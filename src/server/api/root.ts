@@ -4,7 +4,6 @@ import { type inferRouterInputs, type inferRouterOutputs } from "@trpc/server";
 import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
 import { accountRouter } from "./account";
 import { coreRouter } from "./core";
-import { creditsRouter } from "./credits";
 import { minerRouter } from "./miner";
 
 /**
@@ -15,7 +14,6 @@ import { minerRouter } from "./miner";
 
 export const appRouter = createTRPCRouter({
   account: accountRouter,
-  credits: creditsRouter,
   core: coreRouter,
   miner: minerRouter,
 });

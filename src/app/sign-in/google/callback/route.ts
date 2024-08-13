@@ -6,7 +6,6 @@ import { eq } from "drizzle-orm";
 import { db } from "@/schema/db";
 import { User } from "@/schema/schema";
 import { createAccount, google, lucia } from "@/server/auth";
-import { stripe } from "@/server/stripe";
 
 async function handle(req: NextRequest): Promise<Response> {
   const url = new URL(req.url);
@@ -54,7 +53,6 @@ async function handle(req: NextRequest): Promise<Response> {
     existing?.id ??
     (await createAccount({
       db,
-      stripe,
       email: user.email,
       googleId: user.sub,
     }));

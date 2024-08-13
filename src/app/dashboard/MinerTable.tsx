@@ -37,12 +37,6 @@ export default async function MinerTable() {
                   >
                     Netuids
                   </th>
-                  <th
-                    scope="col"
-                    className="sticky top-0 z-10 whitespace-nowrap border-b border-gray-300 px-3 py-3.5 pr-4 text-right backdrop-blur backdrop-filter dark:border-gray-500 lg:table-cell"
-                  >
-                    Base Credits per Token
-                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -67,16 +61,6 @@ export default async function MinerTable() {
                       )}
                     >
                       {m.miners}
-                    </td>
-                    <td
-                      className={clsx(
-                        idx !== models.length - 1
-                          ? "border-b border-gray-200"
-                          : "",
-                        "whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm text-gray-500 dark:text-gray-50",
-                      )}
-                    >
-                      {m.cpt}
                     </td>
                   </tr>
                 ))}

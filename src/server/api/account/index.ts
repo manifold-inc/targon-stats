@@ -6,7 +6,7 @@ import { z } from "zod";
 
 import { User } from "@/schema/schema";
 import { createAccount, lucia } from "@/server/auth";
-import { createTRPCRouter, publicProcedure, stripeProcedure } from "../trpc";
+import { createTRPCRouter, publicProcedure } from "../trpc";
 
 export const accountRouter = createTRPCRouter({
   getUserId: publicProcedure.query(({ ctx }) => {
@@ -54,7 +54,7 @@ export const accountRouter = createTRPCRouter({
         sessionCookie.attributes,
       );
     }),
-  createAccount: stripeProcedure
+  createAccount: publicProcedure
     .input(
       z.object({
         email: z.string(),
@@ -84,7 +84,6 @@ export const accountRouter = createTRPCRouter({
 
       const userId = await createAccount({
         db: ctx.db,
-        stripe: ctx.stripe,
         email,
         password,
       });
