@@ -1,4 +1,4 @@
-# SN4 Targon Hub
+# SN4 Targon Stats
 
 The goal of the hub is to give validators a simple way to directly generate
 revenue off of their bittensor bandwidth. This is designed as a template for
