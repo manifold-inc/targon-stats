@@ -23,7 +23,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Targon-hub",
+  title: "Targon-Stats",
 };
 
 export default function RootLayout({

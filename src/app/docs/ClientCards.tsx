@@ -88,11 +88,11 @@ export const WatchForSuccess = () => {
   const router = useRouter();
   useEffect(() => {
     if (params.get("success")) {
-      router.push("/dashboard");
+      router.push("/docs");
       setTimeout(() => toast.success("Successfully purchased more tokens"));
     }
     if (params.get("canceled")) {
-      router.push("/dashboard");
+      router.push("/docs");
       setTimeout(() => toast.info("Canceled transaction"));
     }
   }, [params, router]);

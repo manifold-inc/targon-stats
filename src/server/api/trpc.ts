@@ -14,7 +14,6 @@ import { ZodError } from "zod";
 
 import { db } from "@/schema/db";
 import { validateRequest } from "../auth";
-import { stripe } from "../stripe";
 
 export const createTRPCContext = (opts: { req: NextRequest }) => {
   // Fetch stuff that depends on the request
@@ -38,16 +37,6 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
       },
     };
   },
-});
-
-const withStripe = t.middleware(({ ctx, next }) => {
-  return next({
-    ctx: {
-      // infers the `session` as non-nullable
-      ...ctx,
-      stripe: stripe,
-    },
-  });
 });
 
 const useUserAuth = t.middleware(async ({ ctx, next }) => {
@@ -81,7 +70,5 @@ export const createTRPCRouter = t.router;
 export const publicAuthlessProcedure = t.procedure;
 export const publicProcedure = t.procedure.use(useUserAuth);
 export const protectedProcedure = t.procedure
-  .use(withStripe)
   .use(useUserAuth)
   .use(enforceUserIsAuthed);
-export const stripeProcedure = t.procedure.use(withStripe);

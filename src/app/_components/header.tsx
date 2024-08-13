@@ -14,15 +14,13 @@ export const Header = () => {
         <Link href="/stats/miner">Miners</Link>
         {auth.status === "AUTHED" ? (
           <>
-            <Link href="/dashboard">Dashboard</Link>
+            <Link href="/docs">API</Link>
             <Link prefetch={false} href="/sign-out">
               Sign Out
             </Link>
           </>
         ) : (
-          <Link className="hidden" href="/sign-in">
-            Sign in
-          </Link>
+          <Link href="/sign-in">Sign in</Link>
         )}
       </nav>
     </header>

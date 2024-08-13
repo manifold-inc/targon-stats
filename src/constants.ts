@@ -1,9 +1,3 @@
-// make sure this is the same as your stripe product name
-export const CREDIT_PER_DOLLAR = 25000000;
-
-// Minimum credit purchase in dollars
-export const MIN_PURCHASE_IN_DOLLARS = 5;
-
 // higher number decreases the speed at which cost for new requests
 // grows during high traffic
 export const RATE_LIMIT_FACTOR = 50;

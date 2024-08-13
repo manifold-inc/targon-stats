@@ -6,7 +6,6 @@ import { Lucia, Scrypt, type User as LuciaUser, type Session } from "lucia";
 import { env } from "@/env.mjs";
 import { adapter, type db as DB } from "@/schema/db";
 import { ApiKey, genId, User } from "@/schema/schema";
-import { type stripe as STRIPE } from "./stripe";
 
 declare module "lucia" {
   interface Register {
@@ -64,22 +63,16 @@ export const validateRequest = cache(uncachedValidateRequest);
 
 export const createAccount = async ({
   db,
-  stripe,
   email,
   googleId,
   password,
 }: {
   db: typeof DB;
-  stripe: typeof STRIPE;
   email: string;
   googleId?: string;
   password?: string;
 }) => {
   const userId = genId.user();
-  const stripeId = await stripe.customers.create({
-    email,
-    metadata: { user_id: userId },
-  });
 
   let hashedPassowrd = null;
   if (password) {
@@ -89,7 +82,6 @@ export const createAccount = async ({
     id: userId,
     email,
     googleId,
-    stripeCustomerId: stripeId.id,
     password: hashedPassowrd,
     emailConfirmed: !hashedPassowrd,
   });
