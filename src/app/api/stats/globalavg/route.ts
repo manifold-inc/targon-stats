@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { and, desc, eq, gte, sql } from "drizzle-orm";
+import { and, desc, eq, gte, lte, sql } from "drizzle-orm";
 import { z } from "zod";
 
 import { db } from "@/schema/db";
@@ -8,7 +8,8 @@ import { ApiKey, MinerResponse, User, ValidatorRequest } from "@/schema/schema";
 // Schema to validate the input
 const schema = z.object({
   verified: z.boolean(),
-  block: z.number().optional(), // User can pass any number of blocks
+  startblock: z.number().optional(), // User can pass a start block
+  endblock: z.number().optional(), // User can pass an end block
 });
 
 export const GET = async (req: NextRequest) => {
@@ -23,11 +24,18 @@ export const GET = async (req: NextRequest) => {
 
   // Extract and validate the query parameters
   const verified = req.nextUrl.searchParams.get("verified") === "true";
-  const block = req.nextUrl.searchParams.get("block")
-    ? parseInt(req.nextUrl.searchParams.get("block")!)
+  const startBlockInput = req.nextUrl.searchParams.get("startblock")
+    ? parseInt(req.nextUrl.searchParams.get("startblock")!)
+    : undefined;
+  const endBlockInput = req.nextUrl.searchParams.get("endblock")
+    ? parseInt(req.nextUrl.searchParams.get("endblock")!)
     : undefined;
 
-  const response = schema.safeParse({ verified, block });
+  const response = schema.safeParse({
+    verified,
+    startblock: startBlockInput,
+    endblock: endBlockInput,
+  });
   if (!response.success) {
     return NextResponse.json(
       {
@@ -37,14 +45,15 @@ export const GET = async (req: NextRequest) => {
     );
   }
 
-  // Determine the latest block and calculate the start block
+  // Determine the latest block
   const latestBlock = await db
     .select({ maxBlock: sql<number>`MAX(${ValidatorRequest.block})` })
     .from(ValidatorRequest)
     .then((result) => result[0]?.maxBlock ?? 0);
 
-  // If block is provided, calculate the start block, else start from the latest block
-  const startBlock = block !== undefined ? latestBlock - block : latestBlock;
+  // Calculate the start and end block based on user input or defaults
+  const startBlock = startBlockInput ?? latestBlock - 360;
+  const endBlock = endBlockInput ?? latestBlock;
 
   // Fetch the user details and statistics
   const [[user], stats] = await Promise.all([
@@ -90,6 +99,7 @@ export const GET = async (req: NextRequest) => {
       .where(
         and(
           gte(ValidatorRequest.block, startBlock),
+          lte(ValidatorRequest.block, endBlock),
           ...(response.data.verified
             ? [
                 eq(

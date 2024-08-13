@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { desc, eq, or, sql } from "drizzle-orm";
+import { and, desc, eq, gte, lte, or, sql } from "drizzle-orm";
 import { z } from "zod";
 
 import { db } from "@/schema/db";
@@ -8,7 +8,8 @@ import { ApiKey, MinerResponse, User, ValidatorRequest } from "@/schema/schema";
 // Define the schema for input validation
 const schema = z.object({
   query: z.string(),
-  limit: z.number(),
+  startblock: z.number().optional(),
+  endblock: z.number().optional(),
 });
 
 export const GET = async (req: NextRequest) => {
@@ -23,16 +24,19 @@ export const GET = async (req: NextRequest) => {
 
   // Extract query parameters
   const query = req.nextUrl.searchParams.get("query") || "";
-  const limitParam = req.nextUrl.searchParams.get("limit");
-  let limit = parseInt(limitParam!);
-
-  // If limit is 0 or negative, treat it as last 1000
-  if (limit <= 0) {
-    limit = 1000;
-  }
+  const startBlockInput = req.nextUrl.searchParams.get("startblock")
+    ? parseInt(req.nextUrl.searchParams.get("startblock")!)
+    : undefined;
+  const endBlockInput = req.nextUrl.searchParams.get("endblock")
+    ? parseInt(req.nextUrl.searchParams.get("endblock")!)
+    : undefined;
 
   // Validate the incoming request
-  const response = schema.safeParse({ query, limit });
+  const response = schema.safeParse({
+    query,
+    startblock: startBlockInput,
+    endblock: endBlockInput,
+  });
   if (!response.success) {
     return NextResponse.json(
       {
@@ -41,6 +45,16 @@ export const GET = async (req: NextRequest) => {
       { status: 400 },
     );
   }
+
+  // Determine the latest block
+  const latestBlock = await db
+    .select({ maxBlock: sql<number>`MAX(${ValidatorRequest.block})` })
+    .from(ValidatorRequest)
+    .then((result) => result[0]?.maxBlock ?? 0);
+
+  // Calculate the start and end block based on user input or defaults
+  const startBlock = startBlockInput ?? latestBlock - 360;
+  const endBlock = endBlockInput ?? latestBlock;
 
   // Determine if the minerIdentifier is a hotkey, coldkey, or uid
   const minerIdentifier =
@@ -74,6 +88,7 @@ export const GET = async (req: NextRequest) => {
         top_n_tokens: sql<string>`${ValidatorRequest.sampling_params}->'top_n_tokens'`,
         max_n_tokens: sql<string>`${ValidatorRequest.sampling_params}->'max_new_tokens'`,
         repetition_penalty: sql<string>`${ValidatorRequest.sampling_params}->'repetition_penalty'`,
+        block: ValidatorRequest.block,
         jaro_score:
           sql<number>`CAST(${MinerResponse.stats}->'jaro_score' AS DECIMAL)`.mapWith(
             Number,
@@ -100,9 +115,14 @@ export const GET = async (req: NextRequest) => {
         ValidatorRequest,
         eq(ValidatorRequest.r_nanoid, MinerResponse.r_nanoid),
       )
-      .where(or(...minerIdentifier))
-      .orderBy(desc(ValidatorRequest.timestamp))
-      .limit(limit),
+      .where(
+        and(
+          gte(ValidatorRequest.block, startBlock),
+          lte(ValidatorRequest.block, endBlock),
+          or(...minerIdentifier),
+        ),
+      )
+      .orderBy(desc(ValidatorRequest.block)),
   ]);
 
   if (!user) {
