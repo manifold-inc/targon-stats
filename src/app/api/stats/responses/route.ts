@@ -10,6 +10,8 @@ const schema = z.object({
   query: z.string(),
   startblock: z.number().optional(),
   endblock: z.number().optional(),
+  limit: z.number().optional(),
+  offset: z.number().optional(),
 });
 
 export const GET = async (req: NextRequest) => {
@@ -30,12 +32,20 @@ export const GET = async (req: NextRequest) => {
   const endBlockInput = req.nextUrl.searchParams.get("endblock")
     ? parseInt(req.nextUrl.searchParams.get("endblock")!)
     : undefined;
+  const limitInput = req.nextUrl.searchParams.get("limit")
+    ? parseInt(req.nextUrl.searchParams.get("limit")!)
+    : 100; // Default to 100 if not provided
+  const offsetInput = req.nextUrl.searchParams.get("offset")
+    ? parseInt(req.nextUrl.searchParams.get("offset")!)
+    : 0; // Default to 0 if not provided
 
   // Validate the incoming request
   const response = schema.safeParse({
     query,
     startblock: startBlockInput,
     endblock: endBlockInput,
+    limit: limitInput,
+    offset: offsetInput,
   });
   if (!response.success) {
     return NextResponse.json(
@@ -120,6 +130,7 @@ export const GET = async (req: NextRequest) => {
           sql<number>`CAST(${MinerResponse.stats}->'time_to_first_token' AS DECIMAL)`.mapWith(
             Number,
           ),
+        id: MinerResponse.id, // Use id for pagination
       })
       .from(MinerResponse)
       .innerJoin(
@@ -133,7 +144,9 @@ export const GET = async (req: NextRequest) => {
           or(...minerIdentifier),
         ),
       )
-      .orderBy(desc(ValidatorRequest.block)),
+      .orderBy(desc(ValidatorRequest.block))
+      .limit(limitInput)
+      .offset(offsetInput),
   ]);
 
   if (!user) {
@@ -146,10 +159,35 @@ export const GET = async (req: NextRequest) => {
   if (responses.length === 0) {
     return NextResponse.json(
       { error: `No responses found for miner ${query}` },
-      { status: 400 },
+      { status: 404 },
     );
   }
 
-  // Return the results to the client
-  return NextResponse.json(responses);
+  // Calculate total records for pagination
+  const totalRecords = await db
+    .select({ count: sql<number>`COUNT(*)` })
+    .from(MinerResponse)
+    .innerJoin(
+      ValidatorRequest,
+      eq(ValidatorRequest.r_nanoid, MinerResponse.r_nanoid),
+    )
+    .where(
+      and(
+        gte(ValidatorRequest.block, startBlock),
+        lte(ValidatorRequest.block, endBlock),
+        or(...minerIdentifier),
+      ),
+    )
+    .then((result) => result[0]?.count ?? 0);
+
+  // Return the results to the client with pagination metadata
+  return NextResponse.json({
+    data: responses,
+    pagination: {
+      limit: limitInput,
+      offset: offsetInput,
+      totalRecords: totalRecords,
+      hasMore: offsetInput + limitInput < totalRecords, // Determine if there are more records to fetch
+    },
+  });
 };

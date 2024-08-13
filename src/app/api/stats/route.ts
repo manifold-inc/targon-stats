@@ -10,6 +10,8 @@ const schema = z.object({
   query: z.string(),
   startblock: z.number().optional(), // User can pass a start block
   endblock: z.number().optional(), // User can pass an end block
+  limit: z.number().optional(), // User can pass a limit for pagination
+  offset: z.number().optional(), // User can pass an offset for pagination
 });
 
 export const GET = async (req: NextRequest) => {
@@ -30,12 +32,21 @@ export const GET = async (req: NextRequest) => {
   const endBlockInput = req.nextUrl.searchParams.get("endblock")
     ? parseInt(req.nextUrl.searchParams.get("endblock")!)
     : undefined;
+  const limitInput = req.nextUrl.searchParams.get("limit")
+    ? parseInt(req.nextUrl.searchParams.get("limit")!)
+    : 100; // Default to 100 if no limit is provided
+  const offsetInput = req.nextUrl.searchParams.get("offset")
+    ? parseInt(req.nextUrl.searchParams.get("offset")!)
+    : 0; // Default to 0 if no offset is provided
 
   const response = schema.safeParse({
     query,
     startblock: startBlockInput,
     endblock: endBlockInput,
+    limit: limitInput,
+    offset: offsetInput,
   });
+
   if (!response.success) {
     return NextResponse.json(
       {
@@ -61,7 +72,7 @@ export const GET = async (req: NextRequest) => {
       ? [eq(MinerResponse.uid, parseInt(query))]
       : [eq(MinerResponse.hotkey, query), eq(MinerResponse.coldkey, query)];
 
-  // Fetch the user details and statistics
+  // Fetch the user details and statistics with pagination
   const [[user], stats] = await Promise.all([
     db
       .select({
@@ -98,6 +109,7 @@ export const GET = async (req: NextRequest) => {
         hotkey: MinerResponse.hotkey,
         coldkey: MinerResponse.coldkey,
         block: ValidatorRequest.block,
+        id: MinerResponse.id, // Use id for pagination
       })
       .from(MinerResponse)
       .innerJoin(
@@ -111,7 +123,9 @@ export const GET = async (req: NextRequest) => {
           or(...minerIdentifier),
         ),
       )
-      .orderBy(desc(ValidatorRequest.block)),
+      .orderBy(desc(ValidatorRequest.block))
+      .limit(limitInput)
+      .offset(offsetInput),
   ]);
 
   if (!user) {
@@ -128,5 +142,30 @@ export const GET = async (req: NextRequest) => {
     );
   }
 
-  return NextResponse.json(stats);
+  // Calculate total records for pagination
+  const totalRecords = await db
+    .select({ count: sql<number>`COUNT(*)` })
+    .from(MinerResponse)
+    .innerJoin(
+      ValidatorRequest,
+      eq(ValidatorRequest.r_nanoid, MinerResponse.r_nanoid),
+    )
+    .where(
+      and(
+        gte(ValidatorRequest.block, startBlock),
+        lte(ValidatorRequest.block, endBlock),
+        or(...minerIdentifier),
+      ),
+    )
+    .then((result) => result[0]?.count ?? 0);
+
+  return NextResponse.json({
+    data: stats,
+    pagination: {
+      limit: limitInput,
+      offset: offsetInput,
+      totalRecords: totalRecords,
+      hasMore: offsetInput + limitInput < totalRecords, // Determine if there are more records to fetch
+    },
+  });
 };

@@ -10,6 +10,8 @@ const schema = z.object({
   verified: z.boolean(),
   startblock: z.number().optional(), // User can pass a start block
   endblock: z.number().optional(), // User can pass an end block
+  limit: z.number().optional(), // For pagination
+  offset: z.number().optional(), // For pagination
 });
 
 export const GET = async (req: NextRequest) => {
@@ -30,11 +32,19 @@ export const GET = async (req: NextRequest) => {
   const endBlockInput = req.nextUrl.searchParams.get("endblock")
     ? parseInt(req.nextUrl.searchParams.get("endblock")!)
     : undefined;
+  const limitInput = req.nextUrl.searchParams.get("limit")
+    ? parseInt(req.nextUrl.searchParams.get("limit")!)
+    : 100; // Default to 100 if not provided
+  const offsetInput = req.nextUrl.searchParams.get("offset")
+    ? parseInt(req.nextUrl.searchParams.get("offset")!)
+    : 0; // Default to 0 if not provided
 
   const response = schema.safeParse({
     verified,
     startblock: startBlockInput,
     endblock: endBlockInput,
+    limit: limitInput,
+    offset: offsetInput,
   });
   if (!response.success) {
     return NextResponse.json(
@@ -90,6 +100,7 @@ export const GET = async (req: NextRequest) => {
           sql<number>`AVG(CAST(${MinerResponse.stats}->'time_to_first_token' AS DECIMAL))`.mapWith(
             Number,
           ),
+        id: MinerResponse.id,
       })
       .from(MinerResponse)
       .innerJoin(
@@ -110,8 +121,10 @@ export const GET = async (req: NextRequest) => {
             : []),
         ),
       )
-      .groupBy(ValidatorRequest.block)
-      .orderBy(desc(ValidatorRequest.block)),
+      .groupBy(ValidatorRequest.block, MinerResponse.id)
+      .orderBy(desc(ValidatorRequest.block))
+      .limit(limitInput) // Pagination limit
+      .offset(offsetInput), // Pagination offset
   ]);
 
   if (!user) {
@@ -128,5 +141,38 @@ export const GET = async (req: NextRequest) => {
     );
   }
 
-  return NextResponse.json(stats);
+  // Calculate total records for pagination
+  const totalRecords = await db
+    .select({ count: sql<number>`COUNT(*)` })
+    .from(MinerResponse)
+    .innerJoin(
+      ValidatorRequest,
+      eq(ValidatorRequest.r_nanoid, MinerResponse.r_nanoid),
+    )
+    .where(
+      and(
+        gte(ValidatorRequest.block, startBlock),
+        lte(ValidatorRequest.block, endBlock),
+        ...(response.data.verified
+          ? [
+              eq(
+                sql`CAST(${MinerResponse.stats}->'verified' AS BOOLEAN)`,
+                response.data.verified,
+              ),
+            ]
+          : []),
+      ),
+    )
+    .then((result) => result[0]?.count ?? 0);
+
+  // Return the results to the client with pagination metadata
+  return NextResponse.json({
+    data: stats,
+    pagination: {
+      limit: limitInput,
+      offset: offsetInput,
+      totalRecords: totalRecords,
+      hasMore: offsetInput + limitInput < totalRecords, // Determine if there are more records to fetch
+    },
+  });
 };
