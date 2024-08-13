@@ -1,11 +1,12 @@
 import { type HTMLProps, type PropsWithChildren } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import hljs from "highlight.js/lib/core";
+import json from "highlight.js/lib/languages/json";
 
 import { API_BASE_URL } from "@/constants";
 import { uncachedValidateRequest } from "@/server/auth";
 import { ApiSection, WatchForSuccess } from "./ClientCards";
-import MinerTable from "./MinerTable";
 
 export const dynamic = "force-dynamic";
 
@@ -23,21 +24,12 @@ const cardStyles =
 export default async function Page() {
   const { user } = await uncachedValidateRequest();
   if (!user) redirect("/");
+  hljs.registerLanguage("json", json);
   return (
     <div className="mx-auto max-w-7xl px-12 pb-20 pt-20">
       <WatchForSuccess />
-      <div className="pb-10 text-6xl font-bold">Documentation</div>
+      <div className="pb-10 text-6xl font-bold">Docs</div>
       <div className="flex flex-col gap-8">
-        <Container>
-          <div className="flex flex-col justify-between gap-4 sm:flex-row">
-            <div className="w-full">
-              <div className="truncate pb-4 text-3xl font-medium text-gray-900 dark:text-gray-50">
-                Current Models
-              </div>
-              <MinerTable />
-            </div>
-          </div>
-        </Container>
         <Container>
           <h3 className="pb-8 text-3xl font-semibold leading-6 text-gray-900 dark:text-gray-50">
             API Reference
@@ -122,8 +114,10 @@ export default async function Page() {
           <div className="overflow-x-scroll pb-4">
             <div className="w-full whitespace-nowrap rounded bg-gray-800 px-2 py-2 text-sm leading-3 text-gray-50 dark:bg-neutral-900">
               <pre className="hljs prose-sm w-full overflow-x-scroll rounded bg-gray-800 px-2 py-2 dark:bg-neutral-900">
-                <code>
-                  {`{
+                <code
+                  dangerouslySetInnerHTML={{
+                    __html: hljs.highlight(
+                      `{
   "data": [
     {
       "block": 101,
@@ -134,7 +128,6 @@ export default async function Page() {
       "avg_time_to_first_token": 0.002,
       "id": 1
     }
-    // more records...
   ],
   "pagination": {
     "limit": 50,
@@ -142,8 +135,11 @@ export default async function Page() {
     "totalRecords": 500,
     "hasMore": true
   }
-}`}
-                </code>
+}`,
+                      { language: "json" },
+                    ).value,
+                  }}
+                />
               </pre>
             </div>
           </div>
@@ -162,54 +158,6 @@ export default async function Page() {
               records to fetch.
             </li>
           </ul>
-          <h4 className="pb-2 text-xl font-semibold leading-6 text-gray-900 dark:text-gray-50">
-            Error Responses
-          </h4>
-          <ul className="list-disc pb-4 pl-5">
-            <li>
-              <strong>401 Unauthorized</strong>: If the Bearer Token is missing
-              or invalid.
-            </li>
-            <li>
-              <strong>400 Bad Request</strong>: If the query parameters are
-              invalid.
-            </li>
-            <li>
-              <strong>404 Not Found</strong>: If no statistics are found for the
-              given parameters.
-            </li>
-          </ul>
-
-          <h4 className="pb-2 text-xl font-semibold leading-6 text-gray-900 dark:text-gray-50">
-            Processing Logic
-          </h4>
-          <div className="pb-4">The API performs the following steps:</div>
-          <ol className="list-decimal pb-4 pl-5">
-            <li>
-              <strong>Authentication:</strong> Checks for the Bearer Token in
-              the Authorization header.
-            </li>
-            <li>
-              <strong>Parameter Parsing and Validation:</strong> Query
-              parameters are parsed and validated.
-            </li>
-            <li>
-              <strong>Fetch Latest Block:</strong> Retrieves the latest block
-              number from the ValidatorRequest table.
-            </li>
-            <li>
-              <strong>Calculate Block Range:</strong> Determines the start and
-              end block range based on user input or defaults.
-            </li>
-            <li>
-              <strong>Data Fetching:</strong> Fetches user details and
-              statistics based on the block range and verification status.
-            </li>
-            <li>
-              <strong>Response Construction:</strong> Returns statistics and
-              pagination metadata, or appropriate error messages.
-            </li>
-          </ol>
         </Container>
 
         <Container>
@@ -281,8 +229,10 @@ export default async function Page() {
           <div className="overflow-x-scroll pb-4">
             <div className="w-full whitespace-nowrap rounded bg-gray-800 px-2 py-2 text-sm leading-3 text-gray-50 dark:bg-neutral-900">
               <pre className="hljs prose-sm w-full overflow-x-scroll rounded bg-gray-800 px-2 py-2 dark:bg-neutral-900">
-                <code>
-                  {`{
+                <code
+                  dangerouslySetInnerHTML={{
+                    __html: hljs.highlight(
+                      `{
   "data": [
     {
       "response": "response data",
@@ -293,7 +243,6 @@ export default async function Page() {
       "uid": 1,
       "block": 101,
       "timestamp": "2024-08-13T12:34:56Z",
-      "tokens": ["token1", "token2"],
       "seed": "seed_value",
       "top_k": "top_k_value",
       "top_p": "top_p_value",
@@ -317,7 +266,6 @@ export default async function Page() {
       "time_to_first_token": 0.002,
       "id": 1
     }
-    // more records...
   ],
   "pagination": {
     "limit": 50,
@@ -325,8 +273,11 @@ export default async function Page() {
     "totalRecords": 500,
     "hasMore": true
   }
-}`}
-                </code>
+}`,
+                      { language: "json" },
+                    ).value,
+                  }}
+                />
               </pre>
             </div>
           </div>
@@ -347,54 +298,6 @@ export default async function Page() {
             </li>
           </ul>
 
-          <h4 className="pb-2 text-xl font-semibold leading-6 text-gray-900 dark:text-gray-50">
-            Error Responses
-          </h4>
-          <ul className="list-disc pb-4 pl-5">
-            <li>
-              <strong>401 Unauthorized</strong>: If the Bearer Token is missing
-              or invalid.
-            </li>
-            <li>
-              <strong>400 Bad Request</strong>: If the query parameters are
-              invalid.
-            </li>
-            <li>
-              <strong>404 Not Found</strong>: If no responses are found for the
-              given miner identifier.
-            </li>
-          </ul>
-
-          <h4 className="pb-2 text-xl font-semibold leading-6 text-gray-900 dark:text-gray-50">
-            Processing Logic
-          </h4>
-          <div className="pb-4">The API performs the following steps:</div>
-          <ol className="list-decimal pb-4 pl-5">
-            <li>
-              <strong>Authentication:</strong> Checks for the Bearer Token in
-              the Authorization header.
-            </li>
-            <li>
-              <strong>Parameter Parsing and Validation:</strong> Query
-              parameters are parsed and validated.
-            </li>
-            <li>
-              <strong>Fetch Latest Block:</strong> Retrieves the latest block
-              number from the ValidatorRequest table.
-            </li>
-            <li>
-              <strong>Calculate Block Range:</strong> Determines the start and
-              end block range based on user input or defaults.
-            </li>
-            <li>
-              <strong>Data Fetching:</strong> Fetches user details and miner
-              responses based on the block range and miner identifier.
-            </li>
-            <li>
-              <strong>Response Construction:</strong> Returns miner responses
-              and pagination metadata, or appropriate error messages.
-            </li>
-          </ol>
         </Container>
 
         <Container>
@@ -466,8 +369,10 @@ export default async function Page() {
           <div className="overflow-x-scroll pb-4">
             <div className="w-full whitespace-nowrap rounded bg-gray-800 px-2 py-2 text-sm leading-3 text-gray-50 dark:bg-neutral-900">
               <pre className="hljs prose-sm w-full overflow-x-scroll rounded bg-gray-800 px-2 py-2 dark:bg-neutral-900">
-                <code>
-                  {`{
+                <code
+                  dangerouslySetInnerHTML={{
+                    __html: hljs.highlight(
+                      `{
   "data": [
     {
       "jaro_score": 0.95,
@@ -481,7 +386,6 @@ export default async function Page() {
       "block": 101,
       "id": 1
     }
-    // more records...
   ],
   "pagination": {
     "limit": 50,
@@ -489,8 +393,11 @@ export default async function Page() {
     "totalRecords": 500,
     "hasMore": true
   }
-}`}
-                </code>
+}`,
+                      { language: "json" },
+                    ).value,
+                  }}
+                />
               </pre>
             </div>
           </div>
@@ -510,55 +417,6 @@ export default async function Page() {
               records to fetch.
             </li>
           </ul>
-
-          <h4 className="pb-2 text-xl font-semibold leading-6 text-gray-900 dark:text-gray-50">
-            Error Responses
-          </h4>
-          <ul className="list-disc pb-4 pl-5">
-            <li>
-              <strong>401 Unauthorized</strong>: If the Bearer Token is missing
-              or invalid.
-            </li>
-            <li>
-              <strong>400 Bad Request</strong>: If the query parameters are
-              invalid.
-            </li>
-            <li>
-              <strong>404 Not Found</strong>: If no statistics are found for the
-              given parameters.
-            </li>
-          </ul>
-
-          <h4 className="pb-2 text-xl font-semibold leading-6 text-gray-900 dark:text-gray-50">
-            Processing Logic
-          </h4>
-          <div className="pb-4">The API performs the following steps:</div>
-          <ol className="list-decimal pb-4 pl-5">
-            <li>
-              <strong>Authentication:</strong> Checks for the Bearer Token in
-              the Authorization header.
-            </li>
-            <li>
-              <strong>Parameter Parsing and Validation:</strong> Query
-              parameters are parsed and validated.
-            </li>
-            <li>
-              <strong>Fetch Latest Block:</strong> Retrieves the latest block
-              number from the ValidatorRequest table.
-            </li>
-            <li>
-              <strong>Calculate Block Range:</strong> Determines the start and
-              end block range based on user input or defaults.
-            </li>
-            <li>
-              <strong>Data Fetching:</strong> Fetches user details and miner
-              statistics based on the block range and miner identifier.
-            </li>
-            <li>
-              <strong>Response Construction:</strong> Returns miner statistics
-              and pagination metadata, or appropriate error messages.
-            </li>
-          </ol>
         </Container>
       </div>
     </div>

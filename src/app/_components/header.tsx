@@ -14,7 +14,7 @@ export const Header = () => {
         <Link href="/stats/miner">Miners</Link>
         {auth.status === "AUTHED" ? (
           <>
-            <Link href="/documentation">API</Link>
+            <Link href="/docs">API</Link>
             <Link prefetch={false} href="/sign-out">
               Sign Out
             </Link>
