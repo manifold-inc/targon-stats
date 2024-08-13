@@ -76,7 +76,6 @@ export const GET = async (req: NextRequest) => {
   const [[user], responses] = await Promise.all([
     db
       .select({
-        credits: User.credits,
         id: User.id,
       })
       .from(User)
