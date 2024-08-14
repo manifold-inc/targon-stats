@@ -1,17 +1,99 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Check, ChevronDown, ChevronUp } from "lucide-react";
 
 import { useAuth } from "./providers";
 
 export const Header = () => {
   const auth = useAuth();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [selectedBits, setSelectedBits] = useState(0b100); // Default to "All Validators"
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const handleSelection = (bitValue: number) => {
+    const newSelectedBits = selectedBits ^ bitValue;
+    setSelectedBits(newSelectedBits);
+
+    // Update the router's query parameters with the new bit value
+    const currentParams = new URLSearchParams(searchParams);
+    currentParams.set(
+      "selection",
+      newSelectedBits.toString(2).padStart(3, "0"),
+    );
+    router.replace(`?${currentParams.toString()}`, undefined);
+  };
+
+  useEffect(() => {
+    const selection = searchParams.get("selection");
+    if (selection) {
+      setSelectedBits(parseInt(selection, 2)); // Parse the binary string into an integer
+    } else {
+      // Ensure "All Validators" is selected by default
+      const defaultBits = 0b100;
+      const currentParams = new URLSearchParams(searchParams);
+      currentParams.set("selection", defaultBits.toString(2).padStart(3, "0"));
+      router.replace(`?${currentParams.toString()}`, undefined);
+    }
+  }, [searchParams, router]);
+
   return (
     <header>
-      <nav className="fixed right-5 top-5 z-40 flex gap-8">
+      <nav className="fixed right-5 top-5 z-40 flex space-x-8">
         <Link href="/">Homepage</Link>
         <Link href="/stats">Stats</Link>
         <Link href="/stats/miner">Miners</Link>
+        <div className="relative">
+          <button onClick={toggleDropdown} className="flex items-center gap-2">
+            Validators
+            {isDropdownOpen ? <ChevronUp /> : <ChevronDown />}
+          </button>
+          {isDropdownOpen && (
+            <div className="absolute z-50 mt-2 w-64 rounded-md bg-white shadow-lg">
+              <div
+                onClick={() => handleSelection(0b001)}
+                className="flex cursor-pointer items-center px-4 py-2"
+              >
+                <span className="mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-gray-400">
+                  {selectedBits & 0b001 ? (
+                    <Check className="text-black" />
+                  ) : null}
+                </span>
+                Manifold
+              </div>
+              <div
+                onClick={() => handleSelection(0b010)}
+                className="flex cursor-pointer items-center px-4 py-2"
+              >
+                <span className="mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-gray-400">
+                  {selectedBits & 0b010 ? (
+                    <Check className="text-black" />
+                  ) : null}
+                </span>
+                Open Tensor Foundation
+              </div>
+              <div
+                onClick={() => handleSelection(0b100)}
+                className="flex cursor-pointer items-center px-4 py-2"
+              >
+                <span className="mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-gray-400">
+                  {selectedBits & 0b100 ? (
+                    <Check className="text-black" />
+                  ) : null}
+                </span>
+                All Validators
+              </div>
+            </div>
+          )}
+        </div>
         {auth.status === "AUTHED" ? (
           <>
             <Link href="/docs">API</Link>
