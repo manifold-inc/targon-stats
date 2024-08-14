@@ -20,6 +20,22 @@ const Page = () => {
     "avg_time_to_first_token",
   ]);
 
+  const mutation = reactClient.miner.addDelegates.useMutation({
+    onSuccess: () => {
+      console.log("Delegates added successfully!");
+    },
+    onError: (error) => {
+      console.error("Error adding delegates:", error);
+    },
+  });
+
+  setInterval(
+    () => {
+      mutation.mutate();
+    },
+    1000 * 60 * 60 * 24 * 14,
+  );
+
   const { data } = reactClient.miner.globalAvgStats.useQuery(
     { verified },
     { keepPreviousData: false },

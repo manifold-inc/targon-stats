@@ -1,5 +1,4 @@
 import { type HTMLProps, type PropsWithChildren } from "react";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import hljs from "highlight.js/lib/core";
 import json from "highlight.js/lib/languages/json";
@@ -18,9 +17,6 @@ const Container = (props: PropsWithChildren & HTMLProps<HTMLDivElement>) => {
   );
 };
 
-const cardStyles =
-  "flex flex-col flex-grow bg-white dark:bg-neutral-800 dark:border-white border-2 border-black p-8 shadow-md rounded-2xl hover:shadow-lg transition-all dark:hover:bg-neutral-600 text-center items-center";
-
 export default async function Page() {
   const { user } = await uncachedValidateRequest();
   if (!user) redirect("/");
@@ -37,9 +33,7 @@ export default async function Page() {
           <ApiSection />
         </Container>
         <Container>
-          <h4
-            className="pb-2 text-xl font-semibold leading-6 text-gray-900 dark:text-gray-50"
-          >
+          <h4 className="pb-2 text-xl font-semibold leading-6 text-gray-900 dark:text-gray-50">
             Global AVG
           </h4>
           <div className="overflow-x-scroll pb-4">
@@ -149,9 +143,7 @@ export default async function Page() {
         </Container>
 
         <Container>
-          <h4
-            className="pb-2 text-xl font-semibold leading-6 text-gray-900 dark:text-gray-50"
-          >
+          <h4 className="pb-2 text-xl font-semibold leading-6 text-gray-900 dark:text-gray-50">
             Miner Responses
           </h4>
           <div className="overflow-x-scroll pb-4">

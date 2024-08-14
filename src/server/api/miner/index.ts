@@ -1,8 +1,19 @@
 import { and, desc, eq, gte, or, sql } from "drizzle-orm";
 import { z } from "zod";
 
-import { MinerResponse, ValidatorRequest } from "@/schema/schema";
+import { MinerResponse, Validator, ValidatorRequest } from "@/schema/schema";
 import { createTRPCRouter, publicProcedure } from "../trpc";
+
+// Define the Delegate schema
+const DelegateSchema = z.object({
+  name: z.string(),
+  url: z.string(),
+  description: z.string(),
+  signature: z.string(),
+});
+
+// Define the schema for the entire response
+const DelegatesSchema = z.record(z.string(), DelegateSchema);
 
 export const minerRouter = createTRPCRouter({
   globalAvgStats: publicProcedure
@@ -197,4 +208,42 @@ export const minerRouter = createTRPCRouter({
 
       return results;
     }),
+  addDelegates: publicProcedure.mutation(async ({ ctx }) => {
+    try {
+      // Fetch the delegate data
+      const response = await fetch(
+        "https://raw.githubusercontent.com/opentensor/bittensor-delegates/main/public/delegates.json",
+      );
+
+      if (!response.ok) {
+        console.error("[addDelegates] Error: ", response.status);
+        return new Response(null, { status: 500 });
+      }
+
+      const jsonData: unknown = await response.json();
+      const data = DelegatesSchema.parse(jsonData);
+
+      // Process each delegate
+      for (const [hotkey, delegate] of Object.entries(data)) {
+        await ctx.db
+          .insert(Validator)
+          .values({
+            hotkey: hotkey,
+            valiName: delegate.name,
+          })
+          .onConflictDoUpdate({
+            target: [Validator.hotkey],
+            set: {
+              valiName: delegate.name,
+            },
+          });
+      }
+
+      // Return a success response
+      return { success: true };
+    } catch (error) {
+      console.error("[addDelegates] Error: ", error);
+      return { success: false, error: "An error occurred during processing." };
+    }
+  }),
 });
