@@ -10,11 +10,9 @@ const schema = z.object({
   query: z.string(),
   startblock: z.number().optional(),
   endblock: z.number().optional(),
-  limit: z.number().optional(),
-  offset: z.number().optional(),
 });
 
-export const GET = async (req: NextRequest) => {
+export const POST = async (req: NextRequest) => {
   // Bearer Token Authentication
   const bearerToken = req.headers.get("Authorization")?.split(" ").at(1);
   if (!bearerToken) {
@@ -24,29 +22,8 @@ export const GET = async (req: NextRequest) => {
     );
   }
 
-  // Extract query parameters
-  const query = req.nextUrl.searchParams.get("query") || "";
-  const startBlockInput = req.nextUrl.searchParams.get("startblock")
-    ? parseInt(req.nextUrl.searchParams.get("startblock")!)
-    : undefined;
-  const endBlockInput = req.nextUrl.searchParams.get("endblock")
-    ? parseInt(req.nextUrl.searchParams.get("endblock")!)
-    : undefined;
-  const limitInput = req.nextUrl.searchParams.get("limit")
-    ? parseInt(req.nextUrl.searchParams.get("limit")!)
-    : 100; // Default to 100 if not provided
-  const offsetInput = req.nextUrl.searchParams.get("offset")
-    ? parseInt(req.nextUrl.searchParams.get("offset")!)
-    : 0; // Default to 0 if not provided
-
-  // Validate the incoming request
-  const response = schema.safeParse({
-    query,
-    startblock: startBlockInput,
-    endblock: endBlockInput,
-    limit: limitInput,
-    offset: offsetInput,
-  });
+  // Parse and validate the JSON body
+  const response = schema.safeParse(await req.json());
   if (!response.success) {
     return NextResponse.json(
       {
@@ -56,6 +33,8 @@ export const GET = async (req: NextRequest) => {
     );
   }
 
+  const { query, startblock, endblock } = response.data;
+
   // Determine the latest block
   const latestBlock = await db
     .select({ maxBlock: sql<number>`MAX(${ValidatorRequest.block})` })
@@ -63,8 +42,8 @@ export const GET = async (req: NextRequest) => {
     .then((result) => result[0]?.maxBlock ?? 0);
 
   // Calculate the start and end block based on user input or defaults
-  const startBlock = startBlockInput ?? latestBlock - 360;
-  const endBlock = endBlockInput ?? latestBlock;
+  const startBlock = startblock ?? latestBlock - 360;
+  const endBlock = endblock ?? latestBlock;
 
   // Determine if the minerIdentifier is a hotkey, coldkey, or uid
   const minerIdentifier =
@@ -108,11 +87,12 @@ export const GET = async (req: NextRequest) => {
         watermark: sql<boolean>`CAST(${ValidatorRequest.sampling_params}->'watermark' AS BOOLEAN)`,
         return_full_text: sql<boolean>`CAST(${ValidatorRequest.sampling_params}->'return_full_text' AS BOOLEAN)`,
         decoder_input_details: sql<boolean>`CAST(${ValidatorRequest.sampling_params}->'decoder_input_details' AS BOOLEAN)`,
-        version: sql<string>`${ValidatorRequest.sampling_params}->'version'`,
+        version: ValidatorRequest.version,
         jaro_score:
           sql<number>`CAST(${MinerResponse.stats}->'jaro_score' AS DECIMAL)`.mapWith(
             Number,
           ),
+        jaros: sql<number[]>`${MinerResponse.stats}->'jaros'`,
         words_per_second:
           sql<number>`CAST(${MinerResponse.stats}->'wps' AS DECIMAL)`.mapWith(
             Number,
@@ -143,9 +123,7 @@ export const GET = async (req: NextRequest) => {
           or(...minerIdentifier),
         ),
       )
-      .orderBy(desc(ValidatorRequest.block))
-      .limit(limitInput)
-      .offset(offsetInput),
+      .orderBy(desc(ValidatorRequest.block)),
   ]);
 
   if (!user) {
@@ -162,31 +140,8 @@ export const GET = async (req: NextRequest) => {
     );
   }
 
-  // Calculate total records for pagination
-  const totalRecords = await db
-    .select({ count: sql<number>`COUNT(*)` })
-    .from(MinerResponse)
-    .innerJoin(
-      ValidatorRequest,
-      eq(ValidatorRequest.r_nanoid, MinerResponse.r_nanoid),
-    )
-    .where(
-      and(
-        gte(ValidatorRequest.block, startBlock),
-        lte(ValidatorRequest.block, endBlock),
-        or(...minerIdentifier),
-      ),
-    )
-    .then((result) => result[0]?.count ?? 0);
-
   // Return the results to the client with pagination metadata
   return NextResponse.json({
     data: responses,
-    pagination: {
-      limit: limitInput,
-      offset: offsetInput,
-      totalRecords: totalRecords,
-      hasMore: offsetInput + limitInput < totalRecords, // Determine if there are more records to fetch
-    },
   });
 };
