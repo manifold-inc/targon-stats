@@ -17,6 +17,8 @@ const schema = z.object({
   startblock: z.number().optional(),
   endblock: z.number().optional(),
   vhotkey: z.string().optional(),
+  limit: z.number().optional(),
+  offset: z.number().optional(),
 });
 
 export const POST = async (req: NextRequest) => {
@@ -40,7 +42,10 @@ export const POST = async (req: NextRequest) => {
     );
   }
 
-  const { query, startblock, endblock, vhotkey } = response.data;
+  const { query, startblock, endblock, vhotkey, limit, offset } = response.data;
+
+  const limitValue = limit ?? 100;
+  const offsetValue = offset ?? 0;
 
   // Determine the latest block
   const latestBlock = await db
@@ -57,6 +62,23 @@ export const POST = async (req: NextRequest) => {
     query.length < 5
       ? [eq(MinerResponse.uid, parseInt(query))]
       : [eq(MinerResponse.hotkey, query), eq(MinerResponse.coldkey, query)];
+
+  const totalRecords = await db
+    .select({ totalRecords: sql<number>`COUNT(*)` })
+    .from(MinerResponse)
+    .innerJoin(
+      ValidatorRequest,
+      eq(ValidatorRequest.r_nanoid, MinerResponse.r_nanoid),
+    )
+    .innerJoin(Validator, eq(Validator.hotkey, ValidatorRequest.hotkey))
+    .where(
+      and(
+        gte(ValidatorRequest.block, startBlock),
+        lte(ValidatorRequest.block, endBlock),
+        or(...minerIdentifier),
+        ...(vhotkey ? [eq(Validator.hotkey, vhotkey)] : []),
+      ),
+    );
 
   // Fetch user details (authenticate the token) and responses for the specified miner
   const [[user], responses] = await Promise.all([
@@ -134,7 +156,9 @@ export const POST = async (req: NextRequest) => {
           ...(vhotkey ? [eq(Validator.hotkey, vhotkey)] : []),
         ),
       )
-      .orderBy(desc(ValidatorRequest.block)),
+      .orderBy(desc(ValidatorRequest.block), desc(MinerResponse.id))
+      .limit(limitValue)
+      .offset(offsetValue),
   ]);
 
   if (!user) {
@@ -153,6 +177,9 @@ export const POST = async (req: NextRequest) => {
 
   // Return the results to the client with pagination metadata
   return NextResponse.json({
-    data: responses,
+    responses: responses,
+    totalRecords: totalRecords[0]!.totalRecords,
+    offset: offsetValue,
+    limit: limitValue,
   });
 };

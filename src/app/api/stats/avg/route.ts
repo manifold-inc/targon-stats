@@ -17,6 +17,8 @@ const schema = z.object({
   startblock: z.number().optional(),
   endblock: z.number().optional(),
   vhotkey: z.string().optional(),
+  limit: z.number().optional(),
+  offset: z.number().optional(),
 });
 
 export const POST = async (req: NextRequest) => {
@@ -40,6 +42,9 @@ export const POST = async (req: NextRequest) => {
   }
 
   const body = response.data;
+
+  const limit = body.limit ?? 100;
+  const offset = body.offset ?? 0;
 
   // Fetch the latest block to set default values for start_block and end_block
   const latestBlock = await db
@@ -115,6 +120,30 @@ export const POST = async (req: NextRequest) => {
     );
   }
 
+  const totalRecords = await db
+    .select({ totalRecords: sql<number>`COUNT(*)` })
+    .from(MinerResponse)
+    .innerJoin(
+      ValidatorRequest,
+      eq(ValidatorRequest.r_nanoid, MinerResponse.r_nanoid),
+    )
+    .innerJoin(Validator, eq(Validator.hotkey, ValidatorRequest.hotkey))
+    .where(
+      and(
+        gte(ValidatorRequest.block, startBlock),
+        lte(ValidatorRequest.block, endBlock),
+        ...(body.verified
+          ? [
+              eq(
+                sql`CAST(${MinerResponse.stats}->'verified' AS BOOLEAN)`,
+                body.verified,
+              ),
+            ]
+          : []),
+        ...(body.vhotkey ? [eq(Validator.hotkey, body.vhotkey)] : []),
+      ),
+    );
+
   try {
     let stats;
     switch (true) {
@@ -158,6 +187,7 @@ export const POST = async (req: NextRequest) => {
               ),
             validator: Validator.valiName,
             vhotkey: Validator.hotkey,
+            id: MinerResponse.id,
           })
           .from(MinerResponse)
           .innerJoin(
@@ -183,10 +213,14 @@ export const POST = async (req: NextRequest) => {
           .groupBy(
             sql`DATE_TRUNC('MINUTES', ${ValidatorRequest.timestamp})`,
             Validator.hotkey,
+            MinerResponse.id,
           )
           .orderBy(
             desc(sql`DATE_TRUNC('MINUTES', ${ValidatorRequest.timestamp})`),
-          );
+            desc(MinerResponse.id),
+          )
+          .limit(limit)
+          .offset(offset);
         break;
 
       case version! < versionCutoff:
@@ -227,6 +261,7 @@ export const POST = async (req: NextRequest) => {
               sql<number>`AVG(CAST(${MinerResponse.stats}->'time_to_first_token' AS DECIMAL))`.mapWith(
                 Number,
               ),
+            id: MinerResponse.id,
           })
           .from(MinerResponse)
           .innerJoin(
@@ -250,13 +285,19 @@ export const POST = async (req: NextRequest) => {
           .groupBy(sql`DATE_TRUNC('MINUTES', ${ValidatorRequest.timestamp})`)
           .orderBy(
             desc(sql`DATE_TRUNC('MINUTES', ${ValidatorRequest.timestamp})`),
-          );
+            desc(MinerResponse.id),
+          )
+          .limit(limit)
+          .offset(offset);
 
         break;
     }
 
     return NextResponse.json({
       stats,
+      totalRecords: totalRecords[0]!.totalRecords,
+      offset,
+      limit,
     });
   } catch (error) {
     if (error instanceof Error) {
