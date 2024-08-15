@@ -36,10 +36,10 @@ export const minerRouter = createTRPCRouter({
                 return utc;
               },
             ),
-          avg_jaro:
-            sql<number>`AVG(CAST(${MinerResponse.stats}->'jaro_score' AS DECIMAL))`.mapWith(
-              Number,
-            ),
+          avg_jaro: sql<number>`
+              AVG((SELECT AVG(value::float) FROM jsonb_array_elements(${MinerResponse.stats}->'jaros')))`.mapWith(
+            Number,
+          ),
           avg_wps:
             sql<number>`AVG(CAST(${MinerResponse.stats}->'wps' AS DECIMAL))`.mapWith(
               Number,
@@ -56,6 +56,7 @@ export const minerRouter = createTRPCRouter({
             sql<number>`AVG(CAST(${MinerResponse.stats}->'time_to_first_token' AS DECIMAL))`.mapWith(
               Number,
             ),
+          valiName: Validator.valiName,
         })
         .from(MinerResponse)
         .innerJoin(
@@ -80,7 +81,10 @@ export const minerRouter = createTRPCRouter({
               : []),
           ),
         )
-        .groupBy(sql`DATE_TRUNC('MINUTES', ${ValidatorRequest.timestamp})`)
+        .groupBy(
+          sql`DATE_TRUNC('MINUTES', ${ValidatorRequest.timestamp})`,
+          Validator.valiName,
+        )
         .orderBy(sql`DATE_TRUNC('MINUTES', ${ValidatorRequest.timestamp})`);
 
       console.log(stats);
@@ -92,10 +96,11 @@ export const minerRouter = createTRPCRouter({
       z.object({
         query: z.string(),
         block: z.number().optional(),
+        valiName: z.string().optional(),
       }),
     )
     .query(async ({ input, ctx }) => {
-      const { query, block } = input;
+      const { query, block, valiName } = input;
 
       const latestBlock = await ctx.db
         .select({ maxBlock: sql<number>`MAX(${ValidatorRequest.block})` })
@@ -144,7 +149,16 @@ export const minerRouter = createTRPCRouter({
           ValidatorRequest,
           eq(ValidatorRequest.r_nanoid, MinerResponse.r_nanoid),
         )
-        .where(and(gte(ValidatorRequest.block, startBlock), or(...eqs)))
+        .innerJoin(Validator, eq(Validator.hotkey, ValidatorRequest.hotkey))
+        .where(
+          and(
+            gte(ValidatorRequest.block, startBlock),
+            or(...eqs),
+            ...(valiName && valiName !== "All Validators"
+              ? [eq(Validator.valiName, valiName)]
+              : []),
+          ),
+        )
         .orderBy(desc(ValidatorRequest.block));
 
       console.log("Stats: ", stats);
@@ -183,10 +197,7 @@ export const minerRouter = createTRPCRouter({
           max_n_tokens: sql<string>`${ValidatorRequest.sampling_params}->'max_new_tokens'`,
           repetition_penalty: sql<string>`${ValidatorRequest.sampling_params}->'repetition_penalty'`,
           verified: sql<boolean>`${MinerResponse.stats}->'verified'`,
-          jaro_score:
-            sql<number>`CAST(${MinerResponse.stats}->'jaro_score' AS DECIMAL)`.mapWith(
-              Number,
-            ),
+          jaros: sql<number[]>`${MinerResponse.stats}->'jaros'`,
           words_per_second:
             sql<number>`CAST(${MinerResponse.stats}->'wps' AS DECIMAL)`.mapWith(
               Number,
