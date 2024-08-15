@@ -83,6 +83,17 @@ export const Header = () => {
           {isDropdownOpen && (
             <div className="absolute z-50 mt-2 w-64 rounded-md bg-white shadow-lg">
               <div
+                onClick={() => handleSelection(0b100)}
+                className="flex cursor-pointer items-center px-4 py-2"
+              >
+                <span className="mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-gray-400">
+                  {selectedBits & 0b100 ? (
+                    <Check className="text-black" />
+                  ) : null}
+                </span>
+                All Validators
+              </div>
+              <div
                 onClick={() => handleSelection(0b001)}
                 className="flex cursor-pointer items-center px-4 py-2"
               >
@@ -103,17 +114,6 @@ export const Header = () => {
                   ) : null}
                 </span>
                 Openτensor Foundaτion
-              </div>
-              <div
-                onClick={() => handleSelection(0b100)}
-                className="flex cursor-pointer items-center px-4 py-2"
-              >
-                <span className="mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-gray-400">
-                  {selectedBits & 0b100 ? (
-                    <Check className="text-black" />
-                  ) : null}
-                </span>
-                All Validators
               </div>
             </div>
           )}
