@@ -35,7 +35,10 @@ interface Response {
   verified: boolean;
 }
 
-const ResponseComparison: React.FC<ResponseComparisonProps> = ({ query }) => {
+const ResponseComparison: React.FC<ResponseComparisonProps> = ({
+  query,
+  valiName,
+}) => {
   const {
     data: responses,
     isLoading,
@@ -342,7 +345,7 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({ query }) => {
                 <div className="px-4 sm:px-0">
                   <div className="flex justify-between">
                     <h3 className="text-xl font-semibold leading-7 text-gray-900 dark:text-white">
-                      Response Details
+                      Response Details on {valiName} Validator
                     </h3>
                     <button onClick={() => setOpen(false)}>
                       <X className="h-6 w-6 text-gray-500 dark:text-gray-300" />
