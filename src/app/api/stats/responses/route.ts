@@ -40,6 +40,15 @@ export const POST = async (req: NextRequest) => {
       },
       { status: 400 },
     );
+  } else {
+    if (response.data.limit && response.data.limit > 300) {
+      return NextResponse.json(
+        {
+          error: { message: "Max Limit is 300" },
+        },
+        { status: 400 },
+      );
+    }
   }
 
   const { query, startblock, endblock, vhotkey, limit, offset } = response.data;

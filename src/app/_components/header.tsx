@@ -81,14 +81,14 @@ export const Header = () => {
             {isDropdownOpen ? <ChevronUp /> : <ChevronDown />}
           </button>
           {isDropdownOpen && (
-            <div className="absolute z-50 mt-2 w-64 rounded-md bg-white shadow-lg">
+            <div className="absolute z-50 mt-2 w-64 rounded-md bg-white shadow-lg dark:bg-neutral-700 dark:text-gray-300">
               <div
                 onClick={() => handleSelection(0b100)}
                 className="flex cursor-pointer items-center px-4 py-2"
               >
                 <span className="mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-gray-400">
                   {selectedBits & 0b100 ? (
-                    <Check className="text-black" />
+                    <Check className="text-black dark:text-white" />
                   ) : null}
                 </span>
                 All Validators
@@ -99,7 +99,7 @@ export const Header = () => {
               >
                 <span className="mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-gray-400">
                   {selectedBits & 0b001 ? (
-                    <Check className="text-black" />
+                    <Check className="text-black dark:text-white" />
                   ) : null}
                 </span>
                 Manifold
@@ -110,7 +110,7 @@ export const Header = () => {
               >
                 <span className="mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-gray-400">
                   {selectedBits & 0b010 ? (
-                    <Check className="text-black" />
+                    <Check className="text-black dark:text-white" />
                   ) : null}
                 </span>
                 Openτensor Foundaτion
