@@ -3,13 +3,20 @@ import { and, desc, eq, gte, lte, sql } from "drizzle-orm";
 import { z } from "zod";
 
 import { db } from "@/schema/db";
-import { ApiKey, MinerResponse, User, ValidatorRequest } from "@/schema/schema";
+import {
+  ApiKey,
+  MinerResponse,
+  User,
+  Validator,
+  ValidatorRequest,
+} from "@/schema/schema";
 
 // Define the input schema with limit and offset
 const schema = z.object({
   verified: z.boolean(),
   startblock: z.number().optional(),
   endblock: z.number().optional(),
+  vhotkey: z.string().optional(),
 });
 
 export const POST = async (req: NextRequest) => {
@@ -149,12 +156,15 @@ export const POST = async (req: NextRequest) => {
               sql<number>`AVG(CAST(${MinerResponse.stats}->'time_to_first_token' AS DECIMAL))`.mapWith(
                 Number,
               ),
+            validator: Validator.valiName,
+            vhotkey: Validator.hotkey,
           })
           .from(MinerResponse)
           .innerJoin(
             ValidatorRequest,
             eq(ValidatorRequest.r_nanoid, MinerResponse.r_nanoid),
           )
+          .innerJoin(Validator, eq(Validator.hotkey, ValidatorRequest.hotkey))
           .where(
             and(
               gte(ValidatorRequest.block, startBlock),
@@ -167,9 +177,13 @@ export const POST = async (req: NextRequest) => {
                     ),
                   ]
                 : []),
+              ...(body.vhotkey ? [eq(Validator.hotkey, body.vhotkey)] : []),
             ),
           )
-          .groupBy(sql`DATE_TRUNC('MINUTES', ${ValidatorRequest.timestamp})`)
+          .groupBy(
+            sql`DATE_TRUNC('MINUTES', ${ValidatorRequest.timestamp})`,
+            Validator.hotkey,
+          )
           .orderBy(
             desc(sql`DATE_TRUNC('MINUTES', ${ValidatorRequest.timestamp})`),
           );

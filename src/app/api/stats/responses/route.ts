@@ -3,13 +3,20 @@ import { and, desc, eq, gte, lte, or, sql } from "drizzle-orm";
 import { z } from "zod";
 
 import { db } from "@/schema/db";
-import { ApiKey, MinerResponse, User, ValidatorRequest } from "@/schema/schema";
+import {
+  ApiKey,
+  MinerResponse,
+  User,
+  Validator,
+  ValidatorRequest,
+} from "@/schema/schema";
 
 // Define the schema for input validation
 const schema = z.object({
   query: z.string(),
   startblock: z.number().optional(),
   endblock: z.number().optional(),
+  vhotkey: z.string().optional(),
 });
 
 export const POST = async (req: NextRequest) => {
@@ -33,7 +40,7 @@ export const POST = async (req: NextRequest) => {
     );
   }
 
-  const { query, startblock, endblock } = response.data;
+  const { query, startblock, endblock, vhotkey } = response.data;
 
   // Determine the latest block
   const latestBlock = await db
@@ -88,6 +95,8 @@ export const POST = async (req: NextRequest) => {
         return_full_text: sql<boolean>`CAST(${ValidatorRequest.sampling_params}->'return_full_text' AS BOOLEAN)`,
         decoder_input_details: sql<boolean>`CAST(${ValidatorRequest.sampling_params}->'decoder_input_details' AS BOOLEAN)`,
         version: ValidatorRequest.version,
+        validator: Validator.valiName,
+        vhotkey: Validator.hotkey,
         jaro_score:
           sql<number>`CAST(${MinerResponse.stats}->'jaro_score' AS DECIMAL)`.mapWith(
             Number,
@@ -116,11 +125,13 @@ export const POST = async (req: NextRequest) => {
         ValidatorRequest,
         eq(ValidatorRequest.r_nanoid, MinerResponse.r_nanoid),
       )
+      .innerJoin(Validator, eq(Validator.hotkey, ValidatorRequest.hotkey))
       .where(
         and(
           gte(ValidatorRequest.block, startBlock),
           lte(ValidatorRequest.block, endBlock),
           or(...minerIdentifier),
+          ...(vhotkey ? [eq(Validator.hotkey, vhotkey)] : []),
         ),
       )
       .orderBy(desc(ValidatorRequest.block)),

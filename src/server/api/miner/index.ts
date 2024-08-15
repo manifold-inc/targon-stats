@@ -170,10 +170,11 @@ export const minerRouter = createTRPCRouter({
     .input(
       z.object({
         query: z.string(),
+        validator: z.string().optional(),
       }),
     )
     .query(async ({ input, ctx }) => {
-      const { query } = input;
+      const { query, validator } = input;
 
       const eqs =
         query.length < 5
@@ -196,6 +197,7 @@ export const minerRouter = createTRPCRouter({
           repetition_penalty: sql<string>`${ValidatorRequest.sampling_params}->'repetition_penalty'`,
           verified: sql<boolean>`${MinerResponse.stats}->'verified'`,
           jaros: sql<number[]>`${MinerResponse.stats}->'jaros'`,
+          validator: sql<string>`${Validator.valiName}`,
           words_per_second:
             sql<number>`CAST(${MinerResponse.stats}->'wps' AS DECIMAL)`.mapWith(
               Number,
@@ -218,7 +220,15 @@ export const minerRouter = createTRPCRouter({
           ValidatorRequest,
           eq(ValidatorRequest.r_nanoid, MinerResponse.r_nanoid),
         )
-        .where(or(...eqs))
+        .innerJoin(Validator, eq(Validator.hotkey, ValidatorRequest.hotkey))
+        .where(
+          and(
+            or(...eqs),
+            ...(validator && validator !== "All Validators"
+              ? [eq(Validator.valiName, validator)]
+              : []),
+          ),
+        )
         .orderBy(desc(ValidatorRequest.timestamp))
         .limit(10);
 

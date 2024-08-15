@@ -15,6 +15,7 @@ interface ResponseComparisonProps {
 
 interface Response {
   hotkey: string;
+  validator: string;
   ground_truth: string;
   response: string;
   jaros: number[];
@@ -43,7 +44,7 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
     data: responses,
     isLoading,
     error,
-  } = reactClient.miner.getResponses.useQuery({ query });
+  } = reactClient.miner.getResponses.useQuery({ query, validator: valiName });
   const [open, setOpen] = useState(false);
   const [selectedResponse, setSelectedResponse] = useState<Response | null>(
     null,
@@ -91,6 +92,12 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                       className="whitespace-nowrap px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-200 sm:pl-6"
                     >
                       Hotkey
+                    </th>
+                    <th
+                      scope="col"
+                      className="whitespace-nowrap px-3 py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200"
+                    >
+                      Validator
                     </th>
                     <th
                       scope="col"
@@ -224,6 +231,9 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                         </div>
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
+                        {response.validator}
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
                         {response.verified ? "Yes" : "No"}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
@@ -345,7 +355,7 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                 <div className="px-4 sm:px-0">
                   <div className="flex justify-between">
                     <h3 className="text-xl font-semibold leading-7 text-gray-900 dark:text-white">
-                      Response Details on {valiName} Validator
+                      Response Details on {selectedResponse.validator} Validator
                     </h3>
                     <button onClick={() => setOpen(false)}>
                       <X className="h-6 w-6 text-gray-500 dark:text-gray-300" />
