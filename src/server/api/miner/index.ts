@@ -17,8 +17,9 @@ const DelegatesSchema = z.record(z.string(), DelegateSchema);
 
 export const minerRouter = createTRPCRouter({
   globalAvgStats: publicProcedure
-    .input(z.object({ verified: z.boolean() }))
+    .input(z.object({ verified: z.boolean(), valiName: z.string().optional() }))
     .query(async ({ input, ctx }) => {
+      console.log("Input: ", input);
       const stats = await ctx.db
         .select({
           minute:
@@ -61,6 +62,7 @@ export const minerRouter = createTRPCRouter({
           ValidatorRequest,
           eq(ValidatorRequest.r_nanoid, MinerResponse.r_nanoid),
         )
+        .innerJoin(Validator, eq(Validator.hotkey, ValidatorRequest.hotkey))
         .where(
           and(
             gte(ValidatorRequest.timestamp, sql`NOW() - INTERVAL '2 hours'`),
@@ -73,10 +75,15 @@ export const minerRouter = createTRPCRouter({
                   ),
                 ]
               : []),
+            ...(input.valiName && input.valiName !== "All Validators"
+              ? [eq(Validator.valiName, input.valiName)]
+              : []),
           ),
         )
         .groupBy(sql`DATE_TRUNC('MINUTES', ${ValidatorRequest.timestamp})`)
         .orderBy(sql`DATE_TRUNC('MINUTES', ${ValidatorRequest.timestamp})`);
+
+      console.log(stats);
 
       return stats;
     }),

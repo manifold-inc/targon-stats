@@ -26,21 +26,21 @@ export const Header = () => {
     // Update the router's query parameters with the new bit value
     const currentParams = new URLSearchParams(searchParams);
     currentParams.set(
-      "selection",
+      "validators",
       newSelectedBits.toString(2).padStart(3, "0"),
     );
     router.replace(`?${currentParams.toString()}`, undefined);
   };
 
   useEffect(() => {
-    const selection = searchParams.get("selection");
-    if (selection) {
-      setSelectedBits(parseInt(selection, 2)); // Parse the binary string into an integer
+    const validator = searchParams.get("validators");
+    if (validator) {
+      setSelectedBits(parseInt(validator, 2)); // Parse the binary string into an integer
     } else {
       // Ensure "All Validators" is selected by default
       const defaultBits = 0b100;
       const currentParams = new URLSearchParams(searchParams);
-      currentParams.set("selection", defaultBits.toString(2).padStart(3, "0"));
+      currentParams.set("validators", defaultBits.toString(2).padStart(3, "0"));
       router.replace(`?${currentParams.toString()}`, undefined);
     }
   }, [searchParams, router]);

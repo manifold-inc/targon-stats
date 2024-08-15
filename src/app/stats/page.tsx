@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Field, Label, Switch } from "@headlessui/react";
 import { LineChart } from "@tremor/react";
 import moment from "moment";
 
 import { reactClient } from "@/trpc/react";
+import { bitsToNames } from "@/utils/validatorMap";
 
 export const dynamic = "force-dynamic";
 
@@ -19,6 +21,13 @@ const Page = () => {
     "avg_total_time",
     "avg_time_to_first_token",
   ]);
+  const params = useSearchParams();
+  const validatorParam = params.get("validators");
+
+  // Handle the case where `validatorParam` could be null
+  const valiName = validatorParam
+    ? bitsToNames(parseInt(validatorParam, 2))
+    : "";
 
   const mutation = reactClient.miner.addDelegates.useMutation({
     onSuccess: () => {
@@ -37,7 +46,7 @@ const Page = () => {
   );
 
   const { data } = reactClient.miner.globalAvgStats.useQuery(
-    { verified },
+    { verified, valiName: valiName },
     { keepPreviousData: false },
   );
   const handleCategoryClick = (category: string) => () => {
