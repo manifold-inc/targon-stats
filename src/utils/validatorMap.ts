@@ -1,6 +1,6 @@
 const validatorMap: Record<number, string> = {
   0b001: "Manifold",
-  0b010: "Open Tensor Foundation",
+  0b010: "Openτensor Foundaτion",
   0b100: "All Validators",
 };
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Check, ChevronDown, ChevronUp } from "lucide-react";
@@ -14,13 +14,21 @@ export const Header = () => {
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedBits, setSelectedBits] = useState(0b100); // Default to "All Validators"
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
+    setIsDropdownOpen((prev) => !prev);
   };
 
   const handleSelection = (bitValue: number) => {
-    const newSelectedBits = selectedBits ^ bitValue;
+    let newSelectedBits;
+    if (bitValue === 0b100) {
+      // "All Validators" selected
+      newSelectedBits = 0b100;
+    } else {
+      // Specific validator selected, deselect "All Validators"
+      newSelectedBits = bitValue;
+    }
     setSelectedBits(newSelectedBits);
 
     // Update the router's query parameters with the new bit value
@@ -45,13 +53,29 @@ export const Header = () => {
     }
   }, [searchParams, router]);
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
+
   return (
     <header>
       <nav className="fixed right-5 top-5 z-40 flex space-x-8">
         <Link href="/">Homepage</Link>
         <Link href="/stats">Stats</Link>
         <Link href="/stats/miner">Miners</Link>
-        <div className="relative">
+        <div className="relative" ref={dropdownRef}>
           <button onClick={toggleDropdown} className="flex items-center gap-2">
             Validators
             {isDropdownOpen ? <ChevronUp /> : <ChevronDown />}
@@ -78,7 +102,7 @@ export const Header = () => {
                     <Check className="text-black" />
                   ) : null}
                 </span>
-                Open Tensor Foundation
+                Openτensor Foundaτion
               </div>
               <div
                 onClick={() => handleSelection(0b100)}
