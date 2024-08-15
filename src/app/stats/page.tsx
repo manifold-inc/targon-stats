@@ -49,6 +49,21 @@ const Page = () => {
     { verified, valiName: valiName },
     { keepPreviousData: false },
   );
+
+  const processedData = data
+    ? data.map((item) => ({
+        ...item,
+        avg_jaro: item.avg_jaro ? item.avg_jaro.toFixed(2) : item.avg_jaro,
+        avg_wps: item.avg_wps ? item.avg_wps.toFixed(2) : item.avg_wps,
+        avg_total_time: item.avg_total_time
+          ? item.avg_total_time.toFixed(2)
+          : item.avg_total_time,
+        avg_time_to_first_token: item.avg_time_to_first_token
+          ? item.avg_time_to_first_token.toFixed(2)
+          : item.avg_time_to_first_token,
+      }))
+    : []; // Return an empty array if data is undefined
+
   const handleCategoryClick = (category: string) => () => {
     setVisibleCategories((prev) =>
       prev.includes(category)
@@ -173,7 +188,7 @@ const Page = () => {
                 Avg stats last 2 hours on {valiName}
               </h3>
               <LineChart
-                data={(data ?? []).map((s) => ({
+                data={(processedData ?? []).map((s) => ({
                   ...s,
                   minute: moment(s.minute).format("LT"),
                 }))}

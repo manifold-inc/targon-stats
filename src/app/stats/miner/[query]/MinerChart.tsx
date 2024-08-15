@@ -64,6 +64,23 @@ const MinerChart: React.FC<MinerChartProps> = ({ query, block, valiName }) => {
     miners.set(m.uid, { hotkey: m.hotkey, coldkey: m.coldkey });
   });
 
+  const processedData = minerStats.data!.map((item) => ({
+    ...item,
+    jaro_score: (
+      item.jaros.reduce((a, b) => a + b, 0) / item.jaros.length
+    ).toFixed(2), // Calculate the average and format to 2 decimal places
+    total_time: item.total_time ? item.total_time.toFixed(2) : item.total_time,
+    words_per_second: item.words_per_second
+      ? item.words_per_second.toFixed(2)
+      : item.words_per_second,
+    time_for_all_tokens: item.time_for_all_tokens
+      ? item.time_for_all_tokens.toFixed(2)
+      : item.time_for_all_tokens,
+    time_to_first_token: item.time_to_first_token
+      ? item.time_to_first_token.toFixed(2)
+      : item.time_to_first_token,
+  }));
+
   return (
     <>
       {!!minerStats.data?.length && (
@@ -84,8 +101,11 @@ const MinerChart: React.FC<MinerChartProps> = ({ query, block, valiName }) => {
               >
                 {minerStats
                   ? (
-                      minerStats.data.reduce((s, d) => s + d.jaro_score, 0) /
-                      minerStats.data.length
+                      minerStats.data.reduce((s, d) => {
+                        const avgJaroScore =
+                          d.jaros.reduce((a, b) => a + b, 0) / d.jaros.length;
+                        return s + avgJaroScore;
+                      }, 0) / minerStats.data.length
                     ).toFixed(2)
                   : "_"}
               </dd>
@@ -192,9 +212,9 @@ const MinerChart: React.FC<MinerChartProps> = ({ query, block, valiName }) => {
                 Viewing Stats For: {query} on Validator: {valiName}
               </h3>
               <LineChart
-                data={minerStats.data}
+                data={processedData}
                 index="block"
-                xAxisLabel="Time"
+                xAxisLabel="Block"
                 categories={visibleCategories}
                 colors={visibleCategories.map(
                   (category) => categoryColorMap[category]!,

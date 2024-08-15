@@ -112,6 +112,7 @@ export const minerRouter = createTRPCRouter({
       const startBlock = latestBlock - Math.min(block!, 360);
 
       console.log("Start Block: ", startBlock);
+      console.log("Vali Name: ", valiName);
 
       const eqs =
         query.length < 5
@@ -119,10 +120,7 @@ export const minerRouter = createTRPCRouter({
           : [eq(MinerResponse.hotkey, query), eq(MinerResponse.coldkey, query)];
       const stats = await ctx.db
         .select({
-          jaro_score:
-            sql<number>`CAST(${MinerResponse.stats}->'jaro_score' AS DECIMAL)`.mapWith(
-              Number,
-            ),
+          jaros: sql<number[]>`${MinerResponse.stats}->'jaros'`,
           words_per_second:
             sql<number>`CAST(${MinerResponse.stats}->'wps' AS DECIMAL)`.mapWith(
               Number,
