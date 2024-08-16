@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { and, desc, eq, gte, lte, sql } from "drizzle-orm";
+import { and, desc, eq, gte, inArray, lte, sql } from "drizzle-orm";
 import { z } from "zod";
 
 import { db } from "@/schema/db";
@@ -16,7 +16,7 @@ const schema = z.object({
   verified: z.boolean(),
   startblock: z.number().optional(),
   endblock: z.number().optional(),
-  vhotkey: z.string().optional(),
+  validator_hotkeys: z.string().array().optional(),
   limit: z.number().optional(),
   offset: z.number().optional(),
 });
@@ -149,9 +149,14 @@ export const POST = async (req: NextRequest) => {
               ),
             ]
           : []),
-        ...(body.vhotkey ? [eq(Validator.hotkey, body.vhotkey)] : []),
+        ...(body.validator_hotkeys
+          ? [inArray(Validator.hotkey, body.validator_hotkeys)]
+          : []),
       ),
     );
+
+  // Determine if there are more records
+  const hasMoreRecords = limit + offset < totalRecords[0]!.totalRecords;
 
   try {
     let stats;
@@ -216,7 +221,9 @@ export const POST = async (req: NextRequest) => {
                     ),
                   ]
                 : []),
-              ...(body.vhotkey ? [eq(Validator.hotkey, body.vhotkey)] : []),
+              ...(body.validator_hotkeys
+                ? [inArray(Validator.hotkey, body.validator_hotkeys)]
+                : []),
             ),
           )
           .groupBy(
@@ -307,6 +314,7 @@ export const POST = async (req: NextRequest) => {
       totalRecords: totalRecords[0]!.totalRecords,
       offset,
       limit,
+      hasMoreRecords,
     });
   } catch (error) {
     if (error instanceof Error) {

@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { and, desc, eq, gte, lte, or, sql } from "drizzle-orm";
+import { and, desc, eq, gte, inArray, lte, or, sql } from "drizzle-orm";
 import { z } from "zod";
 
 import { db } from "@/schema/db";
@@ -16,7 +16,7 @@ const schema = z.object({
   query: z.string(),
   startblock: z.number().optional(),
   endblock: z.number().optional(),
-  validator_hotkey: z.string().optional(),
+  validator_hotkeys: z.string().array().optional(),
   limit: z.number().optional(),
   offset: z.number().optional(),
 });
@@ -51,14 +51,8 @@ export const POST = async (req: NextRequest) => {
     }
   }
 
-  const {
-    query,
-    startblock,
-    endblock,
-    validator_hotkey: vhotkey,
-    limit,
-    offset,
-  } = response.data;
+  const { query, startblock, endblock, validator_hotkeys, limit, offset } =
+    response.data;
 
   const limitValue = limit ?? 100;
   const offsetValue = offset ?? 0;
@@ -92,9 +86,15 @@ export const POST = async (req: NextRequest) => {
         gte(ValidatorRequest.block, startBlock),
         lte(ValidatorRequest.block, endBlock),
         or(...minerIdentifier),
-        ...(vhotkey ? [eq(Validator.hotkey, vhotkey)] : []),
+        ...(validator_hotkeys
+          ? [inArray(Validator.hotkey, validator_hotkeys)]
+          : []),
       ),
     );
+
+  // Determine if there are more records
+  const hasMoreRecords =
+    offsetValue + limitValue < totalRecords[0]!.totalRecords;
 
   // Fetch user details (authenticate the token) and responses for the specified miner
   const [[user], responses] = await Promise.all([
@@ -129,7 +129,9 @@ export const POST = async (req: NextRequest) => {
           gte(ValidatorRequest.block, startBlock),
           lte(ValidatorRequest.block, endBlock),
           or(...minerIdentifier),
-          ...(vhotkey ? [eq(Validator.hotkey, vhotkey)] : []),
+          ...(validator_hotkeys
+            ? [inArray(Validator.hotkey, validator_hotkeys)]
+            : []),
         ),
       )
       .orderBy(desc(ValidatorRequest.block), desc(MinerResponse.id))
@@ -157,5 +159,6 @@ export const POST = async (req: NextRequest) => {
     totalRecords: totalRecords[0]!.totalRecords,
     offset: offsetValue,
     limit: limitValue,
+    hasMoreRecords: hasMoreRecords,
   });
 };
