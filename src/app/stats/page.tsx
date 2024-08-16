@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Field, Label, Switch } from "@headlessui/react";
 import { LineChart } from "@tremor/react";
@@ -11,7 +11,7 @@ import { bitsToNames } from "@/utils/validatorMap";
 
 export const dynamic = "force-dynamic";
 
-const Page = () => {
+const PageContent = () => {
   const cardStyles =
     "flex flex-col flex-grow bg-white dark:bg-neutral-800 p-8 shadow-md rounded-2xl hover:shadow-lg transition-all dark:hover:bg-gray-800 items-center text-center justify-center";
   const [verified, setVerified] = useState(true);
@@ -229,4 +229,10 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default function Page() {
+  return (
+    <Suspense fallback="Loading...">
+      <PageContent />
+    </Suspense>
+  );
+}
