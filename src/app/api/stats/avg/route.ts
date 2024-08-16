@@ -199,7 +199,7 @@ export const POST = async (req: NextRequest) => {
                 Number,
               ),
             validator: Validator.valiName,
-            vhotkey: Validator.hotkey,
+            validator_hotkey: Validator.hotkey,
             id: MinerResponse.id,
           })
           .from(MinerResponse)

@@ -115,7 +115,7 @@ export const POST = async (req: NextRequest) => {
         sampling_params: ValidatorRequest.sampling_params,
         version: ValidatorRequest.version,
         validator: Validator.valiName,
-        vhotkey: Validator.hotkey,
+        validator_hotkey: Validator.hotkey,
         id: MinerResponse.id, // Use id for pagination
       })
       .from(MinerResponse)

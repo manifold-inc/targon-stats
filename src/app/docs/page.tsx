@@ -65,8 +65,8 @@ export default async function Page() {
                 number to fetch statistics until. Defaults to the latest block.
               </li>
               <li>
-                <strong>vhotkey</strong> (optional, string): The validator
-                hotkey to filter the results. If not provided, results from all
+                <strong>validator_hotkeys</strong> (optional, string[]): The validator
+                hotkeys to filter the results. If not provided, results from all
                 validators are included.
               </li>
               <li>
@@ -107,7 +107,7 @@ export default async function Page() {
   "version": true,
   "startblock": 3612400,
   "endblock": 3612488,
-  "vhotkey": "vhotkey1",
+  "validator_hotkeys": ["validator_hotkey1". "validator_hotkey2"],
   "limit": 200,
   "offset": 4
 }`,
@@ -137,7 +137,7 @@ export default async function Page() {
       "avg_total_time": 0.01,
       "avg_time_to_first_token": 0.002,
       "validator": "ValidatorName",
-      "vhotkey": "vhotkey1",
+      "validator_hotkey": "validator_hotkey",
       "id": 1
     }
   ],
@@ -202,7 +202,7 @@ export default async function Page() {
               number to fetch statistics until. Defaults to the latest block.
             </li>
             <li>
-              <strong>vhotkey</strong> (optional, string): The validator hotkey
+              <strong>validator_hotkeys</strong> (optional, string[]): The validator hotkeys
               to filter the results. If not provided, results from all
               validators are included.
             </li>
@@ -245,7 +245,7 @@ export default async function Page() {
   "query": "0",
   "startblock": 3612400,
   "endblock": 3612488,
-  "vhotkey": "vhotkey1",
+  "validator_hotkeys": ["validator_hotkey", "validator_hotkey2"],
   "limit": 200,
   "offset": 4
 }`,
@@ -266,65 +266,74 @@ export default async function Page() {
                 <code
                   dangerouslySetInnerHTML={{
                     __html: hljs.highlight(
-                      `{
-"responses": [
+                                `{
+    "responses": [
         {
-            "response": "responseData",
-            "ground_truth": "groundTruthData",
-            "prompt": [
-                {
-                    "role": "system",
-                    "content" "You are Sybil.com ..."
-                },
-                {
-                    "role": "user",
-                    "content": "Search query: PyTorch CUDA cudnn installation issues"
-                }
-            ],
-            "hotkey": "minerHotkey",
-            "coldkey": "coldkeyHotkey",
-            "uid": 0,
-            "block": 3612469,
-            "timestamp": "2024-08-15T22:31:02.258Z",
-            "tokens": null,
-            "seed": 3497717,
-            "top_k": 10,
-            "top_p": 0.998,
-            "best_of": 1,
-            "typical_p": 0.9999999,
-            "temperature": 0.01,
-            "top_n_tokens": 5,
-            "max_n_tokens": 5159,
-            "repetition_penalty": 1,
-            "stream": false,
-            "details": false,
-            "do_sample": true,
-            "watermark": false,
-            "return_full_text": false,
-            "decoder_input_details": true,
+            "stats": {
+                "wps": 58.01988863287137,
+                "jaros": [
+                    1,
+                    0.6795484690309636,
+                    0.6795061561405632,
+                    0.5222063276501124,
+                    0.41916666665418006,
+                    0.3681720430107527,
+                    0,
+                    0,
+                    0
+                ],
+                "response": "string representing response",
+                "verified": false,
+                "total_time": 4.843166828155518,
+                "time_for_all_tokens": 0.09341573715209961,
+                "time_to_first_token": 4.74975061416626
+            },
+            "ground_truth": {
+                "messages": [
+                    {
+                        "role": "system",
+                        "content": "You are Sybil...",
+                    },
+                    {
+                        "role": "user",
+                        "content": "Search query: Causal attention mask GPT2 training"
+                    }
+                ],
+                "ground_truth": "Search query: Causal attention mask GPT2 training",
+            },
+            "block": 3612446,
+            "timestamp": "2024-08-15T16:26:29.128Z",
+            "sampling_params": {
+                "seed": 6041060,
+                "stop": [
+                    ""
+                ],
+                "top_k": 10,
+                "top_p": 0.998,
+                "stream": false,
+                "best_of": 1,
+                "details": false,
+                "truncate": null,
+                "do_sample": true,
+                "typical_p": 0.9999999,
+                "watermark": false,
+                "temperature": 0.01,
+                "top_n_tokens": 5,
+                "max_new_tokens": 4635,
+                "return_full_text": false,
+                "repetition_penalty": 1,
+                "decoder_input_details": true
+            },
             "version": 204100,
-            "validator": "Manifold",
-            "vhotkey": "validatorHotkey",
-            "jaro_score": null,
-            "jaros": [
-                0.5329806743447907,
-                0.6530518983581822,
-                0.4534848447595578,
-                0.47999987716281617,
-                0.36000000000000004,
-                0.46666666666227147,
-                0.5011793508830612
-            ],
-            "words_per_second": 41.20194918729087,
-            "time_for_all_tokens": 0.11551189422607422,
-            "total_time": 7.863705635070801,
-            "time_to_first_token": 7.7481935024261475,
-            "id": 2218226
+            "validator": "Openτensor Foundaτion",
+            "vhotkey": "5F4tQyWrhfGVcNhoqeiNsR6KjD4wMZ2kfhLj4oHYuyHbZAc3",
+            "id": 2216965
         }
     ],
     "totalRecords": "14",
-    "offset": 4,
-    "limit": 1
+    "offset": 7,
+    "limit": 1,
+    "hasMoreRecords": true
 }`,
                       { language: "json" },
                     ).value,
