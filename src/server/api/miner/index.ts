@@ -1,4 +1,4 @@
-import { and, desc, eq, gte, or, sql } from "drizzle-orm";
+import { and, desc, eq, gte, inArray, or, sql } from "drizzle-orm";
 import { z } from "zod";
 
 import { MinerResponse, Validator, ValidatorRequest } from "@/schema/schema";
@@ -17,9 +17,13 @@ const DelegatesSchema = z.record(z.string(), DelegateSchema);
 
 export const minerRouter = createTRPCRouter({
   globalAvgStats: publicProcedure
-    .input(z.object({ verified: z.boolean(), valiName: z.string().optional() }))
+    .input(
+      z.object({
+        verified: z.boolean(),
+        valiNames: z.string().array().optional(),
+      }),
+    )
     .query(async ({ input, ctx }) => {
-      console.log("Input: ", input);
       const stats = await ctx.db
         .select({
           minute:
@@ -76,8 +80,8 @@ export const minerRouter = createTRPCRouter({
                   ),
                 ]
               : []),
-            ...(input.valiName && input.valiName !== "All Validators"
-              ? [eq(Validator.valiName, input.valiName)]
+            ...(input.valiNames && !input.valiNames.includes("All Validators")
+              ? [inArray(Validator.valiName, input.valiNames)]
               : []),
           ),
         )
@@ -87,8 +91,6 @@ export const minerRouter = createTRPCRouter({
         )
         .orderBy(sql`DATE_TRUNC('MINUTES', ${ValidatorRequest.timestamp})`);
 
-      console.log(stats);
-
       return stats;
     }),
   stats: publicProcedure
@@ -96,23 +98,18 @@ export const minerRouter = createTRPCRouter({
       z.object({
         query: z.string(),
         block: z.number().optional(),
-        valiName: z.string().optional(),
+        valiNames: z.string().array().optional(),
       }),
     )
     .query(async ({ input, ctx }) => {
-      const { query, block, valiName } = input;
+      const { query, block, valiNames } = input;
 
       const latestBlock = await ctx.db
         .select({ maxBlock: sql<number>`MAX(${ValidatorRequest.block})` })
         .from(ValidatorRequest)
         .then((result) => result[0]?.maxBlock ?? 0);
 
-      console.log("Latest Block: ", latestBlock);
-
       const startBlock = latestBlock - Math.min(block!, 360);
-
-      console.log("Start Block: ", startBlock);
-      console.log("Vali Name: ", valiName);
 
       const eqs =
         query.length < 5
@@ -152,17 +149,14 @@ export const minerRouter = createTRPCRouter({
           and(
             gte(ValidatorRequest.block, startBlock),
             or(...eqs),
-            ...(valiName && valiName !== "All Validators"
-              ? [eq(Validator.valiName, valiName)]
+            ...(valiNames && !valiNames.includes("All Validators")
+              ? [inArray(Validator.valiName, valiNames)]
               : []),
           ),
         )
         .orderBy(desc(ValidatorRequest.block));
 
-      console.log("Stats: ", stats);
-
       const orderedStats = stats.reverse();
-      console.log("Ordered Stats: ", orderedStats);
 
       return orderedStats;
     }),
@@ -170,11 +164,11 @@ export const minerRouter = createTRPCRouter({
     .input(
       z.object({
         query: z.string(),
-        validator: z.string().optional(),
+        valiNames: z.string().array().optional(),
       }),
     )
     .query(async ({ input, ctx }) => {
-      const { query, validator } = input;
+      const { query, valiNames } = input;
 
       const eqs =
         query.length < 5
@@ -224,8 +218,8 @@ export const minerRouter = createTRPCRouter({
         .where(
           and(
             or(...eqs),
-            ...(validator && validator !== "All Validators"
-              ? [eq(Validator.valiName, validator)]
+            ...(valiNames && !valiNames.includes("All Validators")
+              ? [inArray(Validator.valiName, valiNames)]
               : []),
           ),
         )
@@ -242,7 +236,6 @@ export const minerRouter = createTRPCRouter({
       );
 
       if (!response.ok) {
-        console.error("[addDelegates] Error: ", response.status);
         return new Response(null, { status: 500 });
       }
 
@@ -268,7 +261,6 @@ export const minerRouter = createTRPCRouter({
       // Return a success response
       return { success: true };
     } catch (error) {
-      console.error("[addDelegates] Error: ", error);
       return { success: false, error: "An error occurred during processing." };
     }
   }),

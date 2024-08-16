@@ -110,7 +110,6 @@ export const POST = async (req: NextRequest) => {
   }
 
   const version = min_version;
-  console.log("Version: ", version);
   const versionCutoff = 204070;
 
   const user = await db
