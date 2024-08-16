@@ -9,7 +9,7 @@ import { Analytics } from "@vercel/analytics/react";
 import clsx from "clsx";
 import { Toaster } from "sonner";
 
-import { Header } from "./_components/header";
+import Header from "./_components/header";
 import { WithGlobalProvider } from "./_components/providers";
 
 const ToggleTheme = dynamic(() => import("./_components/ToggleTheme"), {
