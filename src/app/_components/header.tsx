@@ -12,7 +12,6 @@ const HeaderContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathName = usePathname();
-  console.log(pathName);
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedBits, setSelectedBits] = useState(0b100); // Default to "All Validators"
