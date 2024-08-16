@@ -17,7 +17,7 @@ const config = {
     "@typescript-eslint/array-type": "off",
     "@typescript-eslint/prefer-nullish-coalescing": "off",
     "@typescript-eslint/consistent-type-definitions": "off",
-    "@typescript-eslint/no-explicit-any": 2,
+    "@typescript-eslint/no-explicit-any": "error",
 
     "@typescript-eslint/consistent-type-imports": [
       "warn",
@@ -31,9 +31,15 @@ const config = {
       { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
     ],
     "@typescript-eslint/no-misused-promises": [
-      2,
+      "error",
       {
         checksVoidReturn: { attributes: false },
+      },
+    ],
+    "drizzle/enforce-delete-with-where": [
+      "error",
+      {
+        drizzleObjectName: "db",
       },
     ],
   },
