@@ -9,7 +9,7 @@ export const bitsToNames = (bitValue: number): string[] => {
     .map((bit) => Number(bit))
     .filter((bit) => bitValue & bit)
     .map((bit) => validatorMap[bit])
-    .filter((name): name is string => name !== undefined); // Filter out undefined values
+    .filter((name): name is string => name !== undefined);
 };
 
 export const namesToBits = (names: string[]): number => {

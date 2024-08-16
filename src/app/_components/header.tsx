@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Check, ChevronDown, ChevronUp } from "lucide-react";
@@ -14,26 +14,23 @@ export const Header = () => {
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedBits, setSelectedBits] = useState(0b100); // Default to "All Validators"
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const toggleDropdown = () => {
     setIsDropdownOpen((prev) => !prev);
   };
 
   const handleSelection = (bitValue: number) => {
-    // Toggle the selected bit value
     let newSelectedBits = selectedBits ^ bitValue;
 
-    // If no bits are selected, default to "All Validators"
     if (newSelectedBits === 0) {
       newSelectedBits = 0b100;
     } else if (newSelectedBits & 0b100) {
-      // If any other bits are selected, deselect "All Validators"
       newSelectedBits &= ~0b100;
     }
 
     setSelectedBits(newSelectedBits);
 
-    // Update the router's query parameters with the new bit value
     const currentParams = new URLSearchParams(searchParams);
     currentParams.set(
       "validators",
@@ -42,18 +39,33 @@ export const Header = () => {
     router.replace(`?${currentParams.toString()}`, undefined);
   };
 
+  const handleClickOutside = (event: MouseEvent) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      setIsDropdownOpen(false);
+    }
+  };
+
   useEffect(() => {
     const validator = searchParams.get("validators");
     if (validator) {
-      setSelectedBits(parseInt(validator, 2)); // Parse the binary string into an integer
+      setSelectedBits(parseInt(validator, 2));
     } else {
-      // Ensure "All Validators" is selected by default
       const defaultBits = 0b100;
       const currentParams = new URLSearchParams(searchParams);
       currentParams.set("validators", defaultBits.toString(2).padStart(3, "0"));
       router.replace(`?${currentParams.toString()}`, undefined);
     }
-  }, [searchParams, router]);
+
+    if (isDropdownOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [searchParams, router, isDropdownOpen]);
 
   return (
     <header>
@@ -61,10 +73,10 @@ export const Header = () => {
         <Link href="/">Homepage</Link>
         <Link href="/stats">Stats</Link>
         <Link href="/stats/miner">Miners</Link>
-        <div className="relative">
+        <div className="relative" ref={dropdownRef}>
           <button onClick={toggleDropdown} className="flex items-center gap-2">
             Validators
-            {isDropdownOpen ? <ChevronUp /> : <ChevronDown />}
+            {isDropdownOpen ? <ChevronUp className="px-1 py-2" /> : <ChevronDown />}
           </button>
           {isDropdownOpen && (
             <div
