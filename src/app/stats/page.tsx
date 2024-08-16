@@ -25,9 +25,9 @@ const Page = () => {
   const validatorParam = params.get("validators");
 
   // Handle the case where `validatorParam` could be null
-  const valiName = validatorParam
+  const valiNames = validatorParam
     ? bitsToNames(parseInt(validatorParam, 2))
-    : "";
+    : [];
 
   const mutation = reactClient.miner.addDelegates.useMutation({
     onSuccess: () => {
@@ -46,7 +46,7 @@ const Page = () => {
   );
 
   const { data } = reactClient.miner.globalAvgStats.useQuery(
-    { verified, valiName: valiName },
+    { verified, valiNames: valiNames },
     { keepPreviousData: false },
   );
 
@@ -185,7 +185,7 @@ const Page = () => {
               className={`flex w-full flex-1 flex-col rounded-2xl bg-white p-8 shadow-md dark:bg-neutral-800 sm:w-full`}
             >
               <h3 className="pb-4 text-center text-2xl font-semibold text-gray-800 dark:text-gray-50">
-                Avg stats last 2 hours on {valiName}
+                Avg stats last 2 hours on {valiNames.join(", ")}
               </h3>
               <LineChart
                 data={(processedData ?? []).map((s) => ({

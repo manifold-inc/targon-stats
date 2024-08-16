@@ -10,7 +10,7 @@ import ResponseComparison from "./ResponseComparison";
 interface MinerChartProps {
   query: string;
   block: number;
-  valiName: string;
+  valiNames: string[];
 }
 
 export interface Keys {
@@ -18,7 +18,7 @@ export interface Keys {
   coldkey: string;
 }
 
-const MinerChart: React.FC<MinerChartProps> = ({ query, block, valiName }) => {
+const MinerChart: React.FC<MinerChartProps> = ({ query, block, valiNames }) => {
   const cardStyles =
     "flex flex-col flex-grow bg-white dark:bg-neutral-800 p-8 shadow-md rounded-2xl hover:shadow-lg transition-all dark:hover:bg-gray-800 text-center items-center";
   const [visibleCategories, setVisibleCategories] = useState<string[]>([
@@ -30,7 +30,7 @@ const MinerChart: React.FC<MinerChartProps> = ({ query, block, valiName }) => {
   ]);
 
   const minerStats = reactClient.miner.stats.useQuery(
-    { query, block, valiName },
+    { query, block, valiNames },
     { enabled: !!query.length },
   );
 
@@ -209,7 +209,7 @@ const MinerChart: React.FC<MinerChartProps> = ({ query, block, valiName }) => {
           <div className="pt-8">
             <div className="flex w-full flex-grow flex-col items-center rounded-2xl bg-white p-8 text-center shadow-md transition-all hover:shadow-lg dark:bg-neutral-800">
               <h3 className="pb-4 text-center text-2xl font-semibold text-gray-800 dark:text-gray-50">
-                Viewing Stats For: {query} on Validator: {valiName}
+                Viewing Stats For: {query} on Validator: {valiNames.join(", ")}
               </h3>
               <LineChart
                 data={processedData}
@@ -232,7 +232,7 @@ const MinerChart: React.FC<MinerChartProps> = ({ query, block, valiName }) => {
           <KeysTable miners={miners} />
         </div>
         <div className="flex-1 pt-8">
-          <ResponseComparison query={query} valiName={valiName} />
+          <ResponseComparison query={query} valiNames={valiNames} />
         </div>
       </div>
     </>

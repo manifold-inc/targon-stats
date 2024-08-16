@@ -14,9 +14,9 @@ const MinerPage = ({
   searchParams: { block?: string };
 }) => {
   const validatorParam = useSearchParams().get("validators");
-  const valiName = validatorParam
+  const valiNames = validatorParam
     ? bitsToNames(parseInt(validatorParam, 2))
-    : "";
+    : [];
   return (
     <div className="mx-auto max-w-7xl px-12 pb-12">
       <div className="py-24 sm:py-24">
@@ -34,7 +34,7 @@ const MinerPage = ({
                 <MinerChart
                   query={params.query}
                   block={parseInt(searchParams.block ?? "360")}
-                  valiName={valiName}
+                  valiNames={valiNames}
                 />
               )}
             </div>

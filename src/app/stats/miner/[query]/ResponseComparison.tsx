@@ -10,7 +10,7 @@ import { copyToClipboard } from "@/utils/utils";
 
 interface ResponseComparisonProps {
   query: string;
-  valiName: string;
+  valiNames: string[];
 }
 
 interface Response {
@@ -38,13 +38,13 @@ interface Response {
 
 const ResponseComparison: React.FC<ResponseComparisonProps> = ({
   query,
-  valiName,
+  valiNames,
 }) => {
   const {
     data: responses,
     isLoading,
     error,
-  } = reactClient.miner.getResponses.useQuery({ query, validator: valiName });
+  } = reactClient.miner.getResponses.useQuery({ query, valiNames });
   const [open, setOpen] = useState(false);
   const [selectedResponse, setSelectedResponse] = useState<Response | null>(
     null,

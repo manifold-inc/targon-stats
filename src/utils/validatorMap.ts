@@ -4,12 +4,12 @@ const validatorMap: Record<number, string> = {
   0b100: "All Validators",
 };
 
-export const bitsToNames = (bitValue: number): string => {
+export const bitsToNames = (bitValue: number): string[] => {
   return Object.keys(validatorMap)
     .map((bit) => Number(bit))
     .filter((bit) => bitValue & bit)
     .map((bit) => validatorMap[bit])
-    .join(", "); // Join the names into a single string
+    .filter((name): name is string => name !== undefined); // Filter out undefined values
 };
 
 export const namesToBits = (names: string[]): number => {
