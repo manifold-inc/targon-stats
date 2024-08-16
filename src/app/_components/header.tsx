@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Check, ChevronDown, ChevronUp } from "lucide-react";
 
 import { useAuth } from "./providers";
 
-export const Header = () => {
+const HeaderContent = () => {
   const auth = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -121,3 +121,11 @@ export const Header = () => {
     </header>
   );
 };
+
+export default function Header() {
+  return(
+    <Suspense fallback="Loading...">
+      <HeaderContent />
+    </Suspense>
+      )
+}

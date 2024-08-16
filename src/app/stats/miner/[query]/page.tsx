@@ -1,17 +1,17 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-
 import { bitsToNames } from "@/utils/validatorMap";
 import MinerInputForm from "../MinerInputForm";
 import MinerChart from "./MinerChart";
+import { Suspense } from "react";
 
-const MinerPage = ({
-  params,
-  searchParams,
+const MinerPageContent = ({
+  query,
+  block,
 }: {
-  params: { query: string };
-  searchParams: { block?: string };
+  query: string;
+  block?: string;
 }) => {
   const validatorParam = useSearchParams().get("validators");
   const valiNames = validatorParam
@@ -26,14 +26,11 @@ const MinerPage = ({
               <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-50 sm:text-4xl">
                 Targon Miner Status
               </h2>
-              <MinerInputForm
-                initialQuery={params.query}
-                initialBlock={searchParams.block}
-              />
-              {params.query && (
+              <MinerInputForm initialQuery={query} initialBlock={block} />
+              {query && (
                 <MinerChart
-                  query={params.query}
-                  block={parseInt(searchParams.block ?? "360")}
+                  query={query}
+                  block={parseInt(block ?? "360")}
                   valiNames={valiNames}
                 />
               )}
@@ -45,4 +42,19 @@ const MinerPage = ({
   );
 };
 
-export default MinerPage;
+export default function Page({
+  params,
+  searchParams,
+}: {
+  params: { query: string };
+  searchParams: { block?: string };
+}) {
+  return (
+    <Suspense fallback="Loading...">
+      <MinerPageContent
+        query={params.query}
+        block={searchParams.block}
+      />
+    </Suspense>
+  );
+}
