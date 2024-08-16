@@ -74,9 +74,9 @@ export const Header = () => {
         <Link href="/stats">Stats</Link>
         <Link href="/stats/miner">Miners</Link>
         <div className="relative" ref={dropdownRef}>
-          <button onClick={toggleDropdown} className="flex items-center gap-2">
+          <button onClick={toggleDropdown} className="flex items-center gap-1">
             Validators
-            {isDropdownOpen ? <ChevronUp className="px-1 py-2" /> : <ChevronDown />}
+            {isDropdownOpen ? <ChevronUp className="px-1 py-0.5" /> : <ChevronDown className="px-1 py-0.5" />}
           </button>
           {isDropdownOpen && (
             <div
