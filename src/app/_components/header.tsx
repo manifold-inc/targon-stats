@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Check, ChevronDown, ChevronUp } from "lucide-react";
 
 import { useAuth } from "./providers";
@@ -11,6 +11,8 @@ const HeaderContent = () => {
   const auth = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const pathName = usePathname();
+  console.log(pathName);
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedBits, setSelectedBits] = useState(0b100); // Default to "All Validators"
@@ -24,19 +26,28 @@ const HeaderContent = () => {
     let newSelectedBits = selectedBits ^ bitValue;
 
     if (newSelectedBits === 0) {
-      newSelectedBits = 0b100;
+      newSelectedBits = 0b100; // Default to "All Validators"
     } else if (newSelectedBits & 0b100) {
-      newSelectedBits &= ~0b100;
+      newSelectedBits &= ~0b100; // Unselect "All Validators" when another option is selected
     }
 
     setSelectedBits(newSelectedBits);
 
-    const currentParams = new URLSearchParams(searchParams);
-    currentParams.set(
-      "validators",
-      newSelectedBits.toString(2).padStart(3, "0"),
-    );
-    router.replace(`?${currentParams.toString()}`, undefined);
+    // Check if path includes "/stats" or "/miners"
+    if (pathName.includes("/stats") || pathName.includes("/miners")) {
+      const currentParams = new URLSearchParams(searchParams);
+      if (newSelectedBits === 0b100) {
+        // "All Validators" selected, remove the parameter
+        currentParams.delete("validators");
+      } else {
+        // Specific validators selected, set the parameter
+        currentParams.set(
+          "validators",
+          newSelectedBits.toString(2).padStart(3, "0")
+        );
+      }
+      router.replace(`?${currentParams.toString()}`, undefined);
+    }
   };
 
   const handleClickOutside = (event: MouseEvent) => {
@@ -51,9 +62,14 @@ const HeaderContent = () => {
       setSelectedBits(parseInt(validator, 2));
     } else {
       const defaultBits = 0b100;
-      const currentParams = new URLSearchParams(searchParams);
-      currentParams.set("validators", defaultBits.toString(2).padStart(3, "0"));
-      router.replace(`?${currentParams.toString()}`, undefined);
+      if (pathName.includes("/stats") || pathName.includes("/miners")) {
+        const currentParams = new URLSearchParams(searchParams);
+        currentParams.set(
+          "validators",
+          defaultBits.toString(2).padStart(3, "0")
+        );
+        router.replace(`?${currentParams.toString()}`, undefined);
+      }
     }
 
     if (isDropdownOpen) {
@@ -65,7 +81,7 @@ const HeaderContent = () => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [searchParams, router, isDropdownOpen]);
+  }, [searchParams, router, isDropdownOpen, pathName]);
 
   return (
     <header>
@@ -76,7 +92,11 @@ const HeaderContent = () => {
         <div className="relative" ref={dropdownRef}>
           <button onClick={toggleDropdown} className="flex items-center gap-1">
             Validators
-            {isDropdownOpen ? <ChevronUp className="px-1 py-0.5" /> : <ChevronDown className="px-1 py-0.5" />}
+            {isDropdownOpen ? (
+              <ChevronUp className="px-1 py-0.5" />
+            ) : (
+              <ChevronDown className="px-1 py-0.5" />
+            )}
           </button>
           {isDropdownOpen && (
             <div
@@ -123,9 +143,9 @@ const HeaderContent = () => {
 };
 
 export default function Header() {
-  return(
+  return (
     <Suspense fallback="Loading...">
       <HeaderContent />
     </Suspense>
-      )
+  );
 }
