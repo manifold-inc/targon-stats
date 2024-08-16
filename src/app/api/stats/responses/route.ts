@@ -16,7 +16,7 @@ const schema = z.object({
   query: z.string(),
   startblock: z.number().optional(),
   endblock: z.number().optional(),
-  vhotkey: z.string().optional(),
+  validator_hotkey: z.string().optional(),
   limit: z.number().optional(),
   offset: z.number().optional(),
 });
@@ -51,7 +51,14 @@ export const POST = async (req: NextRequest) => {
     }
   }
 
-  const { query, startblock, endblock, vhotkey, limit, offset } = response.data;
+  const {
+    query,
+    startblock,
+    endblock,
+    validator_hotkey: vhotkey,
+    limit,
+    offset,
+  } = response.data;
 
   const limitValue = limit ?? 100;
   const offsetValue = offset ?? 0;
@@ -101,54 +108,14 @@ export const POST = async (req: NextRequest) => {
       .limit(1),
     db
       .select({
-        response: sql<string>`${MinerResponse.stats}->'response'`,
-        ground_truth: sql<string>`${ValidatorRequest.ground_truth}->'ground_truth'`,
-        prompt: sql<string>`${ValidatorRequest.ground_truth}->'messages'`,
-        hotkey: MinerResponse.hotkey,
-        coldkey: MinerResponse.coldkey,
-        uid: MinerResponse.uid,
+        stats: MinerResponse.stats,
+        ground_truth: ValidatorRequest.ground_truth,
         block: ValidatorRequest.block,
         timestamp: ValidatorRequest.timestamp,
-        tokens: sql<string[]>`${MinerResponse.stats}->'tokens'`,
-        seed: sql<string>`${ValidatorRequest.sampling_params}->'seed'`,
-        top_k: sql<string>`${ValidatorRequest.sampling_params}->'top_k'`,
-        top_p: sql<string>`${ValidatorRequest.sampling_params}->'top_p'`,
-        best_of: sql<string>`${ValidatorRequest.sampling_params}->'best_of'`,
-        typical_p: sql<string>`${ValidatorRequest.sampling_params}->'typical_p'`,
-        temperature: sql<string>`${ValidatorRequest.sampling_params}->'temperature'`,
-        top_n_tokens: sql<string>`${ValidatorRequest.sampling_params}->'top_n_tokens'`,
-        max_n_tokens: sql<string>`${ValidatorRequest.sampling_params}->'max_new_tokens'`,
-        repetition_penalty: sql<string>`${ValidatorRequest.sampling_params}->'repetition_penalty'`,
-        stream: sql<boolean>`CAST(${ValidatorRequest.sampling_params}->'stream' AS BOOLEAN)`,
-        details: sql<boolean>`CAST(${ValidatorRequest.sampling_params}->'details' AS BOOLEAN)`,
-        do_sample: sql<boolean>`CAST(${ValidatorRequest.sampling_params}->'do_sample' AS BOOLEAN)`,
-        watermark: sql<boolean>`CAST(${ValidatorRequest.sampling_params}->'watermark' AS BOOLEAN)`,
-        return_full_text: sql<boolean>`CAST(${ValidatorRequest.sampling_params}->'return_full_text' AS BOOLEAN)`,
-        decoder_input_details: sql<boolean>`CAST(${ValidatorRequest.sampling_params}->'decoder_input_details' AS BOOLEAN)`,
+        sampling_params: ValidatorRequest.sampling_params,
         version: ValidatorRequest.version,
         validator: Validator.valiName,
         vhotkey: Validator.hotkey,
-        jaro_score:
-          sql<number>`CAST(${MinerResponse.stats}->'jaro_score' AS DECIMAL)`.mapWith(
-            Number,
-          ),
-        jaros: sql<number[]>`${MinerResponse.stats}->'jaros'`,
-        words_per_second:
-          sql<number>`CAST(${MinerResponse.stats}->'wps' AS DECIMAL)`.mapWith(
-            Number,
-          ),
-        time_for_all_tokens:
-          sql<number>`CAST(${MinerResponse.stats}->'time_for_all_tokens' AS DECIMAL)`.mapWith(
-            Number,
-          ),
-        total_time:
-          sql<number>`CAST(${MinerResponse.stats}->'total_time' AS DECIMAL)`.mapWith(
-            Number,
-          ),
-        time_to_first_token:
-          sql<number>`CAST(${MinerResponse.stats}->'time_to_first_token' AS DECIMAL)`.mapWith(
-            Number,
-          ),
         id: MinerResponse.id, // Use id for pagination
       })
       .from(MinerResponse)
