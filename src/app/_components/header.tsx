@@ -21,7 +21,6 @@ const HeaderContent = () => {
     setIsDropdownOpen((prev) => !prev);
   };
 
-
   const handleSelection = (bitValue: number) => {
     let newSelectedBits = selectedBits ^ bitValue;
 
@@ -34,25 +33,22 @@ const HeaderContent = () => {
 
     setSelectedBits(newSelectedBits);
 
-    // Update the URL only if on the appropriate page
-    if (pathName.includes("/stats") || pathName.includes("/miners")) {
-      const currentParams = new URLSearchParams(searchParams);
+    // Update the URL parameters without any path restriction
+    const currentParams = new URLSearchParams(searchParams);
 
-      if (newSelectedBits === 0b1000) {
-        // "All Validators" selected, remove the parameter
-        currentParams.delete("validators");
-      } else {
-        // Specific validators selected, set the parameter
-        currentParams.set(
-          "validators",
-          newSelectedBits.toString(2).padStart(4, "0") // Pad to 4 bits for consistency
-        );
-      }
-
-      // Replace the current URL with the new one
-      router.replace(`?${currentParams.toString()}`, undefined);
+    if (newSelectedBits === 0b1000) {
+      currentParams.delete("validators");
+    } else {
+      currentParams.set(
+        "validators",
+        newSelectedBits.toString(2).padStart(4, "0") // Pad to 4 bits for consistency
+      );
     }
-  };
+
+  // Replace the current URL with the new one
+  router.replace(`?${currentParams.toString()}`);
+};
+
 
   const handleClickOutside = (event: MouseEvent) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -60,20 +56,19 @@ const HeaderContent = () => {
     }
   };
 
+
   useEffect(() => {
     const validator = searchParams.get("validators");
     if (validator) {
       setSelectedBits(parseInt(validator, 2));
-    } else {
+    } else if( pathName !== "/" ) {
       const defaultBits = 0b1000;
-      if (pathName.includes("/stats") || pathName.includes("/miners")) {
-        const currentParams = new URLSearchParams(searchParams);
-        currentParams.set(
-          "validators",
-          defaultBits.toString(2).padStart(4, "0")
-        );
-        router.replace(`?${currentParams.toString()}`, undefined);
-      }
+      const currentParams = new URLSearchParams(searchParams);
+      currentParams.set(
+        "validators",
+        defaultBits.toString(2).padStart(4, "0")
+      );
+      router.replace(`?${currentParams.toString()}`, undefined);
     }
 
     if (isDropdownOpen) {
@@ -90,8 +85,7 @@ const HeaderContent = () => {
   return (
     <header>
       <nav className="fixed right-5 top-5 z-40 flex space-x-8">
-        <Link href="/">Homepage</Link>
-        <Link href="/stats">Stats</Link>
+        <Link href="/">Stats</Link>
         <Link href="/stats/miner">Miners</Link>
         <div className="relative" ref={dropdownRef}>
           <button onClick={toggleDropdown} className="flex items-center gap-1">
