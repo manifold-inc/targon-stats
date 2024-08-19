@@ -1,11 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { LineChart } from "@tremor/react";
-import moment from "moment";
-import { type RowList } from "postgres";
 
-const ClientPage = ({ data }: { data: RowList<Record<string, unknown>[]> }) => {
+const ClientPage = (/*{ data }: { data: RowList<Record<string, unknown>[]> } */) => {
   const cardStyles =
     "flex flex-col flex-grow bg-white p-8 shadow-md rounded-2xl hover:shadow-lg transition-all dark:hover:bg-gray-800";
   const [visibleCategories, setVisibleCategories] = useState<string[]>([
@@ -22,11 +19,11 @@ const ClientPage = ({ data }: { data: RowList<Record<string, unknown>[]> }) => {
     );
   };
 
-  const categoryColorMap: Record<string, string> = {
+  /*const categoryColorMap: Record<string, string> = {
     Peak_WPS: "blue",
     Competitive_Min_WPS: "pink",
     Percent_Change_Percentile_20_WPS: "orange",
-  };
+  }; */
 
   const textColor = (category: string, color: string) => {
     return visibleCategories.includes(category)
@@ -61,11 +58,11 @@ const ClientPage = ({ data }: { data: RowList<Record<string, unknown>[]> }) => {
                     "text-pink-500",
                   )}`}
                 >
-                  {data && data.length > 0
+                  {/*data && data.length > 0
                     ? Number(data[data.length - 1]!.percentile_80_wps).toFixed(
                         2,
                       )
-                    : "Loading..."}
+                    : "Loading..." */}
                 </dd>
               </button>
 
@@ -82,9 +79,9 @@ const ClientPage = ({ data }: { data: RowList<Record<string, unknown>[]> }) => {
                     "text-blue-500",
                   )}`}
                 >
-                  {data && data.length > 0
+                  {/*data && data.length > 0
                     ? Number(data[data.length - 1]!.max_wps).toFixed(2)
-                    : "Loading..."}
+                    : "Loading..." */}
                 </dd>
               </button>
 
@@ -103,7 +100,7 @@ const ClientPage = ({ data }: { data: RowList<Record<string, unknown>[]> }) => {
                     "text-orange-500",
                   )}`}
                 >
-                  {data && data.length > 0
+                  {/*data && data.length > 0
                     ? (
                         data.reduce(
                           (sum, item) =>
@@ -111,7 +108,7 @@ const ClientPage = ({ data }: { data: RowList<Record<string, unknown>[]> }) => {
                           0,
                         ) / data.length
                       ).toFixed(2) + "%"
-                    : "Loading..."}
+                    : "Loading..." */}
                 </dd>
               </button>
             </dl>
@@ -121,8 +118,8 @@ const ClientPage = ({ data }: { data: RowList<Record<string, unknown>[]> }) => {
               <h3 className="pb-4 text-center text-2xl font-semibold text-gray-800 dark:text-gray-50">
                 Stats for Targon V2
               </h3>
-              <LineChart
-                data={(data ?? []).map((s) => ({
+              {/*<LineChart
+                data={( data ?? []).map((s) => ({ 
                   day: moment(s.day as string).format("MMMM Do YYYY"),
                   Peak_WPS: Number(s.max_wps).toFixed(2),
                   Competitive_Min_WPS: Number(s.percentile_80_wps).toFixed(2),
@@ -141,7 +138,7 @@ const ClientPage = ({ data }: { data: RowList<Record<string, unknown>[]> }) => {
                 }
                 yAxisWidth={40}
                 showLegend={false}
-              />
+              /> */} 
             </div>
           </div>
         </div>

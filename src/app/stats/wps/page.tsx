@@ -1,12 +1,9 @@
-/*import { sql } from "drizzle-orm";
-
-import { db } from "@/schema/db";
 import ClientPage from "./ClientPage";
 
 export const revalidate = 86400; // 60 * 60 * 24
 
-export default async function Page() {
-  const data = db.execute(sql`with daily_stats as (
+export default  function Page() {
+  /*const data = db.execute(sql`with daily_stats as (
     select 
         date_trunc('day', vr.timestamp) as day,
         (mr.stats->>'wps')::decimal as wps
@@ -48,6 +45,6 @@ select
     percent_change_percentile_80_wps
 from final_aggregates
 where previous_percentile_80_wps is not null
-order by day;`);
-  return <ClientPage data={await data} />;
-} */
+order by day;`); */
+  return <ClientPage />;
+} 
