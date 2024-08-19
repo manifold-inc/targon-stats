@@ -14,7 +14,7 @@ const HeaderContent = () => {
   const pathName = usePathname();
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [selectedBits, setSelectedBits] = useState(0b100); // Default to "All Validators"
+  const [selectedBits, setSelectedBits] = useState(0b1000); // Default to "All Validators"
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const toggleDropdown = () => {
