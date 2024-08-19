@@ -21,30 +21,35 @@ const HeaderContent = () => {
     setIsDropdownOpen((prev) => !prev);
   };
 
+
   const handleSelection = (bitValue: number) => {
     let newSelectedBits = selectedBits ^ bitValue;
 
+    // If no other options are selected, default to "All Validators"
     if (newSelectedBits === 0) {
-      newSelectedBits = 0b100; // Default to "All Validators"
-    } else if (newSelectedBits & 0b100) {
-      newSelectedBits &= ~0b100; // Unselect "All Validators" when another option is selected
+      newSelectedBits = 0b1000; // Default to "All Validators"
+    } else if (newSelectedBits & 0b1000) {
+      newSelectedBits &= ~0b1000; // Unselect "All Validators" when another option is selected
     }
 
     setSelectedBits(newSelectedBits);
 
-    // Check if path includes "/stats" or "/miners"
+    // Update the URL only if on the appropriate page
     if (pathName.includes("/stats") || pathName.includes("/miners")) {
       const currentParams = new URLSearchParams(searchParams);
-      if (newSelectedBits === 0b100) {
+
+      if (newSelectedBits === 0b1000) {
         // "All Validators" selected, remove the parameter
         currentParams.delete("validators");
       } else {
         // Specific validators selected, set the parameter
         currentParams.set(
           "validators",
-          newSelectedBits.toString(2).padStart(3, "0")
+          newSelectedBits.toString(2).padStart(4, "0") // Pad to 4 bits for consistency
         );
       }
+
+      // Replace the current URL with the new one
       router.replace(`?${currentParams.toString()}`, undefined);
     }
   };
@@ -60,12 +65,12 @@ const HeaderContent = () => {
     if (validator) {
       setSelectedBits(parseInt(validator, 2));
     } else {
-      const defaultBits = 0b100;
+      const defaultBits = 0b1000;
       if (pathName.includes("/stats") || pathName.includes("/miners")) {
         const currentParams = new URLSearchParams(searchParams);
         currentParams.set(
           "validators",
-          defaultBits.toString(2).padStart(3, "0")
+          defaultBits.toString(2).padStart(4, "0")
         );
         router.replace(`?${currentParams.toString()}`, undefined);
       }
@@ -102,26 +107,37 @@ const HeaderContent = () => {
               className={`-translate-x-1/5 absolute right-0 z-50 mt-2 min-w-fit transform whitespace-nowrap rounded-md bg-white p-2 shadow-lg dark:bg-neutral-700 dark:text-gray-300`}
             >
               <div
-                onClick={() => handleSelection(0b010)}
+                onClick={() => handleSelection(0b0010)}
                 className="flex cursor-pointer items-center gap-2 p-2"
               >
                 <span className="flex h-4 w-4 items-center justify-center rounded-sm border border-gray-400">
-                  {selectedBits & 0b010 ? (
+                  {selectedBits & 0b0010 ? (
                     <Check className="text-black dark:text-white" />
                   ) : null}
                 </span>
                 Openτensor Foundaτion
               </div>
               <div
-                onClick={() => handleSelection(0b001)}
+                onClick={() => handleSelection(0b0001)}
                 className="flex cursor-pointer items-center gap-2 p-2"
               >
                 <span className="flex h-4 w-4 items-center justify-center rounded-sm border border-gray-400">
-                  {selectedBits & 0b001 ? (
+                  {selectedBits & 0b0001 ? (
                     <Check className="text-black dark:text-white" />
                   ) : null}
                 </span>
                 Manifold
+              </div>
+              <div
+                onClick={() => handleSelection(0b0100)}
+                className="flex cursor-pointer items-center gap-2 p-2"
+              >
+                <span className="flex h-4 w-4 items-center justify-center rounded-sm border border-gray-400">
+                  {selectedBits & 0b0100 ? (
+                    <Check className="text-black dark:text-white" />
+                  ) : null}
+                </span>
+                RoundTable21
               </div>
             </div>
           )}

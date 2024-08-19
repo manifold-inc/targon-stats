@@ -1,7 +1,8 @@
 const validatorMap: Record<number, string> = {
-  0b001: "Manifold",
-  0b010: "Openτensor Foundaτion",
-  0b100: "All Validators",
+  0b0001: "Manifold",
+  0b0010: "Openτensor Foundaτion",
+  0b0100: "RoundTable21",
+  0b1000: "All Validators",
 };
 
 export const bitsToNames = (bitValue: number): string[] => {
