@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Field, Label, Switch } from "@headlessui/react";
 import { LineChart } from "@tremor/react";
@@ -27,12 +27,9 @@ const PageContent = () => {
 
   // Handle the case where `validatorParam` could be null
   if (validatorParam === null || validatorParam === undefined) {
-    valiNames = ["All Validators"]
-  }
-  else {
-    valiNames = validatorParam
-      ? bitsToNames(parseInt(validatorParam, 2))
-      : [];
+    valiNames = ["All Validators"];
+  } else {
+    valiNames = validatorParam ? bitsToNames(parseInt(validatorParam, 2)) : [];
   }
 
   const mutation = reactClient.miner.addDelegates.useMutation({

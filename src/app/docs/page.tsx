@@ -65,9 +65,9 @@ export default async function Page() {
                 number to fetch statistics until. Defaults to the latest block.
               </li>
               <li>
-                <strong>validator_hotkeys</strong> (optional, string[]): The validator
-                hotkeys to filter the results. If not provided, results from all
-                validators are included.
+                <strong>validator_hotkeys</strong> (optional, string[]): The
+                validator hotkeys to filter the results. If not provided,
+                results from all validators are included.
               </li>
               <li>
                 <strong>limit</strong> (optional, number): The number of records
@@ -202,9 +202,9 @@ export default async function Page() {
               number to fetch statistics until. Defaults to the latest block.
             </li>
             <li>
-              <strong>validator_hotkeys</strong> (optional, string[]): The validator hotkeys
-              to filter the results. If not provided, results from all
-              validators are included.
+              <strong>validator_hotkeys</strong> (optional, string[]): The
+              validator hotkeys to filter the results. If not provided, results
+              from all validators are included.
             </li>
             <li>
               <strong>limit</strong> (optional, number): The number of records
@@ -266,7 +266,7 @@ export default async function Page() {
                 <code
                   dangerouslySetInnerHTML={{
                     __html: hljs.highlight(
-                                `{
+                      `{
     "responses": [
         {
             "stats": {

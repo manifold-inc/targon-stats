@@ -41,33 +41,31 @@ const HeaderContent = () => {
     } else {
       currentParams.set(
         "validators",
-        newSelectedBits.toString(2).padStart(4, "0") // Pad to 4 bits for consistency
+        newSelectedBits.toString(2).padStart(4, "0"), // Pad to 4 bits for consistency
       );
     }
 
-  // Replace the current URL with the new one
-  router.replace(`?${currentParams.toString()}`);
-};
-
+    // Replace the current URL with the new one
+    router.replace(`?${currentParams.toString()}`);
+  };
 
   const handleClickOutside = (event: MouseEvent) => {
-    if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(event.target as Node)
+    ) {
       setIsDropdownOpen(false);
     }
   };
-
 
   useEffect(() => {
     const validator = searchParams.get("validators");
     if (validator) {
       setSelectedBits(parseInt(validator, 2));
-    } else if( pathName !== "/" ) {
+    } else if (pathName !== "/") {
       const defaultBits = 0b1000;
       const currentParams = new URLSearchParams(searchParams);
-      currentParams.set(
-        "validators",
-        defaultBits.toString(2).padStart(4, "0")
-      );
+      currentParams.set("validators", defaultBits.toString(2).padStart(4, "0"));
       router.replace(`?${currentParams.toString()}`, undefined);
     }
 

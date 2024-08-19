@@ -1,10 +1,11 @@
 "use client";
 
+import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
+
 import { bitsToNames } from "@/utils/validatorMap";
 import MinerInputForm from "../MinerInputForm";
 import MinerChart from "./MinerChart";
-import { Suspense } from "react";
 
 const MinerPageContent = ({
   query,
@@ -51,10 +52,7 @@ export default function Page({
 }) {
   return (
     <Suspense fallback="Loading...">
-      <MinerPageContent
-        query={params.query}
-        block={searchParams.block}
-      />
+      <MinerPageContent query={params.query} block={searchParams.block} />
     </Suspense>
   );
 }
