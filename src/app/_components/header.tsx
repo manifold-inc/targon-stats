@@ -62,7 +62,7 @@ const HeaderContent = () => {
     const validator = searchParams.get("validators");
     if (validator) {
       setSelectedBits(parseInt(validator, 2));
-    } else if (pathName !== "/") {
+    } else if (pathName !== "/" && pathName !== "/metrics") {
       const defaultBits = 0b1000;
       const currentParams = new URLSearchParams(searchParams);
       currentParams.set("validators", defaultBits.toString(2).padStart(4, "0"));
@@ -83,7 +83,8 @@ const HeaderContent = () => {
   return (
     <header>
       <nav className="fixed right-5 top-5 z-40 flex space-x-8">
-        <Link href="/">Stats</Link>
+        <Link href="/">Home</Link>
+        <Link href="/metrics">Metrics</Link>
         <Link href="/stats/miner">Miners</Link>
         <div className="relative" ref={dropdownRef}>
           <button onClick={toggleDropdown} className="flex items-center gap-1">
