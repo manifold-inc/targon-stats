@@ -1,4 +1,4 @@
-import { sql } from "drizzle-orm";
+/*import { sql } from "drizzle-orm";
 
 import { db } from "@/schema/db";
 import ClientPage from "./ClientPage";
@@ -6,48 +6,48 @@ import ClientPage from "./ClientPage";
 export const revalidate = 86400; // 60 * 60 * 24
 
 export default async function Page() {
-  const data = db.execute(sql`WITH daily_stats AS (
-    SELECT 
-        DATE_TRUNC('DAY', vr.timestamp) AS day,
-        (mr.stats->>'wps')::DECIMAL AS wps
-    FROM 
+  const data = db.execute(sql`with daily_stats as (
+    select 
+        date_trunc('day', vr.timestamp) as day,
+        (mr.stats->>'wps')::decimal as wps
+    from 
         miner_response mr
-    JOIN 
-        validator_request vr ON mr.r_nanoid = vr.r_nanoid
-    WHERE 
-        vr.timestamp >= NOW() - INTERVAL '7 days'
-        AND (mr.stats->>'verified')::BOOLEAN = TRUE
-        AND mr.stats->>'wps' IS NOT NULL
+    join 
+        validator_request vr on mr.r_nanoid = vr.r_nanoid
+    where 
+        vr.timestamp >= now() - interval '7 days'
+        and (mr.stats->>'verified')::boolean = true
+        and mr.stats->>'wps' is not null
 ),
-daily_aggregates AS (
-    SELECT 
+daily_aggregates as (
+    select 
         day,
-        MAX(wps) AS max_wps,
-        PERCENTILE_CONT(0.8) WITHIN GROUP (ORDER BY wps) AS percentile_80_wps
-    FROM 
+        max(wps) as max_wps,
+        percentile_cont(0.8) within group (order by wps) as percentile_80_wps
+    from 
         daily_stats
-    GROUP BY 
+    group by 
         day
-    ORDER BY 
+    order by 
         day
 ),
-final_aggregates AS (
-    SELECT
+final_aggregates as (
+    select
         da.day,
         da.max_wps,
         da.percentile_80_wps,
-        LAG(da.percentile_80_wps) OVER (ORDER BY da.day) AS previous_percentile_80_wps,
-        ((da.percentile_80_wps - LAG(da.percentile_80_wps) OVER (ORDER BY da.day)) / LAG(da.percentile_80_wps) OVER (ORDER BY da.day) * 100) AS percent_change_percentile_80_wps
-    FROM daily_aggregates da
-    WHERE da.percentile_80_wps IS NOT NULL
+        lag(da.percentile_80_wps) over (order by da.day) as previous_percentile_80_wps,
+        ((da.percentile_80_wps - lag(da.percentile_80_wps) over (order by da.day)) / lag(da.percentile_80_wps) over (order by da.day) * 100) as percent_change_percentile_80_wps
+    from daily_aggregates da
+    where da.percentile_80_wps is not null
 )
-SELECT 
+select 
     day, 
     max_wps,
     percentile_80_wps,
     percent_change_percentile_80_wps
-FROM final_aggregates
-WHERE previous_percentile_80_wps IS NOT NULL
-ORDER BY day;`);
+from final_aggregates
+where previous_percentile_80_wps is not null
+order by day;`);
   return <ClientPage data={await data} />;
-}
+} */
