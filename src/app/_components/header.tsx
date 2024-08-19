@@ -101,17 +101,6 @@ const HeaderContent = () => {
               className={`-translate-x-1/5 absolute right-0 z-50 mt-2 min-w-fit transform whitespace-nowrap rounded-md bg-white p-2 shadow-lg dark:bg-neutral-700 dark:text-gray-300`}
             >
               <div
-                onClick={() => handleSelection(0b0010)}
-                className="flex cursor-pointer items-center gap-2 p-2"
-              >
-                <span className="flex h-4 w-4 items-center justify-center rounded-sm border border-gray-400">
-                  {selectedBits & 0b0010 ? (
-                    <Check className="text-black dark:text-white" />
-                  ) : null}
-                </span>
-                Openτensor Foundaτion
-              </div>
-              <div
                 onClick={() => handleSelection(0b0001)}
                 className="flex cursor-pointer items-center gap-2 p-2"
               >
@@ -121,6 +110,17 @@ const HeaderContent = () => {
                   ) : null}
                 </span>
                 Manifold
+              </div>
+              <div
+                onClick={() => handleSelection(0b0010)}
+                className="flex cursor-pointer items-center gap-2 p-2"
+              >
+                <span className="flex h-4 w-4 items-center justify-center rounded-sm border border-gray-400">
+                  {selectedBits & 0b0010 ? (
+                    <Check className="text-black dark:text-white" />
+                  ) : null}
+                </span>
+                Openτensor Foundaτion
               </div>
               <div
                 onClick={() => handleSelection(0b0100)}
