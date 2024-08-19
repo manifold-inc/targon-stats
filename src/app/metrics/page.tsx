@@ -36,6 +36,13 @@ export default function Page() {
     return "w-1/3";
   };
 
+  const formattedData = (data ?? []).map((s) => ({
+    day: moment(s.day).format("M/D"),
+    wps: s.wps ? s.wps.toFixed(2) : "0.00",
+    time_for_all_tokens: s.time_for_all_tokens ? s.time_for_all_tokens.toFixed(2) : "0.00",
+    daily_validated_requests_with_responses: s.daily_validated_requests_with_responses ? s.daily_validated_requests_with_responses.toFixed(2) : "0.00",
+  }));
+
   return (
     <div className="mx-auto max-w-7xl px-12 pb-12">
       <div className="py-24 sm:py-24">
@@ -138,10 +145,7 @@ export default function Page() {
           <div className="mt-12 flex min-h-[400px] space-x-4 rounded-2xl bg-white p-8 shadow-md dark:bg-neutral-800">
             <div className={`transition-all ${chartVisibility("wps")}`}>
               <LineChart
-                data={(data ?? []).map((s) => ({
-                  ...s,
-                  day: moment(s.day).format("M/D"),
-                }))}
+                data={formattedData}
                 index="day"
                 noDataText="Loading..."
                 categories={["wps"]}
@@ -158,10 +162,7 @@ export default function Page() {
               )}`}
             >
               <LineChart
-                data={(data ?? []).map((s) => ({
-                  ...s,
-                  day: moment(s.day).format("M/D"),
-                }))}
+                data={formattedData}
                 index="day"
                 noDataText="Loading..."
                 categories={["time_for_all_tokens"]}
@@ -178,10 +179,7 @@ export default function Page() {
               )}`}
             >
               <LineChart
-                data={(data ?? []).map((s) => ({
-                  ...s,
-                  day: moment(s.day).format("M/D"),
-                }))}
+                data={formattedData}
                 index="day"
                 noDataText="Loading..."
                 categories={["daily_validated_requests_with_responses"]}
