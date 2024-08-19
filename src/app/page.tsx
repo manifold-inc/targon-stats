@@ -188,7 +188,7 @@ const PageContent = () => {
               className={`flex w-full flex-1 flex-col rounded-2xl bg-white p-8 shadow-md dark:bg-neutral-800 sm:w-full`}
             >
               <h3 className="pb-4 text-center text-2xl font-semibold text-gray-800 dark:text-gray-50">
-                Avg stats last 2 hours on {valiNames.join(", ")}
+                Avg Stats of Last 2 Hours on {valiNames.join(", ")}
               </h3>
               <LineChart
                 data={(processedData ?? []).map((s) => ({
