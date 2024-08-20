@@ -56,13 +56,13 @@ const PageContent = () => {
   const processedData = data
     ? data.map((item) => ({
         ...item,
-        avg_jaro: item.avg_jaro ? item.avg_jaro.toFixed(2) : item.avg_jaro,
-        avg_wps: item.avg_wps ? item.avg_wps.toFixed(2) : item.avg_wps,
+        avg_jaro: item.avg_jaro ? Number(item.avg_jaro.toFixed(2)) : item.avg_jaro,
+        avg_wps: item.avg_wps ? Number(item.avg_wps.toFixed(2)) : item.avg_wps,
         avg_total_time: item.avg_total_time
-          ? item.avg_total_time.toFixed(2)
+          ? Number(item.avg_total_time.toFixed(2))
           : item.avg_total_time,
         avg_time_to_first_token: item.avg_time_to_first_token
-          ? item.avg_time_to_first_token.toFixed(2)
+          ? Number(item.avg_time_to_first_token.toFixed(2))
           : item.avg_time_to_first_token,
       }))
     : []; // Return an empty array if data is undefined
