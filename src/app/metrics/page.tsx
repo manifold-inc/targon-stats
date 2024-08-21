@@ -38,9 +38,14 @@ export default function Page() {
 
   const formattedData = (data ?? []).map((s) => ({
     day: moment(s.day).format("M/D"),
-    wps: s.wps ? s.wps.toFixed(2) : "0.00",
-    time_for_all_tokens: s.time_for_all_tokens ? s.time_for_all_tokens.toFixed(2) : "0.00",
-    daily_validated_requests_with_responses: s.daily_validated_requests_with_responses ? s.daily_validated_requests_with_responses.toFixed(2) : "0.00",
+    wps: s.wps ? Number(s.wps.toFixed(2)) : "0.00",
+    time_for_all_tokens: s.time_for_all_tokens
+      ? Number(s.time_for_all_tokens.toFixed(2))
+      : "0.00",
+    daily_validated_requests_with_responses:
+      s.daily_validated_requests_with_responses
+        ? Number(s.daily_validated_requests_with_responses.toFixed(2))
+        : "0.00",
   }));
 
   return (
@@ -136,7 +141,7 @@ export default function Page() {
                     Number(
                       data[data.length - 1]
                         ?.daily_validated_requests_with_responses,
-                    ).toFixed(2)
+                    ).toFixed(0)
                   )}
                 </dd>
               </button>

@@ -40,7 +40,10 @@ export const overviewRouter = createTRPCRouter({
       .where(
         and(
           eq(sql`CAST(${MinerResponse.stats}->'verified' AS BOOLEAN)`, true),
-          gte(ValidatorRequest.timestamp, sql`'2024-08-01 00:00:00'`),
+          gte(
+            ValidatorRequest.timestamp,
+            sql`'NOW'::TIMESTAMP - INTERVAL '5 DAYS'`,
+          ),
         ),
       )
       .groupBy(sql`DATE_TRUNC('DAY', ${ValidatorRequest.timestamp})`)

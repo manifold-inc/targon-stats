@@ -69,7 +69,9 @@ const MinerChart: React.FC<MinerChartProps> = ({ query, block, valiNames }) => {
     jaro_score: (
       item.jaros.reduce((a, b) => a + b, 0) / item.jaros.length
     ).toFixed(2), // Calculate the average and format to 2 decimal places
-    total_time: item.total_time ? Number(item.total_time.toFixed(2)) : item.total_time,
+    total_time: item.total_time
+      ? Number(item.total_time.toFixed(2))
+      : item.total_time,
     words_per_second: item.words_per_second
       ? Number(item.words_per_second.toFixed(2))
       : item.words_per_second,
