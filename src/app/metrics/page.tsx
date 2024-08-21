@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import { LineChart } from "@tremor/react";
 import moment from "moment";
@@ -18,8 +17,8 @@ export default function Page() {
       prev.includes(chart)
         ? prev.filter((c) => c !== chart)
         : prev.length < 2
-          ? [...prev, chart]
-          : [chart],
+        ? [...prev, chart]
+        : [chart],
     );
   };
 
@@ -37,15 +36,15 @@ export default function Page() {
   };
 
   const formattedData = (data ?? []).map((s) => ({
-    day: moment(s.day).format("M/D"),
-    wps: s.wps ? Number(s.wps.toFixed(2)) : "0.00",
+    day: moment(s.day).format("M/D"), // Format the day for display
+    wps: s.wps ? Number(s.wps.toFixed(2)) : "0.00", // Format WPS value
     time_for_all_tokens: s.time_for_all_tokens
       ? Number(s.time_for_all_tokens.toFixed(2))
-      : "0.00",
+      : "0.00", // Format time_for_all_tokens value
     daily_validated_requests_with_responses:
       s.daily_validated_requests_with_responses
-        ? Number(s.daily_validated_requests_with_responses.toFixed(2))
-        : "0.00",
+        ? Number(s.daily_validated_requests_with_responses.toFixed(0))
+        : "0", // Format daily validated requests
   }));
 
   return (
