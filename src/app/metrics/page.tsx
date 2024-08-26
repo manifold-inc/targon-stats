@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import { LineChart } from "@tremor/react";
 import moment from "moment";
@@ -17,8 +18,8 @@ export default function Page() {
       prev.includes(chart)
         ? prev.filter((c) => c !== chart)
         : prev.length < 2
-        ? [...prev, chart]
-        : [chart],
+          ? [...prev, chart]
+          : [chart],
     );
   };
 

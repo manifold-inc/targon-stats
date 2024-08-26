@@ -14,6 +14,7 @@ import {
 // Define the schema for input validation
 const schema = z.object({
   query: z.string(),
+  verified: z.boolean(),
   startblock: z.number().optional(),
   endblock: z.number().optional(),
   validator_hotkeys: z.string().array().optional(),
@@ -51,8 +52,15 @@ export const POST = async (req: NextRequest) => {
     }
   }
 
-  const { query, startblock, endblock, validator_hotkeys, limit, offset } =
-    response.data;
+  const {
+    query,
+    verified,
+    startblock,
+    endblock,
+    validator_hotkeys,
+    limit,
+    offset,
+  } = response.data;
 
   const limitValue = limit ?? 100;
   const offsetValue = offset ?? 0;
@@ -128,6 +136,10 @@ export const POST = async (req: NextRequest) => {
         and(
           gte(ValidatorRequest.block, startBlock),
           lte(ValidatorRequest.block, endBlock),
+          eq(
+            sql`CAST(${MinerResponse.stats}->'verified' AS BOOLEAN)`,
+            verified,
+          ),
           or(...minerIdentifier),
           ...(validator_hotkeys
             ? [inArray(Validator.hotkey, validator_hotkeys)]

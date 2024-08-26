@@ -104,7 +104,7 @@ export default async function Page() {
                     dangerouslySetInnerHTML={{
                       __html: hljs.highlight(
                         `{
-  "version": true,
+  "verified": true,
   "startblock": 3612400,
   "endblock": 3612488,
   "validator_hotkeys": ["validator_hotkey1". "validator_hotkey2"],
@@ -193,6 +193,10 @@ export default async function Page() {
               search for, which could be a hotkey, coldkey, or UID.
             </li>
             <li>
+              <strong>verified</strong> (required, boolean): Filters the results
+              based on whether the responses are verified or not.
+            </li>
+            <li>
               <strong>startblock</strong> (optional, number): The starting block
               number to fetch statistics from. Defaults to the latest block
               minus 360.
@@ -243,6 +247,7 @@ export default async function Page() {
                     __html: hljs.highlight(
                       `{
   "query": "0",
+  "verified": true,
   "startblock": 3612400,
   "endblock": 3612488,
   "validator_hotkeys": ["validator_hotkey", "validator_hotkey2"],
