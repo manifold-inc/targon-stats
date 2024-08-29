@@ -11,7 +11,9 @@ export const env = createEnv({
     GOOGLE_CLIENT_ID: z.string(),
     GOOGLE_REDIRECT_URI: z.string(),
 
-    DATABASE_URL: z.string(),
+    DATABASE_HOST: z.string(),
+    DATABASE_USERNAME: z.string(),
+    DATABASE_PASSWORD: z.string(),
 
     HUB_API_ENDPOINT: z.string(),
     HUB_SECRET_TOKEN: z.string(),
@@ -24,7 +26,9 @@ export const env = createEnv({
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     GOOGLE_REDIRECT_URI: process.env.GOOGLE_REDIRECT_URI,
-    DATABASE_URL: process.env.DATABASE_URL,
+    DATABASE_HOST: process.env.DATABASE_HOST,
+    DATABASE_USERNAME: process.env.DATABASE_USERNAME,
+    DATABASE_PASSWORD: process.env.DATABASE_PASSWORD,
     HUB_API_ENDPOINT: process.env.HUB_API_ENDPOINT,
     HUB_SECRET_TOKEN: process.env.HUB_SECRET_TOKEN,
     VERCEL_URL: process.env.VERCEL_ENV ?? "http://localhost:3000",

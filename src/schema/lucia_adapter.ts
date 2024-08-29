@@ -1,18 +1,18 @@
 import { eq, lte } from "drizzle-orm";
 import type { InferSelectModel } from "drizzle-orm";
-import { type PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import type { Adapter, DatabaseSession, DatabaseUser } from "lucia";
 
 import type { Session, User } from "./schema";
+import { type PlanetScaleDatabase } from "drizzle-orm/planetscale-serverless";
 
 export class LuciaAdapter implements Adapter {
-  private db: PostgresJsDatabase;
+  private db: PlanetScaleDatabase;
 
   private sessionTable: typeof Session;
   private userTable: typeof User;
 
   constructor(
-    db: PostgresJsDatabase,
+    db: PlanetScaleDatabase,
     sessionTable: typeof Session,
     userTable: typeof User,
   ) {
@@ -59,9 +59,7 @@ export class LuciaAdapter implements Adapter {
       .select()
       .from(this.sessionTable)
       .where(eq(this.sessionTable.userId, userId));
-    return result.map((val) => {
-      return transformIntoDatabaseSession(val);
-    });
+    return result.map((val) => transformIntoDatabaseSession(val));
   }
 
   public async setSession(session: DatabaseSession): Promise<void> {
@@ -79,9 +77,7 @@ export class LuciaAdapter implements Adapter {
   ): Promise<void> {
     await this.db
       .update(this.sessionTable)
-      .set({
-        expiresAt,
-      })
+      .set({ expiresAt })
       .where(eq(this.sessionTable.id, sessionId));
   }
 
@@ -96,20 +92,12 @@ function transformIntoDatabaseSession(
   raw: InferSelectModel<typeof Session>,
 ): DatabaseSession {
   const { id, userId, expiresAt, ...attributes } = raw;
-  return {
-    userId,
-    id,
-    expiresAt,
-    attributes,
-  };
+  return { userId, id, expiresAt, attributes };
 }
 
 function transformIntoDatabaseUser(
   raw: InferSelectModel<typeof User>,
 ): DatabaseUser {
   const { id, ...attributes } = raw;
-  return {
-    id,
-    attributes,
-  };
+  return { id, attributes };
 }

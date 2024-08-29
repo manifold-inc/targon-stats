@@ -74,16 +74,16 @@ export const createAccount = async ({
 }) => {
   const userId = genId.user();
 
-  let hashedPassowrd = null;
+  let hashedPassword = null;
   if (password) {
-    hashedPassowrd = await new Scrypt().hash(password);
+    hashedPassword = await new Scrypt().hash(password);
   }
   await db.insert(User).values({
     id: userId,
     email,
     googleId,
-    password: hashedPassowrd,
-    emailConfirmed: !hashedPassowrd,
+    password: hashedPassword,
+    emailConfirmed: !hashedPassword,
   });
   const apiKey = genId.apikey();
   await db.insert(ApiKey).values({

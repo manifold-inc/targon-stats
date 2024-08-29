@@ -5,9 +5,15 @@ config({ path: ".env" });
 
 export default defineConfig({
   verbose: true,
-  dialect: "postgresql",
+  dialect: "mysql",
   schema: "./src/schema/schema.ts",
   dbCredentials: {
-    url: process.env.DATABASE_URL!,
+    host: process.env.DATABASE_HOST!, 
+    user: process.env.DATABASE_USERNAME!,
+    password: process.env.DATABASE_PASSWORD!, 
+    database: process.env.DATABASE_NAME || "targon-stats",
+    ssl: {
+      rejectUnauthorized: true,
+    }
   },
 });
