@@ -65,7 +65,9 @@ export const OrganicRequest = mysqlTable("organic_request", {
   request: json("request").notNull(),
   response: text("response"),
   model: varchar("model_id", { length: 128 }).notNull(),
-  createdAt: timestamp("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  createdAt: timestamp("created_at")
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`),
   uid: int("uid"),
   hotkey: varchar("hotkey", { length: 255 }),
   coldkey: varchar("coldkey", { length: 255 }),
