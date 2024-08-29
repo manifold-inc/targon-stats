@@ -18,7 +18,7 @@ export const overviewRouter = createTRPCRouter({
             );
           },
         ),
-        wps: sql<number>`AVG(CAST(${MinerResponse.stats}->'wps' AS DECIMAL))`.mapWith(
+        wps: sql<number>`AVG(CAST(${MinerResponse.stats}->'$.wps' AS DECIMAL))`.mapWith(
           Number,
         ),
       })
@@ -29,8 +29,8 @@ export const overviewRouter = createTRPCRouter({
       )
       .where(
         and(
-          eq(sql`CAST(${MinerResponse.stats}->'verified' AS BOOLEAN)`, true),
-          gte(ValidatorRequest.timestamp, sql`NOW() - INTERVAL '5 DAYS'`),
+          eq(sql`CAST(${MinerResponse.stats}->'$.verified')`, true),
+          gte(ValidatorRequest.timestamp, sql`NOW() - INTERVAL 5 DAYS`),
         ),
       )
       .groupBy(sql`DATE_TRUNC('DAY', ${ValidatorRequest.timestamp})`)

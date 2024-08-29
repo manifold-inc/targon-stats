@@ -141,12 +141,7 @@ export const POST = async (req: NextRequest) => {
         gte(ValidatorRequest.block, startBlock),
         lte(ValidatorRequest.block, endBlock),
         ...(body.verified
-          ? [
-              eq(
-                sql`CAST(${MinerResponse.stats}->'verified' AS BOOLEAN)`,
-                body.verified,
-              ),
-            ]
+          ? [eq(sql`CAST(${MinerResponse.stats}->'verified'`, body.verified)]
           : []),
         ...(body.validator_hotkeys
           ? [inArray(Validator.hotkey, body.validator_hotkeys)]

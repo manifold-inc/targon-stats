@@ -32,22 +32,6 @@ const PageContent = () => {
     valiNames = validatorParam ? bitsToNames(parseInt(validatorParam, 2)) : [];
   }
 
-  const mutation = reactClient.miner.addDelegates.useMutation({
-    onSuccess: () => {
-      console.log("Delegates added successfully!");
-    },
-    onError: (error) => {
-      console.error("Error adding delegates:", error);
-    },
-  });
-
-  setInterval(
-    () => {
-      mutation.mutate();
-    },
-    1000 * 60 * 60 * 24 * 14,
-  );
-
   const { data } = reactClient.miner.globalAvgStats.useQuery(
     { verified, valiNames: valiNames },
     { keepPreviousData: false },
