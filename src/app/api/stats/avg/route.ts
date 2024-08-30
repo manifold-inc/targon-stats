@@ -65,53 +65,6 @@ export const POST = async (req: NextRequest) => {
   const startBlock = body.startblock ?? latestBlock - 360;
   const endBlock = body.endblock ?? latestBlock;
 
-  // Check for version consistency across the block range
-  const versionRangeResult = await db
-    .select({
-      min_version: sql<number>`MIN(${ValidatorRequest.version})`,
-      max_version: sql<number>`MAX(${ValidatorRequest.version})`,
-    })
-    .from(ValidatorRequest)
-    .where(
-      and(
-        gte(ValidatorRequest.block, startBlock),
-        lte(ValidatorRequest.block, endBlock),
-      ),
-    )
-    .limit(1);
-
-  const { min_version, max_version } = versionRangeResult[0] ?? {};
-
-  if (min_version !== max_version) {
-    // Find the nearest block where the version changes
-    const nearestBlockResult = await db
-      .select({
-        block: ValidatorRequest.block,
-      })
-      .from(ValidatorRequest)
-      .where(
-        and(
-          gte(ValidatorRequest.block, startBlock),
-          lte(ValidatorRequest.block, endBlock),
-          eq(ValidatorRequest.version, min_version!),
-        ),
-      )
-      .orderBy(desc(ValidatorRequest.block))
-      .limit(1);
-
-    const nearestBlock = nearestBlockResult[0]?.block ?? "unknown";
-
-    return NextResponse.json(
-      {
-        error: `Block range contains multiple versions (min: ${min_version}, max: ${max_version}). The nearest consistent block range ends at block ${nearestBlock}.`,
-      },
-      { status: 400 },
-    );
-  }
-
-  const version = min_version;
-  const versionCutoff = 204070;
-
   const user = await db
     .select({
       id: User.id,
@@ -141,7 +94,7 @@ export const POST = async (req: NextRequest) => {
         gte(ValidatorRequest.block, startBlock),
         lte(ValidatorRequest.block, endBlock),
         ...(body.verified
-          ? [eq(sql`CAST(${MinerResponse.stats}->'verified'`, body.verified)]
+          ? [eq(sql`${MinerResponse.stats}->'$.verified'`, body.verified)]
           : []),
         ...(body.validator_hotkeys
           ? [inArray(Validator.hotkey, body.validator_hotkeys)]
@@ -153,156 +106,76 @@ export const POST = async (req: NextRequest) => {
   const hasMoreRecords = limit + offset < totalRecords[0]!.totalRecords;
 
   try {
-    let stats;
-    switch (true) {
-      case version! >= versionCutoff:
-        // Handle the query for versions >= 204070 (where `jaro` is an array)
-        stats = await db
-          .select({
-            minute:
-              sql<string>`DATE_TRUNC('MINUTES', ${ValidatorRequest.timestamp})`.mapWith(
-                (v: string) => {
-                  const date = new Date(v);
-                  const utc = Date.UTC(
-                    date.getFullYear(),
-                    date.getMonth(),
-                    date.getDate(),
-                    date.getHours(),
-                    date.getMinutes(),
-                  );
-                  return utc;
-                },
-              ),
-            avg_jaro: sql<number>`
-              AVG((SELECT AVG(value::float) FROM jsonb_array_elements(${MinerResponse.stats}->'jaros')))`.mapWith(
-              Number,
-            ),
-            avg_wps:
-              sql<number>`AVG(CAST(${MinerResponse.stats}->'wps' AS DECIMAL))`.mapWith(
-                Number,
-              ),
-            avg_time_for_all_tokens:
-              sql<number>`AVG(CAST(${MinerResponse.stats}->'time_for_all_tokens' AS DECIMAL))`.mapWith(
-                Number,
-              ),
-            avg_total_time:
-              sql<number>`AVG(CAST(${MinerResponse.stats}->'total_time' AS DECIMAL))`.mapWith(
-                Number,
-              ),
-            avg_time_to_first_token:
-              sql<number>`AVG(CAST(${MinerResponse.stats}->'time_to_first_token' AS DECIMAL))`.mapWith(
-                Number,
-              ),
-            validator: Validator.valiName,
-            validator_hotkey: Validator.hotkey,
-            id: MinerResponse.id,
-          })
-          .from(MinerResponse)
-          .innerJoin(
-            ValidatorRequest,
-            eq(ValidatorRequest.r_nanoid, MinerResponse.r_nanoid),
-          )
-          .innerJoin(Validator, eq(Validator.hotkey, ValidatorRequest.hotkey))
-          .where(
-            and(
-              gte(ValidatorRequest.block, startBlock),
-              lte(ValidatorRequest.block, endBlock),
-              ...(body.verified
-                ? [
-                    eq(
-                      sql`CAST(${MinerResponse.stats}->'verified' AS BOOLEAN)`,
-                      body.verified,
-                    ),
-                  ]
-                : []),
-              ...(body.validator_hotkeys
-                ? [inArray(Validator.hotkey, body.validator_hotkeys)]
-                : []),
-            ),
-          )
-          .groupBy(
-            sql`DATE_TRUNC('MINUTES', ${ValidatorRequest.timestamp})`,
-            Validator.hotkey,
-            MinerResponse.id,
-          )
-          .orderBy(
-            desc(sql`DATE_TRUNC('MINUTES', ${ValidatorRequest.timestamp})`),
-            desc(MinerResponse.id),
-          )
-          .limit(limit)
-          .offset(offset);
-        break;
-
-      case version! < versionCutoff:
-        // Handle the query for versions < 204070 (where `jaro` is a string)
-        stats = await db
-          .select({
-            minute:
-              sql<string>`DATE_TRUNC('MINUTES', ${ValidatorRequest.timestamp})`.mapWith(
-                (v: string) => {
-                  const date = new Date(v);
-                  const utc = Date.UTC(
-                    date.getFullYear(),
-                    date.getMonth(),
-                    date.getDate(),
-                    date.getHours(),
-                    date.getMinutes(),
-                  );
-                  return utc;
-                },
-              ),
-            avg_jaro: sql<number>`
-              AVG(CAST(${MinerResponse.stats}->'jaro_score' AS FLOAT))`.mapWith(
-              Number,
-            ),
-            avg_wps:
-              sql<number>`AVG(CAST(${MinerResponse.stats}->'wps' AS DECIMAL))`.mapWith(
-                Number,
-              ),
-            avg_time_for_all_tokens:
-              sql<number>`AVG(CAST(${MinerResponse.stats}->'time_for_all_tokens' AS DECIMAL))`.mapWith(
-                Number,
-              ),
-            avg_total_time:
-              sql<number>`AVG(CAST(${MinerResponse.stats}->'total_time' AS DECIMAL))`.mapWith(
-                Number,
-              ),
-            avg_time_to_first_token:
-              sql<number>`AVG(CAST(${MinerResponse.stats}->'time_to_first_token' AS DECIMAL))`.mapWith(
-                Number,
-              ),
-            id: MinerResponse.id,
-          })
-          .from(MinerResponse)
-          .innerJoin(
-            ValidatorRequest,
-            eq(ValidatorRequest.r_nanoid, MinerResponse.r_nanoid),
-          )
-          .where(
-            and(
-              gte(ValidatorRequest.block, startBlock),
-              lte(ValidatorRequest.block, endBlock),
-              ...(body.verified
-                ? [
-                    eq(
-                      sql`CAST(${MinerResponse.stats}->'verified' AS BOOLEAN)`,
-                      body.verified,
-                    ),
-                  ]
-                : []),
-            ),
-          )
-          .groupBy(sql`DATE_TRUNC('MINUTES', ${ValidatorRequest.timestamp})`)
-          .orderBy(
-            desc(sql`DATE_TRUNC('MINUTES', ${ValidatorRequest.timestamp})`),
-            desc(MinerResponse.id),
-          )
-          .limit(limit)
-          .offset(offset);
-
-        break;
-    }
-
+    const stats = await db
+      .select({
+        minute:
+          sql<string>`DATE_FORMAT(${ValidatorRequest.timestamp}, '%Y-%m-%d %H:%i:00')`.mapWith(
+            (v: string) => {
+              const date = new Date(v);
+              const utc = Date.UTC(
+                date.getFullYear(),
+                date.getMonth(),
+                date.getDate(),
+                date.getHours(),
+                date.getMinutes(),
+              );
+              return utc;
+            },
+          ),
+        avg_jaro: sql<number>`
+              AVG(
+                (SELECT AVG(CAST(jt.value AS DECIMAL))
+                FROM JSON_TABLE(${MinerResponse.stats}->'$.jaros', '$[*]' COLUMNS (value DOUBLE PATH '$')) AS jt)
+                )`.mapWith(Number),
+        avg_wps:
+          sql<number>`AVG(CAST(${MinerResponse.stats}->'$.wps' AS DECIMAL))`.mapWith(
+            Number,
+          ),
+        avg_time_for_all_tokens:
+          sql<number>`AVG(CAST(${MinerResponse.stats}->'$.time_for_all_tokens' AS DECIMAL(65,30)))`.mapWith(
+            Number,
+          ),
+        avg_total_time:
+          sql<number>`AVG(CAST(${MinerResponse.stats}->'$.total_time' AS DECIMAL(65,3)))`.mapWith(
+            Number,
+          ),
+        avg_time_to_first_token:
+          sql<number>`AVG(CAST(${MinerResponse.stats}->'$.time_to_first_token' AS DECIMAL(65,30)))`.mapWith(
+            Number,
+          ),
+        validator: Validator.valiName,
+        validator_hotkey: Validator.hotkey,
+        id: MinerResponse.id,
+      })
+      .from(MinerResponse)
+      .innerJoin(
+        ValidatorRequest,
+        eq(ValidatorRequest.r_nanoid, MinerResponse.r_nanoid),
+      )
+      .innerJoin(Validator, eq(Validator.hotkey, ValidatorRequest.hotkey))
+      .where(
+        and(
+          gte(ValidatorRequest.block, startBlock),
+          lte(ValidatorRequest.block, endBlock),
+          ...(body.verified
+            ? [sql`(${MinerResponse.stats}->'$.verified') = ${body.verified}`]
+            : []),
+          ...(body.validator_hotkeys
+            ? [inArray(Validator.hotkey, body.validator_hotkeys)]
+            : []),
+        ),
+      )
+      .groupBy(
+        sql`DATE_FORMAT(${ValidatorRequest.timestamp}, '%Y-%m-%d %H:%i:00')`,
+        Validator.hotkey,
+        MinerResponse.id,
+      )
+      .orderBy(
+        sql`DATE_FORMAT(${ValidatorRequest.timestamp}, '%Y-%m-%d %H:%i:00')`,
+        desc(MinerResponse.id),
+      )
+      .limit(limit)
+      .offset(offset);
     return NextResponse.json({
       stats,
       totalRecords: totalRecords[0]!.totalRecords,

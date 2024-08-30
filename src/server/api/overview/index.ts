@@ -40,14 +40,11 @@ export const overviewRouter = createTRPCRouter({
       .where(
         and(
           sql`(${MinerResponse.stats}->'$.verified') = ${true}`,
-          gte(
-            ValidatorRequest.timestamp,
-            sql`NOW() - INTERVAL 30 DAY`,
-          ),
+          gte(ValidatorRequest.timestamp, sql`NOW() - INTERVAL 30 DAY`),
         ),
       )
       .groupBy(sql`DATE(${ValidatorRequest.timestamp})`)
-      .orderBy(asc(sql`DATE(${ValidatorRequest.timestamp})`))
+      .orderBy(asc(sql`DATE(${ValidatorRequest.timestamp})`));
 
     return stats;
   }),
@@ -59,10 +56,10 @@ export const overviewRouter = createTRPCRouter({
       .from(Validator)
       .innerJoin(
         ValidatorRequest,
-        eq(Validator.hotkey, ValidatorRequest.hotkey)
+        eq(Validator.hotkey, ValidatorRequest.hotkey),
       )
       .groupBy(Validator.valiName);
 
-    return activeValidators.map(validator => validator.name);
-  })
+    return activeValidators.map((validator) => validator.name);
+  }),
 });

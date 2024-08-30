@@ -1,10 +1,13 @@
 let validatorMap: Record<number, string> = {};
 
 export const setValidatorMap = (validators: string[]) => {
-  validatorMap = validators.reduce((map, name, index) => {
-    map[1 << index] = name; // Assign bit values dynamically
-    return map;
-  }, {} as Record<number, string>);
+  validatorMap = validators.reduce(
+    (map, name, index) => {
+      map[1 << index] = name; // Assign bit values dynamically
+      return map;
+    },
+    {} as Record<number, string>,
+  );
 };
 
 export const bitsToNames = (bitValue: number): string[] => {

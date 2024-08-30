@@ -59,9 +59,10 @@ const MinerChart: React.FC<MinerChartProps> = ({ query, block, valiNames }) => {
       : "text-gray-400 dark:text-gray-600";
   };
 
-  const displayValiNames = valiNames.length > 3 
-  ? `${valiNames[0]} ... ${valiNames[valiNames.length - 1]}` 
-  : valiNames.join(", ");
+  const displayValiNames =
+    valiNames.length > 3
+      ? `${valiNames[0]} ... ${valiNames[valiNames.length - 1]}`
+      : valiNames.join(", ");
 
   const miners = new Map<number, Keys>();
   minerStats.data?.forEach((m) => {

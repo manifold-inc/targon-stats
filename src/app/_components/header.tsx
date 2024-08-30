@@ -5,9 +5,9 @@ import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Check, ChevronDown, ChevronUp } from "lucide-react";
 
-import { useAuth } from "./providers";
 import { reactClient } from "@/trpc/react";
 import { setValidatorMap } from "@/utils/validatorMap";
+import { useAuth } from "./providers";
 
 const HeaderContent = () => {
   const auth = useAuth();
@@ -84,7 +84,10 @@ const HeaderContent = () => {
       } else if (pathName !== "/" && pathName !== "/metrics") {
         const defaultBits = (1 << validators.length) - 1;
         const currentParams = new URLSearchParams(searchParams);
-        currentParams.set("validators", defaultBits.toString(2).padStart(validators.length, "0"));
+        currentParams.set(
+          "validators",
+          defaultBits.toString(2).padStart(validators.length, "0"),
+        );
         router.replace(`?${currentParams.toString()}`, undefined);
       }
     }
