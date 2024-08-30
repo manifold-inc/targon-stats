@@ -132,15 +132,15 @@ export const POST = async (req: NextRequest) => {
             Number,
           ),
         avg_time_for_all_tokens:
-          sql<number>`AVG(CAST(${MinerResponse.stats}->'$.time_for_all_tokens' AS DECIMAL(65,30)))`.mapWith(
+          sql<number>`AVG(CAST(${MinerResponse.stats}->'$.time_for_all_tokens' AS DECIMAL(8,5)))`.mapWith(
             Number,
           ),
         avg_total_time:
-          sql<number>`AVG(CAST(${MinerResponse.stats}->'$.total_time' AS DECIMAL(65,3)))`.mapWith(
+          sql<number>`AVG(CAST(${MinerResponse.stats}->'$.total_time' AS DECIMAL(8,5)))`.mapWith(
             Number,
           ),
         avg_time_to_first_token:
-          sql<number>`AVG(CAST(${MinerResponse.stats}->'$.time_to_first_token' AS DECIMAL(65,30)))`.mapWith(
+          sql<number>`AVG(CAST(${MinerResponse.stats}->'$.time_to_first_token' AS DECIMAL(8,5)))`.mapWith(
             Number,
           ),
         validator: Validator.valiName,
