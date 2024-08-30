@@ -39,15 +39,15 @@ export const minerRouter = createTRPCRouter({
               Number,
             ),
           avg_time_for_all_tokens:
-            sql<number>`AVG(CAST(${MinerResponse.stats}->'$.time_for_all_tokens' AS DECIMAL))`.mapWith(
+            sql<number>`AVG(CAST(${MinerResponse.stats}->'$.time_for_all_tokens' AS DECIMAL(65,30)))`.mapWith(
               Number,
             ),
           avg_total_time:
-            sql<number>`AVG(CAST(${MinerResponse.stats}->'$.total_time' AS DECIMAL))`.mapWith(
+            sql<number>`AVG(CAST(${MinerResponse.stats}->'$.total_time' AS DECIMAL(65,3)))`.mapWith(
               Number,
             ),
           avg_time_to_first_token:
-            sql<number>`AVG(CAST(${MinerResponse.stats}->'$.time_to_first_token' AS DECIMAL))`.mapWith(
+            sql<number>`AVG(CAST(${MinerResponse.stats}->'$.time_to_first_token' AS DECIMAL(65,30)))`.mapWith(
               Number,
             ),
           valiName: Validator.valiName,
@@ -79,7 +79,6 @@ export const minerRouter = createTRPCRouter({
           sql`DATE_FORMAT(${ValidatorRequest.timestamp}, '%Y-%m-%d %H:%i:00')`,
         );
 
-      console.log(stats);
       return stats;
     }),
   stats: publicProcedure
@@ -112,15 +111,15 @@ export const minerRouter = createTRPCRouter({
               Number,
             ),
           time_for_all_tokens:
-            sql<number>`CAST(${MinerResponse.stats}->'$.time_for_all_tokens' AS DECIMAL)`.mapWith(
+            sql<number>`CAST(${MinerResponse.stats}->'$.time_for_all_tokens' AS DECIMAL(65,30))`.mapWith(
               Number,
             ),
           total_time:
-            sql<number>`CAST(${MinerResponse.stats}->'$.total_time' AS DECIMAL)`.mapWith(
+            sql<number>`CAST(${MinerResponse.stats}->'$.total_time' AS DECIMAL(65,30))`.mapWith(
               Number,
             ),
           time_to_first_token:
-            sql<number>`CAST(${MinerResponse.stats}->'$.time_to_first_token' AS DECIMAL)`.mapWith(
+            sql<number>`CAST(${MinerResponse.stats}->'$.time_to_first_token' AS DECIMAL(65, 30))`.mapWith(
               Number,
             ),
           uid: MinerResponse.uid,
@@ -182,19 +181,19 @@ export const minerRouter = createTRPCRouter({
           jaros: sql<number[]>`${MinerResponse.stats}->'$.jaros'`,
           validator: sql<string>`${Validator.valiName}`,
           words_per_second:
-            sql<number>`CAST(${MinerResponse.stats}->'$.wps' AS DECIMAL)`.mapWith(
+            sql<number>`CAST(${MinerResponse.stats}->'$.wps' AS DECIMAL(65, 30))`.mapWith(
               Number,
             ),
           time_for_all_tokens:
-            sql<number>`CAST(${MinerResponse.stats}->'$.time_for_all_tokens' AS DECIMAL)`.mapWith(
+            sql<number>`CAST(${MinerResponse.stats}->'$.time_for_all_tokens' AS DECIMAL(65,30))`.mapWith(
               Number,
             ),
           total_time:
-            sql<number>`CAST(${MinerResponse.stats}->'$.total_time' AS DECIMAL)`.mapWith(
+            sql<number>`CAST(${MinerResponse.stats}->'$.total_time' AS DECIMAL(65,30))`.mapWith(
               Number,
             ),
           time_to_first_token:
-            sql<number>`CAST(${MinerResponse.stats}->'$.time_to_first_token' AS DECIMAL)`.mapWith(
+            sql<number>`CAST(${MinerResponse.stats}->'$.time_to_first_token' AS DECIMAL(65,30))`.mapWith(
               Number,
             ),
         })

@@ -1,6 +1,6 @@
 import { and, asc, eq, gte, sql } from "drizzle-orm";
 
-import { MinerResponse, ValidatorRequest } from "@/schema/schema";
+import { MinerResponse, Validator, ValidatorRequest } from "@/schema/schema";
 import { createTRPCRouter, publicProcedure } from "../trpc";
 
 export const overviewRouter = createTRPCRouter({
@@ -51,4 +51,18 @@ export const overviewRouter = createTRPCRouter({
 
     return stats;
   }),
+  activeValidators: publicProcedure.query(async ({ ctx }) => {
+    const activeValidators = await ctx.db
+      .select({
+        name: Validator.valiName,
+      })
+      .from(Validator)
+      .innerJoin(
+        ValidatorRequest,
+        eq(Validator.hotkey, ValidatorRequest.hotkey)
+      )
+      .groupBy(Validator.valiName);
+
+    return activeValidators.map(validator => validator.name);
+  })
 });

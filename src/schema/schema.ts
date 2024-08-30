@@ -8,6 +8,7 @@ import {
   text,
   timestamp,
   varchar,
+  index,
 } from "drizzle-orm/mysql-core";
 import { customAlphabet } from "nanoid";
 
@@ -29,6 +30,13 @@ export const ValidatorRequest = mysqlTable("validator_request", {
   ground_truth: json("ground_truth"),
   version: int("version").notNull(),
   hotkey: varchar("hotkey", { length: 255 }),
+}, (table) => {
+  return {
+    rNanoidIdx: index("r_nanoid_idx").on(table.r_nanoid),
+    timestampIdx: index("timestamp_idx").on(table.timestamp),
+    blockIdx: index("block_idx").on(table.block),
+    hotkeyIdx: index("hotkey_idx").on(table.hotkey),
+  };
 });
 
 export const MinerResponse = mysqlTable("miner_response", {
@@ -38,11 +46,22 @@ export const MinerResponse = mysqlTable("miner_response", {
   coldkey: varchar("coldkey", { length: 255 }).notNull(),
   uid: int("uid").notNull(),
   stats: json("stats"),
+}, (table) => {
+  return {
+    rNanoidIdx: index("r_nanoid_idx").on(table.r_nanoid),
+    hotkeyIdx: index("hotkey_idx").on(table.hotkey),
+    coldkeyIdx: index("coldkey_idx").on(table.coldkey),
+    uidIdx: index("uid_idx").on(table.uid),
+  };
 });
 
 export const Validator = mysqlTable("validator", {
   hotkey: varchar("hotkey", { length: 255 }).primaryKey(),
   valiName: varchar("vali_name", { length: 255 }),
+}, (table) => {
+  return {
+    valiNameIdx: index("vali_name_idx").on(table.valiName),
+  };
 });
 
 export const User = mysqlTable("user", {
