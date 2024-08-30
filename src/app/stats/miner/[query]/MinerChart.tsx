@@ -59,6 +59,10 @@ const MinerChart: React.FC<MinerChartProps> = ({ query, block, valiNames }) => {
       : "text-gray-400 dark:text-gray-600";
   };
 
+  const displayValiNames = valiNames.length > 3 
+  ? `${valiNames[0]} ... ${valiNames[valiNames.length - 1]}` 
+  : valiNames.join(", ");
+
   const miners = new Map<number, Keys>();
   minerStats.data?.forEach((m) => {
     miners.set(m.uid, { hotkey: m.hotkey, coldkey: m.coldkey });
@@ -211,7 +215,7 @@ const MinerChart: React.FC<MinerChartProps> = ({ query, block, valiNames }) => {
           <div className="pt-8">
             <div className="flex w-full flex-grow flex-col items-center rounded-2xl bg-white p-8 text-center shadow-md transition-all hover:shadow-lg dark:bg-neutral-800">
               <h3 className="pb-4 text-center text-2xl font-semibold text-gray-800 dark:text-gray-50">
-                Viewing Stats For: {query} on Validator: {valiNames.join(", ")}
+                Viewing Stats For: {query} on Validator: {displayValiNames}
               </h3>
               <LineChart
                 data={processedData}
