@@ -32,13 +32,10 @@ const HeaderContent = () => {
   };
 
   const handleSelection = (bitValue: number) => {
-    console.log("Clicked validator bit value:", bitValue);
     let newSelectedBits = selectedBits ^ bitValue;
-    console.log("New selected bits after XOR:", newSelectedBits);
 
     // Calculate the bitmask for "All Validators"
     const allValidatorsBitmask = (1 << validators!.length) - 1;
-    console.log("All validators bitmask:", allValidatorsBitmask);
 
     // If no other options are selected, default to "All Validators"
     if (newSelectedBits === 0) {
@@ -46,7 +43,6 @@ const HeaderContent = () => {
     } else if (newSelectedBits === allValidatorsBitmask) {
       newSelectedBits = 0; // Unselect "All Validators" when it is the only option selected
     }
-    console.log("Final selected bits:", newSelectedBits);
 
     setSelectedBits(newSelectedBits);
 
@@ -63,7 +59,6 @@ const HeaderContent = () => {
     }
 
     // Replace the current URL with the new one
-    console.log("Updated URL params:", currentParams.toString());
     router.replace(`?${currentParams.toString()}`);
   };
 
