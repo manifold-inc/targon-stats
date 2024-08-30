@@ -2,6 +2,7 @@ import { sql } from "drizzle-orm";
 import {
   boolean,
   float,
+  index,
   int,
   json,
   mysqlTable,
@@ -21,29 +22,59 @@ export const genId = {
   organicRequest: () => "oreq_" + nanoid(27),
 };
 
-export const ValidatorRequest = mysqlTable("validator_request", {
-  r_nanoid: varchar("r_nanoid", { length: 255 }).primaryKey(),
-  block: int("block").notNull(),
-  timestamp: timestamp("timestamp").default(sql`CURRENT_TIMESTAMP`),
-  sampling_params: json("sampling_params"),
-  ground_truth: json("ground_truth"),
-  version: int("version").notNull(),
-  hotkey: varchar("hotkey", { length: 255 }),
-});
+export const ValidatorRequest = mysqlTable(
+  "validator_request",
+  {
+    r_nanoid: varchar("r_nanoid", { length: 255 }).primaryKey(),
+    block: int("block").notNull(),
+    timestamp: timestamp("timestamp").default(sql`CURRENT_TIMESTAMP`),
+    sampling_params: json("sampling_params"),
+    ground_truth: json("ground_truth"),
+    version: int("version").notNull(),
+    hotkey: varchar("hotkey", { length: 255 }),
+  },
+  (table) => {
+    return {
+      rNanoidIdx: index("r_nanoid_idx").on(table.r_nanoid),
+      timestampIdx: index("timestamp_idx").on(table.timestamp),
+      blockIdx: index("block_idx").on(table.block),
+      hotkeyIdx: index("hotkey_idx").on(table.hotkey),
+    };
+  },
+);
 
-export const MinerResponse = mysqlTable("miner_response", {
-  id: int("id").primaryKey().autoincrement(),
-  r_nanoid: varchar("r_nanoid", { length: 255 }).notNull(),
-  hotkey: varchar("hotkey", { length: 255 }).notNull(),
-  coldkey: varchar("coldkey", { length: 255 }).notNull(),
-  uid: int("uid").notNull(),
-  stats: json("stats"),
-});
+export const MinerResponse = mysqlTable(
+  "miner_response",
+  {
+    id: int("id").primaryKey().autoincrement(),
+    r_nanoid: varchar("r_nanoid", { length: 255 }).notNull(),
+    hotkey: varchar("hotkey", { length: 255 }).notNull(),
+    coldkey: varchar("coldkey", { length: 255 }).notNull(),
+    uid: int("uid").notNull(),
+    stats: json("stats"),
+  },
+  (table) => {
+    return {
+      rNanoidIdx: index("r_nanoid_idx").on(table.r_nanoid),
+      hotkeyIdx: index("hotkey_idx").on(table.hotkey),
+      coldkeyIdx: index("coldkey_idx").on(table.coldkey),
+      uidIdx: index("uid_idx").on(table.uid),
+    };
+  },
+);
 
-export const Validator = mysqlTable("validator", {
-  hotkey: varchar("hotkey", { length: 255 }).primaryKey(),
-  valiName: varchar("vali_name", { length: 255 }),
-});
+export const Validator = mysqlTable(
+  "validator",
+  {
+    hotkey: varchar("hotkey", { length: 255 }).primaryKey(),
+    valiName: varchar("vali_name", { length: 255 }),
+  },
+  (table) => {
+    return {
+      valiNameIdx: index("vali_name_idx").on(table.valiName),
+    };
+  },
+);
 
 export const User = mysqlTable("user", {
   id: varchar("id", { length: 32 }).primaryKey(),
