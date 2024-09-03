@@ -60,7 +60,9 @@ const MinerChart: React.FC<MinerChartProps> = ({ query, block, valiNames }) => {
   };
 
   const displayValiNames =
-    valiNames.length > 3
+    valiNames.length === 0
+      ? "All Validators"
+      : valiNames.length > 3
       ? `${valiNames[0]} ... ${valiNames[valiNames.length - 1]}`
       : valiNames.join(", ");
 
