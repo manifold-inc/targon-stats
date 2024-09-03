@@ -1,9 +1,11 @@
+"use client";
+
 import Link from "next/link";
 import { Copy } from "lucide-react";
 import { toast } from "sonner";
 
 import { copyToClipboard } from "@/utils/utils";
-import { type Keys } from "./MinerChart";
+import { type Keys } from "./MinerChartClient";
 
 interface KeysTableProps {
   miners: Map<number, Keys>;

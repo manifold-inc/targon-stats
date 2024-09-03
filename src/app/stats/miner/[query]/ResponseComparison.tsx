@@ -5,37 +5,20 @@ import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 import { Copy, X } from "lucide-react";
 import { toast } from "sonner";
 
-import { reactClient } from "@/trpc/react";
-import { type RouterOutputs } from "@/trpc/shared";
 import { copyToClipboard } from "@/utils/utils";
+import { type Response } from "./MinerChart";
 
 interface ResponseComparisonProps {
-  query: string;
-  valiNames: string[];
+  responses: Response[];
 }
-type Response = RouterOutputs["miner"]["getResponses"][0];
 
 const ResponseComparison: React.FC<ResponseComparisonProps> = ({
-  query,
-  valiNames,
+  responses,
 }) => {
-  const {
-    data: responses,
-    isLoading,
-    error,
-  } = reactClient.miner.getResponses.useQuery({ query, valiNames });
   const [open, setOpen] = useState(false);
   const [selectedResponse, setSelectedResponse] = useState<Response | null>(
     null,
   );
-
-  if (isLoading) {
-    return <p>Loading Responses...</p>;
-  }
-
-  if (error) {
-    return <p>Error loading responses: {error.message}</p>;
-  }
 
   const handleViewDetails = (response: Response) => {
     setSelectedResponse(response);
@@ -189,7 +172,7 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-neutral-800">
-                  {responses.map((response, index) => (
+                  {responses.map((response: Response, index) => (
                     <tr key={response.hotkey + index}>
                       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-300 sm:pl-6">
                         <div className="flex items-center justify-between font-mono">
@@ -220,9 +203,9 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                           <span>
                             {response.ground_truth.ground_truth.length > 30
                               ? response.ground_truth.ground_truth.substring(
-                                0,
-                                30,
-                              ) + "..."
+                                  0,
+                                  30,
+                                ) + "..."
                               : response.ground_truth.ground_truth}
                           </span>
                           <button
@@ -257,11 +240,11 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
                         {response.stats.jaros.length > 0
                           ? (
-                            response.stats.jaros.reduce(
-                              (acc, score) => acc + score,
-                              0,
-                            ) / response.stats.jaros.length
-                          ).toFixed(2)
+                              response.stats.jaros.reduce(
+                                (acc, score) => acc + score,
+                                0,
+                              ) / response.stats.jaros.length
+                            ).toFixed(2)
                           : "N/A"}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
@@ -298,7 +281,7 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                         {response.sampling_params.top_n_tokens}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
-                        {response.sampling_params.max_n_tokens}
+                        {response.sampling_params.max_new_tokens}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
                         {response.sampling_params.repetition_penalty}
@@ -356,21 +339,21 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                       [
                         "Hotkey",
                         selectedResponse.hotkey.substring(0, 5) +
-                        "..." +
-                        selectedResponse.hotkey.substring(
-                          selectedResponse.hotkey.length - 5,
-                          selectedResponse.hotkey.length,
-                        ),
+                          "..." +
+                          selectedResponse.hotkey.substring(
+                            selectedResponse.hotkey.length - 5,
+                            selectedResponse.hotkey.length,
+                          ),
                       ],
                       [
                         "Avg Jaro Score",
                         selectedResponse.stats.jaros.length > 0
                           ? (
-                            selectedResponse.stats.jaros.reduce(
-                              (acc, score) => acc + score,
-                              0,
-                            ) / selectedResponse.stats.jaros.length
-                          ).toFixed(2)
+                              selectedResponse.stats.jaros.reduce(
+                                (acc, score) => acc + score,
+                                0,
+                              ) / selectedResponse.stats.jaros.length
+                            ).toFixed(2)
                           : "N/A",
                       ],
                       [
@@ -404,7 +387,7 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                       ],
                       [
                         "Max N Tokens",
-                        selectedResponse.sampling_params.max_n_tokens,
+                        selectedResponse.sampling_params.max_new_tokens,
                       ],
                       [
                         "Repetition Penalty",
@@ -445,7 +428,7 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                   </dt>
                   <dd className="mt-1 font-mono text-sm leading-6 text-gray-700 dark:text-gray-400">
                     {selectedResponse.stats.jaros &&
-                      selectedResponse.stats.jaros.length > 0 ? (
+                    selectedResponse.stats.jaros.length > 0 ? (
                       <span>
                         [
                         {selectedResponse.stats.jaros

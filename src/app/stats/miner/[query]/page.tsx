@@ -1,23 +1,28 @@
-"use client";
-
 import { Suspense } from "react";
-import { useSearchParams } from "next/navigation";
 
 import { bitsToNames } from "@/utils/validatorMap";
 import MinerInputForm from "../MinerInputForm";
 import MinerChart from "./MinerChart";
 
-const MinerPageContent = ({
-  query,
-  block,
+export default function Page({
+  params,
+  searchParams,
 }: {
-  query: string;
-  block?: string;
-}) => {
-  const validatorParam = useSearchParams().get("validators");
-  const valiNames = validatorParam
-    ? bitsToNames(parseInt(validatorParam, 2))
-    : [];
+  params: { query: string };
+  searchParams: { block?: string; validators?: string };
+}) {
+  const block = searchParams.block ?? "360";
+  console.log("Validators binary:", searchParams.validators);
+
+  const validatorsBinary = searchParams.validators ?? "";
+  console.log("validatorsBinary:", validatorsBinary);
+  const validatorsNumber = parseInt(validatorsBinary, 2);
+  console.log("Validators as number:", validatorsNumber);
+
+  console.log("Calling bitsToNames with:", validatorsNumber);
+  const valiNames = bitsToNames(validatorsNumber);
+  console.log("Validator names:", valiNames);
+
   return (
     <div className="mx-auto max-w-7xl px-12 pb-12">
       <div className="py-24 sm:py-24">
@@ -27,32 +32,23 @@ const MinerPageContent = ({
               <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-50 sm:text-4xl">
                 Targon Miner Status
               </h2>
-              <MinerInputForm initialQuery={query} initialBlock={block} />
-              {query && (
-                <MinerChart
-                  query={query}
-                  block={parseInt(block ?? "360")}
-                  valiNames={valiNames}
-                />
+              <MinerInputForm
+                initialQuery={params.query}
+                initialBlock={block}
+              />
+              {params.query && (
+                <Suspense fallback="Loading data...">
+                  <MinerChart
+                    query={params.query}
+                    block={parseInt(block)}
+                    valiNames={valiNames}
+                  />
+                </Suspense>
               )}
             </div>
           </div>
         </div>
       </div>
     </div>
-  );
-};
-
-export default function Page({
-  params,
-  searchParams,
-}: {
-  params: { query: string };
-  searchParams: { block?: string };
-}) {
-  return (
-    <Suspense fallback="Loading...">
-      <MinerPageContent query={params.query} block={searchParams.block} />
-    </Suspense>
   );
 }

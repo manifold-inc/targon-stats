@@ -2,65 +2,66 @@
 
 import { Suspense, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Check, ChevronDown, ChevronUp } from "lucide-react";
 
 import { reactClient } from "@/trpc/react";
-import { setValidatorMap } from "@/utils/validatorMap";
+import validatorMap, { setValidatorMap } from "@/utils/validatorMap";
 import { useAuth } from "./providers";
 
 const HeaderContent = () => {
   const auth = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const pathName = usePathname();
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [selectedBits, setSelectedBits] = useState(0); // Default to no selection
+  const [selectedBits, setSelectedBits] = useState(0);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const { data: validators } = reactClient.overview.activeValidators.useQuery();
 
   useEffect(() => {
     if (validators) {
+      console.log("Setting validator map with:", validators);
       setValidatorMap(validators.filter((v): v is string => v !== null));
+      console.log("Validator map set. Current map:", validatorMap);
+
+      // Handle URL params
+      const validatorParam = searchParams.get("validators");
+      if (validatorParam) {
+        setSelectedBits(parseInt(validatorParam, 2));
+      } else {
+        setSelectedBits(0); // Reset if no param
+      }
     }
-  }, [validators]);
+  }, [validators, searchParams]);
+
+  const toggleValidator = (index: number) => {
+    setSelectedBits((prevBits) => {
+      const newBits = prevBits ^ (1 << index);
+
+      // Update URL
+      const params = new URLSearchParams(searchParams);
+      if (newBits !== 0) {
+        params.set(
+          "validators",
+          newBits.toString(2).padStart(validators?.length ?? 0, "0"),
+        );
+      } else {
+        params.delete("validators");
+      }
+      router.replace(`?${params.toString()}`);
+
+      return newBits;
+    });
+  };
 
   const toggleDropdown = () => {
     setIsDropdownOpen((prev) => !prev);
   };
 
-  const handleSelection = (bitValue: number) => {
-    let newSelectedBits = selectedBits ^ bitValue;
-
-    // Calculate the bitmask for "All Validators"
-    const allValidatorsBitmask = (1 << validators!.length) - 1;
-
-    // If no other options are selected, default to "All Validators"
-    if (newSelectedBits === 0) {
-      newSelectedBits = allValidatorsBitmask;
-    } else if (newSelectedBits === allValidatorsBitmask) {
-      newSelectedBits = 0; // Unselect "All Validators" when it is the only option selected
-    }
-
-    setSelectedBits(newSelectedBits);
-
-    // Update the URL parameters without any path restriction
-    const currentParams = new URLSearchParams(searchParams);
-
-    if (newSelectedBits === allValidatorsBitmask) {
-      currentParams.delete("validators");
-    } else {
-      currentParams.set(
-        "validators",
-        newSelectedBits.toString(2).padStart(validators!.length, "0"), // Pad to the number of validators for consistency
-      );
-    }
-
-    // Replace the current URL with the new one
-    router.replace(`?${currentParams.toString()}`);
-  };
+  // Calculate the number of selected validators
+  const selectedCount = selectedBits.toString(2).split("1").length - 1;
 
   const handleClickOutside = (event: MouseEvent) => {
     if (
@@ -70,15 +71,6 @@ const HeaderContent = () => {
       setIsDropdownOpen(false);
     }
   };
-
-  useEffect(() => {
-    if (validators) {
-      const validator = searchParams.get("validators");
-      if (validator) {
-        setSelectedBits(parseInt(validator, 2));
-      }
-    }
-  }, [searchParams, router, pathName, validators]);
 
   useEffect(() => {
     if (isDropdownOpen) {
@@ -99,31 +91,35 @@ const HeaderContent = () => {
         <Link href="/stats/miner">Miners</Link>
         <div className="relative" ref={dropdownRef}>
           <button onClick={toggleDropdown} className="flex items-center gap-1">
-            Validators
+            Validators ({selectedCount}/{validators?.length ?? 0})
             {isDropdownOpen ? (
               <ChevronUp className="px-1 py-0.5" />
             ) : (
               <ChevronDown className="px-1 py-0.5" />
             )}
           </button>
-          {isDropdownOpen && (
+          {isDropdownOpen && validators && (
             <div
               className={`-translate-x-1/5 absolute right-0 z-50 mt-2 min-w-fit transform whitespace-nowrap rounded-md bg-white p-2 shadow-lg dark:bg-neutral-700 dark:text-gray-300`}
             >
-              {validators?.map((validator, index) => (
-                <div
-                  key={index}
-                  onClick={() => handleSelection(1 << index)}
-                  className="flex cursor-pointer items-center gap-2 p-2"
-                >
-                  <span className="flex h-4 w-4 items-center justify-center rounded-sm border border-gray-400">
-                    {selectedBits & (1 << index) ? (
-                      <Check className="text-black dark:text-white" />
-                    ) : null}
-                  </span>
-                  {validator}
-                </div>
-              ))}
+              {validators.length > 0 ? (
+                validators.map((validator, index) => (
+                  <div
+                    key={index}
+                    onClick={() => toggleValidator(index)}
+                    className="flex cursor-pointer items-center gap-2 p-2"
+                  >
+                    <span className="flex h-4 w-4 items-center justify-center rounded-sm border border-gray-400">
+                      {selectedBits & (1 << index) ? (
+                        <Check className="text-black dark:text-white" />
+                      ) : null}
+                    </span>
+                    {validator}
+                  </div>
+                ))
+              ) : (
+                <div>No validators available</div>
+              )}
             </div>
           )}
         </div>
