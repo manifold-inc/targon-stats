@@ -1,6 +1,5 @@
 import { Suspense } from "react";
 
-import { bitsToNames } from "@/utils/validatorMap";
 import MinerInputForm from "../MinerInputForm";
 import MinerChart from "./MinerChart";
 
@@ -12,16 +11,7 @@ export default function Page({
   searchParams: { block?: string; validators?: string };
 }) {
   const block = searchParams.block ?? "360";
-  console.log("Validators binary:", searchParams.validators);
-
   const validatorsBinary = searchParams.validators ?? "";
-  console.log("validatorsBinary:", validatorsBinary);
-  const validatorsNumber = parseInt(validatorsBinary, 2);
-  console.log("Validators as number:", validatorsNumber);
-
-  console.log("Calling bitsToNames with:", validatorsNumber);
-  const valiNames = bitsToNames(validatorsNumber);
-  console.log("Validator names:", valiNames);
 
   return (
     <div className="mx-auto max-w-7xl px-12 pb-12">

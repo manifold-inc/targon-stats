@@ -6,7 +6,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Check, ChevronDown, ChevronUp } from "lucide-react";
 
 import { reactClient } from "@/trpc/react";
-import validatorMap, { setValidatorMap } from "@/utils/validatorMap";
 import { useAuth } from "./providers";
 
 const HeaderContent = () => {
@@ -15,43 +14,29 @@ const HeaderContent = () => {
   const searchParams = useSearchParams();
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [selectedBits, setSelectedBits] = useState(0);
+  const [selectedBits, setSelectedBits] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const { data: validators } = reactClient.overview.activeValidators.useQuery();
 
-  useEffect(() => {
-    if (validators) {
-      console.log("Setting validator map with:", validators);
-      setValidatorMap(validators.filter((v): v is string => v !== null));
-      console.log("Validator map set. Current map:", validatorMap);
-
-      // Handle URL params
-      const validatorParam = searchParams.get("validators");
-      if (validatorParam) {
-        setSelectedBits(parseInt(validatorParam, 2));
-      } else {
-        setSelectedBits(0); // Reset if no param
-      }
-    }
-  }, [validators, searchParams]);
-
   const toggleValidator = (index: number) => {
     setSelectedBits((prevBits) => {
-      const newBits = prevBits ^ (1 << index);
-
-      // Update URL
+      if (!validators) return null;
+      if (!prevBits) {
+        prevBits = new Array(validators.length + 1).join("0");
+      }
+      const firstPart = prevBits.substring(0, index);
+      const lastPart = prevBits.substring(index + 1);
+      let nextPart = "0";
+      if (prevBits[index] === "0") nextPart = "1";
+      const newBits = firstPart + nextPart + lastPart;
       const params = new URLSearchParams(searchParams);
-      if (newBits !== 0) {
-        params.set(
-          "validators",
-          newBits.toString(2).padStart(validators?.length ?? 0, "0"),
-        );
-      } else {
+      if (!newBits.includes("0")) {
         params.delete("validators");
+      } else {
+        params.set("validators", newBits);
       }
       router.replace(`?${params.toString()}`);
-
       return newBits;
     });
   };
@@ -61,7 +46,9 @@ const HeaderContent = () => {
   };
 
   // Calculate the number of selected validators
-  const selectedCount = selectedBits.toString(2).split("1").length - 1;
+  const selectedCount = selectedBits
+    ? selectedBits.split("1").length - 1
+    : (validators?.length ?? 0);
 
   const handleClickOutside = (event: MouseEvent) => {
     if (
@@ -110,7 +97,7 @@ const HeaderContent = () => {
                     className="flex cursor-pointer items-center gap-2 p-2"
                   >
                     <span className="flex h-4 w-4 items-center justify-center rounded-sm border border-gray-400">
-                      {selectedBits & (1 << index) ? (
+                      {(selectedBits?.[index] ?? "1") == "1" ? (
                         <Check className="text-black dark:text-white" />
                       ) : null}
                     </span>

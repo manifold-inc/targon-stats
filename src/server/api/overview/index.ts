@@ -52,14 +52,18 @@ export const overviewRouter = createTRPCRouter({
     const activeValidators = await ctx.db
       .select({
         name: Validator.valiName,
+        hotkey: Validator.hotkey,
       })
       .from(Validator)
       .innerJoin(
         ValidatorRequest,
         eq(Validator.hotkey, ValidatorRequest.hotkey),
       )
+      .where(gte(ValidatorRequest.timestamp, sql`NOW() - INTERVAL 2 HOUR`))
       .groupBy(Validator.valiName);
 
-    return activeValidators.map((validator) => validator.name);
+    return activeValidators
+      .map((validator) => validator.name ?? validator.hotkey.substring(0, 5))
+      .sort((a, b) => a.localeCompare(b));
   }),
 });
