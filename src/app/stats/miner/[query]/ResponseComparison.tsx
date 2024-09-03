@@ -6,35 +6,14 @@ import { Copy, X } from "lucide-react";
 import { toast } from "sonner";
 
 import { reactClient } from "@/trpc/react";
+import { type RouterOutputs } from "@/trpc/shared";
 import { copyToClipboard } from "@/utils/utils";
 
 interface ResponseComparisonProps {
   query: string;
   valiNames: string[];
 }
-
-interface Response {
-  hotkey: string;
-  validator: string;
-  ground_truth: string;
-  response: string;
-  jaros: number[];
-  words_per_second: number;
-  time_for_all_tokens: number;
-  total_time: number;
-  time_to_first_token: number;
-  seed: string;
-  top_k: string;
-  top_p: string;
-  best_of: string;
-  typical_p: string;
-  temperature: string;
-  top_n_tokens: string;
-  max_n_tokens: string;
-  repetition_penalty: string;
-  prompt: string;
-  verified: boolean;
-}
+type Response = RouterOutputs["miner"]["getResponses"][0];
 
 const ResponseComparison: React.FC<ResponseComparisonProps> = ({
   query,
@@ -234,90 +213,95 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                         {response.validator}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
-                        {response.verified ? "Yes" : "No"}
+                        {response.stats.verified ? "Yes" : "No"}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
                         <div className="flex items-center justify-between">
                           <span>
-                            {response.ground_truth.length > 30
-                              ? response.ground_truth.substring(0, 30) + "..."
-                              : response.ground_truth}
-                          </span>
-                          <button
-                            className="ml-2 cursor-pointer"
-                            onClick={() =>
-                              handleCopyClipboard(response.ground_truth)
-                            }
-                          >
-                            <Copy className="z-10 h-4 w-4 text-gray-500 dark:text-gray-300" />
-                          </button>
-                        </div>
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
-                        <div className="flex items-center justify-between">
-                          <span>
-                            {response.response.length > 30
-                              ? response.response.substring(0, 30) + "..."
-                              : response.response}
-                          </span>
-                          <button
-                            className="ml-2 cursor-pointer"
-                            onClick={() =>
-                              handleCopyClipboard(response.response)
-                            }
-                          >
-                            <Copy className="z-10 h-4 w-4 text-gray-500 dark:text-gray-300" />
-                          </button>
-                        </div>
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
-                        {response.jaros.length > 0
-                          ? (
-                              response.jaros.reduce(
-                                (acc, score) => acc + score,
+                            {response.ground_truth.ground_truth.length > 30
+                              ? response.ground_truth.ground_truth.substring(
                                 0,
-                              ) / response.jaros.length
-                            ).toFixed(2)
+                                30,
+                              ) + "..."
+                              : response.ground_truth.ground_truth}
+                          </span>
+                          <button
+                            className="ml-2 cursor-pointer"
+                            onClick={() =>
+                              handleCopyClipboard(
+                                response.ground_truth.ground_truth,
+                              )
+                            }
+                          >
+                            <Copy className="z-10 h-4 w-4 text-gray-500 dark:text-gray-300" />
+                          </button>
+                        </div>
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
+                        <div className="flex items-center justify-between">
+                          <span>
+                            {response.stats.response.length > 30
+                              ? response.stats.response.substring(0, 30) + "..."
+                              : response.stats.response}
+                          </span>
+                          <button
+                            className="ml-2 cursor-pointer"
+                            onClick={() =>
+                              handleCopyClipboard(response.stats.response)
+                            }
+                          >
+                            <Copy className="z-10 h-4 w-4 text-gray-500 dark:text-gray-300" />
+                          </button>
+                        </div>
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
+                        {response.stats.jaros.length > 0
+                          ? (
+                            response.stats.jaros.reduce(
+                              (acc, score) => acc + score,
+                              0,
+                            ) / response.stats.jaros.length
+                          ).toFixed(2)
                           : "N/A"}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
-                        {response.words_per_second.toFixed(2)}
+                        {response.stats.wps.toFixed(2)}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
-                        {response.time_for_all_tokens.toFixed(2)}
+                        {response.stats.time_for_all_tokens.toFixed(2)}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
-                        {response.total_time.toFixed(2)}
+                        {response.stats.total_time.toFixed(2)}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
-                        {response.time_to_first_token.toFixed(2)}
+                        {response.stats.time_to_first_token.toFixed(2)}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
-                        {response.seed}
+                        {response.sampling_params.seed}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
-                        {response.top_k}
+                        {response.sampling_params.top_k}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
-                        {response.top_p}
+                        {response.sampling_params.top_p}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
-                        {response.best_of}
+                        {response.sampling_params.best_of}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
-                        {response.typical_p}
+                        {response.sampling_params.typical_p}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
-                        {response.temperature}
+                        {response.sampling_params.temperature}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
-                        {response.top_n_tokens}
+                        {response.sampling_params.top_n_tokens}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
-                        {response.max_n_tokens}
+                        {response.sampling_params.max_n_tokens}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
-                        {response.repetition_penalty}
+                        {response.sampling_params.repetition_penalty}
                       </td>
                       <td className="relative whitespace-nowrap px-3 py-4 text-right text-sm font-medium sm:pr-6">
                         <button
@@ -372,49 +356,64 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                       [
                         "Hotkey",
                         selectedResponse.hotkey.substring(0, 5) +
-                          "..." +
-                          selectedResponse.hotkey.substring(
-                            selectedResponse.hotkey.length - 5,
-                            selectedResponse.hotkey.length,
-                          ),
+                        "..." +
+                        selectedResponse.hotkey.substring(
+                          selectedResponse.hotkey.length - 5,
+                          selectedResponse.hotkey.length,
+                        ),
                       ],
                       [
                         "Avg Jaro Score",
-                        selectedResponse.jaros.length > 0
+                        selectedResponse.stats.jaros.length > 0
                           ? (
-                              selectedResponse.jaros.reduce(
-                                (acc, score) => acc + score,
-                                0,
-                              ) / selectedResponse.jaros.length
-                            ).toFixed(2)
+                            selectedResponse.stats.jaros.reduce(
+                              (acc, score) => acc + score,
+                              0,
+                            ) / selectedResponse.stats.jaros.length
+                          ).toFixed(2)
                           : "N/A",
                       ],
                       [
                         "Words Per Second",
-                        selectedResponse.words_per_second.toFixed(2),
+                        selectedResponse.stats.wps.toFixed(2),
                       ],
                       [
                         "Time For All Tokens",
-                        selectedResponse.time_for_all_tokens.toFixed(2),
+                        selectedResponse.stats.time_for_all_tokens.toFixed(2),
                       ],
-                      ["Total Time", selectedResponse.total_time.toFixed(2)],
+                      [
+                        "Total Time",
+                        selectedResponse.stats.total_time.toFixed(2),
+                      ],
                       [
                         "Time To First Token",
-                        selectedResponse.time_to_first_token.toFixed(2),
+                        selectedResponse.stats.time_to_first_token.toFixed(2),
                       ],
-                      ["Seed", selectedResponse.seed],
-                      ["Top K", selectedResponse.top_k],
-                      ["Top P", selectedResponse.top_p],
-                      ["Best Of", selectedResponse.best_of],
-                      ["Typical P", selectedResponse.typical_p],
-                      ["Temperature", selectedResponse.temperature],
-                      ["Top N Tokens", selectedResponse.top_n_tokens],
-                      ["Max N Tokens", selectedResponse.max_n_tokens],
+                      ["Seed", selectedResponse.sampling_params.seed],
+                      ["Top K", selectedResponse.sampling_params.top_k],
+                      ["Top P", selectedResponse.sampling_params.top_p],
+                      ["Best Of", selectedResponse.sampling_params.best_of],
+                      ["Typical P", selectedResponse.sampling_params.typical_p],
+                      [
+                        "Temperature",
+                        selectedResponse.sampling_params.temperature,
+                      ],
+                      [
+                        "Top N Tokens",
+                        selectedResponse.sampling_params.top_n_tokens,
+                      ],
+                      [
+                        "Max N Tokens",
+                        selectedResponse.sampling_params.max_n_tokens,
+                      ],
                       [
                         "Repetition Penalty",
-                        selectedResponse.repetition_penalty,
+                        selectedResponse.sampling_params.repetition_penalty,
                       ],
-                      ["Verified", selectedResponse.verified ? "Yes" : "No"],
+                      [
+                        "Verified",
+                        selectedResponse.stats.verified ? "Yes" : "No",
+                      ],
                     ].map(([label, value], index) => (
                       <div
                         key={index}
@@ -445,11 +444,11 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                     Jaro Scores
                   </dt>
                   <dd className="mt-1 font-mono text-sm leading-6 text-gray-700 dark:text-gray-400">
-                    {selectedResponse.jaros &&
-                    selectedResponse.jaros.length > 0 ? (
+                    {selectedResponse.stats.jaros &&
+                      selectedResponse.stats.jaros.length > 0 ? (
                       <span>
                         [
-                        {selectedResponse.jaros
+                        {selectedResponse.stats.jaros
                           .map((score) => score.toFixed(4)) // Formats the scores to 4 decimal places
                           .join(", ")}
                         ]
@@ -466,7 +465,11 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                       className="ml-2 cursor-pointer"
                       onClick={() =>
                         handleCopyClipboard(
-                          JSON.stringify(selectedResponse.prompt, null, 2),
+                          JSON.stringify(
+                            selectedResponse.ground_truth.messages,
+                            null,
+                            2,
+                          ),
                         )
                       }
                     >
@@ -475,7 +478,11 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                   </dt>
                   <pre className="max-w-full overflow-auto">
                     <code className="inline-block items-center space-x-4 break-words text-left text-sm text-gray-700 dark:text-gray-400">
-                      {JSON.stringify(selectedResponse.prompt, null, 2)}
+                      {JSON.stringify(
+                        selectedResponse.ground_truth.messages,
+                        null,
+                        2,
+                      )}
                     </code>
                   </pre>
                 </div>
@@ -485,14 +492,16 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                     <button
                       className="ml-2 cursor-pointer"
                       onClick={() =>
-                        handleCopyClipboard(selectedResponse.ground_truth)
+                        handleCopyClipboard(
+                          selectedResponse.ground_truth.ground_truth,
+                        )
                       }
                     >
                       <Copy className="z-10 h-4 w-4 text-gray-500 dark:text-gray-300" />
                     </button>
                   </dt>
                   <dd className="mt-1 font-mono text-sm leading-6 text-gray-700 dark:text-gray-400">
-                    {selectedResponse.ground_truth}
+                    {selectedResponse.ground_truth.ground_truth}
                   </dd>
                 </div>
                 <div className="border-t border-gray-300 p-4 sm:col-span-2 sm:px-0">
@@ -501,14 +510,16 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                     <button
                       className="ml-2 cursor-pointer"
                       onClick={() =>
-                        handleCopyClipboard(selectedResponse.ground_truth)
+                        handleCopyClipboard(
+                          selectedResponse.ground_truth.ground_truth,
+                        )
                       }
                     >
                       <Copy className="z-10 h-4 w-4 text-gray-500 dark:text-gray-300" />
                     </button>
                   </dt>
                   <dd className="mt-1 font-mono text-sm leading-6 text-gray-700 dark:text-gray-400">
-                    {selectedResponse.response}
+                    {selectedResponse.stats.response}
                   </dd>
                 </div>
               </DialogPanel>

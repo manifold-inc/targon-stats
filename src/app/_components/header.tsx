@@ -76,27 +76,20 @@ const HeaderContent = () => {
       const validator = searchParams.get("validators");
       if (validator) {
         setSelectedBits(parseInt(validator, 2));
-      } else if (pathName !== "/" && pathName !== "/metrics") {
-        const defaultBits = (1 << validators.length) - 1;
-        const currentParams = new URLSearchParams(searchParams);
-        currentParams.set(
-          "validators",
-          defaultBits.toString(2).padStart(validators.length, "0"),
-        );
-        router.replace(`?${currentParams.toString()}`, undefined);
       }
     }
+  }, [searchParams, router, pathName, validators]);
 
+  useEffect(() => {
     if (isDropdownOpen) {
       document.addEventListener("mousedown", handleClickOutside);
     } else {
       document.removeEventListener("mousedown", handleClickOutside);
     }
-
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [searchParams, router, isDropdownOpen, pathName, validators]);
+  }, [isDropdownOpen]);
 
   return (
     <header>

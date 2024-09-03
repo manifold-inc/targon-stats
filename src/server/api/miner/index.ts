@@ -63,8 +63,8 @@ export const minerRouter = createTRPCRouter({
             gte(ValidatorRequest.timestamp, sql`NOW() - INTERVAL 2 HOUR`),
             ...(input.verified
               ? [
-                  sql`(${MinerResponse.stats}->'$.verified') = ${input.verified}`,
-                ]
+                sql`(${MinerResponse.stats}->'$.verified') = ${input.verified}`,
+              ]
               : []),
             ...(input.valiNames && !input.valiNames.includes("All Validators")
               ? [inArray(Validator.valiName, input.valiNames)]
@@ -99,29 +99,24 @@ export const minerRouter = createTRPCRouter({
 
       const startBlock = latestBlock - Math.min(block!, 360);
 
-      const eqs =
-        query.length < 5
-          ? [eq(MinerResponse.uid, parseInt(query))]
-          : [eq(MinerResponse.hotkey, query), eq(MinerResponse.coldkey, query)];
-      const stats = await ctx.db
+      const inner = ctx.db
         .select({
-          jaros: sql<number[]>`${MinerResponse.stats}->'$.jaros'`,
-          words_per_second:
-            sql<number>`CAST(${MinerResponse.stats}->'$.wps' AS DECIMAL)`.mapWith(
-              Number,
-            ),
+          jaros: sql<number[]>`${MinerResponse.stats}->'$.jaros'`.as("jaros"),
+          wps: sql<number>`CAST(${MinerResponse.stats}->'$.wps' AS DECIMAL)`
+            .mapWith(Number)
+            .as("wps"),
           time_for_all_tokens:
-            sql<number>`CAST(${MinerResponse.stats}->'$.time_for_all_tokens' AS DECIMAL(65,30))`.mapWith(
-              Number,
-            ),
+            sql<number>`CAST(${MinerResponse.stats}->'$.time_for_all_tokens' AS DECIMAL(65,30))`
+              .mapWith(Number)
+              .as("time_for_al_tokens"),
           total_time:
-            sql<number>`CAST(${MinerResponse.stats}->'$.total_time' AS DECIMAL(65,30))`.mapWith(
-              Number,
-            ),
+            sql<number>`CAST(${MinerResponse.stats}->'$.total_time' AS DECIMAL(65,30))`
+              .mapWith(Number)
+              .as("total_time"),
           time_to_first_token:
-            sql<number>`CAST(${MinerResponse.stats}->'$.time_to_first_token' AS DECIMAL(65, 30))`.mapWith(
-              Number,
-            ),
+            sql<number>`CAST(${MinerResponse.stats}->'$.time_to_first_token' AS DECIMAL(65, 30))`
+              .mapWith(Number)
+              .as("time_to_first_token"),
           uid: MinerResponse.uid,
           hotkey: MinerResponse.hotkey,
           coldkey: MinerResponse.coldkey,
@@ -136,13 +131,22 @@ export const minerRouter = createTRPCRouter({
         .where(
           and(
             gte(ValidatorRequest.block, startBlock),
-            or(...eqs),
-            ...(valiNames && !valiNames.includes("All Validators")
-              ? [inArray(Validator.valiName, valiNames)]
+            query.length < 5
+              ? eq(MinerResponse.uid, parseInt(query))
+              : or(
+                eq(MinerResponse.hotkey, query),
+                eq(MinerResponse.coldkey, query),
+              ),
+            ...(valiNames?.length !== 0
+              ? [inArray(Validator.valiName, valiNames!)]
               : []),
           ),
         )
-        .orderBy(desc(ValidatorRequest.block));
+        .as("inner");
+      const stats = await ctx.db
+        .select()
+        .from(inner)
+        .orderBy(desc(inner.block));
 
       const orderedStats = stats.reverse();
 
@@ -158,44 +162,14 @@ export const minerRouter = createTRPCRouter({
     .query(async ({ input, ctx }) => {
       const { query, valiNames } = input;
 
-      const eqs =
-        query.length < 5
-          ? [eq(MinerResponse.uid, parseInt(query))]
-          : [eq(MinerResponse.hotkey, query), eq(MinerResponse.coldkey, query)];
-      const results = await ctx.db
+      const inner = ctx.db
         .select({
-          response: sql<string>`${MinerResponse.stats}->'$.response'`,
-          ground_truth: sql<string>`${ValidatorRequest.ground_truth}->'$.ground_truth'`,
-          prompt: sql<string>`${ValidatorRequest.ground_truth}->'$.messages'`,
           hotkey: MinerResponse.hotkey,
-          seed: sql<string>`${ValidatorRequest.sampling_params}->'$.seed'`,
-          top_k: sql<string>`${ValidatorRequest.sampling_params}->'$.top_k'`,
-          top_p: sql<string>`${ValidatorRequest.sampling_params}->'$.top_p'`,
-          best_of: sql<string>`${ValidatorRequest.sampling_params}->'$.best_of'`,
-          typical_p: sql<string>`${ValidatorRequest.sampling_params}->'$.typical_p'`,
-          temperature: sql<string>`${ValidatorRequest.sampling_params}->'$.temperature'`,
-          top_n_tokens: sql<string>`${ValidatorRequest.sampling_params}->'$.top_n_tokens'`,
-          max_n_tokens: sql<string>`${ValidatorRequest.sampling_params}->'$.max_new_tokens'`,
-          repetition_penalty: sql<string>`${ValidatorRequest.sampling_params}->'$.repetition_penalty'`,
-          verified: sql<boolean>`${MinerResponse.stats}->'$.verified'`,
-          jaros: sql<number[]>`${MinerResponse.stats}->'$.jaros'`,
-          validator: sql<string>`${Validator.valiName}`,
-          words_per_second:
-            sql<number>`CAST(${MinerResponse.stats}->'$.wps' AS DECIMAL(65, 30))`.mapWith(
-              Number,
-            ),
-          time_for_all_tokens:
-            sql<number>`CAST(${MinerResponse.stats}->'$.time_for_all_tokens' AS DECIMAL(65,30))`.mapWith(
-              Number,
-            ),
-          total_time:
-            sql<number>`CAST(${MinerResponse.stats}->'$.total_time' AS DECIMAL(65,30))`.mapWith(
-              Number,
-            ),
-          time_to_first_token:
-            sql<number>`CAST(${MinerResponse.stats}->'$.time_to_first_token' AS DECIMAL(65,30))`.mapWith(
-              Number,
-            ),
+          validator: Validator.valiName,
+          stats: MinerResponse.stats,
+          sampling_params: ValidatorRequest.sampling_params,
+          ground_truth: ValidatorRequest.ground_truth,
+          timestamp: ValidatorRequest.timestamp,
         })
         .from(MinerResponse)
         .innerJoin(
@@ -205,15 +179,54 @@ export const minerRouter = createTRPCRouter({
         .innerJoin(Validator, eq(Validator.hotkey, ValidatorRequest.hotkey))
         .where(
           and(
-            or(...eqs),
-            ...(valiNames && !valiNames.includes("All Validators")
-              ? [inArray(Validator.valiName, valiNames)]
+            // Helps speed up query
+            gte(ValidatorRequest.timestamp, sql`NOW() - INTERVAL 2 HOUR`),
+            query.length < 5
+              ? eq(MinerResponse.uid, parseInt(query))
+              : or(
+                eq(MinerResponse.hotkey, query),
+                eq(MinerResponse.coldkey, query),
+              ),
+            ...(valiNames?.length !== 0
+              ? [inArray(Validator.valiName, valiNames!)]
               : []),
           ),
         )
-        .orderBy(desc(ValidatorRequest.timestamp))
-        .limit(10);
+        .as("inner");
 
-      return results;
+      return (await ctx.db
+        .select()
+        .from(inner)
+        .orderBy(desc(inner.timestamp))
+        .limit(10)) as Response[];
     }),
 });
+
+interface Response {
+  hotkey: string;
+  validator: string;
+  sampling_params: {
+    seed: string;
+    top_k: string;
+    top_p: string;
+    best_of: string;
+    typical_p: string;
+    temperature: string;
+    top_n_tokens: string;
+    max_n_tokens: string;
+    repetition_penalty: string;
+  };
+  ground_truth: {
+    ground_truth: string;
+    messages: string;
+  };
+  stats: {
+    response: string;
+    verified: boolean;
+    jaros: number[];
+    wps: number;
+    time_for_all_tokens: number;
+    total_time: number;
+    time_to_first_token: number;
+  };
+}

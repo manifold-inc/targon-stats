@@ -24,7 +24,7 @@ const MinerChart: React.FC<MinerChartProps> = ({ query, block, valiNames }) => {
   const [visibleCategories, setVisibleCategories] = useState<string[]>([
     "jaro_score",
     "total_time",
-    "words_per_second",
+    "wps",
     "time_for_all_tokens",
     "time_to_first_token",
   ]);
@@ -49,7 +49,7 @@ const MinerChart: React.FC<MinerChartProps> = ({ query, block, valiNames }) => {
   const categoryColorMap: Record<string, string> = {
     jaro_score: "blue",
     total_time: "red",
-    words_per_second: "green",
+    wps: "green",
     time_for_all_tokens: "purple",
     time_to_first_token: "orange",
   };
@@ -77,9 +77,9 @@ const MinerChart: React.FC<MinerChartProps> = ({ query, block, valiNames }) => {
     total_time: item.total_time
       ? Number(item.total_time.toFixed(2))
       : item.total_time,
-    words_per_second: item.words_per_second
-      ? Number(item.words_per_second.toFixed(2))
-      : item.words_per_second,
+    wps: item.wps
+      ? Number(item.wps.toFixed(2))
+      : item.wps,
     time_for_all_tokens: item.time_for_all_tokens
       ? Number(item.time_for_all_tokens.toFixed(2))
       : item.time_for_all_tokens,
@@ -141,7 +141,7 @@ const MinerChart: React.FC<MinerChartProps> = ({ query, block, valiNames }) => {
             </button>
 
             <button
-              onClick={handleCategoryClick("words_per_second")}
+              onClick={handleCategoryClick("wps")}
               className={cardStyles}
             >
               <dt className="text-sm font-semibold leading-6 text-gray-600 dark:text-gray-400">
@@ -149,14 +149,14 @@ const MinerChart: React.FC<MinerChartProps> = ({ query, block, valiNames }) => {
               </dt>
               <dd
                 className={`order-first text-3xl font-semibold tracking-tight ${textColor(
-                  "words_per_second",
+                  "wps",
                   "text-green-500",
                 )}`}
               >
                 {minerStats
                   ? (
                       minerStats.data.reduce(
-                        (s, d) => s + d.words_per_second,
+                        (s, d) => s + d.wps,
                         0,
                       ) / minerStats.data.length
                     ).toFixed(2)
