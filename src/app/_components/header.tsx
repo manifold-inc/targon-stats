@@ -45,11 +45,6 @@ const HeaderContent = () => {
     setIsDropdownOpen((prev) => !prev);
   };
 
-  // Calculate the number of selected validators
-  const selectedCount = selectedBits
-    ? selectedBits.split("1").length - 1
-    : (validators?.length ?? 0);
-
   const handleClickOutside = (event: MouseEvent) => {
     if (
       dropdownRef.current &&
@@ -78,7 +73,7 @@ const HeaderContent = () => {
         <Link href="/stats/miner">Miners</Link>
         <div className="relative" ref={dropdownRef}>
           <button onClick={toggleDropdown} className="flex items-center gap-1">
-            Validators ({selectedCount}/{validators?.length ?? 0})
+            Validators
             {isDropdownOpen ? (
               <ChevronUp className="px-1 py-0.5" />
             ) : (
