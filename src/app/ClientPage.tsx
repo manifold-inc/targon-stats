@@ -1,41 +1,44 @@
 "use client";
 
-import { Field, Label, Switch } from "@headlessui/react";
 import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Field, Label, Switch } from "@headlessui/react";
 import { LineChart } from "@tremor/react";
 import moment from "moment";
-import { useRouter, useSearchParams } from "next/navigation";
 
 interface ClientPageProps {
   data: {
-    minute: number,
-    avg_jaro: number,
-    avg_wps: number,
-    avg_total_time: number,
-    avg_time_to_first_token: number,
-    valiName: string | undefined,
-  }[]
-  initialVerified: boolean,
-  initialValidators: string[],
+    minute: number;
+    avg_jaro: number;
+    avg_wps: number;
+    avg_total_time: number;
+    avg_time_to_first_token: number;
+    valiName: string | undefined;
+  }[];
+  initialVerified: boolean;
+  initialValidators: string[];
 }
 
-
-const ClientPage = ({data, initialVerified, initialValidators: valiNames}: ClientPageProps) => {
+const ClientPage = ({
+  data,
+  initialVerified,
+  initialValidators: valiNames,
+}: ClientPageProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const cardStyles =
     "flex flex-col flex-grow bg-white dark:bg-neutral-800 p-8 shadow-md rounded-2xl hover:shadow-lg transition-all dark:hover:bg-gray-800 items-center text-center justify-center";
   const [verified, setVerified] = useState(initialVerified);
 
-  useEffect (() => {
+  useEffect(() => {
     const newSearchParams = new URLSearchParams(searchParams);
     if (verified) {
-      newSearchParams.set('verified', 'true');
+      newSearchParams.set("verified", "true");
     } else {
-      newSearchParams.delete('verified');
+      newSearchParams.delete("verified");
     }
-    router.push(`?${newSearchParams.toString()}`)
-  }, [verified, router, searchParams])
+    router.push(`?${newSearchParams.toString()}`);
+  }, [verified, router, searchParams]);
 
   const [visibleCategories, setVisibleCategories] = useState<string[]>([
     "avg_jaro",
@@ -181,7 +184,12 @@ const ClientPage = ({data, initialVerified, initialValidators: valiNames}: Clien
               className={`flex w-full flex-1 flex-col rounded-2xl bg-white p-8 shadow-md dark:bg-neutral-800 sm:w-full`}
             >
               <h3 className="pb-4 text-center text-2xl font-semibold text-gray-800 dark:text-gray-50">
-                Avg Stats of Last 2 Hours on {valiNames.join(", ")}
+                Avg Stats of Last 2 Hours on{" "}
+                {valiNames.length === 0
+                  ? " All Validators"
+                  : valiNames.length > 3
+                    ? `${valiNames[0]}, ... , ${valiNames[valiNames.length - 1]}`
+                    : valiNames.join(", ")}
               </h3>
               <LineChart
                 data={(processedData ?? []).map((s) => ({

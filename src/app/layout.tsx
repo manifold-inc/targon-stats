@@ -9,8 +9,8 @@ import { Analytics } from "@vercel/analytics/react";
 import clsx from "clsx";
 import { Toaster } from "sonner";
 
-import Header from "./_components/header";
 import { WithGlobalProvider } from "./_components/providers";
+import ServerHeader from "./_components/serverHeader";
 
 const ToggleTheme = dynamic(() => import("./_components/ToggleTheme"), {
   ssr: false,
@@ -46,7 +46,7 @@ export default function RootLayout({
       >
         <WithGlobalProvider>
           <ThemeProvider attribute="class">
-            <Header />
+            <ServerHeader />
             <main>{children}</main>
             <div className="fixed bottom-5 right-5 z-40">
               <ToggleTheme />

@@ -11,8 +11,6 @@ export default function Page({
   searchParams: { block?: string; validators?: string };
 }) {
   const block = searchParams.block ?? "360";
-  const validatorsBinary = searchParams.validators ?? "";
-
   return (
     <div className="mx-auto max-w-7xl px-12 pb-12">
       <div className="py-24 sm:py-24">
@@ -31,7 +29,7 @@ export default function Page({
                   <MinerChart
                     query={params.query}
                     block={parseInt(block)}
-                    valiNames={valiNames}
+                    searchParams={searchParams}
                   />
                 </Suspense>
               )}

@@ -9,7 +9,9 @@ import ResponseComparison from "./ResponseComparison";
 interface MinerChartProps {
   query: string;
   block: number;
-  valiNames: string[];
+  searchParams?: {
+    validators?: string;
+  };
 }
 
 export interface Response {
@@ -49,9 +51,32 @@ interface Keys {
 export default async function MinerChart({
   query,
   block,
-  valiNames,
+  searchParams = {},
 }: MinerChartProps) {
   try {
+    const validatorFlags = searchParams.validators || "";
+
+    const activeValidators = await db
+      .select({
+        name: Validator.valiName,
+        hotkey: Validator.hotkey,
+      })
+      .from(Validator)
+      .innerJoin(
+        ValidatorRequest,
+        eq(Validator.hotkey, ValidatorRequest.hotkey),
+      )
+      .where(gte(ValidatorRequest.timestamp, sql`NOW() - INTERVAL 2 HOUR`))
+      .groupBy(Validator.valiName, Validator.hotkey);
+
+    const sortedValis = activeValidators
+      .map((validator) => validator.name ?? validator.hotkey.substring(0, 5))
+      .sort((a, b) => a.localeCompare(b));
+
+    const selectedValidators = sortedValis.filter(
+      (_, index) => validatorFlags[index] === "1",
+    );
+
     const latestBlock = await db
       .select({ maxBlock: sql<number>`MAX(${ValidatorRequest.block})` })
       .from(ValidatorRequest)
@@ -97,8 +122,8 @@ export default async function MinerChart({
                 eq(MinerResponse.hotkey, query),
                 eq(MinerResponse.coldkey, query),
               ),
-          ...(valiNames?.length !== 0
-            ? [inArray(Validator.valiName, valiNames)]
+          ...(selectedValidators?.length !== 0
+            ? [inArray(Validator.valiName, selectedValidators)]
             : []),
         ),
       )
@@ -133,8 +158,8 @@ export default async function MinerChart({
                 eq(MinerResponse.hotkey, query),
                 eq(MinerResponse.coldkey, query),
               ),
-          ...(valiNames?.length !== 0
-            ? [inArray(Validator.valiName, valiNames)]
+          ...(selectedValidators?.length !== 0
+            ? [inArray(Validator.valiName, selectedValidators)]
             : []),
         ),
       )
@@ -156,7 +181,7 @@ export default async function MinerChart({
         <MinerChartClient
           minerStats={orderedStats}
           query={query}
-          valiNames={valiNames}
+          valiNames={selectedValidators}
         />
         <div className="flex flex-col gap-4 pt-8">
           <div className="flex-1">
