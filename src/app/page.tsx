@@ -10,6 +10,7 @@ interface PageProps {
     validators?: string;
   };
 }
+export const revalidate = 60 * 5;
 
 export default async function Page({ searchParams = {} }: PageProps) {
   const verified = searchParams.verified === "true";

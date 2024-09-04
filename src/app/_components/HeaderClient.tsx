@@ -69,7 +69,9 @@ const HeaderClient = ({ validators }: HeaderClientProps) => {
     <header>
       <nav className="fixed right-5 top-5 z-40 flex space-x-8">
         <Link href="/">Home</Link>
-        <Link href="/metrics">Metrics</Link>
+        <Link href="/metrics" className="hidden">
+          Metrics
+        </Link>
         <Link href="/stats/miner">Miners</Link>
         <div className="relative" ref={dropdownRef}>
           <button onClick={toggleDropdown} className="flex items-center gap-1">

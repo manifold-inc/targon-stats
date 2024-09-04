@@ -6,6 +6,8 @@ import KeysTable from "./KeysTable";
 import MinerChartClient from "./MinerChartClient";
 import ResponseComparison from "./ResponseComparison";
 
+export const revalidate = 60;
+
 interface MinerChartProps {
   query: string;
   block: number;
