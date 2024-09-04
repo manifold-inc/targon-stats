@@ -1,4 +1,4 @@
-"use client";
+/*"use client";
 
 import { useState } from "react";
 import { LineChart } from "@tremor/react";
@@ -198,3 +198,4 @@ export default function ClientPage({ stats }: ClientPageProps) {
     </div>
   );
 }
+*/
