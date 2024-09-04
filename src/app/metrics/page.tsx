@@ -2,9 +2,9 @@
 
 import { db } from "@/schema/db";
 import { MinerResponse, ValidatorRequest } from "@/schema/schema";
-import ClientPage from "./ClientPage";
+import ClientPage from "./ClientPage"; */
 
-export default async function Page() {
+export default function Page() { /*
   try {
     const filteredStats = db
       .select({
@@ -61,6 +61,8 @@ export default async function Page() {
   } catch (error) {
     console.error("Error fetching metrics:", error);
     return <div>Error loading metrics</div>;
-  }
+  }*/
+ return (
+    <div>Nothing to see here...</div>
+ )
 }
-*/
