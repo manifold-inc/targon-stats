@@ -4,8 +4,6 @@ import { type inferRouterInputs, type inferRouterOutputs } from "@trpc/server";
 import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
 import { accountRouter } from "./account";
 import { coreRouter } from "./core";
-import { minerRouter } from "./miner";
-import { overviewRouter } from "./overview";
 
 /**
  * This is the primary router for your server.
@@ -16,8 +14,6 @@ import { overviewRouter } from "./overview";
 export const appRouter = createTRPCRouter({
   account: accountRouter,
   core: coreRouter,
-  miner: minerRouter,
-  overview: overviewRouter,
 });
 
 export type ReactQueryOptions = inferReactQueryProcedureOptions<AppRouter>;
