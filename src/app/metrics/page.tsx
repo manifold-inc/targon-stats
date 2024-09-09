@@ -4,7 +4,8 @@ import { db } from "@/schema/db";
 import { MinerResponse, ValidatorRequest } from "@/schema/schema";
 import ClientPage from "./ClientPage"; */
 
-export default function Page() { /*
+export default function Page() {
+  /*
   try {
     const filteredStats = db
       .select({
@@ -28,7 +29,6 @@ export default function Page() { /*
           sql<number>`AVG(CAST(${MinerResponse.stats}->'$.time_for_all_tokens' AS DECIMAL))`
             .mapWith(Number)
             .as("time_for_all_tokens"),
-        r_nanoid: ValidatorRequest.r_nanoid,
       })
       .from(MinerResponse)
       .innerJoin(
@@ -62,7 +62,5 @@ export default function Page() { /*
     console.error("Error fetching metrics:", error);
     return <div>Error loading metrics</div>;
   }*/
- return (
-    <div>Nothing to see here...</div>
- )
+  return <div>Nothing to see here...</div>;
 }

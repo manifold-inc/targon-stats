@@ -9,11 +9,10 @@ import moment from "moment";
 interface ClientPageProps {
   data: {
     minute: number;
-    avg_jaro: number;
     avg_wps: number;
     avg_total_time: number;
     avg_time_to_first_token: number;
-    valiName: string | undefined;
+    valiName: string | null;
   }[];
   initialVerified: boolean;
   initialValidators: string[];
@@ -41,7 +40,6 @@ const ClientPage = ({
   }, [verified, router, searchParams]);
 
   const [visibleCategories, setVisibleCategories] = useState<string[]>([
-    "avg_jaro",
     "avg_wps",
     "avg_total_time",
     "avg_time_to_first_token",
@@ -50,9 +48,6 @@ const ClientPage = ({
   const processedData = data
     ? data.map((item) => ({
         ...item,
-        avg_jaro: item.avg_jaro
-          ? Number(item.avg_jaro.toFixed(2))
-          : item.avg_jaro,
         avg_wps: item.avg_wps ? Number(item.avg_wps.toFixed(2)) : item.avg_wps,
         avg_total_time: item.avg_total_time
           ? Number(item.avg_total_time.toFixed(2))
@@ -111,27 +106,6 @@ const ClientPage = ({
                 >
                   {data
                     ? Math.max(...data.map((d) => d.avg_wps)).toFixed(0)
-                    : "_"}
-                </dd>
-              </button>
-
-              <button
-                onClick={handleCategoryClick("avg_jaro")}
-                className={cardStyles}
-              >
-                <dt className="text-sm font-semibold leading-6 text-gray-600 dark:text-gray-400">
-                  Average Jaro
-                </dt>
-                <dd
-                  className={`order-first text-3xl font-semibold tracking-tight ${textColor(
-                    "avg_jaro",
-                    "text-blue-500",
-                  )}`}
-                >
-                  {data
-                    ? (
-                        data.reduce((s, d) => s + d.avg_jaro, 0) / data.length
-                      ).toFixed(2)
                     : "_"}
                 </dd>
               </button>

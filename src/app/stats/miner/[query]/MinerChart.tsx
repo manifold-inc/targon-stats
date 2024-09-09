@@ -58,18 +58,24 @@ export default async function MinerChart({
   try {
     const validatorFlags = searchParams.validators || "";
 
-    const activeValidators = await db
-      .select({
-        name: Validator.valiName,
-        hotkey: Validator.hotkey,
-      })
-      .from(Validator)
-      .innerJoin(
-        ValidatorRequest,
-        eq(Validator.hotkey, ValidatorRequest.hotkey),
-      )
-      .where(gte(ValidatorRequest.timestamp, sql`NOW() - INTERVAL 2 HOUR`))
-      .groupBy(Validator.valiName, Validator.hotkey);
+    const [activeValidators, latestBlock] = await Promise.all([
+      db
+        .select({
+          name: Validator.valiName,
+          hotkey: Validator.hotkey,
+        })
+        .from(Validator)
+        .innerJoin(
+          ValidatorRequest,
+          eq(Validator.hotkey, ValidatorRequest.hotkey),
+        )
+        .where(gte(ValidatorRequest.timestamp, sql`NOW() - INTERVAL 2 HOUR`))
+        .groupBy(Validator.valiName, Validator.hotkey),
+      db
+        .select({ maxBlock: sql<number>`MAX(${ValidatorRequest.block})` })
+        .from(ValidatorRequest)
+        .then((result) => result[0]?.maxBlock ?? 0),
+    ]);
 
     const sortedValis = activeValidators
       .map((validator) => validator.name ?? validator.hotkey.substring(0, 5))
@@ -78,11 +84,6 @@ export default async function MinerChart({
     const selectedValidators = sortedValis.filter(
       (_, index) => validatorFlags[index] === "1",
     );
-
-    const latestBlock = await db
-      .select({ maxBlock: sql<number>`MAX(${ValidatorRequest.block})` })
-      .from(ValidatorRequest)
-      .then((result) => result[0]?.maxBlock ?? 0);
 
     const startBlock = latestBlock - Math.min(block, 360);
 
@@ -131,10 +132,6 @@ export default async function MinerChart({
       )
       .as("inner");
 
-    const stats = await db.select().from(inner).orderBy(desc(inner.block));
-
-    const orderedStats = stats.reverse();
-
     const innerResponses = db
       .select({
         hotkey: MinerResponse.hotkey,
@@ -167,11 +164,16 @@ export default async function MinerChart({
       )
       .as("innerResponses");
 
-    const latestResponses = (await db
-      .select()
-      .from(innerResponses)
-      .orderBy(desc(innerResponses.timestamp))
-      .limit(10)) as Response[];
+    const [stats, latestResponses] = await Promise.all([
+      db.select().from(inner).orderBy(desc(inner.block)),
+      db
+        .select()
+        .from(innerResponses)
+        .orderBy(desc(innerResponses.timestamp))
+        .limit(10) as Promise<Response[]>,
+    ]);
+
+    const orderedStats = stats.reverse();
 
     const miners = new Map<number, Keys>();
     orderedStats.forEach((m) => {

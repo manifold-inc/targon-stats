@@ -54,13 +54,6 @@ export default async function Page({ searchParams = {} }: PageProps) {
               return utc;
             })
             .as("minute"),
-        avg_jaro: sql<number>`
-            AVG(
-              (SELECT AVG(CAST(jt.value AS DECIMAL))
-              FROM JSON_TABLE(${MinerResponse.stats}->'$.jaros', '$[*]' COLUMNS (value DOUBLE PATH '$')) AS jt)
-              )`
-          .mapWith(Number)
-          .as("avg_jaro"),
         avg_wps:
           sql<number>`AVG(CAST(${MinerResponse.stats}->'$.wps' AS DECIMAL))`
             .mapWith(Number)
@@ -73,9 +66,7 @@ export default async function Page({ searchParams = {} }: PageProps) {
           sql<number>`AVG(CAST(${MinerResponse.stats}->'$.time_to_first_token' AS DECIMAL(8,5)))`
             .mapWith(Number)
             .as("avg_time_to_first_token"),
-        valiName: sql<string | undefined>`IFNULL(${Validator.valiName}, '')`.as(
-          "valiName",
-        ),
+        valiName: Validator.valiName,
       })
       .from(MinerResponse)
       .innerJoin(
