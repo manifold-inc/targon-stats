@@ -1,151 +1,23 @@
-"use client";
+import { eq, gte, sql } from "drizzle-orm";
 
-import { Suspense, useEffect, useRef, useState } from "react";
-import Link from "next/link";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Check, ChevronDown, ChevronUp } from "lucide-react";
+import { db } from "@/schema/db";
+import { Validator, ValidatorRequest } from "@/schema/schema";
+import ClientHeader from "./ClientHeader";
 
-import { reactClient } from "@/trpc/react";
-import { setValidatorMap } from "@/utils/validatorMap";
-import { useAuth } from "./providers";
+export default async function Header() {
+  const activeValidators = await db
+    .select({
+      name: Validator.valiName,
+      hotkey: Validator.hotkey,
+    })
+    .from(Validator)
+    .innerJoin(ValidatorRequest, eq(Validator.hotkey, ValidatorRequest.hotkey))
+    .where(gte(ValidatorRequest.timestamp, sql`NOW() - INTERVAL 2 HOUR`))
+    .groupBy(Validator.valiName, Validator.hotkey);
 
-const HeaderContent = () => {
-  const auth = useAuth();
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const pathName = usePathname();
+  const sortedValis = activeValidators
+    .map((validator) => validator.name ?? validator.hotkey.substring(0, 5))
+    .sort((a, b) => a.localeCompare(b));
 
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [selectedBits, setSelectedBits] = useState(0); // Default to no selection
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  const { data: validators } = reactClient.overview.activeValidators.useQuery();
-
-  useEffect(() => {
-    if (validators) {
-      setValidatorMap(validators.filter((v): v is string => v !== null));
-    }
-  }, [validators]);
-
-  const toggleDropdown = () => {
-    setIsDropdownOpen((prev) => !prev);
-  };
-
-  const handleSelection = (bitValue: number) => {
-    let newSelectedBits = selectedBits ^ bitValue;
-
-    // Calculate the bitmask for "All Validators"
-    const allValidatorsBitmask = (1 << validators!.length) - 1;
-
-    // If no other options are selected, default to "All Validators"
-    if (newSelectedBits === 0) {
-      newSelectedBits = allValidatorsBitmask;
-    } else if (newSelectedBits === allValidatorsBitmask) {
-      newSelectedBits = 0; // Unselect "All Validators" when it is the only option selected
-    }
-
-    setSelectedBits(newSelectedBits);
-
-    // Update the URL parameters without any path restriction
-    const currentParams = new URLSearchParams(searchParams);
-
-    if (newSelectedBits === allValidatorsBitmask) {
-      currentParams.delete("validators");
-    } else {
-      currentParams.set(
-        "validators",
-        newSelectedBits.toString(2).padStart(validators!.length, "0"), // Pad to the number of validators for consistency
-      );
-    }
-
-    // Replace the current URL with the new one
-    router.replace(`?${currentParams.toString()}`);
-  };
-
-  const handleClickOutside = (event: MouseEvent) => {
-    if (
-      dropdownRef.current &&
-      !dropdownRef.current.contains(event.target as Node)
-    ) {
-      setIsDropdownOpen(false);
-    }
-  };
-
-  useEffect(() => {
-    if (validators) {
-      const validator = searchParams.get("validators");
-      if (validator) {
-        setSelectedBits(parseInt(validator, 2));
-      }
-    }
-  }, [searchParams, router, pathName, validators]);
-
-  useEffect(() => {
-    if (isDropdownOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    } else {
-      document.removeEventListener("mousedown", handleClickOutside);
-    }
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isDropdownOpen]);
-
-  return (
-    <header>
-      <nav className="fixed right-5 top-5 z-40 flex space-x-8">
-        <Link href="/">Home</Link>
-        <Link href="/metrics">Metrics</Link>
-        <Link href="/stats/miner">Miners</Link>
-        <div className="relative" ref={dropdownRef}>
-          <button onClick={toggleDropdown} className="flex items-center gap-1">
-            Validators
-            {isDropdownOpen ? (
-              <ChevronUp className="px-1 py-0.5" />
-            ) : (
-              <ChevronDown className="px-1 py-0.5" />
-            )}
-          </button>
-          {isDropdownOpen && (
-            <div
-              className={`-translate-x-1/5 absolute right-0 z-50 mt-2 min-w-fit transform whitespace-nowrap rounded-md bg-white p-2 shadow-lg dark:bg-neutral-700 dark:text-gray-300`}
-            >
-              {validators?.map((validator, index) => (
-                <div
-                  key={index}
-                  onClick={() => handleSelection(1 << index)}
-                  className="flex cursor-pointer items-center gap-2 p-2"
-                >
-                  <span className="flex h-4 w-4 items-center justify-center rounded-sm border border-gray-400">
-                    {selectedBits & (1 << index) ? (
-                      <Check className="text-black dark:text-white" />
-                    ) : null}
-                  </span>
-                  {validator}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-        {auth.status === "AUTHED" ? (
-          <>
-            <Link href="/docs">API</Link>
-            <Link prefetch={false} href="/sign-out">
-              Sign Out
-            </Link>
-          </>
-        ) : (
-          <Link href="/sign-in">Sign in</Link>
-        )}
-      </nav>
-    </header>
-  );
-};
-
-export default function Header() {
-  return (
-    <Suspense fallback="Loading...">
-      <HeaderContent />
-    </Suspense>
-  );
+  return <ClientHeader validators={sortedValis} />;
 }

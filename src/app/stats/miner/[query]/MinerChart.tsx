@@ -1,249 +1,204 @@
-"use client";
+import { and, desc, eq, gte, inArray, or, sql } from "drizzle-orm";
 
-import { useState } from "react";
-import { LineChart } from "@tremor/react";
-
-import { reactClient } from "@/trpc/react";
+import { db } from "@/schema/db";
+import { MinerResponse, Validator, ValidatorRequest } from "@/schema/schema";
 import KeysTable from "./KeysTable";
+import MinerChartClient from "./MinerChartClient";
 import ResponseComparison from "./ResponseComparison";
+
+export const revalidate = 60;
 
 interface MinerChartProps {
   query: string;
   block: number;
-  valiNames: string[];
+  searchParams?: {
+    validators?: string;
+  };
 }
 
-export interface Keys {
+export interface Response {
+  hotkey: string;
+  validator: string;
+  sampling_params: {
+    seed: string;
+    top_k: string;
+    top_p: string;
+    best_of: string;
+    typical_p: string;
+    temperature: string;
+    top_n_tokens: string;
+    max_new_tokens: string;
+    repetition_penalty: string;
+  };
+  ground_truth: {
+    ground_truth: string;
+    messages: string;
+  };
+  stats: {
+    response: string;
+    verified: boolean;
+    jaros: number[];
+    wps: number;
+    time_for_all_tokens: number;
+    total_time: number;
+    time_to_first_token: number;
+  };
+}
+
+interface Keys {
   hotkey: string;
   coldkey: string;
 }
 
-const MinerChart: React.FC<MinerChartProps> = ({ query, block, valiNames }) => {
-  const cardStyles =
-    "flex flex-col flex-grow bg-white dark:bg-neutral-800 p-8 shadow-md rounded-2xl hover:shadow-lg transition-all dark:hover:bg-gray-800 text-center items-center";
-  const [visibleCategories, setVisibleCategories] = useState<string[]>([
-    "jaro_score",
-    "total_time",
-    "wps",
-    "time_for_all_tokens",
-    "time_to_first_token",
-  ]);
+export default async function MinerChart({
+  query,
+  block,
+  searchParams = {},
+}: MinerChartProps) {
+  try {
+    const validatorFlags = searchParams.validators || "";
 
-  const minerStats = reactClient.miner.stats.useQuery(
-    { query, block, valiNames },
-    { enabled: !!query.length },
-  );
+    const [activeValidators, latestBlock] = await Promise.all([
+      db
+        .select({
+          name: Validator.valiName,
+          hotkey: Validator.hotkey,
+        })
+        .from(Validator)
+        .innerJoin(
+          ValidatorRequest,
+          eq(Validator.hotkey, ValidatorRequest.hotkey),
+        )
+        .where(gte(ValidatorRequest.timestamp, sql`NOW() - INTERVAL 2 HOUR`))
+        .groupBy(Validator.valiName, Validator.hotkey),
+      db
+        .select({ maxBlock: sql<number>`MAX(${ValidatorRequest.block})` })
+        .from(ValidatorRequest)
+        .then((result) => result[0]?.maxBlock ?? 0),
+    ]);
 
-  if (minerStats.isLoading) {
-    return <p>Loading Data...</p>;
-  }
+    const sortedValis = activeValidators
+      .map((validator) => validator.name ?? validator.hotkey.substring(0, 5))
+      .sort((a, b) => a.localeCompare(b));
 
-  const handleCategoryClick = (category: string) => () => {
-    setVisibleCategories((prev) =>
-      prev.includes(category)
-        ? prev.filter((cat) => cat !== category)
-        : [...prev, category],
+    const selectedValidators = sortedValis.filter(
+      (_, index) => validatorFlags[index] === "1",
     );
-  };
 
-  const categoryColorMap: Record<string, string> = {
-    jaro_score: "blue",
-    total_time: "red",
-    wps: "green",
-    time_for_all_tokens: "purple",
-    time_to_first_token: "orange",
-  };
-  const textColor = (category: string, color: string) => {
-    return visibleCategories.includes(category)
-      ? color
-      : "text-gray-400 dark:text-gray-600";
-  };
+    const startBlock = latestBlock - Math.min(block, 360);
 
-  const displayValiNames =
-    valiNames.length > 3
-      ? `${valiNames[0]} ... ${valiNames[valiNames.length - 1]}`
-      : valiNames.join(", ");
+    const inner = db
+      .select({
+        jaros: sql<number[]>`${MinerResponse.stats}->'$.jaros'`.as("jaros"),
+        wps: sql<number>`CAST(${MinerResponse.stats}->'$.wps' AS DECIMAL(65,30))`
+          .mapWith(Number)
+          .as("wps"),
+        time_for_all_tokens:
+          sql<number>`CAST(${MinerResponse.stats}->'$.time_for_all_tokens' AS DECIMAL(65,30))`
+            .mapWith(Number)
+            .as("time_for_all_tokens"),
+        total_time:
+          sql<number>`CAST(${MinerResponse.stats}->'$.total_time' AS DECIMAL(65,30))`
+            .mapWith(Number)
+            .as("total_time"),
+        time_to_first_token:
+          sql<number>`CAST(${MinerResponse.stats}->'$.time_to_first_token' AS DECIMAL(65, 30))`
+            .mapWith(Number)
+            .as("time_to_first_token"),
+        uid: MinerResponse.uid,
+        hotkey: MinerResponse.hotkey,
+        coldkey: MinerResponse.coldkey,
+        block: ValidatorRequest.block,
+      })
+      .from(MinerResponse)
+      .innerJoin(
+        ValidatorRequest,
+        eq(ValidatorRequest.r_nanoid, MinerResponse.r_nanoid),
+      )
+      .innerJoin(Validator, eq(Validator.hotkey, ValidatorRequest.hotkey))
+      .where(
+        and(
+          gte(ValidatorRequest.block, startBlock),
+          query.length < 5
+            ? eq(MinerResponse.uid, parseInt(query))
+            : or(
+                eq(MinerResponse.hotkey, query),
+                eq(MinerResponse.coldkey, query),
+              ),
+          ...(selectedValidators?.length !== 0
+            ? [inArray(Validator.valiName, selectedValidators)]
+            : []),
+        ),
+      )
+      .as("inner");
 
-  const miners = new Map<number, Keys>();
-  minerStats.data?.forEach((m) => {
-    miners.set(m.uid, { hotkey: m.hotkey, coldkey: m.coldkey });
-  });
+    const innerResponses = db
+      .select({
+        hotkey: MinerResponse.hotkey,
+        validator: Validator.valiName,
+        stats: MinerResponse.stats,
+        sampling_params: ValidatorRequest.sampling_params,
+        ground_truth: ValidatorRequest.ground_truth,
+        timestamp: ValidatorRequest.timestamp,
+      })
+      .from(MinerResponse)
+      .innerJoin(
+        ValidatorRequest,
+        eq(ValidatorRequest.r_nanoid, MinerResponse.r_nanoid),
+      )
+      .innerJoin(Validator, eq(Validator.hotkey, ValidatorRequest.hotkey))
+      .where(
+        and(
+          // Helps speed up query
+          gte(ValidatorRequest.timestamp, sql`NOW() - INTERVAL 2 HOUR`),
+          query.length < 5
+            ? eq(MinerResponse.uid, parseInt(query))
+            : or(
+                eq(MinerResponse.hotkey, query),
+                eq(MinerResponse.coldkey, query),
+              ),
+          ...(selectedValidators?.length !== 0
+            ? [inArray(Validator.valiName, selectedValidators)]
+            : []),
+        ),
+      )
+      .as("innerResponses");
 
-  const processedData = minerStats.data!.map((item) => ({
-    ...item,
-    jaro_score: (
-      item.jaros.reduce((a, b) => a + b, 0) / item.jaros.length
-    ).toFixed(2), // Calculate the average and format to 2 decimal places
-    total_time: item.total_time
-      ? Number(item.total_time.toFixed(2))
-      : item.total_time,
-    wps: item.wps
-      ? Number(item.wps.toFixed(2))
-      : item.wps,
-    time_for_all_tokens: item.time_for_all_tokens
-      ? Number(item.time_for_all_tokens.toFixed(2))
-      : item.time_for_all_tokens,
-    time_to_first_token: item.time_to_first_token
-      ? Number(item.time_to_first_token.toFixed(2))
-      : item.time_to_first_token,
-  }));
+    const [stats, latestResponses] = await Promise.all([
+      db.select().from(inner).orderBy(desc(inner.block)),
+      db
+        .select()
+        .from(innerResponses)
+        .orderBy(desc(innerResponses.timestamp))
+        .limit(10) as Promise<Response[]>,
+    ]);
 
-  return (
-    <>
-      {!!minerStats.data?.length && (
-        <>
-          <dl className=" flex justify-between gap-4 text-center">
-            <button
-              onClick={handleCategoryClick("jaro_score")}
-              className={cardStyles}
-            >
-              <dt className="text-sm font-semibold leading-6 text-gray-600 dark:text-gray-400">
-                Average Jaro Score
-              </dt>
-              <dd
-                className={`order-first text-3xl font-semibold tracking-tight ${textColor(
-                  "jaro_score",
-                  "text-blue-500",
-                )}`}
-              >
-                {minerStats
-                  ? (
-                      minerStats.data.reduce((s, d) => {
-                        const avgJaroScore =
-                          d.jaros.reduce((a, b) => a + b, 0) / d.jaros.length;
-                        return s + avgJaroScore;
-                      }, 0) / minerStats.data.length
-                    ).toFixed(2)
-                  : "_"}
-              </dd>
-            </button>
+    const orderedStats = stats.reverse();
 
-            <button
-              onClick={handleCategoryClick("total_time")}
-              className={cardStyles}
-            >
-              <dt className="text-sm font-semibold leading-6 text-gray-600 dark:text-gray-400">
-                Average Total Time
-              </dt>
-              <dd
-                className={`order-first flex text-3xl font-semibold tracking-tight ${textColor(
-                  "total_time",
-                  "text-red-500",
-                )}`}
-              >
-                {minerStats
-                  ? (
-                      minerStats.data.reduce((s, d) => s + d.total_time, 0) /
-                      minerStats.data.length
-                    ).toFixed(2)
-                  : "_"}
-              </dd>
-            </button>
+    const miners = new Map<number, Keys>();
+    orderedStats.forEach((m) => {
+      miners.set(m.uid, { hotkey: m.hotkey, coldkey: m.coldkey });
+    });
 
-            <button
-              onClick={handleCategoryClick("wps")}
-              className={cardStyles}
-            >
-              <dt className="text-sm font-semibold leading-6 text-gray-600 dark:text-gray-400">
-                Average Words Per Second
-              </dt>
-              <dd
-                className={`order-first text-3xl font-semibold tracking-tight ${textColor(
-                  "wps",
-                  "text-green-500",
-                )}`}
-              >
-                {minerStats
-                  ? (
-                      minerStats.data.reduce(
-                        (s, d) => s + d.wps,
-                        0,
-                      ) / minerStats.data.length
-                    ).toFixed(2)
-                  : "_"}
-              </dd>
-            </button>
-
-            <button
-              onClick={handleCategoryClick("time_for_all_tokens")}
-              className={cardStyles}
-            >
-              <dt className="text-sm font-semibold leading-6 text-gray-600 dark:text-gray-400">
-                Average Time For All tokens
-              </dt>
-              <dd
-                className={`order-first text-3xl font-semibold tracking-tight ${textColor(
-                  "time_for_all_tokens",
-                  "text-purple-500",
-                )}`}
-              >
-                {minerStats
-                  ? (
-                      minerStats.data.reduce(
-                        (s, d) => s + d.time_for_all_tokens,
-                        0,
-                      ) / minerStats.data.length
-                    ).toFixed(2)
-                  : "_"}
-              </dd>
-            </button>
-
-            <button
-              onClick={handleCategoryClick("time_to_first_token")}
-              className={cardStyles}
-            >
-              <dt className="text-sm font-semibold leading-6 text-gray-600 dark:text-gray-400">
-                Average Time To First Token
-              </dt>
-              <dd
-                className={`order-first text-3xl font-semibold tracking-tight ${textColor(
-                  "time_to_first_token",
-                  "text-orange-500",
-                )}`}
-              >
-                {minerStats
-                  ? (
-                      minerStats.data.reduce(
-                        (s, d) => s + d.time_to_first_token,
-                        0,
-                      ) / minerStats.data.length
-                    ).toFixed(2)
-                  : "_"}
-              </dd>
-            </button>
-          </dl>
-
-          <div className="pt-8">
-            <div className="flex w-full flex-grow flex-col items-center rounded-2xl bg-white p-8 text-center shadow-md transition-all hover:shadow-lg dark:bg-neutral-800">
-              <h3 className="pb-4 text-center text-2xl font-semibold text-gray-800 dark:text-gray-50">
-                Viewing Stats For: {query} on Validator: {displayValiNames}
-              </h3>
-              <LineChart
-                data={processedData}
-                index="block"
-                xAxisLabel="Block"
-                categories={visibleCategories}
-                colors={visibleCategories.map(
-                  (category) => categoryColorMap[category]!,
-                )}
-                yAxisWidth={40}
-                className="mt-4"
-                showLegend={false}
-              />
-            </div>
+    return (
+      <>
+        <MinerChartClient
+          minerStats={orderedStats}
+          query={query}
+          valiNames={selectedValidators}
+        />
+        <div className="flex flex-col gap-4 pt-8">
+          <div className="flex-1">
+            <KeysTable miners={miners} />
           </div>
-        </>
-      )}
-      <div className="flex flex-col gap-4 pt-8">
-        <div className="flex-1">
-          <KeysTable miners={miners} />
+          <div className="flex-1 pt-8">
+            <ResponseComparison responses={latestResponses} />
+          </div>
         </div>
-        <div className="flex-1 pt-8">
-          <ResponseComparison query={query} valiNames={valiNames} />
-        </div>
-      </div>
-    </>
-  );
-};
-
-export default MinerChart;
+      </>
+    );
+  } catch (error) {
+    console.error("Error fetching miner stats:", error);
+    return <div>Error loading miner stats. Please try again later.</div>;
+  }
+}

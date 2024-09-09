@@ -52,6 +52,8 @@ export const MinerResponse = mysqlTable(
     coldkey: varchar("coldkey", { length: 255 }).notNull(),
     uid: int("uid").notNull(),
     stats: json("stats"),
+    wps: float("wps").generatedAlwaysAs(sql`CAST(stats->>'$.wps' AS DECIMAL(65,30))`),
+    timeForAllTokens: float("time_for_all_tokens").generatedAlwaysAs(sql`CAST(stats->>'$.time_for_all_tokens' AS DECIMAL(65,30))`),
   },
   (table) => {
     return {
@@ -59,8 +61,10 @@ export const MinerResponse = mysqlTable(
       hotkeyIdx: index("hotkey_idx").on(table.hotkey),
       coldkeyIdx: index("coldkey_idx").on(table.coldkey),
       uidIdx: index("uid_idx").on(table.uid),
+      wpsIdx: index("wps_idx").on(table.wps),
+      timeForAllTokensIdx: index("time_for_all_tokens_idx").on(table.timeForAllTokens),
     };
-  },
+  }
 );
 
 export const Validator = mysqlTable(
