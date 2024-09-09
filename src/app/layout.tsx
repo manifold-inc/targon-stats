@@ -10,7 +10,7 @@ import clsx from "clsx";
 import { Toaster } from "sonner";
 
 import { WithGlobalProvider } from "./_components/providers";
-import ServerHeader from "./_components/serverHeader";
+import Header from "./_components/header";
 
 const ToggleTheme = dynamic(() => import("./_components/ToggleTheme"), {
   ssr: false,
@@ -46,7 +46,7 @@ export default function RootLayout({
       >
         <WithGlobalProvider>
           <ThemeProvider attribute="class">
-            <ServerHeader />
+            <Header />
             <main>{children}</main>
             <div className="fixed bottom-5 right-5 z-40">
               <ToggleTheme />

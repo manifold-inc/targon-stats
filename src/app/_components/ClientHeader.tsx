@@ -7,10 +7,10 @@ import { Check, ChevronDown, ChevronUp } from "lucide-react";
 
 import { useAuth } from "./providers";
 
-interface HeaderClientProps {
+interface ClientHeaderProps {
   validators: string[];
 }
-const HeaderClient = ({ validators }: HeaderClientProps) => {
+const ClientHeader = ({ validators }: ClientHeaderProps) => {
   const auth = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -122,4 +122,4 @@ const HeaderClient = ({ validators }: HeaderClientProps) => {
   );
 };
 
-export default HeaderClient;
+export default ClientHeader;

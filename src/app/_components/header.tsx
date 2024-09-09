@@ -2,9 +2,9 @@ import { eq, gte, sql } from "drizzle-orm";
 
 import { db } from "@/schema/db";
 import { Validator, ValidatorRequest } from "@/schema/schema";
-import HeaderClient from "./HeaderClient";
+import ClientHeader from "./ClientHeader";
 
-export default async function ServerHeader() {
+export default async function Header() {
   const activeValidators = await db
     .select({
       name: Validator.valiName,
@@ -19,5 +19,5 @@ export default async function ServerHeader() {
     .map((validator) => validator.name ?? validator.hotkey.substring(0, 5))
     .sort((a, b) => a.localeCompare(b));
 
-  return <HeaderClient validators={sortedValis} />;
+  return <ClientHeader validators={sortedValis} />;
 }
