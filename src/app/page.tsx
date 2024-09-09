@@ -55,7 +55,7 @@ export default async function Page({ searchParams = {} }: PageProps) {
             })
             .as("minute"),
         avg_wps:
-          sql<number>`AVG(CAST(${MinerResponse.stats}->'$.wps' AS DECIMAL))`
+          sql<number>`AVG(CAST(${MinerResponse.stats}->'$.wps' AS DECIMAL(65,30)))`
             .mapWith(Number)
             .as("avg_wps"),
         avg_total_time:

@@ -90,7 +90,7 @@ export default async function MinerChart({
     const inner = db
       .select({
         jaros: sql<number[]>`${MinerResponse.stats}->'$.jaros'`.as("jaros"),
-        wps: sql<number>`CAST(${MinerResponse.stats}->'$.wps' AS DECIMAL)`
+        wps: sql<number>`CAST(${MinerResponse.stats}->'$.wps' AS DECIMAL(65,30))`
           .mapWith(Number)
           .as("wps"),
         time_for_all_tokens:
