@@ -1,4 +1,4 @@
-import { and, eq, gte, inArray, sql } from "drizzle-orm";
+import { and, avg, eq, gte, inArray, sql } from "drizzle-orm";
 
 import { db } from "@/schema/db";
 import { MinerResponse, Validator, ValidatorRequest } from "@/schema/schema";
@@ -54,10 +54,7 @@ export default async function Page({ searchParams = {} }: PageProps) {
               return utc;
             })
             .as("minute"),
-        avg_wps:
-          sql<number>`AVG(CAST(${MinerResponse.stats}->'$.wps' AS DECIMAL(65,30)))`
-            .mapWith(Number)
-            .as("avg_wps"),
+        avg_wps: avg(MinerResponse.wps).mapWith(Number).as("avg_wps"),
         avg_total_time:
           sql<number>`AVG(CAST(${MinerResponse.stats}->'$.total_time' AS DECIMAL(8,5)))`
             .mapWith(Number)
@@ -78,7 +75,7 @@ export default async function Page({ searchParams = {} }: PageProps) {
         and(
           gte(ValidatorRequest.timestamp, sql`NOW() - INTERVAL 2 HOUR`),
           ...(verified
-            ? [sql`(${MinerResponse.stats}->'$.verified') = ${verified}`]
+            ? [eq(MinerResponse.verified, verified)]
             : []),
           ...(selectedValidators.length > 0
             ? [inArray(Validator.valiName, selectedValidators)]
