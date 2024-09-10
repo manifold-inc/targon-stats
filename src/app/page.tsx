@@ -1,8 +1,10 @@
+import { Suspense } from "react";
 import { and, avg, eq, gte, inArray, sql } from "drizzle-orm";
 
 import { db } from "@/schema/db";
 import { MinerResponse, Validator, ValidatorRequest } from "@/schema/schema";
 import ClientPage from "./ClientPage";
+import Loading from "./loading";
 
 interface PageProps {
   searchParams?: {
@@ -12,7 +14,15 @@ interface PageProps {
 }
 export const revalidate = 60 * 5;
 
-export default async function Page({ searchParams = {} }: PageProps) {
+export default function Page({ searchParams = {} }: PageProps) {
+  return (
+    <Suspense fallback={<Loading />}>
+      <PageContent searchParams={searchParams} />
+    </Suspense>
+  );
+}
+
+async function PageContent({ searchParams = {} }: PageProps) {
   const verified = searchParams.verified === "true";
   const validatorFlags = searchParams.validators || "";
 
