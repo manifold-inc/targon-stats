@@ -74,9 +74,7 @@ export default async function Page({ searchParams = {} }: PageProps) {
       .where(
         and(
           gte(ValidatorRequest.timestamp, sql`NOW() - INTERVAL 2 HOUR`),
-          ...(verified
-            ? [eq(MinerResponse.verified, verified)]
-            : []),
+          ...(verified ? [eq(MinerResponse.verified, verified)] : []),
           ...(selectedValidators.length > 0
             ? [inArray(Validator.valiName, selectedValidators)]
             : []),

@@ -32,7 +32,9 @@ export const ValidatorRequest = mysqlTable(
     ground_truth: json("ground_truth"),
     version: int("version").notNull(),
     hotkey: varchar("hotkey", { length: 255 }),
-    date: timestamp("date").generatedAlwaysAs(sql`DATE(timestamp)`, { mode: "stored" }),
+    date: timestamp("date").generatedAlwaysAs(sql`DATE(timestamp)`, {
+      mode: "stored",
+    }),
   },
   (table) => {
     return {
@@ -54,9 +56,18 @@ export const MinerResponse = mysqlTable(
     coldkey: varchar("coldkey", { length: 255 }).notNull(),
     uid: int("uid").notNull(),
     stats: json("stats"),
-    wps: float("wps").generatedAlwaysAs(sql`CAST(stats->>'$.wps' AS DECIMAL(65,30))`, { mode: "stored" }),
-    timeForAllTokens: float("time_for_all_tokens").generatedAlwaysAs(sql`CAST(stats->>'$.time_for_all_tokens' AS DECIMAL(65,30))`, { mode: "stored" }),
-    verified: boolean("verified").generatedAlwaysAs(sql`JSON_EXTRACT(stats, '$.verified')`, { mode: "stored" }),
+    wps: float("wps").generatedAlwaysAs(
+      sql`CAST(stats->>'$.wps' AS DECIMAL(65,30))`,
+      { mode: "stored" },
+    ),
+    timeForAllTokens: float("time_for_all_tokens").generatedAlwaysAs(
+      sql`CAST(stats->>'$.time_for_all_tokens' AS DECIMAL(65,30))`,
+      { mode: "stored" },
+    ),
+    verified: boolean("verified").generatedAlwaysAs(
+      sql`JSON_EXTRACT(stats, '$.verified')`,
+      { mode: "stored" },
+    ),
   },
   (table) => {
     return {
@@ -65,10 +76,12 @@ export const MinerResponse = mysqlTable(
       coldkeyIdx: index("coldkey_idx").on(table.coldkey),
       uidIdx: index("uid_idx").on(table.uid),
       wpsIdx: index("wps_idx").on(table.wps),
-      timeForAllTokensIdx: index("time_for_all_tokens_idx").on(table.timeForAllTokens),
+      timeForAllTokensIdx: index("time_for_all_tokens_idx").on(
+        table.timeForAllTokens,
+      ),
       verifiedIdx: index("verified_idx").on(table.verified),
     };
-  }
+  },
 );
 
 export const Validator = mysqlTable(

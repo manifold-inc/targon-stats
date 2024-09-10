@@ -168,10 +168,10 @@ export default async function MinerChart({
         .limit(10) as Promise<Response[]>,
     ]);
 
-    const orderedStats = stats.reverse().map(stat => ({
+    const orderedStats = stats.reverse().map((stat) => ({
       ...stat,
       wps: stat.wps ?? 0,
-      time_for_all_tokens: stat.time_for_all_tokens ?? 0
+      time_for_all_tokens: stat.time_for_all_tokens ?? 0,
     }));
 
     const miners = new Map<number, Keys>();

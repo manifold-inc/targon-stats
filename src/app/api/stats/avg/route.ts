@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { and, desc, eq, gte, inArray, lte, sql } from "drizzle-orm";
+import { and, avg, desc, eq, gte, inArray, lte, sql } from "drizzle-orm";
 import { z } from "zod";
 
 import { db } from "@/schema/db";
@@ -127,14 +127,8 @@ export const POST = async (req: NextRequest) => {
                 (SELECT AVG(CAST(jt.value AS DECIMAL))
                 FROM JSON_TABLE(${MinerResponse.stats}->'$.jaros', '$[*]' COLUMNS (value DOUBLE PATH '$')) AS jt)
                 )`.mapWith(Number),
-        avg_wps:
-          sql<number>`AVG(CAST(${MinerResponse.stats}->'$.wps' AS DECIMAL))`.mapWith(
-            Number,
-          ),
-        avg_time_for_all_tokens:
-          sql<number>`AVG(CAST(${MinerResponse.stats}->'$.time_for_all_tokens' AS DECIMAL(8,5)))`.mapWith(
-            Number,
-          ),
+        avg_wps: avg(MinerResponse.wps),
+        avg_time_for_all_tokens: avg(MinerResponse.timeForAllTokens),
         avg_total_time:
           sql<number>`AVG(CAST(${MinerResponse.stats}->'$.total_time' AS DECIMAL(8,5)))`.mapWith(
             Number,
@@ -157,9 +151,7 @@ export const POST = async (req: NextRequest) => {
         and(
           gte(ValidatorRequest.block, startBlock),
           lte(ValidatorRequest.block, endBlock),
-          ...(body.verified
-            ? [sql`(${MinerResponse.stats}->'$.verified') = ${body.verified}`]
-            : []),
+          ...(body.verified ? [eq(MinerResponse.verified, body.verified)] : []),
           ...(body.validator_hotkeys
             ? [inArray(Validator.hotkey, body.validator_hotkeys)]
             : []),
