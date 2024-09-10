@@ -90,13 +90,8 @@ export default async function MinerChart({
     const inner = db
       .select({
         jaros: sql<number[]>`${MinerResponse.stats}->'$.jaros'`.as("jaros"),
-        wps: sql<number>`CAST(${MinerResponse.stats}->'$.wps' AS DECIMAL(65,30))`
-          .mapWith(Number)
-          .as("wps"),
-        time_for_all_tokens:
-          sql<number>`CAST(${MinerResponse.stats}->'$.time_for_all_tokens' AS DECIMAL(65,30))`
-            .mapWith(Number)
-            .as("time_for_all_tokens"),
+        wps: MinerResponse.wps,
+        time_for_all_tokens: MinerResponse.timeForAllTokens,
         total_time:
           sql<number>`CAST(${MinerResponse.stats}->'$.total_time' AS DECIMAL(65,30))`
             .mapWith(Number)
@@ -173,7 +168,11 @@ export default async function MinerChart({
         .limit(10) as Promise<Response[]>,
     ]);
 
-    const orderedStats = stats.reverse();
+    const orderedStats = stats.reverse().map((stat) => ({
+      ...stat,
+      wps: stat.wps ?? 0,
+      time_for_all_tokens: stat.time_for_all_tokens ?? 0,
+    }));
 
     const miners = new Map<number, Keys>();
     orderedStats.forEach((m) => {
