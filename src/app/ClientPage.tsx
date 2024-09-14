@@ -41,7 +41,7 @@ const ClientPage = ({
   }, [verified, router, searchParams]);
 
   const [visibleCategories, setVisibleCategories] = useState<string[]>([
-    "avg_wps",
+    "avg_tps",
     "avg_total_time",
     "avg_time_to_first_token",
     "avg_time_for_all_tokens",
@@ -61,7 +61,6 @@ const ClientPage = ({
           : item.avg_time_for_all_tokens,
       }))
     : []; // Return an empty array if data is undefined
-
 
   const handleCategoryClick = (category: string) => () => {
     setVisibleCategories((prev) =>
@@ -105,7 +104,7 @@ const ClientPage = ({
                 </dt>
                 <dd
                   className={`order-first text-center text-3xl font-semibold tracking-tight ${textColor(
-                    "avg_wps",
+                    "avg_tps",
                     "text-red-500",
                   )}`}
                 >
@@ -171,7 +170,9 @@ const ClientPage = ({
                   )}`}
                 >
                   {data
-                    ? Math.min(...data.map((d) => d.avg_time_for_all_tokens)).toFixed(2) + "s"
+                    ? Math.min(
+                        ...data.map((d) => d.avg_time_for_all_tokens),
+                      ).toFixed(2) + "s"
                     : "_"}
                 </dd>
               </button>

@@ -83,7 +83,6 @@ const MinerChartClient: React.FC<MinerChartClientProps> = ({
       {!!minerStats.length && (
         <>
           <dl className=" flex justify-between gap-4 text-center">
-
             <button
               onClick={handleCategoryClick("total_time")}
               className={cardStyles}

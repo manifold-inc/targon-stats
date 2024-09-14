@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
-import { Copy, X } from "lucide-react";
+import { Copy, Pencil, X } from "lucide-react";
 import { toast } from "sonner";
 
 import { copyToClipboard } from "@/utils/utils";
 import { type Response } from "./MinerChart";
+import TokenDisplay from "./TokenDisplay";
 
 interface ResponseComparisonProps {
   responses: Response[];
@@ -19,7 +20,7 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
   const [selectedResponse, setSelectedResponse] = useState<Response | null>(
     null,
   );
-
+  const [showTokenized, setShowTokenized] = useState(true);
   const handleViewDetails = (response: Response) => {
     setSelectedResponse(response);
     setOpen(true);
@@ -29,6 +30,10 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
     void copyToClipboard(copy);
     toast.success("Copied to clipboard!");
   };
+
+  if (responses.length === 0) {
+    return <div>No responses found</div>;
+  }
 
   return (
     <>
@@ -71,31 +76,31 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                       scope="col"
                       className="whitespace-nowrap px-3 py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200"
                     >
-                      Ground Truth
+                      Validator Request
                     </th>
                     <th
                       scope="col"
                       className="whitespace-nowrap px-3 py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200"
                     >
-                      Response
+                      Response Tokens
                     </th>
                     <th
                       scope="col"
                       className="whitespace-nowrap px-3  py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200"
                     >
-                      Avg Jaro Score
-                    </th>
-                    <th
-                      scope="col"
-                      className="whitespace-nowrap px-3  py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200"
-                    >
-                      Words Per Second
+                      Tokens Per Second
                     </th>
                     <th
                       scope="col"
                       className="whitespace-nowrap px-3 py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200"
                     >
                       Time For All Tokens
+                    </th>
+                    <th
+                      scope="col"
+                      className="whitespace-nowrap px-3 py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200"
+                    >
+                      Time To First Token
                     </th>
                     <th
                       scope="col"
@@ -107,49 +112,19 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                       scope="col"
                       className="whitespace-nowrap px-3 py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200"
                     >
-                      Time To First Token
-                    </th>
-                    <th
-                      scope="col"
-                      className="whitespace-nowrap px-3 py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200"
-                    >
                       Seed
                     </th>
                     <th
                       scope="col"
                       className="whitespace-nowrap px-3 py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200"
                     >
-                      Top K
+                      Model
                     </th>
                     <th
                       scope="col"
                       className="whitespace-nowrap px-3 py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200"
                     >
-                      Top P
-                    </th>
-                    <th
-                      scope="col"
-                      className="whitespace-nowrap px-3 py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200"
-                    >
-                      Best Of
-                    </th>
-                    <th
-                      scope="col"
-                      className="whitespace-nowrap px-3  py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200"
-                    >
-                      Typical P
-                    </th>
-                    <th
-                      scope="col"
-                      className="whitespace-nowrap px-3  py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200"
-                    >
-                      Temperature
-                    </th>
-                    <th
-                      scope="col"
-                      className="whitespace-nowrap px-3  py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200"
-                    >
-                      Top N Tokens
+                      Stream
                     </th>
                     <th
                       scope="col"
@@ -161,8 +136,15 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                       scope="col"
                       className="whitespace-nowrap px-3 py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200"
                     >
-                      Repetition Penalty
+                      Temperature
                     </th>
+                    <th
+                      scope="col"
+                      className="whitespace-nowrap px-3  py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200"
+                    >
+                      Endpoint
+                    </th>
+
                     <th
                       scope="col"
                       className="whitespace-nowrap px-3 py-3.5 text-right text-sm font-semibold text-gray-900 dark:text-gray-200 sm:pr-6"
@@ -196,23 +178,31 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                         {response.validator}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
-                        {response.stats.verified ? "Yes" : "No"}
+                        {response.verified ? "Yes" : "No"}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
                         <div className="flex items-center justify-between">
                           <span>
-                            {response.ground_truth.ground_truth.length > 30
-                              ? response.ground_truth.ground_truth.substring(
-                                  0,
-                                  30,
-                                ) + "..."
-                              : response.ground_truth.ground_truth}
+                            {response.vali_request.messages
+                              ? response.vali_request.messages
+                                  .find((msg) => msg.role === "user")
+                                  ?.content.substring(0, 30) + "..."
+                              : response.vali_request.prompt
+                                ? response.vali_request.prompt
+                                    .split("\n\n")
+                                    .pop()
+                                    ?.substring(0, 30) + "..."
+                                : "N/A"}
                           </span>
                           <button
                             className="ml-2 cursor-pointer"
                             onClick={() =>
                               handleCopyClipboard(
-                                response.ground_truth.ground_truth,
+                                response.vali_request.messages
+                                  ? JSON.stringify(
+                                      response.vali_request.messages,
+                                    )
+                                  : response.vali_request.prompt || "N/A",
                               )
                             }
                           >
@@ -223,14 +213,18 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
                         <div className="flex items-center justify-between">
                           <span>
-                            {response.stats.response.length > 30
-                              ? response.stats.response.substring(0, 30) + "..."
-                              : response.stats.response}
+                            {response.tokens
+                              .slice(0, 10)
+                              .map(([token]) => token)
+                              .join("|")}
+                            {response.tokens.length > 10 ? "..." : ""}
                           </span>
                           <button
                             className="ml-2 cursor-pointer"
                             onClick={() =>
-                              handleCopyClipboard(response.stats.response)
+                              handleCopyClipboard(
+                                JSON.stringify(response.tokens),
+                              )
                             }
                           >
                             <Copy className="z-10 h-4 w-4 text-gray-500 dark:text-gray-300" />
@@ -238,53 +232,34 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                         </div>
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
-                        {response.stats.jaros.length > 0
-                          ? (
-                              response.stats.jaros.reduce(
-                                (acc, score) => acc + score,
-                                0,
-                              ) / response.stats.jaros.length
-                            ).toFixed(2)
-                          : "N/A"}
+                        {response.tps.toFixed(2)}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
-                        {response.stats.wps.toFixed(2)}
+                        {response.time_for_all_tokens.toFixed(2)}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
-                        {response.stats.time_for_all_tokens.toFixed(2)}
+                        {response.time_to_first_token.toFixed(2)}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
-                        {response.stats.total_time.toFixed(2)}
+                        {response.total_time.toFixed(2)}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
-                        {response.stats.time_to_first_token.toFixed(2)}
+                        {response.vali_request.seed}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
-                        {response.sampling_params.seed}
+                        {response.vali_request.model}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
-                        {response.sampling_params.top_k}
+                        {response.vali_request.stream ? "Yes" : "No"}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
-                        {response.sampling_params.top_p}
+                        {response.vali_request.max_tokens}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
-                        {response.sampling_params.best_of}
+                        {response.vali_request.temperature.toFixed(4)}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
-                        {response.sampling_params.typical_p}
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
-                        {response.sampling_params.temperature}
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
-                        {response.sampling_params.top_n_tokens}
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
-                        {response.sampling_params.max_new_tokens}
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
-                        {response.sampling_params.repetition_penalty}
+                        {response.request_endpoint.substring(10)}
                       </td>
                       <td className="relative whitespace-nowrap px-3 py-4 text-right text-sm font-medium sm:pr-6">
                         <button
@@ -345,58 +320,35 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                             selectedResponse.hotkey.length,
                           ),
                       ],
-                      [
-                        "Avg Jaro Score",
-                        selectedResponse.stats.jaros.length > 0
-                          ? (
-                              selectedResponse.stats.jaros.reduce(
-                                (acc, score) => acc + score,
-                                0,
-                              ) / selectedResponse.stats.jaros.length
-                            ).toFixed(2)
-                          : "N/A",
-                      ],
-                      [
-                        "Words Per Second",
-                        selectedResponse.stats.wps.toFixed(2),
-                      ],
+                      ["Tokens Per Second", selectedResponse.tps.toFixed(2)],
                       [
                         "Time For All Tokens",
-                        selectedResponse.stats.time_for_all_tokens.toFixed(2),
+                        selectedResponse.time_for_all_tokens.toFixed(2),
                       ],
-                      [
-                        "Total Time",
-                        selectedResponse.stats.total_time.toFixed(2),
-                      ],
+                      ["Total Time", selectedResponse.total_time.toFixed(2)],
                       [
                         "Time To First Token",
-                        selectedResponse.stats.time_to_first_token.toFixed(2),
+                        selectedResponse.time_to_first_token.toFixed(2),
                       ],
-                      ["Seed", selectedResponse.sampling_params.seed],
-                      ["Top K", selectedResponse.sampling_params.top_k],
-                      ["Top P", selectedResponse.sampling_params.top_p],
-                      ["Best Of", selectedResponse.sampling_params.best_of],
-                      ["Typical P", selectedResponse.sampling_params.typical_p],
+                      ["Seed", selectedResponse.vali_request.seed],
                       [
                         "Temperature",
-                        selectedResponse.sampling_params.temperature,
-                      ],
-                      [
-                        "Top N Tokens",
-                        selectedResponse.sampling_params.top_n_tokens,
+                        selectedResponse.vali_request.temperature.toFixed(4),
                       ],
                       [
                         "Max N Tokens",
-                        selectedResponse.sampling_params.max_new_tokens,
+                        selectedResponse.vali_request.max_tokens,
                       ],
                       [
-                        "Repetition Penalty",
-                        selectedResponse.sampling_params.repetition_penalty,
+                        "Stream",
+                        selectedResponse.vali_request.stream ? "Yes" : "No",
                       ],
+                      ["Verified", selectedResponse.verified ? "Yes" : "No"],
                       [
-                        "Verified",
-                        selectedResponse.stats.verified ? "Yes" : "No",
+                        "Endpoint",
+                        selectedResponse.request_endpoint.substring(10),
                       ],
+                      ["Model", selectedResponse.vali_request.model],
                     ].map(([label, value], index) => (
                       <div
                         key={index}
@@ -424,34 +376,13 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                 </div>
                 <div className="border-t border-gray-300 p-4 sm:col-span-2 sm:px-0">
                   <dt className="flex justify-between pb-2 pr-4 text-sm font-semibold leading-6 text-gray-900 dark:text-white">
-                    Jaro Scores
-                  </dt>
-                  <dd className="mt-1 font-mono text-sm leading-6 text-gray-700 dark:text-gray-400">
-                    {selectedResponse.stats.jaros &&
-                    selectedResponse.stats.jaros.length > 0 ? (
-                      <span>
-                        [
-                        {selectedResponse.stats.jaros
-                          .map((score) => score.toFixed(4)) // Formats the scores to 4 decimal places
-                          .join(", ")}
-                        ]
-                      </span>
-                    ) : (
-                      <span>No Jaro scores available.</span>
-                    )}
-                  </dd>
-                </div>
-                <div className="border-t border-gray-300 p-4 sm:col-span-2 sm:px-0">
-                  <dt className="flex justify-between pb-2 pr-4 text-sm font-semibold leading-6 text-gray-900 dark:text-white">
-                    Prompt
+                    Validator Request
                     <button
                       className="ml-2 cursor-pointer"
                       onClick={() =>
                         handleCopyClipboard(
                           JSON.stringify(
-                            selectedResponse.ground_truth.messages,
-                            null,
-                            2,
+                            selectedResponse.vali_request.messages,
                           ),
                         )
                       }
@@ -461,22 +392,43 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                   </dt>
                   <pre className="max-w-full overflow-auto">
                     <code className="inline-block items-center space-x-4 break-words text-left text-sm text-gray-700 dark:text-gray-400">
-                      {JSON.stringify(
-                        selectedResponse.ground_truth.messages,
-                        null,
-                        2,
-                      )}
+                      {selectedResponse.vali_request.messages
+                        ? JSON.stringify(selectedResponse.vali_request.messages)
+                        : selectedResponse.vali_request.prompt || "N/A"}
                     </code>
                   </pre>
                 </div>
                 <div className="border-t border-gray-300 p-4 sm:col-span-2 sm:px-0">
-                  <dt className="flex justify-between pb-2 pr-4 text-sm font-semibold leading-6 text-gray-900 dark:text-white">
-                    Ground Truth
+                  <dt className="flex items-center justify-between pb-2 pr-4 text-sm font-semibold leading-6 text-gray-900 dark:text-white">
+                    <div className="flex items-center">
+                      <span className="inline-block w-40">
+                        {showTokenized
+                          ? "Tokenized Response"
+                          : "String Response"}
+                      </span>
+                      <div
+                        onClick={() => setShowTokenized(!showTokenized)}
+                        className="ml-2 cursor-pointer"
+                      >
+                        <Pencil
+                          size={18}
+                          className={
+                            showTokenized
+                              ? "text-gray-800 dark:text-gray-400"
+                              : "text-black dark:text-white"
+                          }
+                        />
+                      </div>
+                    </div>
                     <button
-                      className="ml-2 cursor-pointer"
+                      className="cursor-pointer"
                       onClick={() =>
                         handleCopyClipboard(
-                          selectedResponse.ground_truth.ground_truth,
+                          showTokenized
+                            ? JSON.stringify(selectedResponse.tokens)
+                            : selectedResponse.tokens
+                                .map(([token]) => token)
+                                .join(""),
                         )
                       }
                     >
@@ -484,25 +436,10 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                     </button>
                   </dt>
                   <dd className="mt-1 font-mono text-sm leading-6 text-gray-700 dark:text-gray-400">
-                    {selectedResponse.ground_truth.ground_truth}
-                  </dd>
-                </div>
-                <div className="border-t border-gray-300 p-4 sm:col-span-2 sm:px-0">
-                  <dt className="flex justify-between pb-2 pr-4 text-sm font-semibold leading-6 text-gray-900 dark:text-white">
-                    Response
-                    <button
-                      className="ml-2 cursor-pointer"
-                      onClick={() =>
-                        handleCopyClipboard(
-                          selectedResponse.ground_truth.ground_truth,
-                        )
-                      }
-                    >
-                      <Copy className="z-10 h-4 w-4 text-gray-500 dark:text-gray-300" />
-                    </button>
-                  </dt>
-                  <dd className="mt-1 font-mono text-sm leading-6 text-gray-700 dark:text-gray-400">
-                    {selectedResponse.stats.response}
+                    <TokenDisplay
+                      tokens={selectedResponse.tokens}
+                      showTokenized={showTokenized}
+                    />
                   </dd>
                 </div>
               </DialogPanel>

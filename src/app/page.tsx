@@ -65,8 +65,12 @@ async function PageContent({ searchParams = {} }: PageProps) {
             })
             .as("minute"),
         avg_tps: avg(MinerResponse.tps).as("avg_tps"),
-        avg_time_to_first_token: avg(MinerResponse.timeToFirstToken).as("avg_time_to_first_token"),
-        avg_time_for_all_tokens: avg(MinerResponse.timeForAllTokens).as("avg_time_for_all_tokens"),
+        avg_time_to_first_token: avg(MinerResponse.timeToFirstToken).as(
+          "avg_time_to_first_token",
+        ),
+        avg_time_for_all_tokens: avg(MinerResponse.timeForAllTokens).as(
+          "avg_time_for_all_tokens",
+        ),
         avg_total_time: avg(MinerResponse.totalTime).as("avg_total_time"),
         valiName: Validator.valiName,
       })
@@ -97,13 +101,13 @@ async function PageContent({ searchParams = {} }: PageProps) {
       .from(innerAvg)
       .orderBy(innerAvg.minute);
 
-      const mappedStats = orderedStats.map(stat => ({
-        ...stat,
-        avg_tps: Number(stat.avg_tps),
-        avg_time_to_first_token: Number(stat.avg_time_to_first_token),
-        avg_time_for_all_tokens: Number(stat.avg_time_for_all_tokens),
-        avg_total_time: Number(stat.avg_total_time),
-      }));
+    const mappedStats = orderedStats.map((stat) => ({
+      ...stat,
+      avg_tps: Number(stat.avg_tps),
+      avg_time_to_first_token: Number(stat.avg_time_to_first_token),
+      avg_time_for_all_tokens: Number(stat.avg_time_for_all_tokens),
+      avg_total_time: Number(stat.avg_total_time),
+    }));
 
     return (
       <ClientPage

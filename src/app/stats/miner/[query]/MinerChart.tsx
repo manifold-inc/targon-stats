@@ -22,15 +22,18 @@ export interface Response {
   time_for_all_tokens: number;
   total_time: number;
   time_to_first_token: number;
+  verified: boolean;
   validator: string;
+  tokens: [string, number][];
   vali_request: {
     seed: number;
     model: string;
     stream: boolean;
-    messages: Array<{
+    messages?: Array<{
       role: string;
       content: string;
     }>;
+    prompt?: string;
     max_tokens: number;
     temperature: number;
   };
@@ -120,6 +123,8 @@ export default async function MinerChart({
         time_for_all_tokens: MinerResponse.timeForAllTokens,
         total_time: MinerResponse.totalTime,
         time_to_first_token: MinerResponse.timeToFirstToken,
+        tokens: MinerResponse.tokens,
+        verified: MinerResponse.verified,
         validator: Validator.valiName,
         vali_request: ValidatorRequest.vali_request,
         request_endpoint: ValidatorRequest.request_endpoint,
@@ -133,8 +138,8 @@ export default async function MinerChart({
       .innerJoin(Validator, eq(Validator.hotkey, ValidatorRequest.hotkey))
       .where(
         and(
-          // Helps speed up query
-          gte(ValidatorRequest.timestamp, sql`NOW() - INTERVAL 2 HOUR`),
+          // TODO: Uncomment this when we have recent data lol
+          //gte(ValidatorRequest.timestamp, sql`NOW() - INTERVAL 2 HOUR`),
           query.length < 5
             ? eq(MinerResponse.uid, parseInt(query))
             : or(
@@ -158,7 +163,7 @@ export default async function MinerChart({
     ]);
 
     const orderedStats = stats.reverse().map((stat) => ({
-      ...stat, 
+      ...stat,
     }));
 
     const miners = new Map<number, Keys>();

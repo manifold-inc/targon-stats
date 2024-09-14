@@ -22,36 +22,30 @@ export const genId = {
   organicRequest: () => "oreq_" + nanoid(27),
 };
 
-export const ValidatorRequest = mysqlTable(
-  "validator_request",
-  {
-    r_nanoid: varchar("r_nanoid", { length: 48 }).primaryKey(),
-    block: int("block").notNull(),
-    vali_request: json("vali_request").notNull(),
-    timestamp: timestamp("timestamp").default(sql`CURRENT_TIMESTAMP`),
-    version: int("version").notNull(),
-    hotkey: varchar("hotkey", { length: 255 }),
-    request_endpoint: varchar("request_endpoint", { length: 255 }).notNull(),
-  },
-);
+export const ValidatorRequest = mysqlTable("validator_request", {
+  r_nanoid: varchar("r_nanoid", { length: 48 }).primaryKey(),
+  block: int("block").notNull(),
+  vali_request: json("vali_request").notNull(),
+  timestamp: timestamp("timestamp").default(sql`CURRENT_TIMESTAMP`),
+  version: int("version").notNull(),
+  hotkey: varchar("hotkey", { length: 255 }),
+  request_endpoint: varchar("request_endpoint", { length: 255 }).notNull(),
+});
 
-export const MinerResponse = mysqlTable(
-  "miner_response",
-  {
-    id: int("id").primaryKey().autoincrement(),
-    r_nanoid: varchar("r_nanoid", { length: 48 }).notNull(),
-    hotkey: varchar("hotkey", { length: 255 }).notNull(),
-    coldkey: varchar("coldkey", { length: 255 }).notNull(),
-    uid: int("uid").notNull(),
-    verified: boolean("verified").notNull(),
-    timeToFirstToken: float("time_to_first_token").notNull(),
-    timeForAllTokens: float("time_for_all_tokens").notNull(),
-    totalTime: float("total_time").notNull(),
-    tps: float("tps").notNull(),
-    tokens: json("tokens"),
-    error: text("error"),
-  },
-);
+export const MinerResponse = mysqlTable("miner_response", {
+  id: int("id").primaryKey().autoincrement(),
+  r_nanoid: varchar("r_nanoid", { length: 48 }).notNull(),
+  hotkey: varchar("hotkey", { length: 255 }).notNull(),
+  coldkey: varchar("coldkey", { length: 255 }).notNull(),
+  uid: int("uid").notNull(),
+  verified: boolean("verified").notNull(),
+  timeToFirstToken: float("time_to_first_token").notNull(),
+  timeForAllTokens: float("time_for_all_tokens").notNull(),
+  totalTime: float("total_time").notNull(),
+  tps: float("tps").notNull(),
+  tokens: json("tokens"),
+  error: text("error"),
+});
 
 export const Validator = mysqlTable(
   "validator",
