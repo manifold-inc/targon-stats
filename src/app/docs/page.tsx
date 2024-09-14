@@ -131,8 +131,7 @@ export default async function Page() {
   "stats": [
     {
       "minute": 1683726000000,
-      "avg_jaro": 0.95,
-      "avg_wps": 2.5,
+      "avg_tps": 2.5,
       "avg_time_for_all_tokens": 0.003,
       "avg_total_time": 0.01,
       "avg_time_to_first_token": 0.002,
