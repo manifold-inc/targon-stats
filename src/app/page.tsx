@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { and, avg, eq, gte, inArray, sql } from "drizzle-orm";
+import { and, eq, gte, inArray, sql } from "drizzle-orm";
 
 import { db } from "@/schema/db";
 import { MinerResponse, Validator, ValidatorRequest } from "@/schema/schema";
@@ -64,15 +64,11 @@ async function PageContent({ searchParams = {} }: PageProps) {
               return utc;
             })
             .as("minute"),
-        avg_wps: avg(MinerResponse.wps).mapWith(Number).as("avg_wps"),
-        avg_total_time:
-          sql<number>`AVG(CAST(${MinerResponse.stats}->'$.total_time' AS DECIMAL(8,5)))`
-            .mapWith(Number)
-            .as("avg_total_time"),
-        avg_time_to_first_token:
-          sql<number>`AVG(CAST(${MinerResponse.stats}->'$.time_to_first_token' AS DECIMAL(8,5)))`
-            .mapWith(Number)
-            .as("avg_time_to_first_token"),
+        // TODO: Consider using avg() instead of sql<number> when deploy request is completed and data truncates
+        avg_tps: sql<number>`AVG(${MinerResponse.tps})`.as("avg_tps"),
+        avg_time_to_first_token: sql<number>`AVG(${MinerResponse.timeToFirstToken})`.as("avg_time_to_first_token"),
+        avg_time_for_all_tokens: sql<number>`AVG(${MinerResponse.timeForAllTokens})`.as("avg_time_for_all_tokens"),
+        avg_total_time: sql<number>`AVG(${MinerResponse.totalTime})`.as("avg_total_time"),
         valiName: Validator.valiName,
       })
       .from(MinerResponse)
@@ -83,7 +79,8 @@ async function PageContent({ searchParams = {} }: PageProps) {
       .innerJoin(Validator, eq(Validator.hotkey, ValidatorRequest.hotkey))
       .where(
         and(
-          gte(ValidatorRequest.timestamp, sql`NOW() - INTERVAL 2 HOUR`),
+          // TODO: Uncomment this when we have recent data lol
+          /* gte(ValidatorRequest.timestamp, sql`NOW() - INTERVAL 2 HOUR`), */
           ...(verified ? [eq(MinerResponse.verified, verified)] : []),
           ...(selectedValidators.length > 0
             ? [inArray(Validator.valiName, selectedValidators)]
