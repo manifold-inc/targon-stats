@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { and, eq, gte, inArray, sql } from "drizzle-orm";
+import { and, avg, eq, gte, inArray, sql } from "drizzle-orm";
 
 import { db } from "@/schema/db";
 import { MinerResponse, Validator, ValidatorRequest } from "@/schema/schema";
@@ -64,11 +64,10 @@ async function PageContent({ searchParams = {} }: PageProps) {
               return utc;
             })
             .as("minute"),
-        // TODO: Consider using avg() instead of sql<number> when deploy request is completed and data truncates
-        avg_tps: sql<number>`AVG(${MinerResponse.tps})`.as("avg_tps"),
-        avg_time_to_first_token: sql<number>`AVG(${MinerResponse.timeToFirstToken})`.as("avg_time_to_first_token"),
-        avg_time_for_all_tokens: sql<number>`AVG(${MinerResponse.timeForAllTokens})`.as("avg_time_for_all_tokens"),
-        avg_total_time: sql<number>`AVG(${MinerResponse.totalTime})`.as("avg_total_time"),
+        avg_tps: avg(MinerResponse.tps).as("avg_tps"),
+        avg_time_to_first_token: avg(MinerResponse.timeToFirstToken).as("avg_time_to_first_token"),
+        avg_time_for_all_tokens: avg(MinerResponse.timeForAllTokens).as("avg_time_for_all_tokens"),
+        avg_total_time: avg(MinerResponse.totalTime).as("avg_total_time"),
         valiName: Validator.valiName,
       })
       .from(MinerResponse)
@@ -98,9 +97,17 @@ async function PageContent({ searchParams = {} }: PageProps) {
       .from(innerAvg)
       .orderBy(innerAvg.minute);
 
+      const mappedStats = orderedStats.map(stat => ({
+        ...stat,
+        avg_tps: Number(stat.avg_tps),
+        avg_time_to_first_token: Number(stat.avg_time_to_first_token),
+        avg_time_for_all_tokens: Number(stat.avg_time_for_all_tokens),
+        avg_total_time: Number(stat.avg_total_time),
+      }));
+
     return (
       <ClientPage
-        data={orderedStats}
+        data={mappedStats}
         initialVerified={verified}
         initialValidators={selectedValidators}
       />

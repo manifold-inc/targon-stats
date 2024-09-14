@@ -18,31 +18,24 @@ interface MinerChartProps {
 
 export interface Response {
   hotkey: string;
+  tps: number;
+  time_for_all_tokens: number;
+  total_time: number;
+  time_to_first_token: number;
   validator: string;
-  sampling_params: {
-    seed: string;
-    top_k: string;
-    top_p: string;
-    best_of: string;
-    typical_p: string;
-    temperature: string;
-    top_n_tokens: string;
-    max_new_tokens: string;
-    repetition_penalty: string;
+  vali_request: {
+    seed: number;
+    model: string;
+    stream: boolean;
+    messages: Array<{
+      role: string;
+      content: string;
+    }>;
+    max_tokens: number;
+    temperature: number;
   };
-  ground_truth: {
-    ground_truth: string;
-    messages: string;
-  };
-  stats: {
-    response: string;
-    verified: boolean;
-    jaros: number[];
-    wps: number;
-    time_for_all_tokens: number;
-    total_time: number;
-    time_to_first_token: number;
-  };
+  request_endpoint: string;
+  timestamp: Date;
 }
 
 interface Keys {
@@ -89,17 +82,10 @@ export default async function MinerChart({
 
     const inner = db
       .select({
-        jaros: sql<number[]>`${MinerResponse.stats}->'$.jaros'`.as("jaros"),
-        wps: MinerResponse.wps,
+        tps: MinerResponse.tps,
         time_for_all_tokens: MinerResponse.timeForAllTokens,
-        total_time:
-          sql<number>`CAST(${MinerResponse.stats}->'$.total_time' AS DECIMAL(65,30))`
-            .mapWith(Number)
-            .as("total_time"),
-        time_to_first_token:
-          sql<number>`CAST(${MinerResponse.stats}->'$.time_to_first_token' AS DECIMAL(65, 30))`
-            .mapWith(Number)
-            .as("time_to_first_token"),
+        total_time: MinerResponse.totalTime,
+        time_to_first_token: MinerResponse.timeToFirstToken,
         uid: MinerResponse.uid,
         hotkey: MinerResponse.hotkey,
         coldkey: MinerResponse.coldkey,
@@ -130,10 +116,13 @@ export default async function MinerChart({
     const innerResponses = db
       .select({
         hotkey: MinerResponse.hotkey,
+        tps: MinerResponse.tps,
+        time_for_all_tokens: MinerResponse.timeForAllTokens,
+        total_time: MinerResponse.totalTime,
+        time_to_first_token: MinerResponse.timeToFirstToken,
         validator: Validator.valiName,
-        stats: MinerResponse.stats,
-        sampling_params: ValidatorRequest.sampling_params,
-        ground_truth: ValidatorRequest.ground_truth,
+        vali_request: ValidatorRequest.vali_request,
+        request_endpoint: ValidatorRequest.request_endpoint,
         timestamp: ValidatorRequest.timestamp,
       })
       .from(MinerResponse)
@@ -169,9 +158,7 @@ export default async function MinerChart({
     ]);
 
     const orderedStats = stats.reverse().map((stat) => ({
-      ...stat,
-      wps: stat.wps ?? 0,
-      time_for_all_tokens: stat.time_for_all_tokens ?? 0,
+      ...stat, 
     }));
 
     const miners = new Map<number, Keys>();
