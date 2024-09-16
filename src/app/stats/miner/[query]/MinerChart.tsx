@@ -138,8 +138,7 @@ export default async function MinerChart({
       .innerJoin(Validator, eq(Validator.hotkey, ValidatorRequest.hotkey))
       .where(
         and(
-          // TODO: Uncomment this when we have recent data lol
-          //gte(ValidatorRequest.timestamp, sql`NOW() - INTERVAL 2 HOUR`),
+          gte(ValidatorRequest.timestamp, sql`NOW() - INTERVAL 2 HOUR`),
           query.length < 5
             ? eq(MinerResponse.uid, parseInt(query))
             : or(
