@@ -30,7 +30,17 @@ export const ValidatorRequest = mysqlTable("validator_request", {
   version: int("version").notNull(),
   hotkey: varchar("hotkey", { length: 255 }),
   request_endpoint: varchar("request_endpoint", { length: 255 }).notNull(),
-});
+  },
+  (table) => {
+    return {
+      idxTimestampHotkey: index("idx_validator_request_timestamp_hotkey").on(
+        table.timestamp,
+        table.hotkey
+      ),
+      idxBlock: index("idx_validator_request_block").on(table.block),
+    };
+  },
+);
 
 export const MinerResponse = mysqlTable("miner_response", {
   id: int("id").primaryKey().autoincrement(),
@@ -45,6 +55,16 @@ export const MinerResponse = mysqlTable("miner_response", {
   tps: float("tps").notNull(),
   tokens: json("tokens"),
   error: text("error"),
+},
+(table) => {
+  return {
+    idxVerified: index("idx_miner_response_verified").on(table.verified),
+    idxUid: index("idx_miner_response_uid").on(table.uid),
+    idxHotkeyColdkey: index("idx_miner_response_hotkey_coldkey").on(
+      table.hotkey,
+      table.coldkey
+    ),
+  };
 });
 
 export const Validator = mysqlTable(
