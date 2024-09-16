@@ -22,67 +22,50 @@ export const genId = {
   organicRequest: () => "oreq_" + nanoid(27),
 };
 
-export const ValidatorRequest = mysqlTable(
-  "validator_request",
-  {
-    r_nanoid: varchar("r_nanoid", { length: 255 }).primaryKey(),
-    block: int("block").notNull(),
-    timestamp: timestamp("timestamp").default(sql`CURRENT_TIMESTAMP`),
-    sampling_params: json("sampling_params"),
-    ground_truth: json("ground_truth"),
-    version: int("version").notNull(),
-    hotkey: varchar("hotkey", { length: 255 }),
-    date: timestamp("date").generatedAlwaysAs(sql`DATE(timestamp)`, {
-      mode: "stored",
-    }),
+export const ValidatorRequest = mysqlTable("validator_request", {
+  r_nanoid: varchar("r_nanoid", { length: 48 }).primaryKey(),
+  block: int("block").notNull(),
+  vali_request: json("vali_request").notNull(),
+  timestamp: timestamp("timestamp").default(sql`CURRENT_TIMESTAMP`),
+  version: int("version").notNull(),
+  hotkey: varchar("hotkey", { length: 255 }),
+  request_endpoint: varchar("request_endpoint", { length: 255 }).notNull(),
   },
   (table) => {
     return {
-      rNanoidIdx: index("r_nanoid_idx").on(table.r_nanoid),
-      timestampIdx: index("timestamp_idx").on(table.timestamp),
-      blockIdx: index("block_idx").on(table.block),
-      hotkeyIdx: index("hotkey_idx").on(table.hotkey),
-      dateIdx: index("date_idx").on(table.date),
+      idxTimestampHotkey: index("idx_validator_request_timestamp_hotkey").on(
+        table.timestamp,
+        table.hotkey
+      ),
+      idxBlock: index("idx_validator_request_block").on(table.block),
     };
   },
 );
 
-export const MinerResponse = mysqlTable(
-  "miner_response",
-  {
-    id: int("id").primaryKey().autoincrement(),
-    r_nanoid: varchar("r_nanoid", { length: 255 }).notNull(),
-    hotkey: varchar("hotkey", { length: 255 }).notNull(),
-    coldkey: varchar("coldkey", { length: 255 }).notNull(),
-    uid: int("uid").notNull(),
-    stats: json("stats"),
-    wps: float("wps").generatedAlwaysAs(
-      sql`CAST(stats->>'$.wps' AS DECIMAL(65,30))`,
-      { mode: "stored" },
+export const MinerResponse = mysqlTable("miner_response", {
+  id: int("id").primaryKey().autoincrement(),
+  r_nanoid: varchar("r_nanoid", { length: 48 }).notNull(),
+  hotkey: varchar("hotkey", { length: 255 }).notNull(),
+  coldkey: varchar("coldkey", { length: 255 }).notNull(),
+  uid: int("uid").notNull(),
+  verified: boolean("verified").notNull(),
+  timeToFirstToken: float("time_to_first_token").notNull(),
+  timeForAllTokens: float("time_for_all_tokens").notNull(),
+  totalTime: float("total_time").notNull(),
+  tps: float("tps").notNull(),
+  tokens: json("tokens"),
+  error: text("error"),
+},
+(table) => {
+  return {
+    idxVerified: index("idx_miner_response_verified").on(table.verified),
+    idxUid: index("idx_miner_response_uid").on(table.uid),
+    idxHotkeyColdkey: index("idx_miner_response_hotkey_coldkey").on(
+      table.hotkey,
+      table.coldkey
     ),
-    timeForAllTokens: float("time_for_all_tokens").generatedAlwaysAs(
-      sql`CAST(stats->>'$.time_for_all_tokens' AS DECIMAL(65,30))`,
-      { mode: "stored" },
-    ),
-    verified: boolean("verified").generatedAlwaysAs(
-      sql`JSON_EXTRACT(stats, '$.verified')`,
-      { mode: "stored" },
-    ),
-  },
-  (table) => {
-    return {
-      rNanoidIdx: index("r_nanoid_idx").on(table.r_nanoid),
-      hotkeyIdx: index("hotkey_idx").on(table.hotkey),
-      coldkeyIdx: index("coldkey_idx").on(table.coldkey),
-      uidIdx: index("uid_idx").on(table.uid),
-      wpsIdx: index("wps_idx").on(table.wps),
-      timeForAllTokensIdx: index("time_for_all_tokens_idx").on(
-        table.timeForAllTokens,
-      ),
-      verifiedIdx: index("verified_idx").on(table.verified),
-    };
-  },
-);
+  };
+});
 
 export const Validator = mysqlTable(
   "validator",

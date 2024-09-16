@@ -116,15 +116,21 @@ export const POST = async (req: NextRequest) => {
       .limit(1),
     db
       .select({
-        stats: MinerResponse.stats,
-        ground_truth: ValidatorRequest.ground_truth,
+        tps: MinerResponse.tps,
+        totalTime: MinerResponse.totalTime,
+        timeToFirstToken: MinerResponse.timeToFirstToken,
+        timeForAllTokens: MinerResponse.timeForAllTokens,
+        verified: MinerResponse.verified,
+        tokens: MinerResponse.tokens,
+        error: MinerResponse.error,
+        vali_request: ValidatorRequest.vali_request,
+        request_endpoint: ValidatorRequest.request_endpoint,
         block: ValidatorRequest.block,
         timestamp: ValidatorRequest.timestamp,
-        sampling_params: ValidatorRequest.sampling_params,
         version: ValidatorRequest.version,
         validator: Validator.valiName,
         validator_hotkey: Validator.hotkey,
-        id: MinerResponse.id, // Use id for pagination
+        id: MinerResponse.id,
       })
       .from(MinerResponse)
       .innerJoin(

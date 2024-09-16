@@ -131,8 +131,7 @@ export default async function Page() {
   "stats": [
     {
       "minute": 1683726000000,
-      "avg_jaro": 0.95,
-      "avg_wps": 2.5,
+      "avg_tps": 2.5,
       "avg_time_for_all_tokens": 0.003,
       "avg_total_time": 0.01,
       "avg_time_to_first_token": 0.002,
@@ -274,64 +273,36 @@ export default async function Page() {
                       `{
     "responses": [
         {
-            "stats": {
-                "wps": 58.01988863287137,
-                "jaros": [
-                    1,
-                    0.6795484690309636,
-                    0.6795061561405632,
-                    0.5222063276501124,
-                    0.41916666665418006,
-                    0.3681720430107527,
-                    0,
-                    0,
-                    0
+            "tps": 75.4943,
+            "totalTime": 21.3394,
+            "timeToFirstToken": 21.3394,
+            "timeForAllTokens": 7.15256e-7,
+            "verified": true,
+            "tokens": [
+                [
+                    "ПО",
+                    -4440
                 ],
-                "response": "string representing response",
-                "verified": false,
-                "total_time": 4.843166828155518,
-                "time_for_all_tokens": 0.09341573715209961,
-                "time_to_first_token": 4.74975061416626
-            },
-            "ground_truth": {
-                "messages": [
-                    {
-                        "role": "system",
-                        "content": "You are Sybil...",
-                    },
-                    {
-                        "role": "user",
-                        "content": "Search query: Causal attention mask GPT2 training"
-                    }
+                [
+                    " Laugh",
+                    415301
                 ],
-                "ground_truth": "Search query: Causal attention mask GPT2 training",
-            },
+            ],
+            "error": null,
+            "vali_request": {
+                "seed": 9872828,
+                "model": "NousResearch/Meta-Llama-3.1-8B-Instruct",
+                "prompt": "\n### Current Date: 2024-09-13\n### Instruction:\nYou are to take on the role of Bobinette, an expert language model\ndeveloped in Korea, South, tasked with generating responses to user queries.\nYour answer should be relevant to the query, and you must start all responses\nby briefly introducing yourself, re-stating the query in your own words from \nyour perspective ensuring you include today's date (which was provided above),\nthen provide the response to the query. You should always respond in English.\n\n\nSearch query: \"Product Manager interview questions for director of product management role, strategic vision, problem-solving skills, cross-functional team collaboration\".",
+                "stream": true,
+                "max_tokens": 1575,
+                "temperature": 1.0787910555311384
+            }
+            "request_endpoint": "Endpoints.COMPLETION",
             "block": 3612446,
             "timestamp": "2024-08-15T16:26:29.128Z",
-            "sampling_params": {
-                "seed": 6041060,
-                "stop": [
-                    ""
-                ],
-                "top_k": 10,
-                "top_p": 0.998,
-                "stream": false,
-                "best_of": 1,
-                "details": false,
-                "truncate": null,
-                "do_sample": true,
-                "typical_p": 0.9999999,
-                "watermark": false,
-                "temperature": 0.01,
-                "top_n_tokens": 5,
-                "max_new_tokens": 4635,
-                "return_full_text": false,
-                "repetition_penalty": 1,
-                "decoder_input_details": true
-            },
             "version": 204100,
             "validator": "Openτensor Foundaτion",
-            "vhotkey": "5F4tQyWrhfGVcNhoqeiNsR6KjD4wMZ2kfhLj4oHYuyHbZAc3",
+            "validator_hotkey": "5F4tQyWrhfGVcNhoqeiNsR6KjD4wMZ2kfhLj4oHYuyHbZAc3",
             "id": 2216965
         }
     ],

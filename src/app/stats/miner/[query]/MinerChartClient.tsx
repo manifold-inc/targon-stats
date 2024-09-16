@@ -9,8 +9,7 @@ interface MinerChartClientProps {
     hotkey: string;
     coldkey: string;
     uid: number;
-    jaros: number[];
-    wps: number;
+    tps: number;
     time_for_all_tokens: number;
     total_time: number;
     time_to_first_token: number;
@@ -32,9 +31,8 @@ const MinerChartClient: React.FC<MinerChartClientProps> = ({
   const cardStyles =
     "flex flex-col flex-grow bg-white dark:bg-neutral-800 p-8 shadow-md rounded-2xl hover:shadow-lg transition-all dark:hover:bg-gray-800 text-center items-center";
   const [visibleCategories, setVisibleCategories] = useState<string[]>([
-    "jaro_score",
     "total_time",
-    "wps",
+    "tps",
     "time_for_all_tokens",
     "time_to_first_token",
   ]);
@@ -48,9 +46,8 @@ const MinerChartClient: React.FC<MinerChartClientProps> = ({
   };
 
   const categoryColorMap: Record<string, string> = {
-    jaro_score: "blue",
     total_time: "red",
-    wps: "green",
+    tps: "green",
     time_for_all_tokens: "purple",
     time_to_first_token: "orange",
   };
@@ -69,13 +66,10 @@ const MinerChartClient: React.FC<MinerChartClientProps> = ({
 
   const processedData = minerStats.map((item) => ({
     ...item,
-    jaro_score: (
-      item.jaros.reduce((a, b) => a + b, 0) / item.jaros.length
-    ).toFixed(2), // Calculate the average and format to 2 decimal places
+    tps: item.tps ? Number(item.tps.toFixed(2)) : item.tps,
     total_time: item.total_time
       ? Number(item.total_time.toFixed(2))
       : item.total_time,
-    wps: item.wps ? Number(item.wps.toFixed(2)) : item.wps,
     time_for_all_tokens: item.time_for_all_tokens
       ? Number(item.time_for_all_tokens.toFixed(2))
       : item.time_for_all_tokens,
@@ -89,31 +83,6 @@ const MinerChartClient: React.FC<MinerChartClientProps> = ({
       {!!minerStats.length && (
         <>
           <dl className=" flex justify-between gap-4 text-center">
-            <button
-              onClick={handleCategoryClick("jaro_score")}
-              className={cardStyles}
-            >
-              <dt className="text-sm font-semibold leading-6 text-gray-600 dark:text-gray-400">
-                Average Jaro Score
-              </dt>
-              <dd
-                className={`order-first text-3xl font-semibold tracking-tight ${textColor(
-                  "jaro_score",
-                  "text-blue-500",
-                )}`}
-              >
-                {minerStats
-                  ? (
-                      minerStats.reduce((s, d) => {
-                        const avgJaroScore =
-                          d.jaros.reduce((a, b) => a + b, 0) / d.jaros.length;
-                        return s + avgJaroScore;
-                      }, 0) / minerStats.length
-                    ).toFixed(2)
-                  : "_"}
-              </dd>
-            </button>
-
             <button
               onClick={handleCategoryClick("total_time")}
               className={cardStyles}
@@ -136,19 +105,19 @@ const MinerChartClient: React.FC<MinerChartClientProps> = ({
               </dd>
             </button>
 
-            <button onClick={handleCategoryClick("wps")} className={cardStyles}>
+            <button onClick={handleCategoryClick("tps")} className={cardStyles}>
               <dt className="text-sm font-semibold leading-6 text-gray-600 dark:text-gray-400">
-                Average Words Per Second
+                Average Tokens Per Second
               </dt>
               <dd
                 className={`order-first text-3xl font-semibold tracking-tight ${textColor(
-                  "wps",
+                  "tps",
                   "text-green-500",
                 )}`}
               >
                 {minerStats
                   ? (
-                      minerStats.reduce((s, d) => s + d.wps, 0) /
+                      minerStats.reduce((s, d) => s + d.tps, 0) /
                       minerStats.length
                     ).toFixed(2)
                   : "_"}

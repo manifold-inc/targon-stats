@@ -93,9 +93,7 @@ export const POST = async (req: NextRequest) => {
       and(
         gte(ValidatorRequest.block, startBlock),
         lte(ValidatorRequest.block, endBlock),
-        ...(body.verified
-          ? [eq(sql`${MinerResponse.stats}->'$.verified'`, body.verified)]
-          : []),
+        ...(body.verified ? [eq(MinerResponse.verified, body.verified)] : []),
         ...(body.validator_hotkeys
           ? [inArray(Validator.hotkey, body.validator_hotkeys)]
           : []),
@@ -122,21 +120,10 @@ export const POST = async (req: NextRequest) => {
               return utc;
             },
           ),
-        avg_jaro: sql<number>`
-              AVG(
-                (SELECT AVG(CAST(jt.value AS DECIMAL))
-                FROM JSON_TABLE(${MinerResponse.stats}->'$.jaros', '$[*]' COLUMNS (value DOUBLE PATH '$')) AS jt)
-                )`.mapWith(Number),
-        avg_wps: avg(MinerResponse.wps),
+        avg_tps: avg(MinerResponse.tps),
         avg_time_for_all_tokens: avg(MinerResponse.timeForAllTokens),
-        avg_total_time:
-          sql<number>`AVG(CAST(${MinerResponse.stats}->'$.total_time' AS DECIMAL(8,5)))`.mapWith(
-            Number,
-          ),
-        avg_time_to_first_token:
-          sql<number>`AVG(CAST(${MinerResponse.stats}->'$.time_to_first_token' AS DECIMAL(8,5)))`.mapWith(
-            Number,
-          ),
+        avg_total_time: avg(MinerResponse.totalTime),
+        avg_time_to_first_token: avg(MinerResponse.timeToFirstToken),
         validator: Validator.valiName,
         validator_hotkey: Validator.hotkey,
         id: MinerResponse.id,
