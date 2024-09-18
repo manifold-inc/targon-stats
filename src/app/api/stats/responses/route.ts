@@ -126,7 +126,7 @@ export const POST = async (req: NextRequest) => {
         vali_request: ValidatorRequest.vali_request,
         request_endpoint: ValidatorRequest.request_endpoint,
         block: ValidatorRequest.block,
-        timestamp: ValidatorRequest.timestamp,
+        timestamp: MinerResponse.timestamp,
         version: ValidatorRequest.version,
         validator: Validator.valiName,
         validator_hotkey: Validator.hotkey,

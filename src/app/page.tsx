@@ -51,7 +51,7 @@ async function PageContent({ searchParams = {} }: PageProps) {
     const innerAvg = db
       .select({
         minute:
-          sql<string>`DATE_FORMAT(${ValidatorRequest.timestamp}, '%Y-%m-%d %H:%i:00')`
+          sql<string>`DATE_FORMAT(${MinerResponse.timestamp}, '%Y-%m-%d %H:%i:00')`
             .mapWith((v: string) => {
               const date = new Date(v);
               const utc = Date.UTC(
@@ -90,7 +90,7 @@ async function PageContent({ searchParams = {} }: PageProps) {
         ),
       )
       .groupBy(
-        sql`DATE_FORMAT(${ValidatorRequest.timestamp}, '%Y-%m-%d %H:%i:00')`,
+        sql`DATE_FORMAT(${MinerResponse.timestamp}, '%Y-%m-%d %H:%i:00')`,
         Validator.valiName,
       )
       .as("innerAvg");
