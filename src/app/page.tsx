@@ -82,7 +82,7 @@ async function PageContent({ searchParams = {} }: PageProps) {
       .innerJoin(Validator, eq(Validator.hotkey, ValidatorRequest.hotkey))
       .where(
         and(
-          gte(ValidatorRequest.timestamp, sql`NOW() - INTERVAL 2 HOUR`),
+          gte(MinerResponse.timestamp, sql`NOW() - INTERVAL 2 HOUR`),
           ...(verified ? [eq(MinerResponse.verified, verified)] : []),
           ...(selectedValidators.length > 0
             ? [inArray(Validator.valiName, selectedValidators)]
