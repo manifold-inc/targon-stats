@@ -128,7 +128,7 @@ export default async function MinerChart({
         validator: Validator.valiName,
         vali_request: ValidatorRequest.vali_request,
         request_endpoint: ValidatorRequest.request_endpoint,
-        timestamp: ValidatorRequest.timestamp,
+        timestamp: MinerResponse.timestamp,
       })
       .from(MinerResponse)
       .innerJoin(
@@ -138,7 +138,7 @@ export default async function MinerChart({
       .innerJoin(Validator, eq(Validator.hotkey, ValidatorRequest.hotkey))
       .where(
         and(
-          gte(ValidatorRequest.timestamp, sql`NOW() - INTERVAL 2 HOUR`),
+          gte(MinerResponse.timestamp, sql`NOW() - INTERVAL 2 HOUR`),
           query.length < 5
             ? eq(MinerResponse.uid, parseInt(query))
             : or(

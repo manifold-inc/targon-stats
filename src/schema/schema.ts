@@ -22,50 +22,57 @@ export const genId = {
   organicRequest: () => "oreq_" + nanoid(27),
 };
 
-export const ValidatorRequest = mysqlTable("validator_request", {
-  r_nanoid: varchar("r_nanoid", { length: 48 }).primaryKey(),
-  block: int("block").notNull(),
-  vali_request: json("vali_request").notNull(),
-  timestamp: timestamp("timestamp").default(sql`CURRENT_TIMESTAMP`),
-  version: int("version").notNull(),
-  hotkey: varchar("hotkey", { length: 255 }),
-  request_endpoint: varchar("request_endpoint", { length: 255 }).notNull(),
+export const ValidatorRequest = mysqlTable(
+  "validator_request",
+  {
+    r_nanoid: varchar("r_nanoid", { length: 48 }).primaryKey(),
+    block: int("block").notNull(),
+    vali_request: json("vali_request").notNull(),
+    timestamp: timestamp("timestamp").default(sql`CURRENT_TIMESTAMP`),
+    version: int("version").notNull(),
+    hotkey: varchar("hotkey", { length: 255 }),
+    request_endpoint: varchar("request_endpoint", { length: 255 }).notNull(),
   },
   (table) => {
     return {
       idxTimestampHotkey: index("idx_validator_request_timestamp_hotkey").on(
         table.timestamp,
-        table.hotkey
+        table.hotkey,
       ),
       idxBlock: index("idx_validator_request_block").on(table.block),
     };
   },
 );
 
-export const MinerResponse = mysqlTable("miner_response", {
-  id: int("id").primaryKey().autoincrement(),
-  r_nanoid: varchar("r_nanoid", { length: 48 }).notNull(),
-  hotkey: varchar("hotkey", { length: 255 }).notNull(),
-  coldkey: varchar("coldkey", { length: 255 }).notNull(),
-  uid: int("uid").notNull(),
-  verified: boolean("verified").notNull(),
-  timeToFirstToken: float("time_to_first_token").notNull(),
-  timeForAllTokens: float("time_for_all_tokens").notNull(),
-  totalTime: float("total_time").notNull(),
-  tps: float("tps").notNull(),
-  tokens: json("tokens"),
-  error: text("error"),
-},
-(table) => {
-  return {
-    idxVerified: index("idx_miner_response_verified").on(table.verified),
-    idxUid: index("idx_miner_response_uid").on(table.uid),
-    idxHotkeyColdkey: index("idx_miner_response_hotkey_coldkey").on(
-      table.hotkey,
-      table.coldkey
-    ),
-  };
-});
+export const MinerResponse = mysqlTable(
+  "miner_response",
+  {
+    id: int("id").primaryKey().autoincrement(),
+    r_nanoid: varchar("r_nanoid", { length: 48 }).notNull(),
+    hotkey: varchar("hotkey", { length: 255 }).notNull(),
+    coldkey: varchar("coldkey", { length: 255 }).notNull(),
+    uid: int("uid").notNull(),
+    verified: boolean("verified").notNull(),
+    timeToFirstToken: float("time_to_first_token").notNull(),
+    timeForAllTokens: float("time_for_all_tokens").notNull(),
+    totalTime: float("total_time").notNull(),
+    tps: float("tps").notNull(),
+    tokens: json("tokens"),
+    error: text("error"),
+    timestamp: timestamp("timestamp").default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => {
+    return {
+      idxVerified: index("idx_miner_response_verified").on(table.verified),
+      idxUid: index("idx_miner_response_uid").on(table.uid),
+      idxHotkeyColdkey: index("idx_miner_response_hotkey_coldkey").on(
+        table.hotkey,
+        table.coldkey,
+      ),
+      idxTimestamp: index("idx_miner_response_timestamp").on(table.timestamp),
+    };
+  },
+);
 
 export const Validator = mysqlTable(
   "validator",

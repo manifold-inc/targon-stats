@@ -107,7 +107,7 @@ export const POST = async (req: NextRequest) => {
     const stats = await db
       .select({
         minute:
-          sql<string>`DATE_FORMAT(${ValidatorRequest.timestamp}, '%Y-%m-%d %H:%i:00')`.mapWith(
+          sql<string>`DATE_FORMAT(${MinerResponse.timestamp}, '%Y-%m-%d %H:%i:00')`.mapWith(
             (v: string) => {
               const date = new Date(v);
               const utc = Date.UTC(
@@ -145,12 +145,12 @@ export const POST = async (req: NextRequest) => {
         ),
       )
       .groupBy(
-        sql`DATE_FORMAT(${ValidatorRequest.timestamp}, '%Y-%m-%d %H:%i:00')`,
+        sql`DATE_FORMAT(${MinerResponse.timestamp}, '%Y-%m-%d %H:%i:00')`,
         Validator.hotkey,
         MinerResponse.id,
       )
       .orderBy(
-        sql`DATE_FORMAT(${ValidatorRequest.timestamp}, '%Y-%m-%d %H:%i:00')`,
+        sql`DATE_FORMAT(${MinerResponse.timestamp}, '%Y-%m-%d %H:%i:00')`,
         desc(MinerResponse.id),
       )
       .limit(limit)
