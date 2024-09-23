@@ -150,7 +150,12 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                     >
                       Endpoint
                     </th>
-
+                    <th
+                      scope="col"
+                      className="whitespace-nowrap px-3 py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200"
+                    >
+                      Error
+                    </th>
                     <th
                       scope="col"
                       className="whitespace-nowrap px-3 py-3.5 text-right text-sm font-semibold text-gray-900 dark:text-gray-200 sm:pr-6"
@@ -274,6 +279,11 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
                         {response.request_endpoint.substring(10)}
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
+                        {response.error
+                          ? response.error.substring(0, 15) + "..." + response.error.substring(response.error.length - 15, response.error.length)
+                          : "No Error"}
                       </td>
                       <td className="relative whitespace-nowrap px-3 py-4 text-right text-sm font-medium sm:pr-6">
                         <button
@@ -409,6 +419,30 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                       {selectedResponse.vali_request.messages
                         ? JSON.stringify(selectedResponse.vali_request.messages)
                         : selectedResponse.vali_request.prompt || "N/A"}
+                    </code>
+                  </pre>
+                </div>
+                <div className="border-t border-gray-300 p-4 sm:col-span-2 sm:px-0">
+                  <dt className="flex justify-between pb-2 pr-4 text-sm font-semibold leading-6 text-gray-900 dark:text-white">
+                    Validator Error
+                    <button
+                      className="ml-2 cursor-pointer"
+                      onClick={() =>
+                        handleCopyClipboard(
+                          JSON.stringify(
+                            selectedResponse.error,
+                          ),
+                        )
+                      }
+                    >
+                      <Copy className="z-10 h-4 w-4 text-gray-500 dark:text-gray-300" />
+                    </button>
+                  </dt>
+                  <pre className="max-w-full overflow-auto">
+                    <code className="inline-block items-center space-x-4 break-words text-left text-sm text-gray-700 dark:text-gray-400">
+                      {selectedResponse.error
+                        ? JSON.stringify(selectedResponse.error)
+                        : selectedResponse.error || "No Error"}
                     </code>
                   </pre>
                 </div>

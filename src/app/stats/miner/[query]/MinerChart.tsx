@@ -31,6 +31,7 @@ export interface Response {
   time_to_first_token: number;
   verified: boolean;
   validator: string;
+  error: string;
   tokens: Token[];
   vali_request: {
     seed: number;
@@ -94,8 +95,8 @@ export default async function MinerChart({
       .select({
         tps: MinerResponse.tps,
         time_for_all_tokens: MinerResponse.timeForAllTokens,
-        total_time: MinerResponse.totalTime,
         time_to_first_token: MinerResponse.timeToFirstToken,
+        total_time: MinerResponse.totalTime,
         uid: MinerResponse.uid,
         hotkey: MinerResponse.hotkey,
         coldkey: MinerResponse.coldkey,
@@ -132,6 +133,7 @@ export default async function MinerChart({
         time_to_first_token: MinerResponse.timeToFirstToken,
         tokens: MinerResponse.tokens,
         verified: MinerResponse.verified,
+        error: MinerResponse.error,
         validator: Validator.valiName,
         vali_request: ValidatorRequest.vali_request,
         request_endpoint: ValidatorRequest.request_endpoint,
