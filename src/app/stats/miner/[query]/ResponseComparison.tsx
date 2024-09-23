@@ -282,7 +282,12 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
                         {response.error
-                          ? response.error.substring(0, 15) + "..." + response.error.substring(response.error.length - 15, response.error.length)
+                          ? response.error.substring(0, 15) +
+                            "..." +
+                            response.error.substring(
+                              response.error.length - 15,
+                              response.error.length,
+                            )
                           : "No Error"}
                       </td>
                       <td className="relative whitespace-nowrap px-3 py-4 text-right text-sm font-medium sm:pr-6">
@@ -429,9 +434,7 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                       className="ml-2 cursor-pointer"
                       onClick={() =>
                         handleCopyClipboard(
-                          JSON.stringify(
-                            selectedResponse.error,
-                          ),
+                          JSON.stringify(selectedResponse.error),
                         )
                       }
                     >

@@ -12,7 +12,7 @@ interface ClientPageProps {
     avg_tps: number;
     avg_time_to_first_token: number;
     avg_time_for_all_tokens: number;
-    avg_total_time: number;
+    avg_response_time: number;
     valiName: string | null;
   }[];
   initialVerified: boolean;
@@ -42,7 +42,7 @@ const ClientPage = ({
 
   const [visibleCategories, setVisibleCategories] = useState<string[]>([
     "avg_tps",
-    "avg_total_time",
+    "avg_response_time",
     "avg_time_to_first_token",
     "avg_time_for_all_tokens",
   ]);
@@ -50,9 +50,9 @@ const ClientPage = ({
     ? data.map((item) => ({
         ...item,
         avg_tps: item.avg_tps ? Number(item.avg_tps.toFixed(2)) : item.avg_tps,
-        avg_total_time: item.avg_total_time
-          ? Number(item.avg_total_time.toFixed(2))
-          : item.avg_total_time,
+        avg_response_time: item.avg_response_time
+          ? Number(item.avg_response_time.toFixed(2))
+          : item.avg_response_time,
         avg_time_to_first_token: item.avg_time_to_first_token
           ? Number(item.avg_time_to_first_token.toFixed(2))
           : item.avg_time_to_first_token,
@@ -72,7 +72,7 @@ const ClientPage = ({
 
   const categoryColorMap: Record<string, string> = {
     avg_tps: "red",
-    avg_total_time: "green",
+    avg_response_time: "green",
     avg_time_to_first_token: "purple",
     avg_time_for_all_tokens: "orange",
   };
@@ -115,20 +115,20 @@ const ClientPage = ({
               </button>
 
               <button
-                onClick={handleCategoryClick("avg_total_time")}
+                onClick={handleCategoryClick("avg_response_time")}
                 className={cardStyles}
               >
                 <dt className="text-sm font-semibold leading-6 text-gray-600 dark:text-gray-400">
-                  Min Total Time
+                  Avg Response Time
                 </dt>
                 <dd
                   className={`order-first text-3xl font-semibold tracking-tight ${textColor(
-                    "avg_total_time",
+                    "avg_response_time",
                     "text-green-500",
                   )}`}
                 >
                   {data
-                    ? Math.min(...data.map((d) => d.avg_total_time)).toFixed(
+                    ? Math.min(...data.map((d) => d.avg_response_time)).toFixed(
                         2,
                       ) + "s"
                     : "_"}
