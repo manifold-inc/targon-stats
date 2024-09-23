@@ -8,6 +8,13 @@ import ResponseComparison from "./ResponseComparison";
 
 export const revalidate = 60;
 
+export interface Token {
+  powv: number;
+  text: string;
+  logprob: number;
+  token_id: number;
+}
+
 interface MinerChartProps {
   query: string;
   block: number;
@@ -24,7 +31,7 @@ export interface Response {
   time_to_first_token: number;
   verified: boolean;
   validator: string;
-  tokens: [string, number][];
+  tokens: Token[];
   vali_request: {
     seed: number;
     model: string;

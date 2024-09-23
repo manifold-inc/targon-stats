@@ -6,7 +6,7 @@ import { Copy, Pencil, X } from "lucide-react";
 import { toast } from "sonner";
 
 import { copyToClipboard } from "@/utils/utils";
-import { type Response } from "./MinerChart";
+import { type Response, type Token } from "./MinerChart";
 import TokenDisplay from "./TokenDisplay";
 
 interface ResponseComparisonProps {
@@ -107,6 +107,12 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                       className="whitespace-nowrap px-3  py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200"
                     >
                       Total Time
+                    </th>
+                    <th
+                      scope="col"
+                      className="whitespace-nowrap px-3 py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200"
+                    >
+                      LogProb
                     </th>
                     <th
                       scope="col"
@@ -215,7 +221,7 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                           <span>
                             {response.tokens
                               .slice(0, 10)
-                              .map(([token]) => token)
+                              .map((token: Token) => token.text)
                               .join("|")}
                             {response.tokens.length > 10 ? "..." : ""}
                           </span>
@@ -242,6 +248,14 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
                         {response.total_time.toFixed(2)}
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
+                        {"(" +
+                          response.tokens
+                            .slice(0, 10)
+                            .map((token: Token) => token.logprob.toFixed(2))
+                            .join(", ") +
+                          ")"}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
                         {response.vali_request.seed}
@@ -427,7 +441,7 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                           showTokenized
                             ? JSON.stringify(selectedResponse.tokens)
                             : selectedResponse.tokens
-                                .map(([token]) => token)
+                                .map((token: Token) => token.text)
                                 .join(""),
                         )
                       }
