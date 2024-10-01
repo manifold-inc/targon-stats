@@ -65,13 +65,12 @@ export const MinerResponse = mysqlTable(
     return {
       idxVerified: index("idx_miner_response_verified").on(table.verified),
       idxUid: index("idx_miner_response_uid").on(table.uid),
-      idxHotkeyColdkey: index("idx_miner_response_hotkey_coldkey").on(
-        table.hotkey,
-        table.coldkey,
-      ),
+      idxHotkey: index("idx_miner_response_hotkey").on(table.hotkey),
+      idxColdkey: index("idx,miner_response_coldkey").on(table.coldkey),
       idxTimestamp: index("idx_miner_response_timestamp").on(table.timestamp),
     };
   },
+  
 );
 
 export const Validator = mysqlTable(
