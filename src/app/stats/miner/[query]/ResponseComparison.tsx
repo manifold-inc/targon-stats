@@ -224,11 +224,10 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
                         <div className="flex items-center justify-between">
                           <span>
-                            {response.tokens
+                            {`[${response.tokens
                               .slice(0, 10)
-                              .map((token: Token) => token.text)
-                              .join("|")}
-                            {response.tokens.length > 10 ? "..." : ""}
+                              .map((token: Token) => `"${token.text}"`)
+                              .join(", ")}${response.tokens.length > 10 ? ", ..." : ""}]`}
                           </span>
                           <button
                             className="ml-2 cursor-pointer"
