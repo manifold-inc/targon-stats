@@ -307,7 +307,7 @@ const ClientPage = ({
                         <td className="max-w-3/5 overflow-x-auto whitespace-nowrap px-4 py-4 text-sm text-gray-500 dark:text-gray-300">
                           {valiModel.models.length > 0
                             ? valiModel.models.join(", ")
-                            : "-- no models are being used as challenges by this validator"}
+                            : "-- no models are being used as challenges by this validator. Potential WC"}
                         </td>
                       </tr>
                     ))}

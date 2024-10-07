@@ -335,6 +335,103 @@ export default async function Page() {
             </li>
           </ul>
         </Container>
+
+        <Container>
+          <h4 className="pb-2 text-xl font-semibold leading-6 text-gray-900 dark:text-gray-50">
+            Validator Models
+          </h4>
+          <div className="overflow-x-scroll pb-4">
+            <div className="w-fit whitespace-nowrap rounded bg-gray-200 px-2 py-2 font-mono text-sm leading-3 dark:bg-neutral-900">
+              POST {API_BASE_URL}/validator/model
+            </div>
+          </div>
+          <div className="pb-4">
+            Retrieves information about validator models, including their hotkeys, names, and their challenge models.
+          </div>
+
+          <div className="pb-2 text-lg font-semibold leading-6 text-gray-900 dark:text-gray-50">
+            Query Parameters
+          </div>
+          <ul className="list-inside list-disc pb-4 pl-5">
+            <li>
+              <strong>validator_hotkeys</strong> (optional, string[]): An array of validator hotkeys to filter the results. If not provided, results from all validators are included.
+            </li>
+          </ul>
+
+          <h4 className="pb-2 text-xl font-semibold leading-6 text-gray-900 dark:text-gray-50">
+            Example Request
+          </h4>
+          <div className="overflow-x-scroll pb-4">
+            <div className="w-fit whitespace-nowrap rounded bg-gray-200 px-2 py-2 font-mono text-sm leading-3 dark:bg-neutral-900">
+              POST {API_BASE_URL}/validator/model
+            </div>
+          </div>
+          <div className="pb-4">
+            Ensure the request includes a Bearer Token in the Authorization header:
+          </div>
+          <div className="overflow-x-scroll pb-4">
+            <div className="w-fit whitespace-nowrap rounded bg-gray-200 px-2 py-2 font-mono text-sm leading-3 dark:bg-neutral-900">
+              Authorization: Bearer [your-api-key]
+            </div>
+          </div>
+
+          <div className="overflow-x-scroll pb-4">
+            <div className="w-full whitespace-nowrap rounded bg-gray-800 px-2 py-2 text-sm leading-3 text-gray-50 dark:bg-neutral-900">
+              <pre className="hljs prose-sm w-full overflow-x-scroll rounded bg-gray-800 px-2 py-2 dark:bg-neutral-900">
+                <code
+                  dangerouslySetInnerHTML={{
+                    __html: hljs.highlight(
+                      `{
+  "validator_hotkeys": ["validator_hotkey1", "validator_hotkey2"]
+}`,
+                      { language: "json" },
+                    ).value,
+                  }}
+                />
+              </pre>
+            </div>
+          </div>
+
+          <div className="pb-2 text-xl font-semibold leading-6 text-gray-900 dark:text-gray-50">
+            Example Response
+          </div>
+          <div className="overflow-x-scroll pb-4">
+            <div className="w-full whitespace-nowrap rounded bg-gray-800 px-2 py-2 text-sm leading-3 text-gray-50 dark:bg-neutral-900">
+              <pre className="hljs prose-sm w-full overflow-x-scroll rounded bg-gray-800 px-2 py-2 dark:bg-neutral-900">
+                <code
+                  dangerouslySetInnerHTML={{
+                    __html: hljs.highlight(
+                      `{
+  "validatorModels": [
+    {
+      "hotkey": "validator_hotkey1",
+      "valiName": "Validator 1",
+      "models": ["model1", "model2"]
+    },
+    {
+      "hotkey": "validator_hotkey2",
+      "valiName": "Validator 2",
+      "models": ["model3", "model4"]
+    }
+  ]
+}`,
+                      { language: "json" },
+                    ).value,
+                  }}
+                />
+              </pre>
+            </div>
+          </div>
+
+          <div className="pb-4">
+            This response contains information about the validators and their associated models:
+          </div>
+          <ul className="list-disc pb-4 pl-5">
+            <li>
+              <strong>validatorModels</strong>: An array of objects, each representing a validator with their hotkey, name, and list of models.
+            </li>
+          </ul>
+        </Container>
       </div>
     </div>
   );
