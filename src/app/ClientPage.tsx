@@ -4,7 +4,11 @@ import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Field, Label, Switch } from "@headlessui/react";
 import { LineChart } from "@tremor/react";
+import { Copy } from "lucide-react";
 import moment from "moment";
+import { toast } from "sonner";
+
+import { copyToClipboard } from "@/utils/utils";
 
 interface ClientPageProps {
   data: {
@@ -17,12 +21,18 @@ interface ClientPageProps {
   }[];
   initialVerified: boolean;
   initialValidators: string[];
+  valiModels: {
+    valiName: string | null;
+    hotkey: string;
+    models: string[];
+  }[];
 }
 
 const ClientPage = ({
   data,
   initialVerified,
   initialValidators: valiNames,
+  valiModels,
 }: ClientPageProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -81,6 +91,12 @@ const ClientPage = ({
       ? color
       : "text-gray-400 dark:text-gray-600";
   };
+
+  const handleCopyClipboard = (copy: string) => {
+    void copyToClipboard(copy);
+    toast.success("Copied to clipboard!");
+  };
+
   return (
     <div className="mx-auto max-w-7xl px-12 pb-12">
       <div className="py-24 sm:py-24">
@@ -223,6 +239,80 @@ const ClientPage = ({
                     </span>
                   </Label>
                 </Field>
+              </div>
+            </div>
+          </div>
+          <div className="justify-center p-8 text-center sm:flex sm:items-center">
+            <div className="sm:flex-auto">
+              <h1 className="text-base font-semibold leading-6 text-gray-900 dark:text-gray-50">
+                Validator Models
+              </h1>
+              <p className="mt-2 text-sm text-gray-700 dark:text-gray-200">
+                A list of the latest validators and their challenge models
+              </p>
+            </div>
+          </div>
+          <div className="flow-root max-h-64 overflow-auto rounded border border-gray-200 shadow">
+            <div className="inline-block min-w-full align-middle">
+              <div>
+                <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
+                  <thead className="bg-gray-50 dark:bg-neutral-800">
+                    <tr>
+                      <th
+                        scope="col"
+                        className="w-1/5 whitespace-nowrap px-4 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-200"
+                      >
+                        Hotkey
+                      </th>
+                      <th
+                        scope="col"
+                        className="w-1/5 whitespace-nowrap px-4 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-200"
+                      >
+                        Validator
+                      </th>
+                      <th
+                        scope="col"
+                        className="w-1/3 whitespace-nowrap px-4 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-200"
+                      >
+                        Models
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-neutral-800">
+                    {valiModels.map((valiModel, index) => (
+                      <tr key={valiModel.hotkey + index}>
+                        <td className="w-1/5 whitespace-nowrap px-4 py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
+                          <div className="flex items-center justify-between font-mono">
+                            <span>
+                              {valiModel.hotkey.substring(0, 4) +
+                                "..." +
+                                valiModel.hotkey.substring(
+                                  valiModel.hotkey.length - 4,
+                                  valiModel.hotkey.length,
+                                )}
+                            </span>
+                            <button
+                              className="ml-2 cursor-pointer"
+                              onClick={() =>
+                                handleCopyClipboard(valiModel.hotkey)
+                              }
+                            >
+                              <Copy className="z-10 h-4 w-4 text-gray-500 dark:text-gray-300" />
+                            </button>
+                          </div>
+                        </td>
+                        <td className="w-1/5 whitespace-nowrap px-4 py-4 text-sm text-gray-500 dark:text-gray-300">
+                          {valiModel.valiName}
+                        </td>
+                        <td className="max-w-3/5 overflow-x-auto whitespace-nowrap px-4 py-4 text-sm text-gray-500 dark:text-gray-300">
+                          {valiModel.models.length > 0
+                            ? valiModel.models.join(", ")
+                            : "-- no models are being used as challenges by this validator. Potential WC"}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>

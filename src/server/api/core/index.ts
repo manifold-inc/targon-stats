@@ -1,22 +1,10 @@
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 
-import { ApiKey, genId, Model } from "@/schema/schema";
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
+import { ApiKey, genId } from "@/schema/schema";
+import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const coreRouter = createTRPCRouter({
-  getModel: publicProcedure.query(async ({ ctx }) => {
-    return await ctx.db
-      .select({
-        model: Model.id,
-        failure: Model.failure,
-        success: Model.success,
-        cpt: Model.cpt,
-        miners: Model.miners,
-      })
-      .from(Model)
-      .where(eq(Model.enabled, true));
-  }),
   getApiKeys: protectedProcedure.query(async ({ ctx }) => {
     return await ctx.db
       .select({ key: ApiKey.key })

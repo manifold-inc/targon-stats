@@ -65,10 +65,9 @@ export const MinerResponse = mysqlTable(
     return {
       idxVerified: index("idx_miner_response_verified").on(table.verified),
       idxUid: index("idx_miner_response_uid").on(table.uid),
-      idxHotkeyColdkey: index("idx_miner_response_hotkey_coldkey").on(
-        table.hotkey,
-        table.coldkey,
-      ),
+      idxRNanoid: index("idx_r_nanoid").on(table.r_nanoid),
+      idxHotkey: index("idx_miner_response_hotkey").on(table.hotkey),
+      idxColdkey: index("idx,miner_response_coldkey").on(table.coldkey),
       idxTimestamp: index("idx_miner_response_timestamp").on(table.timestamp),
     };
   },
@@ -78,7 +77,10 @@ export const Validator = mysqlTable(
   "validator",
   {
     hotkey: varchar("hotkey", { length: 255 }).primaryKey(),
-    valiName: varchar("vali_name", { length: 255 }),
+    valiName: varchar("vali_name", { length: 255 }).default(
+      "Unknown Validator",
+    ),
+    models: json("models").$type<string[]>().notNull().default([]),
   },
   (table) => {
     return {
@@ -137,13 +139,4 @@ export const CheckoutSessions = mysqlTable("checkoutSessions", {
   userId: varchar("user_id", { length: 32 }).notNull(),
   credits: int("credits").notNull().default(DEFAULT_CREDITS),
   createdAt: timestamp("created_at").default(sql`CURRENT_TIMESTAMP`),
-});
-
-export const Model = mysqlTable("model", {
-  id: varchar("id", { length: 128 }).primaryKey(),
-  miners: int("miners").default(0).notNull(),
-  success: int("success").default(0).notNull(),
-  failure: int("failure").default(0).notNull(),
-  cpt: int("cpt").default(1).notNull(), // cpt: credits per token
-  enabled: boolean("enabled").default(true),
 });
