@@ -2,7 +2,7 @@ import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 
 import { ApiKey, genId } from "@/schema/schema";
-import { createTRPCRouter, protectedProcedure  } from "../trpc";
+import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const coreRouter = createTRPCRouter({
   getApiKeys: protectedProcedure.query(async ({ ctx }) => {

@@ -99,6 +99,8 @@ async function PageContent({ searchParams = {} }: PageProps) {
       .from(innerAvg)
       .orderBy(innerAvg.minute);
 
+    const valiModels = await db.select().from(Validator);
+
     const mappedStats = orderedStats.map((stat) => ({
       ...stat,
       avg_tps: Number(stat.avg_tps),
@@ -117,6 +119,7 @@ async function PageContent({ searchParams = {} }: PageProps) {
         data={mappedStats}
         initialVerified={verified}
         initialValidators={selectedValidators}
+        valiModels={valiModels}
       />
     );
   } catch (error) {

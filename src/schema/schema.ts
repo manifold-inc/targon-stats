@@ -71,15 +71,16 @@ export const MinerResponse = mysqlTable(
       idxTimestamp: index("idx_miner_response_timestamp").on(table.timestamp),
     };
   },
-  
 );
 
 export const Validator = mysqlTable(
   "validator",
   {
     hotkey: varchar("hotkey", { length: 255 }).primaryKey(),
-    valiName: varchar("vali_name", { length: 255 }).default("Unknown Validator"),
-    models: json('models').$type<string[]>().notNull().default([]),
+    valiName: varchar("vali_name", { length: 255 }).default(
+      "Unknown Validator",
+    ),
+    models: json("models").$type<string[]>().notNull().default([]),
   },
   (table) => {
     return {

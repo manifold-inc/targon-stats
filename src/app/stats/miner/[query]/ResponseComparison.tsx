@@ -227,7 +227,9 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                             {`[${response.tokens
                               .slice(0, 10)
                               .map((token: Token) => `"${token.text}"`)
-                              .join(", ")}${response.tokens.length > 10 ? ", ..." : ""}]`}
+                              .join(
+                                ", ",
+                              )}${response.tokens.length > 10 ? ", ..." : ""}]`}
                           </span>
                           <button
                             className="ml-2 cursor-pointer"
