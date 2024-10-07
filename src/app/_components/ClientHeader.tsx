@@ -70,6 +70,7 @@ const ClientHeader = ({ validators }: ClientHeaderProps) => {
       <nav className="fixed right-5 top-5 z-40 flex space-x-8">
         <Link href="/">Home</Link>
         <Link href="/stats/miner">Miners</Link>
+        <Link href="/models">Models</Link>
         <div className="relative" ref={dropdownRef}>
           <button onClick={toggleDropdown} className="flex items-center gap-1">
             Validators
