@@ -346,7 +346,8 @@ export default async function Page() {
             </div>
           </div>
           <div className="pb-4">
-            Retrieves information about validator models, including their hotkeys, names, and their challenge models.
+            Retrieves information about validator models, including their
+            hotkeys, names, and their challenge models.
           </div>
 
           <div className="pb-2 text-lg font-semibold leading-6 text-gray-900 dark:text-gray-50">
@@ -354,7 +355,9 @@ export default async function Page() {
           </div>
           <ul className="list-inside list-disc pb-4 pl-5">
             <li>
-              <strong>validator_hotkeys</strong> (optional, string[]): An array of validator hotkeys to filter the results. If not provided, results from all validators are included.
+              <strong>validator_hotkeys</strong> (optional, string[]): An array
+              of validator hotkeys to filter the results. If not provided,
+              results from all validators are included.
             </li>
           </ul>
 
@@ -367,7 +370,8 @@ export default async function Page() {
             </div>
           </div>
           <div className="pb-4">
-            Ensure the request includes a Bearer Token in the Authorization header:
+            Ensure the request includes a Bearer Token in the Authorization
+            header:
           </div>
           <div className="overflow-x-scroll pb-4">
             <div className="w-fit whitespace-nowrap rounded bg-gray-200 px-2 py-2 font-mono text-sm leading-3 dark:bg-neutral-900">
@@ -424,11 +428,14 @@ export default async function Page() {
           </div>
 
           <div className="pb-4">
-            This response contains information about the validators and their associated models:
+            This response contains information about the validators and their
+            associated models:
           </div>
           <ul className="list-disc pb-4 pl-5">
             <li>
-              <strong>validatorModels</strong>: An array of objects, each representing a validator with their hotkey, name, and list of models.
+              <strong>validatorModels</strong>: An array of objects, each
+              representing a validator with their hotkey, name, and list of
+              models.
             </li>
           </ul>
         </Container>

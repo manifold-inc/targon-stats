@@ -70,7 +70,10 @@ export const POST = async (req: NextRequest) => {
   } catch (error) {
     if (error instanceof Error) {
       return NextResponse.json(
-        { error: "Failed to retrieve validator models", details: error.message },
+        {
+          error: "Failed to retrieve validator models",
+          details: error.message,
+        },
         { status: 500 },
       );
     }
