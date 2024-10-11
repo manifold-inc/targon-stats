@@ -12,7 +12,6 @@ interface ClientPageProps {
     avg_tps: number;
     avg_time_to_first_token: number;
     avg_time_for_all_tokens: number;
-    avg_response_time: number;
     valiName: string | null;
   }[];
   initialVerified: boolean;
@@ -47,24 +46,20 @@ const ClientPage = ({
 
   const [visibleCategories, setVisibleCategories] = useState<string[]>([
     "avg_tps",
-    "avg_response_time",
     "avg_time_to_first_token",
     "avg_time_for_all_tokens",
   ]);
   const processedData = data
     ? data.map((item) => ({
-        ...item,
-        avg_tps: item.avg_tps ? Number(item.avg_tps.toFixed(2)) : item.avg_tps,
-        avg_response_time: item.avg_response_time
-          ? Number(item.avg_response_time.toFixed(2))
-          : item.avg_response_time,
-        avg_time_to_first_token: item.avg_time_to_first_token
-          ? Number(item.avg_time_to_first_token.toFixed(2))
-          : item.avg_time_to_first_token,
-        avg_time_for_all_tokens: item.avg_time_for_all_tokens
-          ? Number(item.avg_time_for_all_tokens.toFixed(2))
-          : item.avg_time_for_all_tokens,
-      }))
+      ...item,
+      avg_tps: item.avg_tps ? Number(item.avg_tps.toFixed(2)) : item.avg_tps,
+      avg_time_to_first_token: item.avg_time_to_first_token
+        ? Number(item.avg_time_to_first_token.toFixed(2))
+        : item.avg_time_to_first_token,
+      avg_time_for_all_tokens: item.avg_time_for_all_tokens
+        ? Number(item.avg_time_for_all_tokens.toFixed(2))
+        : item.avg_time_for_all_tokens,
+    }))
     : []; // Return an empty array if data is undefined
 
   const handleCategoryClick = (category: string) => () => {
@@ -77,7 +72,6 @@ const ClientPage = ({
 
   const categoryColorMap: Record<string, string> = {
     avg_tps: "red",
-    avg_response_time: "green",
     avg_time_to_first_token: "purple",
     avg_time_for_all_tokens: "orange",
   };
@@ -121,27 +115,6 @@ const ClientPage = ({
               </button>
 
               <button
-                onClick={handleCategoryClick("avg_response_time")}
-                className={cardStyles}
-              >
-                <dt className="text-sm font-semibold leading-6 text-gray-600 dark:text-gray-400">
-                  Avg Response Time
-                </dt>
-                <dd
-                  className={`order-first text-3xl font-semibold tracking-tight ${textColor(
-                    "avg_response_time",
-                    "text-green-500",
-                  )}`}
-                >
-                  {data
-                    ? Math.min(...data.map((d) => d.avg_response_time)).toFixed(
-                        2,
-                      ) + "s"
-                    : "_"}
-                </dd>
-              </button>
-
-              <button
                 onClick={handleCategoryClick("avg_time_to_first_token")}
                 className={cardStyles}
               >
@@ -156,8 +129,8 @@ const ClientPage = ({
                 >
                   {data
                     ? Math.min(
-                        ...data.map((d) => d.avg_time_to_first_token),
-                      ).toFixed(2) + "s"
+                      ...data.map((d) => d.avg_time_to_first_token),
+                    ).toFixed(2) + "s"
                     : "_"}
                 </dd>
               </button>
@@ -177,8 +150,8 @@ const ClientPage = ({
                 >
                   {data
                     ? Math.min(
-                        ...data.map((d) => d.avg_time_for_all_tokens),
-                      ).toFixed(2) + "s"
+                      ...data.map((d) => d.avg_time_for_all_tokens),
+                    ).toFixed(2) + "s"
                     : "_"}
                 </dd>
               </button>

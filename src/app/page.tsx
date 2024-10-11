@@ -106,12 +106,6 @@ async function PageContent({ searchParams = {} }: PageProps) {
       avg_tps: Number(stat.avg_tps),
       avg_time_to_first_token: Number(stat.avg_time_to_first_token),
       avg_time_for_all_tokens: Number(stat.avg_time_for_all_tokens),
-      avg_response_time: Number(
-        stat.avg_time_for_all_tokens && stat.avg_time_to_first_token
-          ? Number(stat.avg_time_for_all_tokens) -
-              Number(stat.avg_time_to_first_token)
-          : 0,
-      ),
     }));
 
     return (

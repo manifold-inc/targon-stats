@@ -8,12 +8,6 @@ export default defineConfig({
   dialect: "mysql",
   schema: "./src/schema/schema.ts",
   dbCredentials: {
-    host: process.env.DATABASE_HOST!,
-    user: process.env.DATABASE_USERNAME!,
-    password: process.env.DATABASE_PASSWORD!,
-    database: process.env.DATABASE_NAME || "targon-stats",
-    ssl: {
-      rejectUnauthorized: true,
-    },
+    url: process.env.DATABASE_URL!
   },
 });
