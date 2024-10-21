@@ -74,7 +74,7 @@ const ClientPage = ({ data }: ClientPageProps) => {
                         ${
                           selected
                             ? "bg-gray-100 dark:bg-neutral-700"
-                            : "hover:bg-gray-50 dark:hover:bg-neutral-700"
+                            : "hover:bg-gray-200 dark:hover:bg-neutral-500"
                         }`
                       }
                     >
