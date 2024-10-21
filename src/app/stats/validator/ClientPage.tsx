@@ -13,7 +13,6 @@ interface ClientPageProps {
     valiName: string | null;
     models: string[];
     requestCount: string | null;
-    lastRequestTimestamp: Date | null;
   }[];
 }
 
@@ -34,13 +33,9 @@ const ClientPage = ({ data }: ClientPageProps) => {
         model.toLowerCase().includes(searchTerm.toLowerCase()),
       );
 
-    const isWeightCopying =
-      vali.models.length === 0 &&
-      vali.requestCount === "0" &&
-      !vali.lastRequestTimestamp;
+    const isLive = vali.models.length > 0 && vali.requestCount !== "0";
 
-    if (validatorFilter === "honest") return matchesSearch && !isWeightCopying;
-    if (validatorFilter === "wc") return matchesSearch && isWeightCopying;
+    if (validatorFilter === "live") return matchesSearch && isLive;
     return matchesSearch;
   });
 
@@ -54,7 +49,7 @@ const ClientPage = ({ data }: ClientPageProps) => {
                 Targon Validator Stats
               </h2>
               <p className="mt-4 text-lg leading-8 text-gray-600 dark:text-gray-400">
-                Honest and Potential WC Validator Stats
+                Request Count Per Validator
               </p>
             </div>
             <div className="relative flex items-center space-x-4 py-4">
@@ -70,7 +65,7 @@ const ClientPage = ({ data }: ClientPageProps) => {
               </div>
               <TabGroup className="w-1/3">
                 <TabList className="flex h-10 rounded border border-gray-200 bg-white shadow dark:border-white dark:bg-neutral-800">
-                  {["All", "Honest", "WC"].map((category) => (
+                  {["All", "Live"].map((category) => (
                     <Tab
                       key={category}
                       onClick={() => setValidatorFilter(category.toLowerCase())}
@@ -116,13 +111,7 @@ const ClientPage = ({ data }: ClientPageProps) => {
                         scope="col"
                         className="w-1/6 px-4 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-200"
                       >
-                        Request Count
-                      </th>
-                      <th
-                        scope="col"
-                        className="w-1/4 px-4 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-200"
-                      >
-                        Last Request Timestamp
+                        Request Count Today
                       </th>
                     </tr>
                   </thead>
@@ -130,7 +119,7 @@ const ClientPage = ({ data }: ClientPageProps) => {
                     {filteredData.map((vali, index) => (
                       <tr key={vali.hotkey + index}>
                         <td className="w-1/6 px-4 py-4 text-sm font-medium text-gray-900 dark:text-gray-300">
-                          <div className="flex items-center justify-between font-mono">
+                          <div className="flex items-center gap-4 font-mono">
                             <span>
                               {vali.hotkey.substring(0, 4) +
                                 "..." +
@@ -140,7 +129,7 @@ const ClientPage = ({ data }: ClientPageProps) => {
                                 )}
                             </span>
                             <button
-                              className="ml-2 cursor-pointer"
+                              className=" cursor-pointer"
                               onClick={() => handleCopyClipboard(vali.hotkey)}
                             >
                               <Copy className="z-10 h-4 w-4 text-gray-500 dark:text-gray-300" />
@@ -150,31 +139,25 @@ const ClientPage = ({ data }: ClientPageProps) => {
                         <td className="w-1/6 px-4 py-4 text-sm text-gray-500 dark:text-gray-300">
                           <div className="flex items-center space-x-2">
                             <span>{vali.valiName}</span>
-                            {vali.models.length === 0 &&
-                              vali.requestCount === "0" &&
-                              !vali.lastRequestTimestamp && (
-                                <span className="inline-flex items-center rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700">
-                                  WC
-                                </span>
-                              )}
                           </div>
                         </td>
                         <td className="w-1/4 px-4 py-4 text-sm text-gray-500 dark:text-gray-300">
                           <div className="break-words">
-                            {vali.models.length > 0
-                              ? vali.models.sort().join(", ")
-                              : "No Models are being used as Challenges"}
+                            {vali.models.length > 0 ? (
+                              <ul className="list-inside list-disc">
+                                {vali.models.sort().map((model, index) => (
+                                  <li key={index}>{model}</li>
+                                ))}
+                              </ul>
+                            ) : (
+                              "No Models are being used as Challenges"
+                            )}
                           </div>
                         </td>
                         <td className="w-1/6 px-4 py-4 text-sm text-gray-500 dark:text-gray-300">
                           {vali.requestCount === "0"
                             ? "No Requests"
                             : vali.requestCount}
-                        </td>
-                        <td className="w-1/4 px-4 py-4 text-sm text-gray-500 dark:text-gray-300">
-                          {vali.lastRequestTimestamp
-                            ? vali.lastRequestTimestamp.toLocaleString()
-                            : ""}
                         </td>
                       </tr>
                     ))}

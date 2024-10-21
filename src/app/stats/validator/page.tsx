@@ -1,4 +1,4 @@
-import { eq, sql } from "drizzle-orm";
+import { and, eq, gte, sql } from "drizzle-orm";
 
 import { db } from "@/schema/db";
 import { Validator, ValidatorRequest } from "@/schema/schema";
@@ -16,13 +16,15 @@ export default async function PageContent() {
         requestCount: sql<string>`COUNT(${ValidatorRequest.r_nanoid})`.as(
           "requestCount",
         ),
-        lastRequestTimestamp:
-          sql<Date | null>`MAX(${ValidatorRequest.timestamp})`.as(
-            "lastRequestTimestamp",
-          ),
       })
       .from(Validator)
-      .leftJoin(ValidatorRequest, eq(Validator.hotkey, ValidatorRequest.hotkey))
+      .leftJoin(
+        ValidatorRequest,
+        and(
+          eq(Validator.hotkey, ValidatorRequest.hotkey),
+          gte(ValidatorRequest.timestamp, sql`NOW() - INTERVAL 1 DAY`),
+        ),
+      )
       .groupBy(Validator.hotkey);
 
     return <ClientPage data={validatorStats} />;
