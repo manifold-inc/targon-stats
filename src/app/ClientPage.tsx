@@ -51,15 +51,15 @@ const ClientPage = ({
   ]);
   const processedData = data
     ? data.map((item) => ({
-      ...item,
-      avg_tps: item.avg_tps ? Number(item.avg_tps.toFixed(2)) : item.avg_tps,
-      avg_time_to_first_token: item.avg_time_to_first_token
-        ? Number(item.avg_time_to_first_token.toFixed(2))
-        : item.avg_time_to_first_token,
-      avg_time_for_all_tokens: item.avg_time_for_all_tokens
-        ? Number(item.avg_time_for_all_tokens.toFixed(2))
-        : item.avg_time_for_all_tokens,
-    }))
+        ...item,
+        avg_tps: item.avg_tps ? Number(item.avg_tps.toFixed(2)) : item.avg_tps,
+        avg_time_to_first_token: item.avg_time_to_first_token
+          ? Number(item.avg_time_to_first_token.toFixed(2))
+          : item.avg_time_to_first_token,
+        avg_time_for_all_tokens: item.avg_time_for_all_tokens
+          ? Number(item.avg_time_for_all_tokens.toFixed(2))
+          : item.avg_time_for_all_tokens,
+      }))
     : []; // Return an empty array if data is undefined
 
   const handleCategoryClick = (category: string) => () => {
@@ -129,8 +129,8 @@ const ClientPage = ({
                 >
                   {data
                     ? Math.min(
-                      ...data.map((d) => d.avg_time_to_first_token),
-                    ).toFixed(2) + "s"
+                        ...data.map((d) => d.avg_time_to_first_token),
+                      ).toFixed(2) + "s"
                     : "_"}
                 </dd>
               </button>
@@ -150,8 +150,8 @@ const ClientPage = ({
                 >
                   {data
                     ? Math.min(
-                      ...data.map((d) => d.avg_time_for_all_tokens),
-                    ).toFixed(2) + "s"
+                        ...data.map((d) => d.avg_time_for_all_tokens),
+                      ).toFixed(2) + "s"
                     : "_"}
                 </dd>
               </button>
