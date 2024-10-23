@@ -167,7 +167,7 @@ export default async function MinerChart({
         .select()
         .from(innerResponses)
         .orderBy(desc(innerResponses.timestamp))
-        .limit(10) as Promise<Response[]>,
+        .limit(100) as Promise<Response[]>,
     ]);
 
     const orderedStats = stats.reverse().map((stat) => ({
