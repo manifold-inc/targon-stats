@@ -43,7 +43,7 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
             Latest Responses
           </h1>
           <p className="mt-2 text-sm text-gray-700 dark:text-gray-200">
-            A list of 10 latest responses with their details.
+            A list of 100 latest responses with their details.
           </p>
         </div>
       </div>
