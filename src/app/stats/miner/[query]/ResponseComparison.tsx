@@ -76,7 +76,13 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                       scope="col"
                       className="whitespace-nowrap px-3 py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200"
                     >
-                      Validator Request
+                      Organic
+                    </th>
+                    <th
+                      scope="col"
+                      className="whitespace-nowrap px-3 py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200"
+                    >
+                      Message
                     </th>
                     <th
                       scope="col"
@@ -130,12 +136,6 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                       scope="col"
                       className="whitespace-nowrap px-3 py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200"
                     >
-                      Stream
-                    </th>
-                    <th
-                      scope="col"
-                      className="whitespace-nowrap px-3 py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200"
-                    >
                       Max N Tokens
                     </th>
                     <th
@@ -155,6 +155,12 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                       className="whitespace-nowrap px-3 py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200"
                     >
                       Error
+                    </th>
+                    <th
+                      scope="col"
+                      className="whitespace-nowrap px-3 py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200"
+                    >
+                      Cause
                     </th>
                     <th
                       scope="col"
@@ -192,28 +198,38 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                         {response.verified ? "Yes" : "No"}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
+                        {response.organic ? "Yes" : "No"}
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
                         <div className="flex items-center justify-between">
                           <span>
-                            {response.vali_request.messages
-                              ? response.vali_request.messages
-                                  .find((msg) => msg.role === "user")
-                                  ?.content.substring(0, 30) + "..."
-                              : response.vali_request.prompt
-                                ? response.vali_request.prompt
-                                    .split("\n\n")
-                                    .pop()
-                                    ?.substring(0, 30) + "..."
-                                : "N/A"}
+                            {(() => {
+                              const messageContent = Array.isArray(
+                                response.messages,
+                              )
+                                ? response.messages
+                                    .map(
+                                      (msg: { content: string }) => msg.content,
+                                    )
+                                    .join(" ")
+                                : response.messages || "N/A";
+
+                              return messageContent.length > 100
+                                ? messageContent.substring(46, 100) +
+                                    "..." +
+                                    messageContent.substring(
+                                      messageContent.length - 50,
+                                    )
+                                : messageContent;
+                            })()}
                           </span>
                           <button
                             className="ml-2 cursor-pointer"
                             onClick={() =>
                               handleCopyClipboard(
-                                response.vali_request.messages
-                                  ? JSON.stringify(
-                                      response.vali_request.messages,
-                                    )
-                                  : response.vali_request.prompt || "N/A",
+                                response.messages
+                                  ? JSON.stringify(response.messages)
+                                  : response.messages || "N/A",
                               )
                             }
                           >
@@ -264,22 +280,19 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                           ")"}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
-                        {response.vali_request.seed}
+                        {response.seed}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
-                        {response.vali_request.model}
+                        {response.model}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
-                        {response.vali_request.stream ? "Yes" : "No"}
+                        {response.max_tokens}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
-                        {response.vali_request.max_tokens}
+                        {response.temperature.toFixed(4)}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
-                        {response.vali_request.temperature.toFixed(4)}
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
-                        {response.request_endpoint.substring(10)}
+                        {response.request_endpoint}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
                         {response.error
@@ -290,6 +303,9 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                               response.error.length,
                             )
                           : "No Error"}
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
+                        {response.cause ? response.cause : "No Cause"}
                       </td>
                       <td className="relative whitespace-nowrap px-3 py-4 text-right text-sm font-medium sm:pr-6">
                         <button
@@ -360,25 +376,13 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                         "Time To First Token",
                         selectedResponse.time_to_first_token.toFixed(2),
                       ],
-                      ["Seed", selectedResponse.vali_request.seed],
-                      [
-                        "Temperature",
-                        selectedResponse.vali_request.temperature.toFixed(4),
-                      ],
-                      [
-                        "Max N Tokens",
-                        selectedResponse.vali_request.max_tokens,
-                      ],
-                      [
-                        "Stream",
-                        selectedResponse.vali_request.stream ? "Yes" : "No",
-                      ],
+                      ["Seed", selectedResponse.seed],
+                      ["Temperature", selectedResponse.temperature.toFixed(4)],
+                      ["Max N Tokens", selectedResponse.max_tokens],
                       ["Verified", selectedResponse.verified ? "Yes" : "No"],
-                      [
-                        "Endpoint",
-                        selectedResponse.request_endpoint.substring(10),
-                      ],
-                      ["Model", selectedResponse.vali_request.model],
+                      ["Organic", selectedResponse.organic ? "Yes" : "No"],
+                      ["Endpoint", selectedResponse.request_endpoint],
+                      ["Model", selectedResponse.model],
                     ].map(([label, value], index) => (
                       <div
                         key={index}
@@ -411,9 +415,7 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                       className="ml-2 cursor-pointer"
                       onClick={() =>
                         handleCopyClipboard(
-                          JSON.stringify(
-                            selectedResponse.vali_request.messages,
-                          ),
+                          JSON.stringify(selectedResponse.messages),
                         )
                       }
                     >
@@ -422,9 +424,7 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                   </dt>
                   <pre className="max-w-full overflow-auto">
                     <code className="inline-block items-center space-x-4 break-words text-left text-sm text-gray-700 dark:text-gray-400">
-                      {selectedResponse.vali_request.messages
-                        ? JSON.stringify(selectedResponse.vali_request.messages)
-                        : selectedResponse.vali_request.prompt || "N/A"}
+                      {JSON.stringify(selectedResponse.messages)}
                     </code>
                   </pre>
                 </div>
@@ -447,6 +447,28 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                       {selectedResponse.error
                         ? JSON.stringify(selectedResponse.error)
                         : selectedResponse.error || "No Error"}
+                    </code>
+                  </pre>
+                </div>
+                <div className="border-t border-gray-300 p-4 sm:col-span-2 sm:px-0">
+                  <dt className="flex justify-between pb-2 pr-4 text-sm font-semibold leading-6 text-gray-900 dark:text-white">
+                    Validator Error Cause
+                    <button
+                      className="ml-2 cursor-pointer"
+                      onClick={() =>
+                        handleCopyClipboard(
+                          JSON.stringify(selectedResponse.cause),
+                        )
+                      }
+                    >
+                      <Copy className="z-10 h-4 w-4 text-gray-500 dark:text-gray-300" />
+                    </button>
+                  </dt>
+                  <pre className="max-w-full overflow-auto">
+                    <code className="inline-block items-center space-x-4 break-words text-left text-sm text-gray-700 dark:text-gray-400">
+                      {selectedResponse.cause
+                        ? JSON.stringify(selectedResponse.cause)
+                        : selectedResponse.cause || "No Cause"}
                     </code>
                   </pre>
                 </div>

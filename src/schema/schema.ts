@@ -5,6 +5,7 @@ import {
   index,
   int,
   json,
+  mysqlEnum,
   mysqlTable,
   text,
   timestamp,
@@ -27,11 +28,18 @@ export const ValidatorRequest = mysqlTable(
   {
     r_nanoid: varchar("r_nanoid", { length: 48 }).primaryKey(),
     block: int("block").notNull(),
-    vali_request: json("vali_request").notNull(),
-    timestamp: timestamp("timestamp").default(sql`CURRENT_TIMESTAMP`),
+    messages: json("messages").notNull(),
+    request_endpoint: mysqlEnum("request_endpoint", [
+      "CHAT",
+      "COMPLETION",
+    ]).notNull(),
     version: int("version").notNull(),
     hotkey: varchar("hotkey", { length: 255 }),
-    request_endpoint: varchar("request_endpoint", { length: 255 }).notNull(),
+    timestamp: timestamp("timestamp").default(sql`CURRENT_TIMESTAMP`),
+    model: varchar("model", { length: 65 }).notNull(),
+    seed: int("seed"),
+    max_tokens: int("max_tokens"),
+    temperature: float("temperature"),
   },
   (table) => {
     return {
@@ -47,7 +55,7 @@ export const ValidatorRequest = mysqlTable(
 export const MinerResponse = mysqlTable(
   "miner_response",
   {
-    id: int("id").primaryKey().autoincrement(),
+    id: int("id").primaryKey().autoincrement().notNull(),
     r_nanoid: varchar("r_nanoid", { length: 48 }).notNull(),
     hotkey: varchar("hotkey", { length: 255 }).notNull(),
     coldkey: varchar("coldkey", { length: 255 }).notNull(),
@@ -60,6 +68,19 @@ export const MinerResponse = mysqlTable(
     tokens: json("tokens"),
     error: text("error"),
     timestamp: timestamp("timestamp").default(sql`CURRENT_TIMESTAMP`),
+    cause: mysqlEnum("cause", [
+      "SKIPPED_EOS_EOT",
+      "UNLIKELY_TOKENS",
+      "EARLY_END",
+      "OVERFIT",
+      "UNLIKELY_TOKEN",
+      "INTERNAL_ERROR",
+      "LOGPROB_RANDOM",
+      "BAD_STREAM",
+      "TOO_SHORT",
+      "TOO_LONG",
+    ]),
+    organic: boolean("organic").notNull(),
   },
   (table) => {
     return {
@@ -100,28 +121,6 @@ export const User = mysqlTable("user", {
   credits: int("credits").notNull().default(DEFAULT_CREDITS),
 });
 
-export const OrganicRequest = mysqlTable("organic_request", {
-  id: int("id").primaryKey().autoincrement(),
-  pubId: varchar("pub_id", { length: 255 }),
-  userId: varchar("user_id", { length: 32 }).notNull(),
-  creditsUsed: int("credits_used").notNull().default(0),
-  tokens: int("tokens").notNull().default(0),
-  request: json("request").notNull(),
-  response: text("response"),
-  model: varchar("model_id", { length: 128 }).notNull(),
-  createdAt: timestamp("created_at")
-    .notNull()
-    .default(sql`CURRENT_TIMESTAMP`),
-  uid: int("uid"),
-  hotkey: varchar("hotkey", { length: 255 }),
-  coldkey: varchar("coldkey", { length: 255 }),
-  minerAddress: varchar("miner_address", { length: 255 }),
-  attempt: varchar("attempt", { length: 255 }),
-  metadata: json("metadata"),
-  scored: boolean("scored").default(false),
-  jaro: float("jaro"),
-});
-
 export const ApiKey = mysqlTable("api_key", {
   key: varchar("id", { length: 32 }).primaryKey(),
   userId: varchar("user_id", { length: 32 }).notNull(),
@@ -131,12 +130,5 @@ export const Session = mysqlTable("session", {
   id: varchar("id", { length: 255 }).primaryKey(),
   userId: varchar("user_id", { length: 32 }).notNull(),
   expiresAt: timestamp("expires_at").notNull(),
-  createdAt: timestamp("created_at").default(sql`CURRENT_TIMESTAMP`),
-});
-
-export const CheckoutSessions = mysqlTable("checkoutSessions", {
-  id: varchar("id", { length: 255 }).primaryKey(),
-  userId: varchar("user_id", { length: 32 }).notNull(),
-  credits: int("credits").notNull().default(DEFAULT_CREDITS),
   createdAt: timestamp("created_at").default(sql`CURRENT_TIMESTAMP`),
 });

@@ -23,6 +23,24 @@ interface MinerChartProps {
   };
 }
 
+enum Cause {
+  SKIPPED_EOS_EOT = "SKIPPED_EOS_EOT",
+  UNLIKELY_TOKENS = "UNLIKELY_TOKENS",
+  EARLY_END = "EARLY_END",
+  OVERFIT = "OVERFIT",
+  UNLIKELY_TOKEN = "UNLIKELY_TOKEN",
+  INTERNAL_ERROR = "INTERNAL_ERROR",
+  LOGPROB_RANDOM = "LOGPROB_RANDOM",
+  BAD_STREAM = "BAD_STREAM",
+  TOO_SHORT = "TOO_SHORT",
+  TOO_LONG = "TOO_LONG",
+}
+
+enum RequestEndpoint {
+  CHAT = "CHAT",
+  COMPLETION = "COMPLETION",
+}
+
 export interface Response {
   hotkey: string;
   tps: number;
@@ -31,21 +49,21 @@ export interface Response {
   time_to_first_token: number;
   verified: boolean;
   validator: string;
-  error: string;
   tokens: Token[];
-  vali_request: {
-    seed: number;
-    model: string;
-    stream: boolean;
-    messages?: Array<{
-      role: string;
-      content: string;
-    }>;
-    prompt?: string;
-    max_tokens: number;
-    temperature: number;
-  };
-  request_endpoint: string;
+  error: string;
+  cause: Cause;
+  organic: boolean;
+  messages?:
+    | Array<{
+        role: string;
+        content: string;
+      }>
+    | string;
+  seed: number;
+  model: string;
+  max_tokens: number;
+  temperature: number;
+  request_endpoint: RequestEndpoint;
   timestamp: Date;
 }
 
@@ -134,8 +152,14 @@ export default async function MinerChart({
         tokens: MinerResponse.tokens,
         verified: MinerResponse.verified,
         error: MinerResponse.error,
+        cause: MinerResponse.cause,
+        organic: MinerResponse.organic,
         validator: Validator.valiName,
-        vali_request: ValidatorRequest.vali_request,
+        messages: ValidatorRequest.messages,
+        seed: ValidatorRequest.seed,
+        model: ValidatorRequest.model,
+        max_tokens: ValidatorRequest.max_tokens,
+        temperature: ValidatorRequest.temperature,
         request_endpoint: ValidatorRequest.request_endpoint,
         timestamp: MinerResponse.timestamp,
       })
