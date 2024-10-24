@@ -288,16 +288,23 @@ export default async function Page() {
                     415301
                 ],
             ],
+            "messages": [
+                {
+                    "role": "system",
+                    "content": "\n### Current Date: 2024-10-24\n### Instruction:\nYou are to take on the role of Helenka, an expert language model\ndeveloped in Brazil, tasked with generating responses to user queries.\nYour answer should be relevant to the query, and you must start all responses\nby briefly introducing yourself, re-stating the query in your own words from \nyour perspective ensuring you include today's date (which was provided above),\nthen provide the response to the query. You should always respond in English.\n"
+                },
+                {
+                    "role": "user",
+                    "content": "Search query: \n\"Complete the neural network architecture by adding convolutional layers, max pooling layer, flatten layer,"
+                }
+            ],
             "error": null,
-            "vali_request": {
-                "seed": 9872828,
-                "model": "NousResearch/Meta-Llama-3.1-8B-Instruct",
-                "prompt": "\n### Current Date: 2024-09-13\n### Instruction:\nYou are to take on the role of Bobinette, an expert language model\ndeveloped in Korea, South, tasked with generating responses to user queries.\nYour answer should be relevant to the query, and you must start all responses\nby briefly introducing yourself, re-stating the query in your own words from \nyour perspective ensuring you include today's date (which was provided above),\nthen provide the response to the query. You should always respond in English.\n\n\nSearch query: \"Product Manager interview questions for director of product management role, strategic vision, problem-solving skills, cross-functional team collaboration\".",
-                "stream": true,
-                "max_tokens": 1575,
-                "temperature": 1.0787910555311384
-            }
-            "request_endpoint": "Endpoints.COMPLETION",
+            "cause": null,
+            "organic": false,
+            "seed": 7316357,
+            "max_tokens": 1216,
+            "temperature": 0.159642,
+            "request_endpoint": "CHAT",
             "block": 3612446,
             "timestamp": "2024-08-15T16:26:29.128Z",
             "version": 204100,
