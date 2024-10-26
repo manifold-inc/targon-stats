@@ -1,6 +1,7 @@
 import { sql } from "drizzle-orm";
 import {
   boolean,
+  date,
   float,
   index,
   int,
@@ -90,6 +91,24 @@ export const MinerResponse = mysqlTable(
       idxHotkey: index("idx_miner_response_hotkey").on(table.hotkey),
       idxColdkey: index("idx,miner_response_coldkey").on(table.coldkey),
       idxTimestamp: index("idx_miner_response_timestamp").on(table.timestamp),
+    };
+  },
+);
+
+export const MinerResponseHistoricalStats = mysqlTable(
+  "miner_response_historical_stats",
+  {
+    id: int("id").primaryKey().autoincrement().notNull(),
+    date: date("date").notNull(),
+    avgTimeToFirstToken: float("avg_time_to_first_token").notNull(),
+    avgTimeForAllTokens: float("avg_time_for_all_tokens").notNull(),
+    avgTotalTime: float("avg_total_time").notNull(),
+    avgTPS: float("avg_tps").notNull(),
+    totalTokens: int("total_tokens").notNull(),
+  },
+  (table) => {
+    return {
+      idxDate: index("idx_miner_response_daily_average_date").on(table.date),
     };
   },
 );
