@@ -162,8 +162,9 @@ export default function ClientPage({ data }: ClientPageProps) {
                 label: "Total Tokens",
                 color: "cyan",
                 dataKey: "totalTokens",
+                valueFormatter: (value: number) => formatNumber(value),
               },
-            ].map(({ key, label, color, dataKey }, index) => (
+            ].map(({ key, label, color, dataKey, valueFormatter }, index) => (
               <div
                 key={key}
                 className={`transition-all ${chartVisibility(key)} mb-4 px-2 ${
@@ -178,9 +179,10 @@ export default function ClientPage({ data }: ClientPageProps) {
                   noDataText="Loading..."
                   categories={[dataKey]}
                   xAxisLabel="Date"
-                  yAxisWidth={40}
+                  yAxisWidth={60}
                   showLegend={false}
                   colors={[color]}
+                  valueFormatter={valueFormatter}
                 />
                 <p className="mt-2 text-center">{label}</p>
               </div>
