@@ -71,6 +71,7 @@ const ClientHeader = ({ validators }: ClientHeaderProps) => {
         <Link href="/">Home</Link>
         <Link href="/stats/miner">Miners</Link>
         <Link href="/stats/validator">Validators</Link>
+        <Link href="/stats/overview">Historical</Link>
         <div className="relative" ref={dropdownRef}>
           <button onClick={toggleDropdown} className="flex items-center gap-1">
             Validator Requests
