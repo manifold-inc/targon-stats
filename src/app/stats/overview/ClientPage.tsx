@@ -94,7 +94,7 @@ export default function ClientPage({ data }: ClientPageProps) {
                 },
                 {
                   key: "totalTokens",
-                  label: "AVG Total Tokens",
+                  label: "Total Tokens",
                   value: "totalTokens",
                   color: "cyan",
                 },
