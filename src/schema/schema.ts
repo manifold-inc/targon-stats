@@ -67,6 +67,7 @@ export const MinerResponse = mysqlTable(
     totalTime: float("total_time").notNull(),
     tps: float("tps").notNull(),
     tokens: json("tokens"),
+    totalTokens: int("total_tokens").generatedAlwaysAs(sql`(COALESCE(JSON_LENGTH(tokens), 0))`).notNull(),
     error: text("error"),
     timestamp: timestamp("timestamp").default(sql`CURRENT_TIMESTAMP`),
     cause: mysqlEnum("cause", [
