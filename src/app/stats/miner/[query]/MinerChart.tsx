@@ -65,6 +65,8 @@ export interface Response {
   temperature: number;
   request_endpoint: RequestEndpoint;
   timestamp: Date;
+  r_nanoid: string;
+  version: number;
 }
 
 interface Keys {
@@ -161,6 +163,8 @@ export default async function MinerChart({
         max_tokens: ValidatorRequest.max_tokens,
         temperature: ValidatorRequest.temperature,
         request_endpoint: ValidatorRequest.request_endpoint,
+        r_nanoid: ValidatorRequest.r_nanoid,
+        version: ValidatorRequest.version,
         timestamp: MinerResponse.timestamp,
       })
       .from(MinerResponse)
