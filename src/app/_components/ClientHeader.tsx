@@ -15,7 +15,8 @@ const ClientHeader = ({ validators }: ClientHeaderProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
-  const showValidatorRequests = pathname === "/" || pathname.includes("/stats/miner");
+  const showValidatorRequests =
+    pathname === "/" || pathname.includes("/stats/miner");
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedBits, setSelectedBits] = useState<string | null>(null);

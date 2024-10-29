@@ -164,6 +164,18 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                     </th>
                     <th
                       scope="col"
+                      className="whitespace-nowrap px-3 py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200"
+                    >
+                      NanoID
+                    </th>
+                    <th
+                      scope="col"
+                      className="whitespace-nowrap px-3 py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200"
+                    >
+                      Version
+                    </th>
+                    <th
+                      scope="col"
                       className="whitespace-nowrap px-3 py-3.5 text-right text-sm font-semibold text-gray-900 dark:text-gray-200 sm:pr-6"
                     >
                       Actions
@@ -307,6 +319,12 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
                         {response.cause ? response.cause : "No Cause"}
                       </td>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
+                        {response.r_nanoid}
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
+                        {response.version}
+                      </td>
                       <td className="relative whitespace-nowrap px-3 py-4 text-right text-sm font-medium sm:pr-6">
                         <button
                           onClick={() => handleViewDetails(response)}
@@ -349,6 +367,9 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                       <X className="h-6 w-6 text-gray-500 dark:text-gray-300" />
                     </button>
                   </div>
+                  <p className="mt-1 max-w-2xl text-lg leading-6 text-gray-500">
+                    Validator Version: {selectedResponse.version}
+                  </p>
                   <p className="mt-1 max-w-2xl text-lg leading-6 text-gray-500">
                     Detailed {selectedResponse.hotkey.substring(0, 5) + "..."}{" "}
                     Response View
@@ -407,6 +428,26 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                       </div>
                     ))}
                   </dl>
+                </div>
+                <div className="border-t border-gray-300 p-4 sm:col-span-2 sm:px-0">
+                  <dt className="flex justify-between pb-2 pr-4 text-sm font-semibold leading-6 text-gray-900 dark:text-white">
+                    Validator NanoID
+                    <button
+                      className="ml-2 cursor-pointer"
+                      onClick={() =>
+                        handleCopyClipboard(
+                          JSON.stringify(selectedResponse.r_nanoid),
+                        )
+                      }
+                    >
+                      <Copy className="z-10 h-4 w-4 text-gray-500 dark:text-gray-300" />
+                    </button>
+                  </dt>
+                  <pre className="max-w-full overflow-auto">
+                    <code className="inline-block items-center space-x-4 break-words text-left text-sm text-gray-700 dark:text-gray-400">
+                      {selectedResponse.r_nanoid}
+                    </code>
+                  </pre>
                 </div>
                 <div className="border-t border-gray-300 p-4 sm:col-span-2 sm:px-0">
                   <dt className="flex justify-between pb-2 pr-4 text-sm font-semibold leading-6 text-gray-900 dark:text-white">
