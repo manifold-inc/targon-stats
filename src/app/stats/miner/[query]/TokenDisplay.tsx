@@ -28,7 +28,7 @@ const TokenDisplay: React.FC<TokenProps> = ({ tokens, showTokenized }) => {
               {token.text}
               {hoveredIndex === index && (
                 <span className="absolute bottom-full left-1/2 mb-1 -translate-x-1/2 transform rounded bg-gray-800 px-2 py-1 text-xs text-white">
-                  {`powv: ${token.powv}, logprob: ${token.logprob.toFixed(2)}, token_id: ${token.token_id}`}
+                  {`logprob: ${token.logprob.toFixed(2)}, token_id: ${token.token_id}`}
                 </span>
               )}
             </span>

@@ -9,7 +9,6 @@ import ResponseComparison from "./ResponseComparison";
 export const revalidate = 60;
 
 export interface Token {
-  powv: number;
   text: string;
   logprob: number;
   token_id: number;
