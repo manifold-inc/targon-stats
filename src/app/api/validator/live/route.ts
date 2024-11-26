@@ -50,9 +50,7 @@ export const POST = async (req: NextRequest) => {
       .groupBy(Validator.hotkey)
       .having(gt(sql`COUNT(${ValidatorRequest.r_nanoid})`, 0));
 
-    return NextResponse.json({
-      validatorLiveStats,
-    });
+    return NextResponse.json(validatorLiveStats);
   } catch (error) {
     if (error instanceof Error) {
       return NextResponse.json(

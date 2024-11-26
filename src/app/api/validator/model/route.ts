@@ -64,9 +64,7 @@ export const POST = async (req: NextRequest) => {
         ),
       );
 
-    return NextResponse.json({
-      validatorModels,
-    });
+    return NextResponse.json(validatorModels);
   } catch (error) {
     if (error instanceof Error) {
       return NextResponse.json(

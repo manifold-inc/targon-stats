@@ -1,10 +1,8 @@
 import { type HTMLProps, type PropsWithChildren } from "react";
-import { redirect } from "next/navigation";
 import hljs from "highlight.js/lib/core";
 import json from "highlight.js/lib/languages/json";
 
 import { API_BASE_URL } from "@/constants";
-import { uncachedValidateRequest } from "@/server/auth";
 import { ApiSection, WatchForSuccess } from "./ClientCards";
 
 export const dynamic = "force-dynamic";
@@ -17,9 +15,7 @@ const Container = (props: PropsWithChildren & HTMLProps<HTMLDivElement>) => {
   );
 };
 
-export default async function Page() {
-  const { user } = await uncachedValidateRequest();
-  if (!user) redirect("/");
+export default function Page() {
   hljs.registerLanguage("json", json);
   return (
     <div className="mx-auto max-w-7xl px-12 pb-20 pt-20">
@@ -412,20 +408,18 @@ export default async function Page() {
                 <code
                   dangerouslySetInnerHTML={{
                     __html: hljs.highlight(
-                      `{
-  "validatorModels": [
-    {
-      "hotkey": "validator_hotkey1",
-      "valiName": "Validator 1",
-      "models": ["model1", "model2"]
-    },
-    {
-      "hotkey": "validator_hotkey2",
-      "valiName": "Validator 2",
-      "models": ["model3", "model4"]
-    }
-  ]
-}`,
+                      `[
+  {
+    "hotkey": "validator_hotkey1",
+    "valiName": "Validator 1",
+    "models": ["model1", "model2"]
+  },
+  {
+    "hotkey": "validator_hotkey2",
+    "valiName": "Validator 2",
+    "models": ["model3", "model4"]
+  }
+]`,
                       { language: "json" },
                     ).value,
                   }}
@@ -489,39 +483,37 @@ export default async function Page() {
                 <code
                   dangerouslySetInnerHTML={{
                     __html: hljs.highlight(
-                      `{
-    "validatorLiveStats": [
-        {
-            "hotkey": "5DQ2Geab6G25wiZ4jGH6wJM8fekrm1QhV9hrRuntjBVxxKZm",
-            "valiName": "Miner's Union Validator",
-            "models": [
-                "NousResearch/Meta-Llama-3.1-8B-Instruct"
-            ],
-            "requestCount": "5078"
-        },
-        {
-            "hotkey": "5F2CsUDVbRbVMXTh9fAzF9GacjVX7UapvRxidrxe7z8BYckQ",
-            "valiName": "Rizzo",
-            "models": [
-                "NousResearch/Meta-Llama-3.1-8B-Instruct"
-            ],
-            "requestCount": "4125"
-        },
-        {
-            "hotkey": "5FFApaS75bv5pJHfAp2FVLBj9ZaXuFDjEypsaBNc1wCfe52v",
-            "valiName": "RoundTable21",
-            "models": [
-                "NousResearch/Meta-Llama-3.1-8B-Instruct",
-                "NousResearch/Hermes-3-Llama-3.1-8B",
-                "EnvyIrys/EnvyIrys_sn111_14",
-                "gryphe/mythomax-l2-13b",
-                "deepseek-ai/deepseek-coder-33b-instruct",
-                "Qwen/Qwen2.5-Coder-7B-Instruct"
-            ],
-            "requestCount": "5433"
-        }
-    ]
-}`,
+                      `[
+    {
+        "hotkey": "5DQ2Geab6G25wiZ4jGH6wJM8fekrm1QhV9hrRuntjBVxxKZm",
+        "valiName": "Miner's Union Validator",
+        "models": [
+            "NousResearch/Meta-Llama-3.1-8B-Instruct"
+        ],
+        "requestCount": "5078"
+    },
+    {
+        "hotkey": "5F2CsUDVbRbVMXTh9fAzF9GacjVX7UapvRxidrxe7z8BYckQ",
+        "valiName": "Rizzo",
+        "models": [
+            "NousResearch/Meta-Llama-3.1-8B-Instruct"
+        ],
+        "requestCount": "4125"
+    },
+    {
+        "hotkey": "5FFApaS75bv5pJHfAp2FVLBj9ZaXuFDjEypsaBNc1wCfe52v",
+        "valiName": "RoundTable21",
+        "models": [
+            "NousResearch/Meta-Llama-3.1-8B-Instruct",
+            "NousResearch/Hermes-3-Llama-3.1-8B",
+            "EnvyIrys/EnvyIrys_sn111_14",
+            "gryphe/mythomax-l2-13b",
+            "deepseek-ai/deepseek-coder-33b-instruct",
+            "Qwen/Qwen2.5-Coder-7B-Instruct"
+        ],
+        "requestCount": "5433"
+    }
+]`,
                       { language: "json" },
                     ).value,
                   }}

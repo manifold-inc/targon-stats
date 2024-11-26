@@ -8,9 +8,11 @@ import { toast } from "sonner";
 import { API_BASE_URL } from "@/constants";
 import { reactClient } from "@/trpc/react";
 import { copyToClipboard } from "@/utils/utils";
+import { useAuth } from "../_components/providers";
 
 export const ApiSection = () => {
   const apiKeys = reactClient.core.getApiKeys.useQuery();
+  const auth = useAuth();
   return (
     <div className="flex flex-col gap-8 lg:flex-row">
       <div>
@@ -21,7 +23,7 @@ export const ApiSection = () => {
       </div>
       {apiKeys.data?.length ? (
         <ApiKey apiKey={apiKeys.data[0]!.key} />
-      ) : (
+      ) : auth.status === "UNAUTHED" ? null : (
         <div className="mt-auto flex h-6 w-72 animate-pulse items-center gap-2 bg-neutral-200 px-2 py-0.5 text-gray-800 dark:bg-neutral-700 dark:text-gray-300" />
       )}
     </div>
