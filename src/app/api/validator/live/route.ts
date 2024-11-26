@@ -4,7 +4,6 @@ import { and, eq, gt, gte, sql } from "drizzle-orm";
 import { db } from "@/schema/db";
 import { ApiKey, User, Validator, ValidatorRequest } from "@/schema/schema";
 
-
 export const POST = async (req: NextRequest) => {
   const bearerToken = req.headers.get("Authorization")?.split(" ").at(1);
   if (!bearerToken) {
@@ -13,7 +12,6 @@ export const POST = async (req: NextRequest) => {
       { status: 401 },
     );
   }
-
 
   const user = await db
     .select({
@@ -46,7 +44,7 @@ export const POST = async (req: NextRequest) => {
         ValidatorRequest,
         and(
           eq(Validator.hotkey, ValidatorRequest.hotkey),
-          gte(ValidatorRequest.timestamp, sql`NOW() - INTERVAL 1 DAY`)
+          gte(ValidatorRequest.timestamp, sql`NOW() - INTERVAL 1 DAY`),
         ),
       )
       .groupBy(Validator.hotkey)

@@ -458,8 +458,8 @@ export default async function Page() {
           </div>
           <div className="pb-4">
             Retrieves live statistics for validators, including their hotkeys,
-            names, models, and the number of requests they have received in the last 24
-            hours.
+            names, models, and the number of requests they have received in the
+            last 24 hours.
           </div>
 
           <h4 className="pb-2 text-xl font-semibold leading-6 text-gray-900 dark:text-gray-50">
@@ -538,7 +538,8 @@ export default async function Page() {
             <li>
               <strong>validatorLiveStats</strong>: An array of objects, each
               representing a validator with their hotkey, name, list of models,
-              and the number of requests they have received in the last 24 hours.
+              and the number of requests they have received in the last 24
+              hours.
             </li>
           </ul>
         </Container>
