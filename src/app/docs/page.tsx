@@ -446,6 +446,102 @@ export default async function Page() {
             </li>
           </ul>
         </Container>
+
+        <Container>
+          <h4 className="pb-2 text-xl font-semibold leading-6 text-gray-900 dark:text-gray-50">
+            Validator Live Stats
+          </h4>
+          <div className="overflow-x-scroll pb-4">
+            <div className="w-fit whitespace-nowrap rounded bg-gray-200 px-2 py-2 font-mono text-sm leading-3 dark:bg-neutral-900">
+              POST {API_BASE_URL}/validator/live
+            </div>
+          </div>
+          <div className="pb-4">
+            Retrieves live statistics for validators, including their hotkeys,
+            names, models, and the number of requests they have received in the last 24
+            hours.
+          </div>
+
+          <h4 className="pb-2 text-xl font-semibold leading-6 text-gray-900 dark:text-gray-50">
+            Example Request
+          </h4>
+          <div className="overflow-x-scroll pb-4">
+            <div className="w-fit whitespace-nowrap rounded bg-gray-200 px-2 py-2 font-mono text-sm leading-3 dark:bg-neutral-900">
+              POST {API_BASE_URL}/validator/live
+            </div>
+          </div>
+          <div className="pb-4">
+            Ensure the request includes a Bearer Token in the Authorization
+            header:
+          </div>
+          <div className="overflow-x-scroll pb-4">
+            <div className="w-fit whitespace-nowrap rounded bg-gray-200 px-2 py-2 font-mono text-sm leading-3 dark:bg-neutral-900">
+              Authorization: Bearer [your-api-key]
+            </div>
+          </div>
+
+          <div className="pb-2 text-xl font-semibold leading-6 text-gray-900 dark:text-gray-50">
+            Example Response
+          </div>
+          <div className="overflow-x-scroll pb-4">
+            <div className="w-full whitespace-nowrap rounded bg-gray-800 px-2 py-2 text-sm leading-3 text-gray-50 dark:bg-neutral-900">
+              <pre className="hljs prose-sm w-full overflow-x-scroll rounded bg-gray-800 px-2 py-2 dark:bg-neutral-900">
+                <code
+                  dangerouslySetInnerHTML={{
+                    __html: hljs.highlight(
+                      `{
+    "validatorLiveStats": [
+        {
+            "hotkey": "5DQ2Geab6G25wiZ4jGH6wJM8fekrm1QhV9hrRuntjBVxxKZm",
+            "valiName": "Miner's Union Validator",
+            "models": [
+                "NousResearch/Meta-Llama-3.1-8B-Instruct"
+            ],
+            "requestCount": "5078"
+        },
+        {
+            "hotkey": "5F2CsUDVbRbVMXTh9fAzF9GacjVX7UapvRxidrxe7z8BYckQ",
+            "valiName": "Rizzo",
+            "models": [
+                "NousResearch/Meta-Llama-3.1-8B-Instruct"
+            ],
+            "requestCount": "4125"
+        },
+        {
+            "hotkey": "5FFApaS75bv5pJHfAp2FVLBj9ZaXuFDjEypsaBNc1wCfe52v",
+            "valiName": "RoundTable21",
+            "models": [
+                "NousResearch/Meta-Llama-3.1-8B-Instruct",
+                "NousResearch/Hermes-3-Llama-3.1-8B",
+                "EnvyIrys/EnvyIrys_sn111_14",
+                "gryphe/mythomax-l2-13b",
+                "deepseek-ai/deepseek-coder-33b-instruct",
+                "Qwen/Qwen2.5-Coder-7B-Instruct"
+            ],
+            "requestCount": "5433"
+        }
+    ]
+}`,
+                      { language: "json" },
+                    ).value,
+                  }}
+                />
+              </pre>
+            </div>
+          </div>
+
+          <div className="pb-4">
+            This response contains information about the validators and their
+            associated live stats:
+          </div>
+          <ul className="list-disc pb-4 pl-5">
+            <li>
+              <strong>validatorLiveStats</strong>: An array of objects, each
+              representing a validator with their hotkey, name, list of models,
+              and the number of requests they have received in the last 24 hours.
+            </li>
+          </ul>
+        </Container>
       </div>
     </div>
   );
