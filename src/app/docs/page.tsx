@@ -206,6 +206,10 @@ export default function Page() {
               from all validators are included.
             </li>
             <li>
+              <strong>gettokens</strong> (optional, boolean): If true, the
+              response will include the tokens field. Defaults to false.
+            </li>
+            <li>
               <strong>limit</strong> (optional, number): The number of records
               to return in the response. Defaults to 100.{" "}
               <strong>Maximum limit is 300</strong>.
@@ -246,6 +250,7 @@ export default function Page() {
   "startblock": 3612400,
   "endblock": 3612488,
   "validator_hotkeys": ["validator_hotkey", "validator_hotkey2"],
+  "gettokens": true,
   "limit": 200,
   "offset": 4
 }`,
