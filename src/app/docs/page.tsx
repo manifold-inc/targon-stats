@@ -279,6 +279,18 @@ export default function Page() {
             "timeToFirstToken": 0.988543,
             "timeForAllTokens": 0.306293,
             "verified": true,
+            "tokens": [
+                {
+                    "text": " @@",
+                    "logprob": -0.23052221536636353,
+                    "token_id": 4815
+                },
+                {
+                    "text": "###",
+                    "logprob": -0.1162070631980896,
+                    "token_id": 14711
+                },
+            ],
             "error": null,
             "cause": null,
             "organic": false,
