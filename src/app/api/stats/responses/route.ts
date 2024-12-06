@@ -22,7 +22,7 @@ const schema = z.object({
   offset: z.number().optional(),
   extras: z
     .object({
-      tokens: z.boolean(),
+      tokens: z.boolean().optional().default(false),
     })
     .optional()
     .default({ tokens: false }),
