@@ -176,7 +176,13 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                     </th>
                     <th
                       scope="col"
-                      className="whitespace-nowrap px-3 py-3.5 text-right text-sm font-semibold text-gray-900 dark:text-gray-200 sm:pr-6"
+                      className="whitespace-nowrap px-3 py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200"
+                    >
+                      Timestamp
+                    </th>
+                    <th
+                      scope="col"
+                      className="sticky right-0 z-10 whitespace-nowrap bg-gray-50 px-3 py-3.5 text-right text-sm font-semibold text-gray-900 dark:bg-neutral-800 dark:text-gray-200 sm:pr-6"
                     >
                       Actions
                     </th>
@@ -325,7 +331,10 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
                         {response.version}
                       </td>
-                      <td className="relative whitespace-nowrap px-3 py-4 text-right text-sm font-medium sm:pr-6">
+                      <td className="pygi-4 whitespace-nowrap px-3 text-sm text-gray-500 dark:text-gray-300">
+                        {response.timestamp.toISOString()}
+                      </td>
+                      <td className="sticky right-0 z-10 whitespace-nowrap bg-white px-3 py-4 text-right text-sm font-medium dark:bg-neutral-800 sm:pr-6">
                         <button
                           onClick={() => handleViewDetails(response)}
                           className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-200 dark:hover:text-indigo-100"

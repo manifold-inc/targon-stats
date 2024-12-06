@@ -20,6 +20,12 @@ const schema = z.object({
   validator_hotkeys: z.string().array().optional(),
   limit: z.number().optional(),
   offset: z.number().optional(),
+  extras: z
+    .object({
+      tokens: z.boolean().optional().default(false),
+    })
+    .optional()
+    .default({ tokens: false }),
 });
 
 export const POST = async (req: NextRequest) => {
@@ -60,6 +66,7 @@ export const POST = async (req: NextRequest) => {
     validator_hotkeys,
     limit,
     offset,
+    extras,
   } = response.data;
 
   const limitValue = limit ?? 100;
@@ -121,7 +128,7 @@ export const POST = async (req: NextRequest) => {
         timeToFirstToken: MinerResponse.timeToFirstToken,
         timeForAllTokens: MinerResponse.timeForAllTokens,
         verified: MinerResponse.verified,
-        tokens: MinerResponse.tokens,
+        ...(extras.tokens && { tokens: MinerResponse.tokens }),
         error: MinerResponse.error,
         cause: MinerResponse.cause,
         organic: MinerResponse.organic,

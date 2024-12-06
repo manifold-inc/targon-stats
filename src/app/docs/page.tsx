@@ -206,6 +206,16 @@ export default function Page() {
               from all validators are included.
             </li>
             <li>
+              <strong>extras</strong> (optional, object): An object containing
+              additional fields to include in the response. Currently supports:
+              <ul className="list-inside list-[circle] pl-5">
+                <li>
+                  <code>tokens</code> (boolean): When true, includes the
+                  token-level details in the response. Defaults to false.
+                </li>
+              </ul>
+            </li>
+            <li>
               <strong>limit</strong> (optional, number): The number of records
               to return in the response. Defaults to 100.{" "}
               <strong>Maximum limit is 300</strong>.
@@ -246,6 +256,9 @@ export default function Page() {
   "startblock": 3612400,
   "endblock": 3612488,
   "validator_hotkeys": ["validator_hotkey", "validator_hotkey2"],
+  "extras": {
+    "tokens": true
+  },
   "limit": 200,
   "offset": 4
 }`,
@@ -269,48 +282,51 @@ export default function Page() {
                       `{
     "responses": [
         {
-            "tps": 75.4943,
-            "totalTime": 21.3394,
-            "timeToFirstToken": 21.3394,
-            "timeForAllTokens": 7.15256e-7,
+            "tps": 53.2886,
+            "totalTime": 1.29484,
+            "timeToFirstToken": 0.988543,
+            "timeForAllTokens": 0.306293,
             "verified": true,
             "tokens": [
-                [
-                    "ПО",
-                    -4440
-                ],
-                [
-                    " Laugh",
-                    415301
-                ],
-            ],
-            "messages": [
                 {
-                    "role": "system",
-                    "content": "\n### Current Date: 2024-10-24\n### Instruction:\nYou are to take on the role of Helenka, an expert language model\ndeveloped in Brazil, tasked with generating responses to user queries.\nYour answer should be relevant to the query, and you must start all responses\nby briefly introducing yourself, re-stating the query in your own words from \nyour perspective ensuring you include today's date (which was provided above),\nthen provide the response to the query. You should always respond in English.\n"
+                    "text": " @@",
+                    "logprob": -0.23052221536636353,
+                    "token_id": 4815
                 },
                 {
-                    "role": "user",
-                    "content": "Search query: \n\"Complete the neural network architecture by adding convolutional layers, max pooling layer, flatten layer,"
-                }
+                    "text": "###",
+                    "logprob": -0.1162070631980896,
+                    "token_id": 14711
+                },
             ],
             "error": null,
             "cause": null,
             "organic": false,
-            "seed": 7316357,
-            "max_tokens": 1216,
-            "temperature": 0.159642,
+            "messages": [
+                {
+                    "role": "system",
+                    "content": "\n### Current Date: 2024-11-27\n### Instruction:\nYou are to take on the role of Corella, an expert language model\ndeveloped in Lesotho, tasked with generating responses to user queries.\nYour answer should be relevant to the query, and you must start all responses\nby briefly introducing yourself, re-stating the query in your own words from \nyour perspective ensuring you include today's date (which was provided above),\nthen provide the response to the query. You should always respond in English.\n"
+                },
+                {
+                    "role": "user",
+                    "content": "Search query: How many horses from a riding school can get new horseshoes given the iron requirement for horseshoes and the total iron available for horseshoes for farms"
+                }
+            ],
+            "model": "deepseek-ai/deepseek-coder-33b-instruct",
+            "seed": 7620555,
+            "max_tokens": 1527,
+            "temperature": 0.28463,
             "request_endpoint": "CHAT",
-            "block": 3612446,
-            "timestamp": "2024-08-15T16:26:29.128Z",
-            "version": 204100,
-            "validator": "Openτensor Foundaτion",
-            "validator_hotkey": "5F4tQyWrhfGVcNhoqeiNsR6KjD4wMZ2kfhLj4oHYuyHbZAc3",
-            "id": 2216965
+            "block": 4358349,
+            "timestamp": "2024-11-27T16:14:25.000Z",
+            "version": 402090,
+            "validator": "Manifold",
+            "validator_hotkey": "5Hp18g9P8hLGKp9W3ZDr4bvJwba6b6bY3P2u3VdYf8yMR8FM",
+            "id": 29898598
         }
     ],
-    "totalRecords": "14",
-    "offset": 7,
+    "totalRecords": "211",
+    "offset": 20,
     "limit": 1,
     "hasMoreRecords": true
 }`,
