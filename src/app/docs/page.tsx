@@ -206,8 +206,14 @@ export default function Page() {
               from all validators are included.
             </li>
             <li>
-              <strong>gettokens</strong> (optional, boolean): If true, the
-              response will include the tokens field. Defaults to false.
+              <strong>extras</strong> (optional, object): An object containing
+              additional fields to include in the response. Currently supports:
+              <ul className="list-inside list-[circle] pl-5">
+                <li>
+                  <code>tokens</code> (boolean): When true, includes the token-level
+                  details in the response. Defaults to false.
+                </li>
+              </ul>
             </li>
             <li>
               <strong>limit</strong> (optional, number): The number of records
@@ -250,7 +256,9 @@ export default function Page() {
   "startblock": 3612400,
   "endblock": 3612488,
   "validator_hotkeys": ["validator_hotkey", "validator_hotkey2"],
-  "gettokens": true,
+  "extras": {
+    "tokens": true
+  },
   "limit": 200,
   "offset": 4
 }`,
