@@ -75,6 +75,7 @@ const ClientHeader = ({ validators }: ClientHeaderProps) => {
         <Link href="/stats/miner">Miners</Link>
         <Link href="/stats/validator">Validators</Link>
         <Link href="/stats/overview">Historical</Link>
+        <Link href="/docs">API</Link>
         {showValidatorRequests && (
           <div className="relative" ref={dropdownRef}>
             <button
@@ -116,7 +117,6 @@ const ClientHeader = ({ validators }: ClientHeaderProps) => {
         )}
         {auth.status === "AUTHED" ? (
           <>
-            <Link href="/docs">API</Link>
             <Link prefetch={false} href="/sign-out">
               Sign Out
             </Link>
