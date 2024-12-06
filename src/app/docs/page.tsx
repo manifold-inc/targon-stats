@@ -210,8 +210,8 @@ export default function Page() {
               additional fields to include in the response. Currently supports:
               <ul className="list-inside list-[circle] pl-5">
                 <li>
-                  <code>tokens</code> (boolean): When true, includes the token-level
-                  details in the response. Defaults to false.
+                  <code>tokens</code> (boolean): When true, includes the
+                  token-level details in the response. Defaults to false.
                 </li>
               </ul>
             </li>

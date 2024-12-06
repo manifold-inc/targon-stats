@@ -331,7 +331,7 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
                         {response.version}
                       </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
+                      <td className="pygi-4 whitespace-nowrap px-3 text-sm text-gray-500 dark:text-gray-300">
                         {response.timestamp.toISOString()}
                       </td>
                       <td className="relative whitespace-nowrap px-3 py-4 text-right text-sm font-medium sm:pr-6">
