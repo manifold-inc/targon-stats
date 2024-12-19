@@ -128,7 +128,7 @@ export const POST = async (req: NextRequest) => {
     offsetValue + limitValue < totalRecords[0]!.totalRecords;
 
   // Fetch user details (authenticate the token) and responses for the specified miner
-  const [[user], responses] = await Promise.all([
+  const [[user], rawResponses] = await Promise.all([
     db
       .select({
         id: User.id,
@@ -138,22 +138,22 @@ export const POST = async (req: NextRequest) => {
       .where(eq(ApiKey.key, bearerToken))
       .limit(1),
     extras.organics
-      ? await db
+      ? db
           .select({
             uid: OrganicRequest.uid,
             tps: OrganicRequest.tps,
-            total_time: OrganicRequest.total_time,
-            time_to_first_token: OrganicRequest.time_to_first_token,
-            time_for_all_tokens: OrganicRequest.time_for_all_tokens,
+            totalTime: OrganicRequest.total_time,
+            timeToFirstToken: OrganicRequest.time_to_first_token,
+            timeForAllTokens: OrganicRequest.time_for_all_tokens,
             verified: OrganicRequest.verified,
             error: OrganicRequest.error,
             cause: OrganicRequest.cause,
             model: OrganicRequest.model,
             seed: OrganicRequest.seed,
-            max_tokens: OrganicRequest.max_tokens,
+            maxTokens: OrganicRequest.max_tokens,
             temperature: OrganicRequest.temperature,
-            request_endpoint: OrganicRequest.request_endpoint,
-            created_at: OrganicRequest.created_at,
+            requestEndpoint: OrganicRequest.request_endpoint,
+            timestamp: OrganicRequest.created_at,
             id: OrganicRequest.id,
           })
           .from(OrganicRequest)
@@ -170,32 +170,7 @@ export const POST = async (req: NextRequest) => {
           .orderBy(desc(OrganicRequest.created_at))
           .limit(limitValue)
           .offset(offsetValue)
-          .then((organicResponses) =>
-            organicResponses.map((response) => ({
-              tps: response.tps,
-              totalTime: response.total_time,
-              timeToFirstToken: response.time_to_first_token,
-              timeForAllTokens: response.time_for_all_tokens,
-              verified: response.verified,
-              tokens: [],
-              error: response.error,
-              cause: response.cause,
-              organic: true,
-              messages: [],
-              model: response.model,
-              seed: response.seed,
-              max_tokens: response.max_tokens,
-              temperature: response.temperature,
-              request_endpoint: response.request_endpoint,
-              block: 0,
-              timestamp: response.created_at,
-              version: 0,
-              validator: "",
-              validator_hotkey: "",
-              id: response.id,
-            })),
-          )
-      : await db
+      : db
           .select({
             tps: MinerResponse.tps,
             totalTime: MinerResponse.totalTime,
@@ -209,14 +184,14 @@ export const POST = async (req: NextRequest) => {
             messages: ValidatorRequest.messages,
             model: ValidatorRequest.model,
             seed: ValidatorRequest.seed,
-            max_tokens: ValidatorRequest.max_tokens,
+            maxTokens: ValidatorRequest.max_tokens,
             temperature: ValidatorRequest.temperature,
-            request_endpoint: ValidatorRequest.request_endpoint,
+            requestEndpoint: ValidatorRequest.request_endpoint,
             block: ValidatorRequest.block,
             timestamp: MinerResponse.timestamp,
             version: ValidatorRequest.version,
             validator: Validator.valiName,
-            validator_hotkey: Validator.hotkey,
+            validatorHotkey: Validator.hotkey,
             id: MinerResponse.id,
           })
           .from(MinerResponse)
@@ -240,6 +215,33 @@ export const POST = async (req: NextRequest) => {
           .limit(limitValue)
           .offset(offsetValue),
   ]);
+
+  // Transform organic responses to match synthetic response shape
+  const responses = extras.organics
+    ? rawResponses.map((response) => ({
+        tps: response.tps,
+        totalTime: response.totalTime,
+        timeToFirstToken: response.timeToFirstToken,
+        timeForAllTokens: response.timeForAllTokens,
+        verified: response.verified,
+        tokens: [],
+        error: response.error,
+        cause: response.cause,
+        organic: true,
+        messages: [],
+        model: response.model,
+        seed: response.seed,  
+        maxTokens: response.maxTokens,
+        temperature: response.temperature,
+        requestEndpoint: response.requestEndpoint,
+        block: 0,
+        timestamp: response.timestamp,
+        version: 0,
+        validator: "",
+        validatorHotkey: "",
+        id: response.id,
+      }))
+    : rawResponses;
 
   if (!user) {
     return NextResponse.json(

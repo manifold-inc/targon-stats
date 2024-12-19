@@ -287,52 +287,40 @@ export default function Page() {
                       `{
     "responses": [
         {
-            "tps": 53.2886,
-            "totalTime": 1.29484,
-            "timeToFirstToken": 0.988543,
-            "timeForAllTokens": 0.306293,
+            "tps": 50.7754,
+            "totalTime": 3.60411,
+            "timeToFirstToken": 1.85199,
+            "timeForAllTokens": 1.75212,
             "verified": true,
-            "tokens": [
-                {
-                    "text": " @@",
-                    "logprob": -0.23052221536636353,
-                    "token_id": 4815
-                },
-                {
-                    "text": "###",
-                    "logprob": -0.1162070631980896,
-                    "token_id": 14711
-                },
-            ],
             "error": null,
             "cause": null,
             "organic": false,
             "messages": [
                 {
                     "role": "system",
-                    "content": "\n### Current Date: 2024-11-27\n### Instruction:\nYou are to take on the role of Corella, an expert language model\ndeveloped in Lesotho, tasked with generating responses to user queries.\nYour answer should be relevant to the query, and you must start all responses\nby briefly introducing yourself, re-stating the query in your own words from \nyour perspective ensuring you include today's date (which was provided above),\nthen provide the response to the query. You should always respond in English.\n"
+                    "content": "\\n### Current Date: 2024-12-19\\n### Instruction:\\nYou are to take on the role of Con..."
                 },
                 {
                     "role": "user",
-                    "content": "Search query: How many horses from a riding school can get new horseshoes given the iron requirement for horseshoes and the total iron available for horseshoes for farms"
+                    "content": "Search query: What theory brings together continental drift and seafloor spreading?"
                 }
             ],
-            "model": "deepseek-ai/deepseek-coder-33b-instruct",
-            "seed": 7620555,
-            "max_tokens": 1527,
-            "temperature": 0.28463,
-            "request_endpoint": "CHAT",
-            "block": 4358349,
-            "timestamp": "2024-11-27T16:14:25.000Z",
-            "version": 402090,
-            "validator": "Manifold",
-            "validator_hotkey": "5Hp18g9P8hLGKp9W3ZDr4bvJwba6b6bY3P2u3VdYf8yMR8FM",
-            "id": 29898598
+            "model": "NousResearch/Meta-Llama-3.1-8B-Instruct",
+            "seed": 5402214,
+            "maxTokens": 802,
+            "temperature": 0.326203,
+            "requestEndpoint": "CHAT",
+            "block": 4517585,
+            "timestamp": "2024-12-19T19:11:14.000Z",
+            "version": 403010,
+            "validator": "Foundry",
+            "validatorHotkey": "5HEo565WAy4Dbq3Sv271SAi7syBSofyfhhwRNjFNSM2gP9M2",
+            "id": 46767535
         }
     ],
-    "totalRecords": "211",
-    "offset": 20,
-    "limit": 1,
+    "totalRecords": "207",
+    "offset": 0,
+    "limit": 2,
     "hasMoreRecords": true
 }`,
                       { language: "json" },
@@ -355,33 +343,33 @@ export default function Page() {
                       `{
     "responses": [
         {
-            "tps": 53.2886,
-            "totalTime": 1.29484,
-            "timeToFirstToken": 0.988543,
-            "timeForAllTokens": 0.306293,
+            "tps": 246.988,
+            "totalTime": 166,
+            "timeToFirstToken": 158,
+            "timeForAllTokens": 8,
             "verified": true,
             "tokens": [],
             "error": null,
             "cause": null,
             "organic": true,
             "messages": [],
-            "model": "deepseek-ai/deepseek-coder-33b-instruct",
-            "seed": 7620555,
-            "max_tokens": 1527,
-            "temperature": 0.28463,
-            "request_endpoint": "CHAT",
+            "model": "EnvyIrys/EnvyIrys_sn111_14",
+            "seed": 1734554855,
+            "maxTokens": 500,
+            "temperature": 0.2,
+            "requestEndpoint": "COMPLETION",
             "block": 0,
-            "timestamp": "2024-11-27T16:14:25.000Z",
+            "timestamp": "2024-12-18T20:48:47.000Z",
             "version": 0,
             "validator": "",
-            "validator_hotkey": "",
-            "id": 29898598
+            "validatorHotkey": "",
+            "id": 1
         }
     ],
-    "totalRecords": "211",
-    "offset": 20,
-    "limit": 1,
-    "hasMoreRecords": true
+    "totalRecords": "2",
+    "offset": 0,
+    "limit": 2,
+    "hasMoreRecords": false
 }`,
                       { language: "json" },
                     ).value,
