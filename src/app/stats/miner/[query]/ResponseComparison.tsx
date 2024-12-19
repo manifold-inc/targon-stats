@@ -76,12 +76,6 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                       scope="col"
                       className="whitespace-nowrap px-3 py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200"
                     >
-                      Organic
-                    </th>
-                    <th
-                      scope="col"
-                      className="whitespace-nowrap px-3 py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200"
-                    >
                       Message
                     </th>
                     <th
@@ -214,9 +208,6 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
                         {response.verified ? "Yes" : "No"}
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
-                        {response.organic ? "Yes" : "No"}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
                         <div className="flex items-center justify-between">
@@ -410,9 +401,9 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                       ["Temperature", selectedResponse.temperature.toFixed(4)],
                       ["Max N Tokens", selectedResponse.max_tokens],
                       ["Verified", selectedResponse.verified ? "Yes" : "No"],
-                      ["Organic", selectedResponse.organic ? "Yes" : "No"],
                       ["Endpoint", selectedResponse.request_endpoint],
                       ["Model", selectedResponse.model],
+                      ["", ""]
                     ].map(([label, value], index) => (
                       <div
                         key={index}

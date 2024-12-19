@@ -276,7 +276,7 @@ export default function Page() {
           </div>
 
           <div className="pb-2 text-xl font-semibold leading-6 text-gray-900 dark:text-gray-50">
-            Example Response
+            Example Synthetic Response
           </div>
           <div className="overflow-x-scroll pb-4">
             <div className="w-full whitespace-nowrap rounded bg-gray-800 px-2 py-2 text-sm leading-3 text-gray-50 dark:bg-neutral-900">
@@ -294,7 +294,6 @@ export default function Page() {
             "verified": true,
             "error": null,
             "cause": null,
-            "organic": false,
             "messages": [
                 {
                     "role": "system",
@@ -351,7 +350,6 @@ export default function Page() {
             "tokens": [],
             "error": null,
             "cause": null,
-            "organic": true,
             "messages": [],
             "model": "EnvyIrys/EnvyIrys_sn111_14",
             "seed": 1734554855,
@@ -383,9 +381,6 @@ export default function Page() {
           <ul className="list-disc pb-4 pl-5">
             <li>
               <code>tokens</code> and <code>messages</code> are empty arrays
-            </li>
-            <li>
-              <code>organic</code> is always true
             </li>
             <li>
               <code>block</code> and <code>version</code> are 0

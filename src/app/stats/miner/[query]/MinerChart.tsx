@@ -57,7 +57,6 @@ export interface Response {
   tokens: Token[];
   error: string;
   cause: Cause;
-  organic: boolean;
   messages?:
     | Array<{
         role: string;
@@ -178,7 +177,6 @@ export default async function MinerChart({
         verified: MinerResponse.verified,
         error: MinerResponse.error,
         cause: MinerResponse.cause,
-        organic: MinerResponse.organic,
         validator: Validator.valiName,
         messages: ValidatorRequest.messages,
         seed: ValidatorRequest.seed,
@@ -233,6 +231,7 @@ export default async function MinerChart({
       .from(OrganicRequest)
       .where(
         and(
+          gte(OrganicRequest.created_at, sql`NOW() - INTERVAL 2 HOUR`),
           query.length < 5
             ? eq(OrganicRequest.uid, parseInt(query))
             : or(

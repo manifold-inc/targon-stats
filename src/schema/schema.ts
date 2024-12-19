@@ -84,7 +84,6 @@ export const MinerResponse = mysqlTable(
       "TOO_SHORT",
       "TOO_LONG",
     ]),
-    organic: boolean("organic").notNull(),
   },
   (table) => {
     return {
