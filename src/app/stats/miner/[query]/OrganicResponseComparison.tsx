@@ -2,9 +2,9 @@
 
 import { Copy } from "lucide-react";
 import { toast } from "sonner";
+
 import { copyToClipboard } from "@/utils/utils";
 import { type OrganicResponse } from "./MinerChart";
-
 
 interface OrganicResponseComparisonProps {
   responses: OrganicResponse[];
@@ -46,34 +46,64 @@ const OrganicResponseComparison: React.FC<OrganicResponseComparisonProps> = ({
             <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
               <thead className="bg-gray-50 dark:bg-neutral-800">
                 <tr>
-                  <th scope="col" className="whitespace-nowrap px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-200">
+                  <th
+                    scope="col"
+                    className="whitespace-nowrap px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-200"
+                  >
                     Hotkey
                   </th>
-                  <th scope="col" className="whitespace-nowrap px-3 py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200">
+                  <th
+                    scope="col"
+                    className="whitespace-nowrap px-3 py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200"
+                  >
                     Model
                   </th>
-                  <th scope="col" className="whitespace-nowrap px-3 py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200">
+                  <th
+                    scope="col"
+                    className="whitespace-nowrap px-3 py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200"
+                  >
                     Total Tokens
                   </th>
-                  <th scope="col" className="whitespace-nowrap px-3 py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200">
+                  <th
+                    scope="col"
+                    className="whitespace-nowrap px-3 py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200"
+                  >
                     TPS
                   </th>
-                  <th scope="col" className="whitespace-nowrap px-3 py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200">
+                  <th
+                    scope="col"
+                    className="whitespace-nowrap px-3 py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200"
+                  >
                     Time For All Tokens
                   </th>
-                  <th scope="col" className="whitespace-nowrap px-3 py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200">
+                  <th
+                    scope="col"
+                    className="whitespace-nowrap px-3 py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200"
+                  >
                     Total Time
                   </th>
-                  <th scope="col" className="whitespace-nowrap px-3 py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200">
+                  <th
+                    scope="col"
+                    className="whitespace-nowrap px-3 py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200"
+                  >
                     Time To First Token
                   </th>
-                  <th scope="col" className="whitespace-nowrap px-3 py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200">
+                  <th
+                    scope="col"
+                    className="whitespace-nowrap px-3 py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200"
+                  >
                     Error
                   </th>
-                  <th scope="col" className="whitespace-nowrap px-3 py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200">
+                  <th
+                    scope="col"
+                    className="whitespace-nowrap px-3 py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200"
+                  >
                     Cause
                   </th>
-                  <th scope="col" className="whitespace-nowrap px-3 py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200">
+                  <th
+                    scope="col"
+                    className="whitespace-nowrap px-3 py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200"
+                  >
                     Timestamp
                   </th>
                 </tr>
@@ -137,4 +167,4 @@ const OrganicResponseComparison: React.FC<OrganicResponseComparisonProps> = ({
   );
 };
 
-export default OrganicResponseComparison; 
+export default OrganicResponseComparison;

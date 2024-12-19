@@ -1,11 +1,16 @@
 import { and, desc, eq, gte, inArray, or, sql } from "drizzle-orm";
 
 import { db } from "@/schema/db";
-import { MinerResponse, OrganicRequest, Validator, ValidatorRequest } from "@/schema/schema";
+import {
+  MinerResponse,
+  OrganicRequest,
+  Validator,
+  ValidatorRequest,
+} from "@/schema/schema";
 import KeysTable from "./KeysTable";
 import MinerChartClient from "./MinerChartClient";
-import ResponseComparison from "./ResponseComparison";
 import OrganicResponseComparison from "./OrganicResponseComparison";
+import ResponseComparison from "./ResponseComparison";
 
 export const revalidate = 60;
 
@@ -233,24 +238,25 @@ export default async function MinerChart({
             : or(
                 eq(OrganicRequest.hotkey, query),
                 eq(OrganicRequest.coldkey, query),
-              )
+              ),
         ),
       )
       .as("innerOrganicResponses");
 
-    const [stats, latestSyntheticResponses, latestOrganicResponses] = await Promise.all([
-      db.select().from(inner).orderBy(desc(inner.block)),
-      db
-        .select()
-        .from(innerSyntheticResponses)
-        .orderBy(desc(innerSyntheticResponses.timestamp))
-        .limit(100) as Promise<Response[]>,
-      db
-        .select()
-        .from(innerOrganicResponses)
-        .orderBy(desc(innerOrganicResponses.created_at))
-        .limit(100) as Promise<OrganicResponse[]>,
-    ]);
+    const [stats, latestSyntheticResponses, latestOrganicResponses] =
+      await Promise.all([
+        db.select().from(inner).orderBy(desc(inner.block)),
+        db
+          .select()
+          .from(innerSyntheticResponses)
+          .orderBy(desc(innerSyntheticResponses.timestamp))
+          .limit(100) as Promise<Response[]>,
+        db
+          .select()
+          .from(innerOrganicResponses)
+          .orderBy(desc(innerOrganicResponses.created_at))
+          .limit(100) as Promise<OrganicResponse[]>,
+      ]);
 
     const orderedStats = stats.reverse().map((stat) => ({
       ...stat,
