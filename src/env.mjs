@@ -16,7 +16,6 @@ export const env = createEnv({
     DATABASE_PASSWORD: z.string(),
 
     HUB_API_ENDPOINT: z.string(),
-    HUB_SECRET_TOKEN: z.string(),
     VERCEL_URL: z.string(),
   },
   client: {},
@@ -30,7 +29,6 @@ export const env = createEnv({
     DATABASE_USERNAME: process.env.DATABASE_USERNAME,
     DATABASE_PASSWORD: process.env.DATABASE_PASSWORD,
     HUB_API_ENDPOINT: process.env.HUB_API_ENDPOINT,
-    HUB_SECRET_TOKEN: process.env.HUB_SECRET_TOKEN,
     VERCEL_URL: process.env.VERCEL_ENV ?? "http://localhost:3000",
   },
 
