@@ -236,7 +236,7 @@ export const POST = async (req: NextRequest) => {
         .limit(limitValue)
         .offset(offsetValue),
     ]);
-    
+
     return NextResponse.json({
       responses,
       totalRecords: recordCount[0]!.totalRecords,
