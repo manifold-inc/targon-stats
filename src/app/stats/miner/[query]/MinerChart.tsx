@@ -1,10 +1,11 @@
 import { and, desc, eq, gte, inArray, or, sql } from "drizzle-orm";
 
 import { db } from "@/schema/db";
-import { MinerResponse, Validator, ValidatorRequest } from "@/schema/schema";
+import { MinerResponse, OrganicRequest, Validator, ValidatorRequest } from "@/schema/schema";
 import KeysTable from "./KeysTable";
 import MinerChartClient from "./MinerChartClient";
 import ResponseComparison from "./ResponseComparison";
+import OrganicResponseComparison from "./OrganicResponseComparison";
 
 export const revalidate = 60;
 
@@ -66,6 +67,24 @@ export interface Response {
   timestamp: Date;
   r_nanoid: string;
   version: number;
+}
+
+export interface OrganicResponse {
+  hotkey: string;
+  request_endpoint: RequestEndpoint;
+  temperature: number;
+  max_tokens: number;
+  seed: number;
+  model: string;
+  total_tokens: number;
+  created_at: Date;
+  verified: boolean;
+  tps: number;
+  time_for_all_tokens: number;
+  total_time: number;
+  time_to_first_token: number;
+  error: string;
+  cause: Cause;
 }
 
 interface Keys {
@@ -143,7 +162,7 @@ export default async function MinerChart({
       )
       .as("inner");
 
-    const innerResponses = db
+    const innerSyntheticResponses = db
       .select({
         hotkey: MinerResponse.hotkey,
         tps: MinerResponse.tps,
@@ -186,15 +205,51 @@ export default async function MinerChart({
             : []),
         ),
       )
-      .as("innerResponses");
+      .as("innerSyntheticResponses");
 
-    const [stats, latestResponses] = await Promise.all([
+    const innerOrganicResponses = db
+      .select({
+        hotkey: OrganicRequest.hotkey,
+        request_endpoint: OrganicRequest.request_endpoint,
+        temperature: OrganicRequest.temperature,
+        max_tokens: OrganicRequest.max_tokens,
+        seed: OrganicRequest.seed,
+        model: OrganicRequest.model,
+        total_tokens: OrganicRequest.total_tokens,
+        created_at: OrganicRequest.created_at,
+        verified: OrganicRequest.verified,
+        tps: OrganicRequest.tps,
+        time_for_all_tokens: OrganicRequest.time_for_all_tokens,
+        total_time: OrganicRequest.total_time,
+        time_to_first_token: OrganicRequest.time_to_first_token,
+        error: OrganicRequest.error,
+        cause: OrganicRequest.cause,
+      })
+      .from(OrganicRequest)
+      .where(
+        and(
+          query.length < 5
+            ? eq(OrganicRequest.uid, parseInt(query))
+            : or(
+                eq(OrganicRequest.hotkey, query),
+                eq(OrganicRequest.coldkey, query),
+              )
+        ),
+      )
+      .as("innerOrganicResponses");
+
+    const [stats, latestSyntheticResponses, latestOrganicResponses] = await Promise.all([
       db.select().from(inner).orderBy(desc(inner.block)),
       db
         .select()
-        .from(innerResponses)
-        .orderBy(desc(innerResponses.timestamp))
+        .from(innerSyntheticResponses)
+        .orderBy(desc(innerSyntheticResponses.timestamp))
         .limit(100) as Promise<Response[]>,
+      db
+        .select()
+        .from(innerOrganicResponses)
+        .orderBy(desc(innerOrganicResponses.created_at))
+        .limit(100) as Promise<OrganicResponse[]>,
     ]);
 
     const orderedStats = stats.reverse().map((stat) => ({
@@ -218,7 +273,10 @@ export default async function MinerChart({
             <KeysTable miners={miners} />
           </div>
           <div className="flex-1 pt-8">
-            <ResponseComparison responses={latestResponses} />
+            <ResponseComparison responses={latestSyntheticResponses} />
+          </div>
+          <div className="flex-1 pt-8">
+            <OrganicResponseComparison responses={latestOrganicResponses} />
           </div>
         </div>
       </>

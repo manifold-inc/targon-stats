@@ -40,7 +40,7 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
           <h1 className="text-base font-semibold leading-6 text-gray-900 dark:text-gray-50">
-            Latest Responses
+            Latest Synthetic Responses
           </h1>
           <p className="mt-2 text-sm text-gray-700 dark:text-gray-200">
             A list of 100 latest responses with their details.
@@ -48,7 +48,7 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
         </div>
       </div>
       <div className="pt-8">
-        <div className="flow-root overflow-x-auto rounded border border-gray-200 shadow">
+        <div className="flow-root h-96 overflow-y-auto rounded border border-gray-200 shadow">
           <div className="inline-block min-w-full align-middle">
             <div>
               <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
