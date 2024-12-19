@@ -6,10 +6,10 @@ import { db } from "@/schema/db";
 import {
   ApiKey,
   MinerResponse,
+  OrganicRequest,
   User,
   Validator,
   ValidatorRequest,
-  OrganicRequest,
 } from "@/schema/schema";
 
 // Define the schema for input validation
@@ -190,10 +190,10 @@ export const POST = async (req: NextRequest) => {
               block: 0,
               timestamp: response.created_at,
               version: 0,
-              validator: '',
-              validator_hotkey: '',
+              validator: "",
+              validator_hotkey: "",
               id: response.id,
-            }))
+            })),
           )
       : await db
           .select({

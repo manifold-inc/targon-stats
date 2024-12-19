@@ -214,8 +214,8 @@ export default function Page() {
                   token-level details in the response. Defaults to false.
                 </li>
                 <li>
-                  <code>organics</code> (boolean): When true, returns organic responses 
-                  instead of synthetic responses. Defaults to false.
+                  <code>organics</code> (boolean): When true, returns organic
+                  responses instead of synthetic responses. Defaults to false.
                 </li>
               </ul>
             </li>
@@ -391,15 +391,25 @@ export default function Page() {
             </div>
           </div>
 
-          <div className="pb-4">
-            Note the differences in organic responses:
-          </div>
+          <div className="pb-4">Note the differences in organic responses:</div>
           <ul className="list-disc pb-4 pl-5">
-            <li><code>tokens</code> and <code>messages</code> are empty arrays</li>
-            <li><code>organic</code> is always true</li>
-            <li><code>block</code> and <code>version</code> are 0</li>
-            <li><code>validator</code> and <code>validator_hotkey</code> are empty strings</li>
-            <li>All other fields maintain their actual values from the organic request</li>
+            <li>
+              <code>tokens</code> and <code>messages</code> are empty arrays
+            </li>
+            <li>
+              <code>organic</code> is always true
+            </li>
+            <li>
+              <code>block</code> and <code>version</code> are 0
+            </li>
+            <li>
+              <code>validator</code> and <code>validator_hotkey</code> are empty
+              strings
+            </li>
+            <li>
+              All other fields maintain their actual values from the organic
+              request
+            </li>
           </ul>
 
           <div className="pb-4">
