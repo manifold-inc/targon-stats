@@ -155,13 +155,6 @@ export const POST = async (req: NextRequest) => {
         .offset(offsetValue),
     ]);
 
-    if (rawResponses.length === 0) {
-      return NextResponse.json(
-        { error: `No organic responses found for miner ${query}` },
-        { status: 404 },
-      );
-    }
-
     return NextResponse.json({
       responses: rawResponses.map((response) => ({
         ...response,
@@ -243,14 +236,7 @@ export const POST = async (req: NextRequest) => {
         .limit(limitValue)
         .offset(offsetValue),
     ]);
-
-    if (responses.length === 0) {
-      return NextResponse.json(
-        { error: `No synthetic responses found for miner ${query}` },
-        { status: 404 },
-      );
-    }
-
+    
     return NextResponse.json({
       responses,
       totalRecords: recordCount[0]!.totalRecords,
