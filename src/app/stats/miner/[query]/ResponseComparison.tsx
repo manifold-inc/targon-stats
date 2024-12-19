@@ -403,7 +403,7 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                       ["Verified", selectedResponse.verified ? "Yes" : "No"],
                       ["Endpoint", selectedResponse.request_endpoint],
                       ["Model", selectedResponse.model],
-                      ["", ""]
+                      ["", ""],
                     ].map(([label, value], index) => (
                       <div
                         key={index}

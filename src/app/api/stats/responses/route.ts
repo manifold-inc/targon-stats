@@ -90,8 +90,26 @@ export const POST = async (req: NextRequest) => {
       ? [eq(MinerResponse.uid, parseInt(query))]
       : [eq(MinerResponse.hotkey, query), eq(MinerResponse.coldkey, query)];
 
-  const totalRecords = await (extras.organics
-    ? db
+  // Get user first for authentication
+  const [user] = await db
+    .select({
+      id: User.id,
+    })
+    .from(User)
+    .innerJoin(ApiKey, eq(ApiKey.userId, User.id))
+    .where(eq(ApiKey.key, bearerToken))
+    .limit(1);
+
+  if (!user) {
+    return NextResponse.json(
+      { error: "Invalid Bearer Token" },
+      { status: 401 },
+    );
+  }
+
+  if (extras.organics) {
+    const [recordCount, rawResponses] = await Promise.all([
+      db
         .select({ totalRecords: sql<number>`COUNT(*)` })
         .from(OrganicRequest)
         .where(
@@ -103,8 +121,65 @@ export const POST = async (req: NextRequest) => {
                   eq(OrganicRequest.coldkey, query),
                 ),
           ),
+        ),
+      db
+        .select({
+          tps: OrganicRequest.tps,
+          totalTime: OrganicRequest.total_time,
+          timeToFirstToken: OrganicRequest.time_to_first_token,
+          timeForAllTokens: OrganicRequest.time_for_all_tokens,
+          verified: OrganicRequest.verified,
+          error: OrganicRequest.error,
+          cause: OrganicRequest.cause,
+          model: OrganicRequest.model,
+          seed: OrganicRequest.seed,
+          maxTokens: OrganicRequest.max_tokens,
+          temperature: OrganicRequest.temperature,
+          requestEndpoint: OrganicRequest.request_endpoint,
+          timestamp: OrganicRequest.created_at,
+          id: OrganicRequest.id,
+        })
+        .from(OrganicRequest)
+        .where(
+          and(
+            query.length < 5
+              ? eq(OrganicRequest.uid, parseInt(query))
+              : or(
+                  eq(OrganicRequest.hotkey, query),
+                  eq(OrganicRequest.coldkey, query),
+                ),
+          ),
         )
-    : db
+        .orderBy(desc(OrganicRequest.created_at))
+        .limit(limitValue)
+        .offset(offsetValue),
+    ]);
+
+    if (rawResponses.length === 0) {
+      return NextResponse.json(
+        { error: `No organic responses found for miner ${query}` },
+        { status: 404 },
+      );
+    }
+
+    return NextResponse.json({
+      responses: rawResponses.map((response) => ({
+        ...response,
+        tokens: [],
+        messages: [],
+        block: 0,
+        version: 0,
+        validator: "",
+        validatorHotkey: "",
+      })),
+      totalRecords: recordCount[0]!.totalRecords,
+      offset: offsetValue,
+      limit: limitValue,
+      hasMoreRecords: offsetValue + limitValue < recordCount[0]!.totalRecords,
+    });
+  } else {
+    const [recordCount, responses] = await Promise.all([
+      db
         .select({ totalRecords: sql<number>`COUNT(*)` })
         .from(MinerResponse)
         .innerJoin(
@@ -121,146 +196,65 @@ export const POST = async (req: NextRequest) => {
               ? [inArray(Validator.hotkey, validator_hotkeys)]
               : []),
           ),
-        ));
+        ),
+      db
+        .select({
+          tps: MinerResponse.tps,
+          totalTime: MinerResponse.totalTime,
+          timeToFirstToken: MinerResponse.timeToFirstToken,
+          timeForAllTokens: MinerResponse.timeForAllTokens,
+          verified: MinerResponse.verified,
+          ...(extras.tokens && { tokens: MinerResponse.tokens }),
+          error: MinerResponse.error,
+          cause: MinerResponse.cause,
+          messages: ValidatorRequest.messages,
+          model: ValidatorRequest.model,
+          seed: ValidatorRequest.seed,
+          maxTokens: ValidatorRequest.max_tokens,
+          temperature: ValidatorRequest.temperature,
+          requestEndpoint: ValidatorRequest.request_endpoint,
+          block: ValidatorRequest.block,
+          timestamp: MinerResponse.timestamp,
+          version: ValidatorRequest.version,
+          validator: Validator.valiName,
+          validatorHotkey: Validator.hotkey,
+          id: MinerResponse.id,
+        })
+        .from(MinerResponse)
+        .innerJoin(
+          ValidatorRequest,
+          eq(ValidatorRequest.r_nanoid, MinerResponse.r_nanoid),
+        )
+        .innerJoin(Validator, eq(Validator.hotkey, ValidatorRequest.hotkey))
+        .where(
+          and(
+            gte(ValidatorRequest.block, startBlock),
+            lte(ValidatorRequest.block, endBlock),
+            eq(MinerResponse.verified, verified),
+            or(...minerIdentifier),
+            ...(validator_hotkeys
+              ? [inArray(Validator.hotkey, validator_hotkeys)]
+              : []),
+          ),
+        )
+        .orderBy(desc(ValidatorRequest.block), desc(MinerResponse.id))
+        .limit(limitValue)
+        .offset(offsetValue),
+    ]);
 
-  // Determine if there are more records
-  const hasMoreRecords =
-    offsetValue + limitValue < totalRecords[0]!.totalRecords;
+    if (responses.length === 0) {
+      return NextResponse.json(
+        { error: `No synthetic responses found for miner ${query}` },
+        { status: 404 },
+      );
+    }
 
-  // Fetch user details (authenticate the token) and responses for the specified miner
-  const [[user], rawResponses] = await Promise.all([
-    db
-      .select({
-        id: User.id,
-      })
-      .from(User)
-      .innerJoin(ApiKey, eq(ApiKey.userId, User.id))
-      .where(eq(ApiKey.key, bearerToken))
-      .limit(1),
-    extras.organics
-      ? db
-          .select({
-            uid: OrganicRequest.uid,
-            tps: OrganicRequest.tps,
-            totalTime: OrganicRequest.total_time,
-            timeToFirstToken: OrganicRequest.time_to_first_token,
-            timeForAllTokens: OrganicRequest.time_for_all_tokens,
-            verified: OrganicRequest.verified,
-            error: OrganicRequest.error,
-            cause: OrganicRequest.cause,
-            model: OrganicRequest.model,
-            seed: OrganicRequest.seed,
-            maxTokens: OrganicRequest.max_tokens,
-            temperature: OrganicRequest.temperature,
-            requestEndpoint: OrganicRequest.request_endpoint,
-            timestamp: OrganicRequest.created_at,
-            id: OrganicRequest.id,
-          })
-          .from(OrganicRequest)
-          .where(
-            and(
-              query.length < 5
-                ? eq(OrganicRequest.uid, parseInt(query))
-                : or(
-                    eq(OrganicRequest.hotkey, query),
-                    eq(OrganicRequest.coldkey, query),
-                  ),
-            ),
-          )
-          .orderBy(desc(OrganicRequest.created_at))
-          .limit(limitValue)
-          .offset(offsetValue)
-      : db
-          .select({
-            tps: MinerResponse.tps,
-            totalTime: MinerResponse.totalTime,
-            timeToFirstToken: MinerResponse.timeToFirstToken,
-            timeForAllTokens: MinerResponse.timeForAllTokens,
-            verified: MinerResponse.verified,
-            ...(extras.tokens && { tokens: MinerResponse.tokens }),
-            error: MinerResponse.error,
-            cause: MinerResponse.cause,
-            messages: ValidatorRequest.messages,
-            model: ValidatorRequest.model,
-            seed: ValidatorRequest.seed,
-            maxTokens: ValidatorRequest.max_tokens,
-            temperature: ValidatorRequest.temperature,
-            requestEndpoint: ValidatorRequest.request_endpoint,
-            block: ValidatorRequest.block,
-            timestamp: MinerResponse.timestamp,
-            version: ValidatorRequest.version,
-            validator: Validator.valiName,
-            validatorHotkey: Validator.hotkey,
-            id: MinerResponse.id,
-          })
-          .from(MinerResponse)
-          .innerJoin(
-            ValidatorRequest,
-            eq(ValidatorRequest.r_nanoid, MinerResponse.r_nanoid),
-          )
-          .innerJoin(Validator, eq(Validator.hotkey, ValidatorRequest.hotkey))
-          .where(
-            and(
-              gte(ValidatorRequest.block, startBlock),
-              lte(ValidatorRequest.block, endBlock),
-              eq(MinerResponse.verified, verified),
-              or(...minerIdentifier),
-              ...(validator_hotkeys
-                ? [inArray(Validator.hotkey, validator_hotkeys)]
-                : []),
-            ),
-          )
-          .orderBy(desc(ValidatorRequest.block), desc(MinerResponse.id))
-          .limit(limitValue)
-          .offset(offsetValue),
-  ]);
-
-  // Transform organic responses to match synthetic response shape
-  const responses = extras.organics
-    ? rawResponses.map((response) => ({
-        tps: response.tps,
-        totalTime: response.totalTime,
-        timeToFirstToken: response.timeToFirstToken,
-        timeForAllTokens: response.timeForAllTokens,
-        verified: response.verified,
-        tokens: [],
-        error: response.error,
-        cause: response.cause,
-        messages: [],
-        model: response.model,
-        seed: response.seed,  
-        maxTokens: response.maxTokens,
-        temperature: response.temperature,
-        requestEndpoint: response.requestEndpoint,
-        block: 0,
-        timestamp: response.timestamp,
-        version: 0,
-        validator: "",
-        validatorHotkey: "",
-        id: response.id,
-      }))
-    : rawResponses;
-
-  if (!user) {
-    return NextResponse.json(
-      { error: "Invalid Bearer Token" },
-      { status: 401 },
-    );
+    return NextResponse.json({
+      responses,
+      totalRecords: recordCount[0]!.totalRecords,
+      offset: offsetValue,
+      limit: limitValue,
+      hasMoreRecords: offsetValue + limitValue < recordCount[0]!.totalRecords,
+    });
   }
-
-  if (responses.length === 0) {
-    return NextResponse.json(
-      { error: `No responses found for miner ${query}` },
-      { status: 404 },
-    );
-  }
-
-  // Return the results to the client with pagination metadata
-  return NextResponse.json({
-    responses: responses,
-    totalRecords: totalRecords[0]!.totalRecords,
-    offset: offsetValue,
-    limit: limitValue,
-    hasMoreRecords: hasMoreRecords,
-  });
 };
