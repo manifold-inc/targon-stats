@@ -52,7 +52,7 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
           <div className="inline-block min-w-full align-middle">
             <div>
               <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
-                <thead className="bg-gray-50 dark:bg-neutral-800">
+                <thead className="sticky top-0 z-20 bg-gray-50 dark:bg-neutral-800">
                   <tr>
                     <th
                       scope="col"

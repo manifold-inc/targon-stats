@@ -44,7 +44,7 @@ const OrganicResponseComparison: React.FC<OrganicResponseComparisonProps> = ({
         <div className="flow-root h-96 overflow-y-auto rounded border border-gray-200 shadow">
           <div className="inline-block min-w-full align-middle">
             <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
-              <thead className="bg-gray-50 dark:bg-neutral-800">
+              <thead className="sticky top-0 z-20 bg-gray-50 dark:bg-neutral-800">
                 <tr>
                   <th
                     scope="col"
