@@ -177,7 +177,9 @@ export const POST = async (req: NextRequest) => {
       limit: limitValue,
       hasMoreRecords: offsetValue + limitValue < recordCount[0]!.totalRecords,
     });
-  } else {
+  }
+
+  if (!extras.organics) {
     const [recordCount, responses] = await Promise.all([
       db
         .select({ totalRecords: sql<number>`COUNT(*)` })
