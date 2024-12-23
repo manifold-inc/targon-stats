@@ -52,7 +52,7 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
           <div className="inline-block min-w-full align-middle">
             <div>
               <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
-                <thead className="sticky top-0 z-20 bg-gray-50 dark:bg-neutral-800">
+                <thead className="sticky top-0 z-10 bg-gray-50 dark:bg-neutral-800">
                   <tr>
                     <th
                       scope="col"
@@ -176,7 +176,7 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                     </th>
                     <th
                       scope="col"
-                      className="sticky right-0 z-10 whitespace-nowrap bg-gray-50 px-3 py-3.5 text-right text-sm font-semibold text-gray-900 dark:bg-neutral-800 dark:text-gray-200 sm:pr-6"
+                      className="sticky right-0 whitespace-nowrap bg-gray-50 px-3 py-3.5 text-right text-sm font-semibold text-gray-900 dark:bg-neutral-800 dark:text-gray-200 sm:pr-6"
                     >
                       Actions
                     </th>
@@ -322,10 +322,10 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
                         {response.version}
                       </td>
-                      <td className="pygi-4 whitespace-nowrap px-3 text-sm text-gray-500 dark:text-gray-300">
+                      <td className="py-4 whitespace-nowrap px-3 text-sm text-gray-500 dark:text-gray-300">
                         {response.timestamp.toISOString()}
                       </td>
-                      <td className="sticky right-0 z-10 whitespace-nowrap bg-white px-3 py-4 text-right text-sm font-medium dark:bg-neutral-800 sm:pr-6">
+                      <td className="sticky right-0 whitespace-nowrap bg-white px-3 py-4 text-right text-sm font-medium dark:bg-neutral-800 sm:pr-6">
                         <button
                           onClick={() => handleViewDetails(response)}
                           className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-200 dark:hover:text-indigo-100"
@@ -346,7 +346,7 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
         <Dialog
           open={open}
           onClose={() => setOpen(false)}
-          className="relative z-10"
+          className="relative z-50"
         >
           <DialogBackdrop
             transition
