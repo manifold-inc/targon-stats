@@ -39,6 +39,9 @@ enum Cause {
   BAD_STREAM = "BAD_STREAM",
   TOO_SHORT = "TOO_SHORT",
   TOO_LONG = "TOO_LONG",
+  NO_USAGE = "NO_USAGE",
+  INCORRECT_USAGE_DATA = "INCORRECT_USAGE_DATA",
+  LOW_SCORE = "LOW_SCORE"
 }
 
 enum RequestEndpoint {
