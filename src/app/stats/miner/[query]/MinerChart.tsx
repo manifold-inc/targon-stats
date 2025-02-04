@@ -96,6 +96,20 @@ interface Keys {
   coldkey: string;
 }
 
+interface StreamingChunk {
+  choices: Array<{
+    delta: {
+      content: string | null;
+    };
+    logprobs: {
+      content: Array<{
+        token: string;
+        logprob: number;
+      }> | null;
+    } | null;
+  }>;
+}
+
 export default async function MinerChart({
   query,
   block,
@@ -249,7 +263,30 @@ export default async function MinerChart({
           .select()
           .from(innerSyntheticResponses)
           .orderBy(desc(innerSyntheticResponses.timestamp))
-          .limit(100) as Promise<Response[]>,
+          .limit(100)
+          .then((responses) => {
+            return responses.map((response) => ({
+              ...response,
+              tokens: Array.isArray(response.tokens)
+                ? response.tokens.map((chunk: StreamingChunk) => {
+                    const content = chunk?.choices?.[0]?.delta?.content ?? "";
+                    const logprob =
+                      chunk?.choices?.[0]?.logprobs?.content?.[0]?.logprob ?? 0;
+                    const tokenId =
+                      chunk?.choices?.[0]?.logprobs?.content?.[0]?.token?.replace(
+                        "token_id:",
+                        "",
+                      ) ?? "0";
+
+                    return {
+                      text: content,
+                      logprob: logprob,
+                      token_id: parseInt(tokenId),
+                    };
+                  })
+                : [],
+            }));
+          }) as Promise<Response[]>,
         db
           .select()
           .from(innerOrganicResponses)

@@ -287,7 +287,10 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                         {"(" +
                           response.tokens
                             .slice(0, 10)
-                            .map((token: Token) => (token.logprob?.toFixed(2) ?? 'N/A'))
+                            .map(
+                              (token: Token) =>
+                                token.logprob?.toFixed(2) ?? "N/A",
+                            )
                             .join(", ") +
                           ")"}
                       </td>
