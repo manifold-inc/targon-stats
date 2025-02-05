@@ -18,6 +18,7 @@ export interface Token {
   text: string;
   logprob: number;
   token_id: number;
+  is_usage?: boolean;
 }
 
 interface MinerChartProps {
@@ -57,7 +58,8 @@ export interface Response {
   time_to_first_token: number;
   verified: boolean;
   validator: string;
-  tokens: Token[];
+  tokens: unknown[];
+  parsedTokens: Token[];
   error: string;
   cause: Cause;
   messages?:
@@ -74,6 +76,11 @@ export interface Response {
   timestamp: Date;
   r_nanoid: string;
   version: number;
+  usage?: {
+    completion_tokens: number;
+    prompt_tokens: number;
+    total_tokens: number;
+  };
 }
 
 export interface OrganicResponse {
@@ -103,14 +110,180 @@ interface StreamingChunk {
   choices: Array<{
     delta: {
       content: string | null;
+      role?: string;
+      tool_calls?: Array<{
+        function: {
+          arguments: string;
+        };
+      }>;
     };
     logprobs: {
       content: Array<{
         token: string;
         logprob: number;
+        bytes?: number[];
       }> | null;
     } | null;
   }>;
+}
+
+interface CompletionChunk {
+  id: string;
+  model: string;
+  object: 'text_completion';
+  choices: Array<{
+    text: string;
+    index: number;
+    logprobs: {
+      tokens: string[];
+      token_logprobs: number[];
+      text_offset: number[];
+    };
+    stop_reason: string | null;
+    finish_reason: string | null;
+  }>;
+  created: number;
+  system_fingerprint: string | null;
+  usage: {
+    completion_tokens: number;
+    prompt_tokens: number;
+    total_tokens: number;
+  } | null;
+}
+
+interface UsageChunk {
+  usage: {
+    completion_tokens: number;
+    prompt_tokens: number;
+    total_tokens: number;
+  };
+}
+
+function isStreamingOrCompletionChunk(chunk: unknown): chunk is StreamingChunk | CompletionChunk {
+  if (!chunk || typeof chunk !== 'object') return false;
+  const maybeChunk = chunk as { choices?: unknown };
+  return 'choices' in maybeChunk && Array.isArray(maybeChunk.choices);
+}
+
+function parseStreamingChunk(chunk: StreamingChunk | CompletionChunk | UsageChunk, requestType: RequestEndpoint): Token | null {
+  try {
+    if (!chunk || typeof chunk !== 'object') return null;
+    
+    // Skip usage objects - we'll handle them separately
+    if ('usage' in chunk && chunk.usage !== null) return null;
+
+    // Only proceed if it's a streaming or completion chunk
+    if (!isStreamingOrCompletionChunk(chunk)) return null;
+    
+    const choices = chunk.choices;
+    if (!choices?.length) return null;
+
+    const choice = choices[0];
+    if (!choice || typeof choice !== 'object') return null;
+
+    if (requestType === RequestEndpoint.CHAT) {
+      if (!('delta' in choice)) return null;
+      const delta = choice.delta;
+      if (!delta || typeof delta !== 'object') return null;
+
+      // Skip assistant role messages without content/tools
+      if (delta.role === 'assistant' && 
+          !delta.content && 
+          !delta.tool_calls && 
+          !('function_call' in delta)) {
+        return null;
+      }
+
+      const choiceprobs = choice.logprobs;
+      if (!choiceprobs || typeof choiceprobs !== 'object') return null;
+
+      const contentProbs = Array.isArray(choiceprobs.content) ? choiceprobs.content[0] : null;
+      if (!contentProbs || typeof contentProbs !== 'object') return null;
+
+      const token = typeof contentProbs.token === 'string' ? contentProbs.token : '';
+      const tokenId = parseTokenId(token);
+      if (tokenId === null || tokenId === -1) return null;
+
+      // Get text from bytes if available
+      let text = '';
+      const bytes = Array.isArray(contentProbs.bytes) ? contentProbs.bytes : [];
+      if (bytes.length) {
+        text = String.fromCharCode(...bytes);
+      } else {
+        // If no bytes, use content or tool call argument piece
+        if (delta.content !== null) {
+          text = typeof delta.content === 'string' ? delta.content : '';
+        } else if (Array.isArray(delta.tool_calls) && delta.tool_calls.length > 0) {
+          const toolCall = delta.tool_calls[0];
+          if (toolCall && typeof toolCall === 'object' && 'function' in toolCall) {
+            text = typeof toolCall.function.arguments === 'string' ? toolCall.function.arguments : '';
+          }
+        }
+      }
+
+      return {
+        text,
+        token_id: tokenId,
+        logprob: typeof contentProbs.logprob === 'number' ? contentProbs.logprob : -100,
+        is_usage: false
+      };
+    } 
+    else if (requestType === RequestEndpoint.COMPLETION) {
+      if (!('text' in choice)) return null;
+      const text = choice.text;
+      if (typeof text !== 'string') return null;
+
+      const logprobs = choice.logprobs;
+      if (!logprobs || typeof logprobs !== 'object') return null;
+
+      // For text completions, we'll use the text as is and set default values
+      // since we don't have token IDs in this format
+      return {
+        text,
+        token_id: 0,
+        logprob: 0,
+        is_usage: false
+      };
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+function parseTokenId(token: string): number | null {
+  if (!token) return -1;
+
+  if (token.startsWith("token_id:")) {
+    try {
+      const id = token.split(":")[1];
+      return id ? parseInt(id) : null;
+    } catch {
+      return null;
+    }
+  }
+
+  try {
+    return parseInt(token);
+  } catch {
+    return null;
+  }
+}
+
+function extractUsageData(chunks: unknown[]): { completion_tokens: number; prompt_tokens: number; total_tokens: number; } | undefined {
+  const usageChunk = chunks.find(chunk => 
+    chunk && 
+    typeof chunk === 'object' && 
+    'usage' in chunk && 
+    chunk.usage && 
+    typeof chunk.usage === 'object' &&
+    'completion_tokens' in chunk.usage &&
+    'prompt_tokens' in chunk.usage &&
+    'total_tokens' in chunk.usage
+  ) as UsageChunk | undefined;
+
+  return usageChunk?.usage;
 }
 
 export default async function MinerChart({
@@ -185,6 +358,7 @@ export default async function MinerChart({
 
     const innerSyntheticResponses = db
       .select({
+        id: MinerResponse.id,
         hotkey: MinerResponse.hotkey,
         tps: MinerResponse.tps,
         time_for_all_tokens: MinerResponse.timeForAllTokens,
@@ -229,6 +403,7 @@ export default async function MinerChart({
 
     const innerOrganicResponses = db
       .select({
+        id: OrganicRequest.id,
         hotkey: OrganicRequest.hotkey,
         request_endpoint: OrganicRequest.request_endpoint,
         temperature: OrganicRequest.temperature,
@@ -265,35 +440,32 @@ export default async function MinerChart({
         db
           .select()
           .from(innerSyntheticResponses)
-          .orderBy(desc(innerSyntheticResponses.timestamp))
+          .orderBy(desc(innerSyntheticResponses.id))
           .limit(100)
           .then((responses) => {
-            return responses.map((response) => ({
-              ...response,
-              tokens: Array.isArray(response.tokens)
-                ? response.tokens.map((chunk: StreamingChunk) => {
-                    const content = chunk?.choices?.[0]?.delta?.content ?? "";
-                    const logprob =
-                      chunk?.choices?.[0]?.logprobs?.content?.[0]?.logprob ?? 0;
-                    const tokenId =
-                      chunk?.choices?.[0]?.logprobs?.content?.[0]?.token?.replace(
-                        "token_id:",
-                        "",
-                      ) ?? "0";
+            return responses.map((response) => {
+              const parsedTokens = Array.isArray(response.tokens)
+                ? response.tokens
+                    .map((chunk: unknown) => {
+                      const endpoint = response.request_endpoint === "CHAT" ? RequestEndpoint.CHAT : RequestEndpoint.COMPLETION;
+                      const parsed = parseStreamingChunk(chunk as StreamingChunk | CompletionChunk | UsageChunk, endpoint);
+                      return parsed;
+                    })
+                    .filter((token): token is Token => token !== null)
+                : [];
+              const usage = Array.isArray(response.tokens) ? extractUsageData(response.tokens) : undefined;
 
-                    return {
-                      text: content,
-                      logprob: logprob,
-                      token_id: parseInt(tokenId),
-                    };
-                  })
-                : [],
-            }));
+              return {
+                ...response,
+                parsedTokens,
+                usage
+              };
+            });
           }) as Promise<Response[]>,
         db
           .select()
           .from(innerOrganicResponses)
-          .orderBy(desc(innerOrganicResponses.created_at))
+          .orderBy(desc(innerOrganicResponses.id))
           .limit(100) as Promise<OrganicResponse[]>,
       ]);
 

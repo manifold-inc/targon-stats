@@ -160,6 +160,12 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                       scope="col"
                       className="whitespace-nowrap px-3 py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200"
                     >
+                      Usage
+                    </th>
+                    <th
+                      scope="col"
+                      className="whitespace-nowrap px-3 py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200"
+                    >
                       NanoID
                     </th>
                     <th
@@ -249,12 +255,12 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
                         <div className="flex items-center justify-between">
                           <span>
-                            {`[${response.tokens
+                            {`[${response.parsedTokens
                               .slice(0, 10)
                               .map((token: Token) => `"${token.text}"`)
                               .join(
                                 ", ",
-                              )}${response.tokens.length > 10 ? ", ..." : ""}]`}
+                              )}${response.parsedTokens.length > 10 ? ", ..." : ""}]`}
                           </span>
                           <button
                             className="ml-2 cursor-pointer"
@@ -285,7 +291,7 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
                         {"(" +
-                          response.tokens
+                          response.parsedTokens
                             .slice(0, 10)
                             .map(
                               (token: Token) =>
@@ -318,6 +324,11 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
                         {response.cause ? response.cause : "No Cause"}
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
+                        {response.usage
+                          ? JSON.stringify(response.usage, null, 2)
+                          : "No Usage"}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
                         {response.r_nanoid}
@@ -406,7 +417,12 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                       ["Verified", selectedResponse.verified ? "Yes" : "No"],
                       ["Endpoint", selectedResponse.request_endpoint],
                       ["Model", selectedResponse.model],
-                      ["", ""],
+                      [
+                        "Usage",
+                        selectedResponse.usage
+                          ? JSON.stringify(selectedResponse.usage, null, 2)
+                          : "No Usage"
+                      ],
                     ].map(([label, value], index) => (
                       <div
                         key={index}
@@ -544,7 +560,7 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                         handleCopyClipboard(
                           showTokenized
                             ? JSON.stringify(selectedResponse.tokens)
-                            : selectedResponse.tokens
+                            : selectedResponse.parsedTokens
                                 .map((token: Token) => token.text)
                                 .join(""),
                         )
@@ -555,7 +571,7 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                   </dt>
                   <dd className="mt-1 font-mono text-sm leading-6 text-gray-700 dark:text-gray-400">
                     <TokenDisplay
-                      tokens={selectedResponse.tokens}
+                      tokens={selectedResponse.parsedTokens}
                       showTokenized={showTokenized}
                     />
                   </dd>
