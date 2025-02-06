@@ -123,6 +123,14 @@ export const Validator = mysqlTable(
       "Unknown Validator",
     ),
     models: json("models").$type<string[]>().notNull().default([]),
+    scores: json("scores")
+      .$type<Record<string, number>>()
+      .notNull()
+      .default({}),
+    lastUpdated: timestamp("last_updated")
+      .notNull()
+      .default(sql`CURRENT_TIMESTAMP`)
+      .onUpdateNow(),
   },
   (table) => {
     return {

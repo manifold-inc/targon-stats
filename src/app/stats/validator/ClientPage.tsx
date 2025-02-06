@@ -13,6 +13,8 @@ interface ClientPageProps {
     valiName: string | null;
     models: string[];
     requestCount: string | null;
+    scores: Record<string, number>;
+    lastUpdated: Date;
   }[];
 }
 
@@ -113,6 +115,18 @@ const ClientPage = ({ data }: ClientPageProps) => {
                       >
                         Request Count Today
                       </th>
+                      <th
+                        scope="col"
+                        className="w-1/6 px-4 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-200"
+                      >
+                        Scores
+                      </th>
+                      <th
+                        scope="col"
+                        className="w-1/6 px-4 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-200"
+                      >
+                        Last Updated
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-neutral-800">
@@ -158,6 +172,37 @@ const ClientPage = ({ data }: ClientPageProps) => {
                           {vali.requestCount === "0"
                             ? "No Requests"
                             : vali.requestCount}
+                        </td>
+                        <td className="w-1/6 px-4 py-4 text-sm text-gray-500 dark:text-gray-300">
+                          {vali.scores ? (
+                            <div className="flex items-center gap-2">
+                              <span>View Scores</span>
+                              <button
+                                className="cursor-pointer"
+                                onClick={() =>
+                                  handleCopyClipboard(
+                                    JSON.stringify(vali.scores),
+                                  )
+                                }
+                              >
+                                <Copy className="z-10 h-4 w-4 text-gray-500 dark:text-gray-300" />
+                              </button>
+                            </div>
+                          ) : (
+                            <span>No Scores</span>
+                          )}
+                        </td>
+                        <td className="w-1/6 whitespace-nowrap px-4 py-4 text-sm text-gray-500 dark:text-gray-300">
+                          {new Date(vali.lastUpdated).toLocaleDateString(
+                            "en-US",
+                            {
+                              month: "short",
+                              day: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: true,
+                            },
+                          )}
                         </td>
                       </tr>
                     ))}

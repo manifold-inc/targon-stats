@@ -421,7 +421,7 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                         "Usage",
                         selectedResponse.usage
                           ? JSON.stringify(selectedResponse.usage, null, 2)
-                          : "No Usage"
+                          : "No Usage",
                       ],
                     ].map(([label, value], index) => (
                       <div

@@ -16,6 +16,8 @@ export default async function PageContent() {
         requestCount: sql<string>`COUNT(${ValidatorRequest.r_nanoid})`.as(
           "requestCount",
         ),
+        scores: Validator.scores,
+        lastUpdated: Validator.lastUpdated,
       })
       .from(Validator)
       .leftJoin(
