@@ -2,12 +2,11 @@
 
 import { useState } from "react";
 import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
-import { Copy, Pencil, X } from "lucide-react";
+import { Copy, X } from "lucide-react";
 import { toast } from "sonner";
 
 import { copyToClipboard } from "@/utils/utils";
-import { type Response, type Token } from "./MinerChart";
-import TokenDisplay from "./TokenDisplay";
+import { type Response } from "./MinerChart";
 
 interface ResponseComparisonProps {
   responses: Response[];
@@ -20,9 +19,11 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
   const [selectedResponse, setSelectedResponse] = useState<Response | null>(
     null,
   );
-  const [showTokenized, setShowTokenized] = useState(true);
+  const [showFullTokens, setShowFullTokens] = useState(false);
+
   const handleViewDetails = (response: Response) => {
     setSelectedResponse(response);
+    setShowFullTokens(false);
     setOpen(true);
   };
 
@@ -82,7 +83,7 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                       scope="col"
                       className="whitespace-nowrap px-3 py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200"
                     >
-                      Response Tokens
+                      Response
                     </th>
                     <th
                       scope="col"
@@ -113,12 +114,6 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                       className="whitespace-nowrap px-3  py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200"
                     >
                       Total Time
-                    </th>
-                    <th
-                      scope="col"
-                      className="whitespace-nowrap px-3 py-3.5 text-sm font-semibold text-gray-900 dark:text-gray-200"
-                    >
-                      LogProb
                     </th>
                     <th
                       scope="col"
@@ -255,12 +250,18 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
                         <div className="flex items-center justify-between">
                           <span>
-                            {`[${response.parsedTokens
-                              .slice(0, 10)
-                              .map((token: Token) => `"${token.text}"`)
-                              .join(
-                                ", ",
-                              )}${response.parsedTokens.length > 10 ? ", ..." : ""}]`}
+                            {Array.isArray(response.tokens) &&
+                            response.tokens.length === 0
+                              ? "No response"
+                              : `${JSON.stringify(response.tokens).substring(
+                                  0,
+                                  100,
+                                )}${
+                                  JSON.stringify(response.tokens).length >
+                                  100
+                                    ? "..."
+                                    : ""
+                                }`}
                           </span>
                           <button
                             className="ml-2 cursor-pointer"
@@ -288,17 +289,6 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
                         {response.total_time.toFixed(2)}
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
-                        {"(" +
-                          response.parsedTokens
-                            .slice(0, 10)
-                            .map(
-                              (token: Token) =>
-                                token.logprob?.toFixed(2) ?? "N/A",
-                            )
-                            .join(", ") +
-                          ")"}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
                         {response.seed}
@@ -536,44 +526,45 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                   <dt className="flex items-center justify-between pb-2 pr-4 text-sm font-semibold leading-6 text-gray-900 dark:text-white">
                     <div className="flex items-center">
                       <span className="inline-block w-40">
-                        {showTokenized
-                          ? "Tokenized Response"
-                          : "String Response"}
+                        Response Tokens
                       </span>
-                      <div
-                        onClick={() => setShowTokenized(!showTokenized)}
-                        className="ml-2 cursor-pointer"
-                      >
-                        <Pencil
-                          size={18}
-                          className={
-                            showTokenized
-                              ? "text-gray-800 dark:text-gray-400"
-                              : "text-black dark:text-white"
-                          }
-                        />
-                      </div>
                     </div>
-                    <button
-                      className="cursor-pointer"
-                      onClick={() =>
-                        handleCopyClipboard(
-                          showTokenized
-                            ? JSON.stringify(selectedResponse.tokens)
-                            : selectedResponse.parsedTokens
-                                .map((token: Token) => token.text)
-                                .join(""),
-                        )
-                      }
-                    >
-                      <Copy className="z-10 h-4 w-4 text-gray-500 dark:text-gray-300" />
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        className="text-sm text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300"
+                        onClick={() => setShowFullTokens(!showFullTokens)}
+                      >
+                        {showFullTokens ? "Show Less" : "Show More"}
+                      </button>
+                      <button
+                        className="cursor-pointer"
+                        onClick={() =>
+                          handleCopyClipboard(
+                            JSON.stringify(selectedResponse.tokens, null, 2)
+                          )
+                        }
+                      >
+                        <Copy className="z-10 h-4 w-4 text-gray-500 dark:text-gray-300" />
+                      </button>
+                    </div>
                   </dt>
                   <dd className="mt-1 font-mono text-sm leading-6 text-gray-700 dark:text-gray-400">
-                    <TokenDisplay
-                      tokens={selectedResponse.parsedTokens}
-                      showTokenized={showTokenized}
-                    />
+                    <pre className="max-w-full overflow-auto">
+                      <code className="inline-block items-center space-x-4 break-words text-left text-sm text-gray-700 dark:text-gray-400">
+                        {Array.isArray(selectedResponse.tokens) && selectedResponse.tokens.length === 0
+                          ? "No response"
+                          : showFullTokens
+                            ? JSON.stringify(selectedResponse.tokens, null, 2)
+                            : JSON.stringify(
+                                selectedResponse.tokens?.slice(0, 2),
+                                null,
+                                2,
+                              ) +
+                                (selectedResponse.tokens?.length > 2
+                                  ? "\n..."
+                                  : "")}
+                      </code>
+                    </pre>
                   </dd>
                 </div>
               </DialogPanel>
