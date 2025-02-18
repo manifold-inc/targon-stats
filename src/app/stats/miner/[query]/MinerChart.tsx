@@ -105,32 +105,32 @@ interface Keys {
   coldkey: string;
 }
 
-interface UsageChunk {
-  usage: {
-    completion_tokens: number;
-    prompt_tokens: number;
-    total_tokens: number;
-  };
-}
-
 function extractUsageData(
   chunks: unknown[],
 ):
   | { completion_tokens: number; prompt_tokens: number; total_tokens: number }
   | undefined {
-  const usageChunk = chunks.find(
-    (chunk) =>
-      chunk &&
-      typeof chunk === "object" &&
-      "usage" in chunk &&
-      chunk.usage &&
-      typeof chunk.usage === "object" &&
-      "completion_tokens" in chunk.usage &&
-      "prompt_tokens" in chunk.usage &&
-      "total_tokens" in chunk.usage,
-  ) as UsageChunk | undefined;
+  if (!Array.isArray(chunks)) return undefined;
+  
+  const lastChunk = chunks[chunks.length - 1];
+  if (
+    lastChunk &&
+    typeof lastChunk === "object" &&
+    "usage" in lastChunk &&
+    lastChunk.usage &&
+    typeof lastChunk.usage === "object" &&
+    "completion_tokens" in lastChunk.usage &&
+    "prompt_tokens" in lastChunk.usage &&
+    "total_tokens" in lastChunk.usage
+  ) {
+    return lastChunk.usage as {
+      completion_tokens: number;
+      prompt_tokens: number;
+      total_tokens: number;
+    };
+  }
 
-  return usageChunk?.usage;
+  return undefined;
 }
 
 export default async function MinerChart({
