@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Menu, Check, ChevronDown, ChevronUp } from "lucide-react";
+import { Menu, Check, ChevronDown, ChevronUp, X } from "lucide-react";
 
 import { useAuth } from "./providers";
 
@@ -59,10 +59,6 @@ const ClientHeader = ({ validators }: ClientHeaderProps) => {
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen((prev) => !prev);
-  };
-
   useEffect(() => {
     if (isDropdownOpen) {
       document.addEventListener("mousedown", handleClickOutside);
@@ -79,14 +75,20 @@ const ClientHeader = ({ validators }: ClientHeaderProps) => {
       <nav className="fixed right-5 top-5 z-40">
         <button
           className="block md:hidden"
-          onClick={toggleMobileMenu}
+          onClick={() => setIsMobileMenuOpen((prev) => !prev)}
         >
-          <Menu className="h-6 w-6" />
+          {isMobileMenuOpen ? (
+            <X className="h-6 w-6" />
+          ) : (
+            <Menu className="h-6 w-6" />
+          )}
         </button>
         <div
-          className={`fixed left-5 md:left-auto md:right-5 flex flex-col md:flex-row gap-4 transition-all duration-300 ${
-            isMobileMenuOpen ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"
-          } md:translate-y-0 md:opacity-100`}
+          className={`absolute md:relative w-max right-0 flex flex-col md:flex-row gap-4 transition-all duration-300 md:translate-x-0 md:opacity-100 bg-white dark:bg-neutral-700 md:bg-transparent dark:md:bg-transparent shadow-lg md:shadow-none rounded-md p-4 ${
+            isMobileMenuOpen
+              ? "translate-x-0 opacity-100"
+              : "translate-x-full opacity-0"
+          }`}
         >
           <Link href="/">Home</Link>
           <Link href="/stats/miner">Miners</Link>
