@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Check, ChevronDown, ChevronUp } from "lucide-react";
+import { Menu, Check, ChevronDown, ChevronUp, X } from "lucide-react";
 
 import { useAuth } from "./providers";
 
@@ -57,6 +57,8 @@ const ClientHeader = ({ validators }: ClientHeaderProps) => {
     }
   };
 
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   useEffect(() => {
     if (isDropdownOpen) {
       document.addEventListener("mousedown", handleClickOutside);
@@ -70,60 +72,78 @@ const ClientHeader = ({ validators }: ClientHeaderProps) => {
 
   return (
     <header>
-      <nav className="fixed right-5 top-5 z-40 flex space-x-8">
-        <Link href="/">Home</Link>
-        <Link href="/stats/miner">Miners</Link>
-        <Link href="/stats/validator">Validators</Link>
-        <Link href="/stats/overview">Historical</Link>
-        <Link href="/docs">API</Link>
-        {showValidatorRequests && (
-          <div className="relative" ref={dropdownRef}>
-            <button
-              onClick={toggleDropdown}
-              className="flex items-center gap-1"
-            >
-              Validator Requests
-              {isDropdownOpen ? (
-                <ChevronUp className="px-1 py-0.5" />
-              ) : (
-                <ChevronDown className="px-1 py-0.5" />
-              )}
-            </button>
-            {isDropdownOpen && validators && (
-              <div
-                className={`-translate-x-1/5 absolute right-0 z-50 mt-2 min-w-fit transform whitespace-nowrap rounded-md bg-white p-2 shadow-lg dark:bg-neutral-700 dark:text-gray-300`}
+      <nav className="fixed right-5 top-5 z-40">
+        <button
+          className="block md:hidden"
+          onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+        >
+          {isMobileMenuOpen ? (
+            <X className="h-6 w-6" />
+          ) : (
+            <Menu className="h-6 w-6" />
+          )}
+        </button>
+        <div
+          className={`absolute md:relative w-max right-0 flex flex-col md:flex-row gap-4 transition-all duration-300 md:translate-x-0 md:opacity-100 bg-white dark:bg-neutral-700 md:bg-transparent dark:md:bg-transparent shadow-lg md:shadow-none rounded-md p-4 ${
+            isMobileMenuOpen
+              ? "translate-x-0 opacity-100"
+              : "translate-x-full opacity-0"
+          }`}
+        >
+          <Link href="/">Home</Link>
+          <Link href="/stats/miner">Miners</Link>
+          <Link href="/stats/validator">Validators</Link>
+          <Link href="/stats/overview">Historical</Link>
+          <Link href="/docs">API</Link>
+          {showValidatorRequests && (
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={toggleDropdown}
+                className="flex items-center gap-1"
               >
-                {validators.length > 0 ? (
-                  validators.map((validator, index) => (
-                    <div
-                      key={index}
-                      onClick={() => toggleValidator(index)}
-                      className="flex cursor-pointer items-center gap-2 p-2"
-                    >
-                      <span className="flex h-4 w-4 items-center justify-center rounded-sm border border-gray-400">
-                        {(selectedBits?.[index] ?? "1") == "1" ? (
-                          <Check className="text-black dark:text-white" />
-                        ) : null}
-                      </span>
-                      {validator}
-                    </div>
-                  ))
+                Validator Requests
+                {isDropdownOpen ? (
+                  <ChevronUp className="px-1 py-0.5" />
                 ) : (
-                  <div>No validators available</div>
+                  <ChevronDown className="px-1 py-0.5" />
                 )}
-              </div>
-            )}
-          </div>
-        )}
-        {auth.status === "AUTHED" ? (
-          <>
-            <Link prefetch={false} href="/sign-out">
-              Sign Out
-            </Link>
-          </>
-        ) : (
-          <Link href="/sign-in">Sign in</Link>
-        )}
+              </button>
+              {isDropdownOpen && validators && (
+                <div
+                  className={`-translate-x-1/5 absolute right-0 z-50 mt-2 min-w-fit transform whitespace-nowrap rounded-md bg-white p-2 shadow-lg dark:bg-neutral-700 dark:text-gray-300`}
+                >
+                  {validators.length > 0 ? (
+                    validators.map((validator, index) => (
+                      <div
+                        key={index}
+                        onClick={() => toggleValidator(index)}
+                        className="flex cursor-pointer items-center gap-2 p-2"
+                      >
+                        <span className="flex h-4 w-4 items-center justify-center rounded-sm border border-gray-400">
+                          {(selectedBits?.[index] ?? "1") == "1" ? (
+                            <Check className="text-black dark:text-white" />
+                          ) : null}
+                        </span>
+                        {validator}
+                      </div>
+                    ))
+                  ) : (
+                    <div>No validators available</div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+          {auth.status === "AUTHED" ? (
+            <>
+              <Link prefetch={false} href="/sign-out">
+                Sign Out
+              </Link>
+            </>
+          ) : (
+            <Link href="/sign-in">Sign in</Link>
+          )}
+        </div>
       </nav>
     </header>
   );
