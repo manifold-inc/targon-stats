@@ -84,7 +84,7 @@ const ClientHeader = ({ validators }: ClientHeaderProps) => {
           )}
         </button>
         <div
-          className={`absolute md:relative w-max right-0 flex flex-col md:flex-row gap-4 transition-all duration-300 md:translate-x-0 md:opacity-100 bg-white dark:bg-neutral-700 md:bg-transparent dark:md:bg-transparent shadow-lg md:shadow-none rounded-md p-4 ${
+          className={`absolute md:relative min-w-[240px] right-0 flex flex-col md:flex-row gap-4 transition-all duration-500 ease-in-out md:translate-x-0 md:opacity-100 bg-white dark:bg-neutral-700 md:bg-transparent dark:md:bg-transparent shadow-lg md:shadow-none rounded-md p-4 ${
             isMobileMenuOpen
               ? "translate-x-0 opacity-100"
               : "translate-x-full opacity-0"
@@ -110,7 +110,7 @@ const ClientHeader = ({ validators }: ClientHeaderProps) => {
               </button>
               {isDropdownOpen && validators && (
                 <div
-                  className={`-translate-x-1/5 absolute right-0 z-50 mt-2 min-w-fit transform whitespace-nowrap rounded-md bg-white p-2 shadow-lg dark:bg-neutral-700 dark:text-gray-300`}
+                  className={`-translate-x-1/5 relative md:absolute right-0 z-50 mt-2 min-w-fit transform whitespace-nowrap rounded-md bg-white p-2 md:shadow-lg dark:bg-neutral-700 dark:text-gray-300`}
                 >
                   {validators.length > 0 ? (
                     validators.map((validator, index) => (
