@@ -82,10 +82,10 @@ const ClientPage = ({
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-12 pb-12">
+    <div className="mx-auto max-w-7xl px-4 pb-12 md:px-12">
       <div className="py-24 sm:py-24">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl lg:max-w-none">
+          <div className="mx-auto max-w-2xl md:max-w-none">
             <div className="text-center">
               <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-50 sm:text-4xl">
                 Targon Validator Status
@@ -94,7 +94,7 @@ const ClientPage = ({
                 Your hub for validator stats!
               </p>
             </div>
-            <dl className="mt-16 flex justify-between gap-4 text-center">
+            <dl className="mt-16 grid grid-cols-1 gap-4 text-center md:grid-cols-3">
               <button
                 onClick={handleCategoryClick("avg_tps")}
                 className={cardStyles}

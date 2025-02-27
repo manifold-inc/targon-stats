@@ -111,7 +111,7 @@ function extractUsageData(
   | { completion_tokens: number; prompt_tokens: number; total_tokens: number }
   | undefined {
   if (!Array.isArray(chunks)) return undefined;
-  
+
   const lastChunk = chunks[chunks.length - 1];
   if (
     lastChunk &&

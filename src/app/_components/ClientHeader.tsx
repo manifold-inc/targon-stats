@@ -3,13 +3,21 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Check, ChevronDown, ChevronUp } from "lucide-react";
+import {
+  Dialog,
+  DialogPanel,
+  Disclosure,
+  DisclosureButton,
+  DisclosurePanel,
+} from "@headlessui/react";
+import { Check, ChevronDown, Menu, X } from "lucide-react";
 
 import { useAuth } from "./providers";
 
 interface ClientHeaderProps {
   validators: string[];
 }
+
 const ClientHeader = ({ validators }: ClientHeaderProps) => {
   const auth = useAuth();
   const router = useRouter();
@@ -18,8 +26,9 @@ const ClientHeader = ({ validators }: ClientHeaderProps) => {
   const showValidatorRequests =
     pathname === "/" || pathname.includes("/stats/miner");
 
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedBits, setSelectedBits] = useState<string | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const toggleValidator = (index: number) => {
@@ -69,62 +78,233 @@ const ClientHeader = ({ validators }: ClientHeaderProps) => {
   }, [isDropdownOpen]);
 
   return (
-    <header>
-      <nav className="fixed right-5 top-5 z-40 flex space-x-8">
-        <Link href="/">Home</Link>
-        <Link href="/stats/miner">Miners</Link>
-        <Link href="/stats/validator">Validators</Link>
-        <Link href="/stats/overview">Historical</Link>
-        <Link href="/docs">API</Link>
-        {showValidatorRequests && (
-          <div className="relative" ref={dropdownRef}>
-            <button
-              onClick={toggleDropdown}
-              className="flex items-center gap-1"
-            >
-              Validator Requests
-              {isDropdownOpen ? (
-                <ChevronUp className="px-1 py-0.5" />
-              ) : (
-                <ChevronDown className="px-1 py-0.5" />
-              )}
-            </button>
-            {isDropdownOpen && validators && (
-              <div
-                className={`-translate-x-1/5 absolute right-0 z-50 mt-2 min-w-fit transform whitespace-nowrap rounded-md bg-white p-2 shadow-lg dark:bg-neutral-700 dark:text-gray-300`}
+    <header className="">
+      <nav
+        aria-label="Global"
+        className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8"
+      >
+        <div className="flex lg:flex-1">
+          <Link href="/" className="-m-1.5 p-1.5">
+            <span className="sr-only">Targon Stats</span>
+            <span className="text-xl font-bold">Targon Stats</span>
+          </Link>
+        </div>
+        <div className="flex lg:hidden">
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen(true)}
+            className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700 dark:text-gray-300"
+          >
+            <span className="sr-only">Open main menu</span>
+            <Menu className="size-6" />
+          </button>
+        </div>
+        <div className="hidden lg:flex lg:gap-x-12">
+          <Link
+            href="/"
+            className="text-sm/6 font-semibold text-gray-900 dark:text-gray-100"
+          >
+            Home
+          </Link>
+          <Link
+            href="/stats/miner"
+            className="text-sm/6 font-semibold text-gray-900 dark:text-gray-100"
+          >
+            Miners
+          </Link>
+          <Link
+            href="/stats/validator"
+            className="text-sm/6 font-semibold text-gray-900 dark:text-gray-100"
+          >
+            Validators
+          </Link>
+          <Link
+            href="/stats/overview"
+            className="text-sm/6 font-semibold text-gray-900 dark:text-gray-100"
+          >
+            Historical
+          </Link>
+          <Link
+            href="/docs"
+            className="text-sm/6 font-semibold text-gray-900 dark:text-gray-100"
+          >
+            API
+          </Link>
+          {showValidatorRequests && validators && validators.length > 0 && (
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={toggleDropdown}
+                className="flex items-center gap-x-1 text-sm/6 font-semibold text-gray-900 dark:text-gray-100"
               >
-                {validators.length > 0 ? (
-                  validators.map((validator, index) => (
-                    <div
-                      key={index}
-                      onClick={() => toggleValidator(index)}
-                      className="flex cursor-pointer items-center gap-2 p-2"
-                    >
-                      <span className="flex h-4 w-4 items-center justify-center rounded-sm border border-gray-400">
-                        {(selectedBits?.[index] ?? "1") == "1" ? (
-                          <Check className="text-black dark:text-white" />
-                        ) : null}
-                      </span>
-                      {validator}
-                    </div>
-                  ))
+                Validator Requests
+                <ChevronDown
+                  className={`size-5 flex-none text-gray-400 transition ${isDropdownOpen ? "rotate-180" : ""}`}
+                />
+              </button>
+              {isDropdownOpen && (
+                <div className="absolute left-0 z-10 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5 dark:bg-neutral-800 dark:ring-gray-700/5">
+                  <div className="p-4">
+                    {validators.map((validator, index) => (
+                      <div
+                        key={index}
+                        onClick={() => toggleValidator(index)}
+                        className="group relative flex cursor-pointer items-center gap-x-6 rounded-lg p-4 text-sm/6 hover:bg-gray-50 dark:hover:bg-neutral-700"
+                      >
+                        <div className="flex h-4 w-4 items-center justify-center rounded-sm border border-gray-400">
+                          {(selectedBits?.[index] ?? "1") == "1" ? (
+                            <Check className="h-3 w-3" />
+                          ) : null}
+                        </div>
+                        <div className="flex-auto">
+                          <span className="block font-semibold text-gray-900 dark:text-gray-100">
+                            {validator}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+        <div className="hidden lg:flex lg:flex-1 lg:justify-end">
+          {auth.status === "AUTHED" ? (
+            <Link
+              prefetch={false}
+              href="/sign-out"
+              className="text-sm/6 font-semibold text-gray-900 dark:text-gray-100"
+            >
+              Sign Out <span aria-hidden="true">&rarr;</span>
+            </Link>
+          ) : (
+            <Link
+              href="/sign-in"
+              className="text-sm/6 font-semibold text-gray-900 dark:text-gray-100"
+            >
+              Sign in <span aria-hidden="true">&rarr;</span>
+            </Link>
+          )}
+        </div>
+      </nav>
+
+      <Dialog
+        open={mobileMenuOpen}
+        onClose={setMobileMenuOpen}
+        className="lg:hidden"
+      >
+        <div className="fixed inset-0 z-10" />
+        <DialogPanel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-6 dark:bg-neutral-900 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10 dark:sm:ring-gray-700/10">
+          <div className="flex items-center justify-between">
+            <Link href="/" className="-m-1.5 p-1.5">
+              <span className="sr-only">Targon Stats</span>
+              <span className="text-xl font-bold">Targon Stats</span>
+            </Link>
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(false)}
+              className="-m-2.5 rounded-md p-2.5 text-gray-700 dark:text-gray-300"
+            >
+              <span className="sr-only">Close menu</span>
+              <X className="size-6" />
+            </button>
+          </div>
+          <div className="mt-6 flow-root">
+            <div className="-my-6 divide-y divide-gray-500/10 dark:divide-gray-500/20">
+              <div className="space-y-2 py-6">
+                <Link
+                  href="/"
+                  className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50 dark:text-gray-100 dark:hover:bg-neutral-800"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Home
+                </Link>
+                <Link
+                  href="/stats/miner"
+                  className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50 dark:text-gray-100 dark:hover:bg-neutral-800"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Miners
+                </Link>
+                <Link
+                  href="/stats/validator"
+                  className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50 dark:text-gray-100 dark:hover:bg-neutral-800"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Validators
+                </Link>
+                <Link
+                  href="/stats/overview"
+                  className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50 dark:text-gray-100 dark:hover:bg-neutral-800"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Historical
+                </Link>
+                <Link
+                  href="/docs"
+                  className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50 dark:text-gray-100 dark:hover:bg-neutral-800"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  API
+                </Link>
+
+                {showValidatorRequests &&
+                  validators &&
+                  validators.length > 0 && (
+                    <Disclosure as="div" className="-mx-3">
+                      {({ open }) => (
+                        <>
+                          <DisclosureButton className="group flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50 dark:text-gray-100 dark:hover:bg-neutral-800">
+                            Validator Requests
+                            <ChevronDown
+                              className={`size-5 flex-none transition ${open ? "rotate-180" : ""}`}
+                            />
+                          </DisclosureButton>
+                          <DisclosurePanel className="mt-2 space-y-2">
+                            {validators.map((validator, index) => (
+                              <div
+                                key={index}
+                                onClick={() => toggleValidator(index)}
+                                className="flex cursor-pointer items-center gap-x-3 rounded-lg py-2 pl-6 pr-3 text-sm/7 font-semibold text-gray-900 hover:bg-gray-50 dark:text-gray-100 dark:hover:bg-neutral-800"
+                              >
+                                <div className="flex h-4 w-4 items-center justify-center rounded-sm border border-gray-400">
+                                  {(selectedBits?.[index] ?? "1") == "1" ? (
+                                    <Check className="h-3 w-3" />
+                                  ) : null}
+                                </div>
+                                {validator}
+                              </div>
+                            ))}
+                          </DisclosurePanel>
+                        </>
+                      )}
+                    </Disclosure>
+                  )}
+              </div>
+              <div className="py-6">
+                {auth.status === "AUTHED" ? (
+                  <Link
+                    prefetch={false}
+                    href="/sign-out"
+                    className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50 dark:text-gray-100 dark:hover:bg-neutral-800"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Sign Out
+                  </Link>
                 ) : (
-                  <div>No validators available</div>
+                  <Link
+                    href="/sign-in"
+                    className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50 dark:text-gray-100 dark:hover:bg-neutral-800"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Sign in
+                  </Link>
                 )}
               </div>
-            )}
+            </div>
           </div>
-        )}
-        {auth.status === "AUTHED" ? (
-          <>
-            <Link prefetch={false} href="/sign-out">
-              Sign Out
-            </Link>
-          </>
-        ) : (
-          <Link href="/sign-in">Sign in</Link>
-        )}
-      </nav>
+        </DialogPanel>
+      </Dialog>
     </header>
   );
 };

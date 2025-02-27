@@ -257,8 +257,7 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                                   0,
                                   100,
                                 )}${
-                                  JSON.stringify(response.tokens).length >
-                                  100
+                                  JSON.stringify(response.tokens).length > 100
                                     ? "..."
                                     : ""
                                 }`}
@@ -525,9 +524,7 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                 <div className="border-t border-gray-300 p-4 sm:col-span-2 sm:px-0">
                   <dt className="flex items-center justify-between pb-2 pr-4 text-sm font-semibold leading-6 text-gray-900 dark:text-white">
                     <div className="flex items-center">
-                      <span className="inline-block w-40">
-                        Response Tokens
-                      </span>
+                      <span className="inline-block w-40">Response Tokens</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <button
@@ -540,7 +537,7 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                         className="cursor-pointer"
                         onClick={() =>
                           handleCopyClipboard(
-                            JSON.stringify(selectedResponse.tokens, null, 2)
+                            JSON.stringify(selectedResponse.tokens, null, 2),
                           )
                         }
                       >
@@ -551,7 +548,8 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                   <dd className="mt-1 font-mono text-sm leading-6 text-gray-700 dark:text-gray-400">
                     <pre className="max-w-full overflow-auto">
                       <code className="inline-block items-center space-x-4 break-words text-left text-sm text-gray-700 dark:text-gray-400">
-                        {Array.isArray(selectedResponse.tokens) && selectedResponse.tokens.length === 0
+                        {Array.isArray(selectedResponse.tokens) &&
+                        selectedResponse.tokens.length === 0
                           ? "No response"
                           : showFullTokens
                             ? JSON.stringify(selectedResponse.tokens, null, 2)
@@ -560,9 +558,9 @@ const ResponseComparison: React.FC<ResponseComparisonProps> = ({
                                 null,
                                 2,
                               ) +
-                                (selectedResponse.tokens?.length > 2
-                                  ? "\n..."
-                                  : "")}
+                              (selectedResponse.tokens?.length > 2
+                                ? "\n..."
+                                : "")}
                       </code>
                     </pre>
                   </dd>
