@@ -170,13 +170,12 @@ const ClientHeader = ({ validators }: ClientHeaderProps) => {
         </div>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
           {auth.status === "AUTHED" ? (
-            <Link
-              prefetch={false}
+            <a
               href="/sign-out"
               className="text-sm/6 font-semibold text-gray-900 dark:text-gray-100"
             >
               Sign Out <span aria-hidden="true">&rarr;</span>
-            </Link>
+            </a>
           ) : (
             <Link
               href="/sign-in"
@@ -283,14 +282,13 @@ const ClientHeader = ({ validators }: ClientHeaderProps) => {
               </div>
               <div className="py-6">
                 {auth.status === "AUTHED" ? (
-                  <Link
-                    prefetch={false}
+                  <a
                     href="/sign-out"
                     className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50 dark:text-gray-100 dark:hover:bg-neutral-800"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Sign Out
-                  </Link>
+                  </a>
                 ) : (
                   <Link
                     href="/sign-in"
