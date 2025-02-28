@@ -2,7 +2,7 @@ import MinerInputForm from "./MinerInputForm";
 
 const MinerEntryPage = () => {
   return (
-    <div className="mx-auto max-w-7xl px-12 pb-12">
+    <div className="mx-auto max-w-7xl px-4 md:px-12 pb-12">
       <div className="py-24 sm:py-24">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl lg:max-w-none">
