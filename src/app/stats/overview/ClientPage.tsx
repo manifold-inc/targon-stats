@@ -41,7 +41,7 @@ export default function ClientPage({ data }: ClientPageProps) {
     if (hiddenCharts.includes(chart)) return "hidden";
     const visibleCharts = 5 - hiddenCharts.length;
     if (visibleCharts <= 2) return "w-full";
-    return "w-1/2";
+    return "w-full sm:w-1/2";
   };
 
   const formattedData = (data ?? []).map((s) => ({
@@ -57,7 +57,7 @@ export default function ClientPage({ data }: ClientPageProps) {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-12 pb-12">
+    <div className="mx-auto max-w-7xl px-4 md:px-12 pb-12">
       <div className="py-24 sm:py-24">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl lg:max-w-none">
@@ -66,7 +66,7 @@ export default function ClientPage({ data }: ClientPageProps) {
                 Targon Metrics
               </h2>
             </div>
-            <dl className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+            <dl className="mt-12 grid min-[512px]:grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
               {[
                 {
                   key: "ttft",
