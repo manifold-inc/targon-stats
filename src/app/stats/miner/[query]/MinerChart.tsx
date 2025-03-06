@@ -347,26 +347,14 @@ export default async function MinerChart({
       miners.set(m.uid, { hotkey: m.hotkey, coldkey: m.coldkey });
     });
 
-    const gpuStats = {
-      avg: { h100: 0, h200: 0 },
-      validators: [] as Array<{
-        name: string;
-        gpus: { h100: number; h200: number };
-        models: string[];
-        weight: number;
-      }>,
-    };
-
     try {
       const mongoDb = getMongoDb();
       if (!mongoDb) {
         throw new Error("Failed to connect to MongoDB");
       }
 
-      // First find the UID if we're querying by hotkey/coldkey
       let targetUid: number | undefined;
       if (query.length >= 5) {
-        // Query is hotkey/coldkey, find the UID from our stats
         for (const [uid, keys] of miners.entries()) {
           if (keys.hotkey === query || keys.coldkey === query) {
             targetUid = uid;
@@ -374,9 +362,18 @@ export default async function MinerChart({
           }
         }
       } else {
-        // Query is UID
         targetUid = parseInt(query);
       }
+
+      const gpuStats = {
+        avg: { h100: 0, h200: 0 },
+        validators: [] as Array<{
+          name: string;
+          gpus: { h100: number; h200: number };
+          models: string[];
+          weight: number;
+        }>,
+      };
 
       if (targetUid) {
         const targonCollection = (await mongoDb
@@ -387,94 +384,85 @@ export default async function MinerChart({
         const minerDoc = targonCollection[0];
 
         if (minerDoc) {
-          // Add base GPU stats from the document
+          // Add base GPU stats
           if (minerDoc.gpus) {
             gpuStats.validators.push({
               name: "base",
-              gpus: {
-                h100: minerDoc.gpus.h100 || 0,
-                h200: minerDoc.gpus.h200 || 0,
-              },
+              gpus: minerDoc.gpus,
               models: minerDoc.models || [],
               weight: 0,
             });
           }
 
-          // Add GPU stats from all API endpoints
+          // Add validator GPU stats
           Object.entries(minerDoc).forEach(([key, value]) => {
             if (
-              key !== "gpus" && // Skip the base gpus field
-              key !== "_id" && // Skip MongoDB _id
-              key !== "uid" && // Skip uid
-              key !== "last_updated" && // Skip last_updated
-              key !== "models" && // Skip models
+              key !== "gpus" &&
+              key !== "_id" &&
+              key !== "uid" &&
+              key !== "last_updated" &&
+              key !== "models" &&
               typeof value === "object" &&
               value !== null &&
               "miner_cache" in value &&
               value.miner_cache?.gpus
             ) {
-              const gpus = value.miner_cache.gpus;
+              console.log(value);
               gpuStats.validators.push({
                 name: key,
-                gpus: {
-                  h100: gpus.h100 || 0,
-                  h200: gpus.h200 || 0,
-                },
+                gpus: value.miner_cache.gpus,
                 models: value.miner_cache.models || [],
                 weight: value.miner_cache.weight || 0,
               });
             }
           });
 
-          // Calculate averages
+          // Calculate averages for MinerChartClient only
           if (gpuStats.validators.length > 0) {
             gpuStats.avg = {
               h100: Math.round(
-                gpuStats.validators.reduce(
-                  (acc, validator) => acc + validator.gpus.h100,
-                  0,
-                ) / gpuStats.validators.length,
+                gpuStats.validators.reduce((acc, v) => acc + v.gpus.h100, 0) /
+                  gpuStats.validators.length,
               ),
               h200: Math.round(
-                gpuStats.validators.reduce(
-                  (acc, validator) => acc + validator.gpus.h200,
-                  0,
-                ) / gpuStats.validators.length,
+                gpuStats.validators.reduce((acc, v) => acc + v.gpus.h200, 0) /
+                  gpuStats.validators.length,
               ),
             };
           }
         }
       }
+
+      return (
+        <>
+          <MinerChartClient
+            minerStats={orderedStats}
+            query={query}
+            valiNames={selectedValidators}
+            gpuStats={{
+              avg: gpuStats.avg,
+            }}
+          />
+          <div className="flex flex-col gap-4 pt-8">
+            <div className="flex-1">
+              <KeysTable miners={miners} />
+            </div>
+            <div className="flex-1 pt-8">
+              <ResponseComparison responses={latestSyntheticResponses} />
+            </div>
+            <div className="flex-1 pt-8">
+              <OrganicResponseComparison responses={latestOrganicResponses} />
+            </div>
+            <div className="flex-1 pt-8">
+              <GPUStats gpuStats={gpuStats} />
+            </div>
+          </div>
+        </>
+      );
     } catch (error) {
       console.error("Error calculating GPU stats:", error);
+      return <div>Error loading miner stats. Please try again later.</div>;
     }
-
-    return (
-      <>
-        <MinerChartClient
-          minerStats={orderedStats}
-          query={query}
-          valiNames={selectedValidators}
-          gpuStats={{
-            avg: gpuStats.avg,
-          }}
-        />
-        <div className="flex flex-col gap-4 pt-8">
-          <div className="flex-1">
-            <KeysTable miners={miners} />
-          </div>
-          <div className="flex-1 pt-8">
-            <ResponseComparison responses={latestSyntheticResponses} />
-          </div>
-          <div className="flex-1 pt-8">
-            <OrganicResponseComparison responses={latestOrganicResponses} />
-          </div>
-          <div className="flex-1 pt-8">
-            <GPUStats gpuStats={gpuStats} />
-          </div>
-        </div>
-      </>
-    );
   } catch (error) {
     console.error("Error fetching miner stats:", error);
     return <div>Error loading miner stats. Please try again later.</div>;

@@ -1,5 +1,10 @@
 "use client";
 
+import { Copy } from "lucide-react";
+import { toast } from "sonner";
+
+import { copyToClipboard } from "@/utils/utils";
+
 interface GPUStatsProps {
   gpuStats: {
     avg: { h100: number; h200: number };
@@ -23,6 +28,11 @@ const GPUStats: React.FC<GPUStatsProps> = ({ gpuStats }) => {
     );
   }
 
+  const handleCopyClipboard = (copy: string) => {
+    void copyToClipboard(copy);
+    toast.success("Copied to clipboard!");
+  };
+
   return (
     <>
       <div className="sm:flex sm:items-center">
@@ -36,79 +46,20 @@ const GPUStats: React.FC<GPUStatsProps> = ({ gpuStats }) => {
           </p>
         </div>
       </div>
-      <div className="pt-8">
-        <div className="flow-root h-96 overflow-y-auto rounded border border-gray-200 shadow">
-          <div className="inline-block min-w-full align-middle">
-            <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
-              <thead className="sticky top-0 z-20 bg-gray-50 dark:bg-neutral-800">
-                <tr>
-                  <th
-                    scope="col"
-                    className="w-[15%] whitespace-nowrap px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-200"
-                  >
-                    Validator
-                  </th>
-                  <th
-                    scope="col"
-                    className="w-[10%] whitespace-nowrap px-3 py-3.5 text-center text-sm font-semibold text-gray-900 dark:text-gray-200"
-                  >
-                    Weight
-                  </th>
-                  <th
-                    scope="col"
-                    className="w-[10%] whitespace-nowrap px-3 py-3.5 text-center text-sm font-semibold text-gray-900 dark:text-gray-200"
-                  >
-                    H100 GPUs
-                  </th>
-                  <th
-                    scope="col"
-                    className="w-[10%] whitespace-nowrap px-3 py-3.5 text-center text-sm font-semibold text-gray-900 dark:text-gray-200"
-                  >
-                    H200 GPUs
-                  </th>
-                  <th
-                    scope="col"
-                    className="w-[55%] px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-200"
-                  >
-                    Supported Models
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-neutral-800">
-                {gpuStats.validators.map((validator) => (
-                  <tr key={validator.name}>
-                    <td className="whitespace-nowrap px-3 py-4 text-left text-sm font-medium text-gray-900 dark:text-gray-200">
-                      {validator.name}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-center text-sm text-gray-500 dark:text-gray-300">
-                      {validator.weight.toFixed(2)}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-center text-sm text-gray-500 dark:text-gray-300">
-                      {validator.gpus.h100}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-center text-sm text-gray-500 dark:text-gray-300">
-                      {validator.gpus.h200}
-                    </td>
-                    <td className="px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
-                      <div className="flex flex-wrap gap-1.5">
-                        {validator.models?.map((model) => (
-                          <span
-                            key={model}
-                            className="inline-flex items-center rounded-md border border-gray-200 px-2 py-0.5 text-xs font-medium text-gray-600 dark:border-gray-700 dark:text-gray-300"
-                          >
-                            {model}
-                          </span>
-                        )) || (
-                          <span className="text-gray-400 dark:text-gray-500">
-                            No models reported
-                          </span>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+      <div className="mt-8">
+        <div className="rounded-lg border border-gray-200 bg-gray-50 shadow dark:bg-neutral-900">
+          <div className="flex items-center justify-between p-6">
+            <pre className="flex-1 overflow-x-auto font-mono text-sm text-gray-900 dark:text-gray-200">
+              {JSON.stringify(gpuStats)}
+            </pre>
+            <button
+              className="ml-4 cursor-pointer"
+              onClick={() =>
+                handleCopyClipboard(JSON.stringify(gpuStats, null, 1))
+              }
+            >
+              <Copy className="h-4 w-4 text-gray-500 dark:text-gray-300" />
+            </button>
           </div>
         </div>
       </div>
