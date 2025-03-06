@@ -14,7 +14,7 @@ import MinerChartClient from "./MinerChartClient";
 import OrganicResponseComparison from "./OrganicResponseComparison";
 import ResponseComparison from "./ResponseComparison";
 
-interface TargonDoc {
+export interface TargonDoc {
   _id: string;
   uid: number;
   last_updated: number;
@@ -152,14 +152,27 @@ function extractUsageData(
     "prompt_tokens" in lastChunk.usage &&
     "total_tokens" in lastChunk.usage
   ) {
-    return lastChunk.usage as {
+    const usage = lastChunk.usage as {
       completion_tokens: number;
       prompt_tokens: number;
       total_tokens: number;
     };
+
+    if (
+      typeof usage.completion_tokens === "number" &&
+      typeof usage.prompt_tokens === "number" &&
+      typeof usage.total_tokens === "number"
+    ) {
+      return usage;
+    }
   }
 
   return undefined;
+}
+
+function serializeMinerDoc(doc: TargonDoc | null) {
+  if (!doc) return null;
+  return JSON.parse(JSON.stringify(doc));
 }
 
 export default async function MinerChart({
@@ -365,6 +378,7 @@ export default async function MinerChart({
         targetUid = parseInt(query);
       }
 
+      let minerDoc: TargonDoc | null = null;
       const gpuStats = {
         avg: { h100: 0, h200: 0 },
         validators: [] as Array<{
@@ -381,7 +395,7 @@ export default async function MinerChart({
           .find({ uid: targetUid })
           .toArray()) as unknown as TargonDoc[];
 
-        const minerDoc = targonCollection[0];
+        minerDoc = targonCollection[0] || null;
 
         if (minerDoc) {
           // Add base GPU stats
@@ -395,26 +409,38 @@ export default async function MinerChart({
           }
 
           // Add validator GPU stats
-          Object.entries(minerDoc).forEach(([key, value]) => {
-            if (
-              key !== "gpus" &&
-              key !== "_id" &&
-              key !== "uid" &&
-              key !== "last_updated" &&
-              key !== "models" &&
-              typeof value === "object" &&
-              value !== null &&
-              "miner_cache" in value &&
-              value.miner_cache?.gpus
-            ) {
-              gpuStats.validators.push({
-                name: key,
-                gpus: value.miner_cache.gpus,
-                models: value.miner_cache.models || [],
-                weight: value.miner_cache.weight || 0,
-              });
-            }
-          });
+          Object.entries(minerDoc).forEach(
+            ([key, value]: [string, unknown]) => {
+              if (
+                key !== "gpus" &&
+                key !== "_id" &&
+                key !== "uid" &&
+                key !== "last_updated" &&
+                key !== "models" &&
+                typeof value === "object" &&
+                value !== null &&
+                "miner_cache" in value &&
+                typeof value.miner_cache === "object" &&
+                value.miner_cache !== null &&
+                "gpus" in value.miner_cache
+              ) {
+                const minerValue = value as {
+                  miner_cache: {
+                    weight: number;
+                    models: string[];
+                    gpus: { h100: number; h200: number };
+                  };
+                };
+
+                gpuStats.validators.push({
+                  name: key,
+                  gpus: minerValue.miner_cache.gpus,
+                  models: minerValue.miner_cache.models || [],
+                  weight: minerValue.miner_cache.weight || 0,
+                });
+              }
+            },
+          );
 
           // Calculate averages for MinerChartClient only
           if (gpuStats.validators.length > 0) {
@@ -432,15 +458,17 @@ export default async function MinerChart({
         }
       }
 
+      const avgStats = { avg: gpuStats.avg };
+
+      const serializedMinerDoc = serializeMinerDoc(minerDoc);
+
       return (
         <>
           <MinerChartClient
             minerStats={orderedStats}
             query={query}
             valiNames={selectedValidators}
-            gpuStats={{
-              avg: gpuStats.avg,
-            }}
+            gpuStats={avgStats}
           />
           <div className="flex flex-col gap-4 pt-8">
             <div className="flex-1">
@@ -453,14 +481,14 @@ export default async function MinerChart({
               <OrganicResponseComparison responses={latestOrganicResponses} />
             </div>
             <div className="flex-1 pt-8">
-              <GPUStats gpuStats={gpuStats} />
+              <GPUStats gpuStats={serializedMinerDoc} />
             </div>
           </div>
         </>
       );
     } catch (error) {
       console.error("Error calculating GPU stats:", error);
-      return <div>Error loading miner stats. Please try again later.</div>;
+      return <div>Error loading gpu stats. Please try again later.</div>;
     }
   } catch (error) {
     console.error("Error fetching miner stats:", error);

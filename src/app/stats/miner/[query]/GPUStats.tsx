@@ -4,21 +4,14 @@ import { Copy } from "lucide-react";
 import { toast } from "sonner";
 
 import { copyToClipboard } from "@/utils/utils";
+import { type TargonDoc } from "./MinerChart";
 
 interface GPUStatsProps {
-  gpuStats: {
-    avg: { h100: number; h200: number };
-    validators: Array<{
-      name: string;
-      gpus: { h100: number; h200: number };
-      models: string[];
-      weight: number;
-    }>;
-  };
+  gpuStats: TargonDoc | null;
 }
 
 const GPUStats: React.FC<GPUStatsProps> = ({ gpuStats }) => {
-  if (gpuStats.validators.length === 0) {
+  if (!gpuStats) {
     return (
       <div className="flex h-96 items-center justify-center rounded border border-gray-200 shadow">
         <p className="text-sm text-gray-500 dark:text-gray-300">
@@ -46,14 +39,14 @@ const GPUStats: React.FC<GPUStatsProps> = ({ gpuStats }) => {
           </p>
         </div>
       </div>
-      <div className="pt-8 w-full">
+      <div className="w-full pt-8">
         <div className="rounded-lg border border-gray-200 bg-gray-50 shadow dark:bg-neutral-900">
           <div className="flex p-3">
             <pre className="overflow-y-auto text-left font-mono text-sm text-gray-900 dark:text-gray-200">
               {JSON.stringify(gpuStats, null, 2)}
             </pre>
             <button
-              className="ml-4 cursor-pointer"
+              className="ml-4 cursor-pointer text-right"
               onClick={() =>
                 handleCopyClipboard(JSON.stringify(gpuStats, null, 2))
               }
