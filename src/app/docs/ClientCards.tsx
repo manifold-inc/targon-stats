@@ -20,7 +20,9 @@ export const ApiSection = () => {
           Endpoint
         </label>
         <div className="overflow-x-auto">
-          <div className="font-mono whitespace-nowrap text-sm sm:text-base">{API_BASE_URL}</div>
+          <div className="whitespace-nowrap font-mono text-sm sm:text-base">
+            {API_BASE_URL}
+          </div>
         </div>
       </div>
       {apiKeys.data?.length ? (

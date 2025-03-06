@@ -1,5 +1,6 @@
 import { and, desc, eq, gte, inArray, or, sql } from "drizzle-orm";
 
+import { getMongoDb } from "@/schema/mongoDB";
 import { statsDB } from "@/schema/psDB";
 import {
   MinerResponse,
@@ -11,6 +12,33 @@ import KeysTable from "./KeysTable";
 import MinerChartClient from "./MinerChartClient";
 import OrganicResponseComparison from "./OrganicResponseComparison";
 import ResponseComparison from "./ResponseComparison";
+
+interface TargonDoc {
+  _id: string;
+  uid: number;
+  last_updated: number;
+  models: string[];
+  gpus: {
+    h100: number;
+    h200: number;
+  };
+  [key: string]:
+    | {
+        miner_cache: {
+          weight: number;
+          nodes_endpoint_error: string | null;
+          models: string[];
+          gpus: {
+            h100: number;
+            h200: number;
+          } | null;
+        };
+      }
+    | string
+    | number
+    | string[]
+    | { h100: number; h200: number };
+}
 
 export const revalidate = 60;
 
@@ -318,12 +346,109 @@ export default async function MinerChart({
       miners.set(m.uid, { hotkey: m.hotkey, coldkey: m.coldkey });
     });
 
+    const gpuStats = {
+      avg: { h100: 0, h200: 0 },
+      endpoints: [] as Array<{
+        name: string;
+        gpus: { h100: number; h200: number };
+      }>,
+    };
+
+    try {
+      const mongoDb = getMongoDb();
+      if (!mongoDb) {
+        throw new Error("Failed to connect to MongoDB");
+      }
+
+      // First find the UID if we're querying by hotkey/coldkey
+      let targetUid: number | undefined;
+      if (query.length >= 5) {
+        // Query is hotkey/coldkey, find the UID from our stats
+        for (const [uid, keys] of miners.entries()) {
+          if (keys.hotkey === query || keys.coldkey === query) {
+            targetUid = uid;
+            break;
+          }
+        }
+      } else {
+        // Query is UID
+        targetUid = parseInt(query);
+      }
+
+      if (targetUid) {
+        const targonCollection = (await mongoDb
+          .collection("uid_responses")
+          .find({ uid: targetUid })
+          .toArray()) as unknown as TargonDoc[];
+
+        const minerDoc = targonCollection[0];
+
+        if (minerDoc) {
+          // Add base GPU stats from the document
+          if (minerDoc.gpus) {
+            gpuStats.endpoints.push({
+              name: "base",
+              gpus: {
+                h100: minerDoc.gpus.h100 || 0,
+                h200: minerDoc.gpus.h200 || 0,
+              },
+            });
+          }
+
+          // Add GPU stats from all API endpoints
+          Object.entries(minerDoc).forEach(([key, value]) => {
+            if (
+              key !== "gpus" && // Skip the base gpus field
+              key !== "_id" && // Skip MongoDB _id
+              key !== "uid" && // Skip uid
+              key !== "last_updated" && // Skip last_updated
+              key !== "models" && // Skip models
+              typeof value === "object" &&
+              value !== null &&
+              "miner_cache" in value &&
+              value.miner_cache?.gpus
+            ) {
+              const gpus = value.miner_cache.gpus;
+              gpuStats.endpoints.push({
+                name: key,
+                gpus: {
+                  h100: gpus.h100 || 0,
+                  h200: gpus.h200 || 0,
+                },
+              });
+            }
+          });
+
+          // Calculate averages
+          if (gpuStats.endpoints.length > 0) {
+            gpuStats.avg = {
+              h100: Math.round(
+                gpuStats.endpoints.reduce(
+                  (acc, endpoint) => acc + endpoint.gpus.h100,
+                  0,
+                ) / gpuStats.endpoints.length,
+              ),
+              h200: Math.round(
+                gpuStats.endpoints.reduce(
+                  (acc, endpoint) => acc + endpoint.gpus.h200,
+                  0,
+                ) / gpuStats.endpoints.length,
+              ),
+            };
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error calculating GPU stats:", error);
+    }
+
     return (
       <>
         <MinerChartClient
           minerStats={orderedStats}
           query={query}
           valiNames={selectedValidators}
+          gpuStats={gpuStats}
         />
         <div className="flex flex-col gap-4 pt-8">
           <div className="flex-1">
