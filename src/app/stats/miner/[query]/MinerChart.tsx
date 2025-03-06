@@ -229,6 +229,7 @@ export default async function MinerChart({
         eq(ValidatorRequest.r_nanoid, MinerResponse.r_nanoid),
       )
       .innerJoin(Validator, eq(Validator.hotkey, ValidatorRequest.hotkey))
+
       .where(
         and(
           gte(ValidatorRequest.block, startBlock),
@@ -360,136 +361,129 @@ export default async function MinerChart({
       miners.set(m.uid, { hotkey: m.hotkey, coldkey: m.coldkey });
     });
 
-    try {
-      const mongoDb = getMongoDb();
-      if (!mongoDb) {
-        throw new Error("Failed to connect to MongoDB");
-      }
+    const mongoDb = getMongoDb();
+    if (!mongoDb) {
+      throw new Error("Failed to connect to MongoDB");
+    }
 
-      let targetUid: number | undefined;
-      if (query.length >= 5) {
-        for (const [uid, keys] of miners.entries()) {
-          if (keys.hotkey === query || keys.coldkey === query) {
-            targetUid = uid;
-            break;
-          }
+    let targetUid: number | undefined;
+    if (query.length >= 5) {
+      for (const [uid, keys] of miners.entries()) {
+        if (keys.hotkey === query || keys.coldkey === query) {
+          targetUid = uid;
+          break;
         }
-      } else {
-        targetUid = parseInt(query);
       }
+    } else {
+      targetUid = parseInt(query);
+    }
 
-      let minerDoc: TargonDoc | null = null;
-      const gpuStats = {
-        avg: { h100: 0, h200: 0 },
-        validators: [] as Array<{
-          name: string;
-          gpus: { h100: number; h200: number };
-          models: string[];
-          weight: number;
-        }>,
-      };
+    let minerDoc: TargonDoc | null = null;
+    const gpuStats = {
+      avg: { h100: 0, h200: 0 },
+      validators: [] as Array<{
+        name: string;
+        gpus: { h100: number; h200: number };
+        models: string[];
+        weight: number;
+      }>,
+    };
 
-      if (targetUid) {
-        const targonCollection = (await mongoDb
-          .collection("uid_responses")
-          .find({ uid: targetUid })
-          .toArray()) as unknown as TargonDoc[];
+    if (targetUid) {
+      const targonCollection = (await mongoDb
+        .collection("uid_responses")
+        .find({ uid: targetUid })
+        .toArray()) as unknown as TargonDoc[];
 
-        minerDoc = targonCollection[0] || null;
+      minerDoc = targonCollection[0] || null;
 
-        if (minerDoc) {
-          // Add base GPU stats
-          if (minerDoc.gpus) {
+      if (minerDoc) {
+        // Add base GPU stats
+        if (minerDoc.gpus) {
+          gpuStats.validators.push({
+            name: "base",
+            gpus: minerDoc.gpus,
+            models: minerDoc.models || [],
+            weight: 0,
+          });
+        }
+
+        // Add validator GPU stats
+        Object.entries(minerDoc).forEach(([key, value]: [string, unknown]) => {
+          if (
+            key !== "gpus" &&
+            key !== "_id" &&
+            key !== "uid" &&
+            key !== "last_updated" &&
+            key !== "models" &&
+            typeof value === "object" &&
+            value !== null &&
+            "miner_cache" in value &&
+            typeof value.miner_cache === "object" &&
+            value.miner_cache !== null &&
+            "gpus" in value.miner_cache &&
+            value.miner_cache.gpus !== null
+          ) {
+            const minerValue = value as {
+              miner_cache: {
+                weight: number;
+                models: string[];
+                gpus: { h100: number; h200: number };
+              };
+            };
+
             gpuStats.validators.push({
-              name: "base",
-              gpus: minerDoc.gpus,
-              models: minerDoc.models || [],
-              weight: 0,
+              name: key,
+              gpus: minerValue.miner_cache.gpus,
+              models: minerValue.miner_cache.models || [],
+              weight: minerValue.miner_cache.weight || 0,
             });
           }
+        });
 
-          // Add validator GPU stats
-          Object.entries(minerDoc).forEach(
-            ([key, value]: [string, unknown]) => {
-              if (
-                key !== "gpus" &&
-                key !== "_id" &&
-                key !== "uid" &&
-                key !== "last_updated" &&
-                key !== "models" &&
-                typeof value === "object" &&
-                value !== null &&
-                "miner_cache" in value &&
-                typeof value.miner_cache === "object" &&
-                value.miner_cache !== null &&
-                "gpus" in value.miner_cache
-              ) {
-                const minerValue = value as {
-                  miner_cache: {
-                    weight: number;
-                    models: string[];
-                    gpus: { h100: number; h200: number };
-                  };
-                };
-
-                gpuStats.validators.push({
-                  name: key,
-                  gpus: minerValue.miner_cache.gpus,
-                  models: minerValue.miner_cache.models || [],
-                  weight: minerValue.miner_cache.weight || 0,
-                });
-              }
-            },
-          );
-
-          // Calculate averages for MinerChartClient only
-          if (gpuStats.validators.length > 0) {
-            gpuStats.avg = {
-              h100: Math.round(
-                gpuStats.validators.reduce((acc, v) => acc + v.gpus.h100, 0) /
-                  gpuStats.validators.length,
-              ),
-              h200: Math.round(
-                gpuStats.validators.reduce((acc, v) => acc + v.gpus.h200, 0) /
-                  gpuStats.validators.length,
-              ),
-            };
-          }
+        // Calculate averages for MinerChartClient only
+        if (gpuStats.validators.length > 0) {
+          gpuStats.avg = {
+            h100: Math.round(
+              gpuStats.validators.reduce((acc, v) => acc + v.gpus.h100, 0) /
+                gpuStats.validators.length,
+            ),
+            h200: Math.round(
+              gpuStats.validators.reduce((acc, v) => acc + v.gpus.h200, 0) /
+                gpuStats.validators.length,
+            ),
+          };
         }
       }
-
-      const avgStats = { avg: gpuStats.avg };
-
-      const serializedMinerDoc = serializeMinerDoc(minerDoc);
-
-      return (
-        <>
-          <MinerChartClient
-            minerStats={orderedStats}
-            query={query}
-            valiNames={selectedValidators}
-            gpuStats={avgStats}
-          />
-          <div className="flex flex-col gap-4 pt-8">
-            <div className="flex-1">
-              <KeysTable miners={miners} />
-            </div>
-            <div className="flex-1 pt-8">
-              <ResponseComparison responses={latestSyntheticResponses} />
-            </div>
-            <div className="flex-1 pt-8">
-              <OrganicResponseComparison responses={latestOrganicResponses} />
-            </div>
-            <div className="flex-1 pt-8">
-              <GPUStats gpuStats={serializedMinerDoc} />
-            </div>
-          </div>
-        </>
-      );
-    } catch (error) {
-      console.error("Error calculating GPU stats:", error);
-      return <div>Error loading gpu stats. Please try again later.</div>;
     }
+
+    const avgStats = { avg: gpuStats.avg };
+    const serializedMinerDoc = serializeMinerDoc(minerDoc);
+
+    return (
+      <>
+        <MinerChartClient
+          minerStats={orderedStats}
+          query={query}
+          valiNames={selectedValidators}
+          gpuStats={avgStats}
+        />
+        <div className="flex flex-col gap-4 pt-8">
+          <div className="flex-1">
+            <KeysTable miners={miners} />
+          </div>
+          <div className="flex-1 pt-8">
+            <ResponseComparison responses={latestSyntheticResponses} />
+          </div>
+          <div className="flex-1 pt-8">
+            <OrganicResponseComparison responses={latestOrganicResponses} />
+          </div>
+          <div className="flex-1 pt-8">
+            <GPUStats gpuStats={serializedMinerDoc} />
+          </div>
+        </div>
+      </>
+    );
   } catch (error) {
     console.error("Error fetching miner stats:", error);
     return <div>Error loading miner stats. Please try again later.</div>;
