@@ -8,6 +8,7 @@ import {
   Validator,
   ValidatorRequest,
 } from "@/schema/schema";
+import GPUStats from "./GPUStats";
 import KeysTable from "./KeysTable";
 import MinerChartClient from "./MinerChartClient";
 import OrganicResponseComparison from "./OrganicResponseComparison";
@@ -348,9 +349,10 @@ export default async function MinerChart({
 
     const gpuStats = {
       avg: { h100: 0, h200: 0 },
-      endpoints: [] as Array<{
+      validators: [] as Array<{
         name: string;
         gpus: { h100: number; h200: number };
+        models: string[];
       }>,
     };
 
@@ -386,12 +388,13 @@ export default async function MinerChart({
         if (minerDoc) {
           // Add base GPU stats from the document
           if (minerDoc.gpus) {
-            gpuStats.endpoints.push({
+            gpuStats.validators.push({
               name: "base",
               gpus: {
                 h100: minerDoc.gpus.h100 || 0,
                 h200: minerDoc.gpus.h200 || 0,
               },
+              models: minerDoc.models || [],
             });
           }
 
@@ -409,30 +412,31 @@ export default async function MinerChart({
               value.miner_cache?.gpus
             ) {
               const gpus = value.miner_cache.gpus;
-              gpuStats.endpoints.push({
+              gpuStats.validators.push({
                 name: key,
                 gpus: {
                   h100: gpus.h100 || 0,
                   h200: gpus.h200 || 0,
                 },
+                models: value.miner_cache.models || [],
               });
             }
           });
 
           // Calculate averages
-          if (gpuStats.endpoints.length > 0) {
+          if (gpuStats.validators.length > 0) {
             gpuStats.avg = {
               h100: Math.round(
-                gpuStats.endpoints.reduce(
-                  (acc, endpoint) => acc + endpoint.gpus.h100,
+                gpuStats.validators.reduce(
+                  (acc, validator) => acc + validator.gpus.h100,
                   0,
-                ) / gpuStats.endpoints.length,
+                ) / gpuStats.validators.length,
               ),
               h200: Math.round(
-                gpuStats.endpoints.reduce(
-                  (acc, endpoint) => acc + endpoint.gpus.h200,
+                gpuStats.validators.reduce(
+                  (acc, validator) => acc + validator.gpus.h200,
                   0,
-                ) / gpuStats.endpoints.length,
+                ) / gpuStats.validators.length,
               ),
             };
           }
@@ -448,7 +452,9 @@ export default async function MinerChart({
           minerStats={orderedStats}
           query={query}
           valiNames={selectedValidators}
-          gpuStats={gpuStats}
+          gpuStats={{
+            avg: gpuStats.avg,
+          }}
         />
         <div className="flex flex-col gap-4 pt-8">
           <div className="flex-1">
@@ -459,6 +465,9 @@ export default async function MinerChart({
           </div>
           <div className="flex-1 pt-8">
             <OrganicResponseComparison responses={latestOrganicResponses} />
+          </div>
+          <div className="flex-1 pt-8">
+            <GPUStats gpuStats={gpuStats} />
           </div>
         </div>
       </>

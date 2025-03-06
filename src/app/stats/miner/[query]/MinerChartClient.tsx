@@ -18,10 +18,6 @@ interface MinerChartClientProps {
   valiNames?: string[];
   gpuStats: {
     avg: { h100: number; h200: number };
-    endpoints: Array<{
-      name: string;
-      gpus: { h100: number; h200: number };
-    }>;
   };
 }
 

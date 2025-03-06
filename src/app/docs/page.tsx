@@ -676,6 +676,119 @@ export default function Page() {
             </li>
           </ul>
         </Container>
+
+        <Container>
+          <h4 className="pb-2 text-xl font-semibold leading-6 text-gray-900 dark:text-gray-50">
+            GPU Stats By Miner
+          </h4>
+          <div className="overflow-x-scroll pb-4">
+            <div className="w-fit whitespace-nowrap rounded bg-gray-200 px-2 py-2 font-mono text-sm leading-3 dark:bg-neutral-900">
+              POST {API_BASE_URL}/stats/gpus/miner
+            </div>
+          </div>
+          <div className="pb-4">
+            Retrieves GPU statistics and supported models for a specific miner,
+            identified by either UID or hotkey/coldkey.
+          </div>
+
+          <h4 className="pb-2 text-xl font-semibold leading-6 text-gray-900 dark:text-gray-50">
+            Example Request
+          </h4>
+          <div className="overflow-x-scroll pb-4">
+            <div className="w-fit whitespace-nowrap rounded bg-gray-200 px-2 py-2 font-mono text-sm leading-3 dark:bg-neutral-900">
+              POST {API_BASE_URL}/stats/gpus/miner
+            </div>
+          </div>
+          <div className="pb-4">
+            Ensure the request includes a Bearer Token in the Authorization
+            header:
+          </div>
+          <div className="overflow-x-scroll pb-4">
+            <div className="w-fit whitespace-nowrap rounded bg-gray-200 px-2 py-2 font-mono text-sm leading-3 dark:bg-neutral-900">
+              Authorization: Bearer [your-api-key]
+            </div>
+          </div>
+          <div className="pb-4">
+            Request body should include the miner query:
+          </div>
+          <div className="overflow-x-scroll pb-4">
+            <div className="w-fit whitespace-nowrap rounded bg-gray-200 px-2 py-2 font-mono text-sm leading-3 dark:bg-neutral-900">
+              {`{
+  "query": "5CcW...7V58"  // Miner UID (< 5 chars) or hotkey/coldkey
+}`}
+            </div>
+          </div>
+
+          <div className="pb-2 text-xl font-semibold leading-6 text-gray-900 dark:text-gray-50">
+            Example Response
+          </div>
+          <div className="overflow-x-scroll pb-4">
+            <div className="w-full whitespace-nowrap rounded bg-gray-800 px-2 py-2 text-sm leading-3 text-gray-50 dark:bg-neutral-900">
+              <pre className="hljs prose-sm w-full overflow-x-scroll rounded bg-gray-800 px-2 py-2 dark:bg-neutral-900">
+                <code
+                  dangerouslySetInnerHTML={{
+                    __html: hljs.highlight(
+                      `{
+  "avg": {
+    "h100": 32,
+    "h200": 16
+  },
+  "validators": [
+    {
+      "name": "targon-hub-api",
+      "gpus": {
+        "h100": 32,
+        "h200": 16
+      },
+      "models": [
+        "deepseek-ai/DeepSeek-V3",
+        "NousResearch/Hermes-3-Llama-3.1-8B"
+      ]
+    }
+  ]
+}`,
+                      { language: "json" },
+                    ).value,
+                  }}
+                />
+              </pre>
+            </div>
+          </div>
+
+          <div className="pb-4">
+            This response contains GPU statistics and model information for the
+            specified miner:
+          </div>
+          <ul className="list-disc pb-4 pl-5">
+            <li>
+              <strong>avg</strong>: Average GPU counts across all validators
+              <ul className="list-disc pl-5 pt-2">
+                <li>
+                  <strong>h100</strong>: Average number of H100 GPUs
+                </li>
+                <li>
+                  <strong>h200</strong>: Average number of H200 GPUs
+                </li>
+              </ul>
+            </li>
+            <li>
+              <strong>validators</strong>: Array of validator information
+              <ul className="list-disc pl-5 pt-2">
+                <li>
+                  <strong>name</strong>: Validator name or endpoint identifier
+                </li>
+                <li>
+                  <strong>gpus</strong>: Number of H100 and H200 GPUs for this
+                  validator
+                </li>
+                <li>
+                  <strong>models</strong>: List of AI models supported by this
+                  validator
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </Container>
       </div>
     </div>
   );
