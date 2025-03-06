@@ -34,7 +34,7 @@ const GPUStats: React.FC<GPUStatsProps> = ({ gpuStats }) => {
   };
 
   return (
-    <>
+    <div className="w-full max-w-full">
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
           <h1 className="text-base font-semibold leading-6 text-gray-900 dark:text-gray-50">
@@ -46,16 +46,16 @@ const GPUStats: React.FC<GPUStatsProps> = ({ gpuStats }) => {
           </p>
         </div>
       </div>
-      <div className="mt-8">
+      <div className="pt-8 w-full">
         <div className="rounded-lg border border-gray-200 bg-gray-50 shadow dark:bg-neutral-900">
-          <div className="flex items-center justify-between p-6">
-            <pre className="flex-1 overflow-x-auto font-mono text-sm text-gray-900 dark:text-gray-200">
-              {JSON.stringify(gpuStats)}
+          <div className="flex p-3">
+            <pre className="flex-1 overflow-y-auto font-mono text-sm text-gray-900 dark:text-gray-200">
+              {JSON.stringify(gpuStats, null, 2)}
             </pre>
             <button
               className="ml-4 cursor-pointer"
               onClick={() =>
-                handleCopyClipboard(JSON.stringify(gpuStats, null, 1))
+                handleCopyClipboard(JSON.stringify(gpuStats, null, 2))
               }
             >
               <Copy className="h-4 w-4 text-gray-500 dark:text-gray-300" />
@@ -63,7 +63,7 @@ const GPUStats: React.FC<GPUStatsProps> = ({ gpuStats }) => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
