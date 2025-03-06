@@ -608,6 +608,74 @@ export default function Page() {
             </li>
           </ul>
         </Container>
+
+        <Container>
+          <h4 className="pb-2 text-xl font-semibold leading-6 text-gray-900 dark:text-gray-50">
+            GPU Stats
+          </h4>
+          <div className="overflow-x-scroll pb-4">
+            <div className="w-fit whitespace-nowrap rounded bg-gray-200 px-2 py-2 font-mono text-sm leading-3 dark:bg-neutral-900">
+              POST {API_BASE_URL}/stats/gpus
+            </div>
+          </div>
+          <div className="pb-4">
+            Retrieves the total number of H100 and H200 GPUs in the network.
+          </div>
+
+          <h4 className="pb-2 text-xl font-semibold leading-6 text-gray-900 dark:text-gray-50">
+            Example Request
+          </h4>
+          <div className="overflow-x-scroll pb-4">
+            <div className="w-fit whitespace-nowrap rounded bg-gray-200 px-2 py-2 font-mono text-sm leading-3 dark:bg-neutral-900">
+              POST {API_BASE_URL}/stats/gpus
+            </div>
+          </div>
+          <div className="pb-4">
+            Ensure the request includes a Bearer Token in the Authorization
+            header:
+          </div>
+          <div className="overflow-x-scroll pb-4">
+            <div className="w-fit whitespace-nowrap rounded bg-gray-200 px-2 py-2 font-mono text-sm leading-3 dark:bg-neutral-900">
+              Authorization: Bearer [your-api-key]
+            </div>
+          </div>
+
+          <div className="pb-2 text-xl font-semibold leading-6 text-gray-900 dark:text-gray-50">
+            Example Response
+          </div>
+          <div className="overflow-x-scroll pb-4">
+            <div className="w-full whitespace-nowrap rounded bg-gray-800 px-2 py-2 text-sm leading-3 text-gray-50 dark:bg-neutral-900">
+              <pre className="hljs prose-sm w-full overflow-x-scroll rounded bg-gray-800 px-2 py-2 dark:bg-neutral-900">
+                <code
+                  dangerouslySetInnerHTML={{
+                    __html: hljs.highlight(
+                      `{
+    "h100": 42,
+    "h200": 12
+}`,
+                      { language: "json" },
+                    ).value,
+                  }}
+                />
+              </pre>
+            </div>
+          </div>
+
+          <div className="pb-4">
+            This response contains the total number of GPUs across all
+            validators:
+          </div>
+          <ul className="list-disc pb-4 pl-5">
+            <li>
+              <strong>h100</strong>: The total number of H100 GPUs across all
+              validators
+            </li>
+            <li>
+              <strong>h200</strong>: The total number of H200 GPUs across all
+              validators
+            </li>
+          </ul>
+        </Container>
       </div>
     </div>
   );
