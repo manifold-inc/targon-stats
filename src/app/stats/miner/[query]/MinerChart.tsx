@@ -407,7 +407,6 @@ export default async function MinerChart({
               "miner_cache" in value &&
               value.miner_cache?.gpus
             ) {
-              console.log(value);
               gpuStats.validators.push({
                 name: key,
                 gpus: value.miner_cache.gpus,
