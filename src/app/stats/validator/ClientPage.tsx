@@ -41,7 +41,6 @@ const ClientPage = ({ data }: ClientPageProps) => {
     scores: Record<string, number | number[] | null>,
     validator: { hotkey: string; valiName: string | null; lastUpdated: Date },
   ) => {
-    console.log("Opening modal with scores:", scores);
     setSelectedScores(scores);
     setSelectedValidator(validator);
     setUidFilter(""); // Reset UID filter when opening modal
