@@ -49,7 +49,7 @@ const GPUStats: React.FC<GPUStatsProps> = ({ gpuStats }) => {
       <div className="pt-8 w-full">
         <div className="rounded-lg border border-gray-200 bg-gray-50 shadow dark:bg-neutral-900">
           <div className="flex p-3">
-            <pre className="flex-1 overflow-y-auto font-mono text-sm text-gray-900 dark:text-gray-200">
+            <pre className="overflow-y-auto text-left font-mono text-sm text-gray-900 dark:text-gray-200">
               {JSON.stringify(gpuStats, null, 2)}
             </pre>
             <button
