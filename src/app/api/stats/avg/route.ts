@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { and, avg, desc, eq, gte, inArray, lte, sql } from "drizzle-orm";
 import { z } from "zod";
 
-import { db } from "@/schema/db";
+import { statsDB } from "@/schema/psDB";
 import {
   ApiKey,
   MinerResponse,
@@ -56,7 +56,7 @@ export const POST = async (req: NextRequest) => {
   const offset = body.offset ?? 0;
 
   // Fetch the latest block to set default values for start_block and end_block
-  const latestBlock = await db
+  const latestBlock = await statsDB
     .select({ latest: sql<number>`MAX(${ValidatorRequest.block})` })
     .from(ValidatorRequest)
     .limit(1)
@@ -65,7 +65,7 @@ export const POST = async (req: NextRequest) => {
   const startBlock = body.startblock ?? latestBlock - 360;
   const endBlock = body.endblock ?? latestBlock;
 
-  const user = await db
+  const user = await statsDB
     .select({
       id: User.id,
     })
@@ -81,7 +81,7 @@ export const POST = async (req: NextRequest) => {
     );
   }
 
-  const totalRecords = await db
+  const totalRecords = await statsDB
     .select({ totalRecords: sql<number>`COUNT(*)` })
     .from(MinerResponse)
     .innerJoin(
@@ -104,7 +104,7 @@ export const POST = async (req: NextRequest) => {
   const hasMoreRecords = limit + offset < totalRecords[0]!.totalRecords;
 
   try {
-    const stats = await db
+    const stats = await statsDB
       .select({
         minute:
           sql<string>`DATE_FORMAT(${MinerResponse.timestamp}, '%Y-%m-%d %H:%i:00')`.mapWith(

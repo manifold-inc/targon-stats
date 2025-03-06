@@ -6,10 +6,10 @@ import { LuciaAdapter } from "./lucia_adapter";
 import { Session, User } from "./schema";
 
 const client = new Client({
-  host: env.DATABASE_HOST,
-  username: env.DATABASE_USERNAME,
-  password: env.DATABASE_PASSWORD,
+  host: env.STATS_DATABASE_HOST,
+  username: env.STATS_DATABASE_USERNAME,
+  password: env.STATS_DATABASE_PASSWORD,
 });
 
-export const db = drizzle(client);
-export const adapter = new LuciaAdapter(db, Session, User);
+export const statsDB = drizzle(client);
+export const adapter = new LuciaAdapter(statsDB, Session, User);

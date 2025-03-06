@@ -12,14 +12,14 @@ import { type Session, type User } from "lucia";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
-import { db } from "@/schema/db";
+import { statsDB } from "@/schema/psDB";
 import { validateRequest } from "../auth";
 
 export const createTRPCContext = (opts: { req: NextRequest }) => {
   // Fetch stuff that depends on the request
   return {
     req: opts.req as NextRequest | null,
-    db: db,
+    db: statsDB,
     user: null as User | null,
     session: null as Session | null,
   };

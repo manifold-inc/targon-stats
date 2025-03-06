@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { and, avg, eq, gte, inArray, sql } from "drizzle-orm";
 
-import { db } from "@/schema/db";
+import { statsDB } from "@/schema/psDB";
 import { MinerResponse, Validator, ValidatorRequest } from "@/schema/schema";
 import ClientPage from "./ClientPage";
 import Loading from "./loading";
@@ -27,7 +27,7 @@ async function PageContent({ searchParams = {} }: PageProps) {
   const validatorFlags = searchParams.validators || "";
 
   try {
-    const activeValidators = await db
+    const activeValidators = await statsDB
       .select({
         name: Validator.valiName,
         hotkey: Validator.hotkey,
@@ -48,7 +48,7 @@ async function PageContent({ searchParams = {} }: PageProps) {
       (_, index) => validatorFlags[index] === "1",
     );
 
-    const innerAvg = db
+    const innerAvg = statsDB
       .select({
         minute:
           sql<string>`DATE_FORMAT(${MinerResponse.timestamp}, '%Y-%m-%d %H:%i:00')`
@@ -94,12 +94,12 @@ async function PageContent({ searchParams = {} }: PageProps) {
       )
       .as("innerAvg");
 
-    const orderedStats = await db
+    const orderedStats = await statsDB
       .select()
       .from(innerAvg)
       .orderBy(innerAvg.minute);
 
-    const valiModels = await db.select().from(Validator);
+    const valiModels = await statsDB.select().from(Validator);
 
     const mappedStats = orderedStats.map((stat) => ({
       ...stat,

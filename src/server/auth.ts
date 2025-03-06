@@ -4,7 +4,7 @@ import { Google } from "arctic";
 import { Lucia, Scrypt, type User as LuciaUser, type Session } from "lucia";
 
 import { env } from "@/env.mjs";
-import { adapter, type db as DB } from "@/schema/db";
+import { adapter, type statsDB as DB } from "@/schema/psDB";
 import { ApiKey, genId, User } from "@/schema/schema";
 
 declare module "lucia" {

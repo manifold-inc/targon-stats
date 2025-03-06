@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { and, eq, gt, gte, sql } from "drizzle-orm";
 
-import { db } from "@/schema/db";
+import { statsDB } from "@/schema/psDB";
 import { ApiKey, User, Validator, ValidatorRequest } from "@/schema/schema";
 
 export const POST = async (req: NextRequest) => {
@@ -13,7 +13,7 @@ export const POST = async (req: NextRequest) => {
     );
   }
 
-  const user = await db
+  const user = await statsDB
     .select({
       id: User.id,
     })
@@ -30,7 +30,7 @@ export const POST = async (req: NextRequest) => {
   }
 
   try {
-    const validatorLiveStats = await db
+    const validatorLiveStats = await statsDB
       .select({
         hotkey: Validator.hotkey,
         valiName: Validator.valiName,

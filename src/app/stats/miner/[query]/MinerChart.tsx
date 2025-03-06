@@ -1,6 +1,6 @@
 import { and, desc, eq, gte, inArray, or, sql } from "drizzle-orm";
 
-import { db } from "@/schema/db";
+import { statsDB } from "@/schema/psDB";
 import {
   MinerResponse,
   OrganicRequest,
@@ -142,7 +142,7 @@ export default async function MinerChart({
     const validatorFlags = searchParams.validators || "";
 
     const [activeValidators, latestBlock] = await Promise.all([
-      db
+      statsDB
         .select({
           name: Validator.valiName,
           hotkey: Validator.hotkey,
@@ -154,7 +154,7 @@ export default async function MinerChart({
         )
         .where(gte(ValidatorRequest.timestamp, sql`NOW() - INTERVAL 2 HOUR`))
         .groupBy(Validator.valiName, Validator.hotkey),
-      db
+      statsDB
         .select({ maxBlock: sql<number>`MAX(${ValidatorRequest.block})` })
         .from(ValidatorRequest)
         .then((result) => result[0]?.maxBlock ?? 0),
@@ -170,7 +170,7 @@ export default async function MinerChart({
 
     const startBlock = latestBlock - Math.min(block, 360);
 
-    const inner = db
+    const inner = statsDB
       .select({
         tps: MinerResponse.tps,
         time_for_all_tokens: MinerResponse.timeForAllTokens,
@@ -203,7 +203,7 @@ export default async function MinerChart({
       )
       .as("inner");
 
-    const innerSyntheticResponses = db
+    const innerSyntheticResponses = statsDB
       .select({
         id: MinerResponse.id,
         hotkey: MinerResponse.hotkey,
@@ -248,7 +248,7 @@ export default async function MinerChart({
       )
       .as("innerSyntheticResponses");
 
-    const innerOrganicResponses = db
+    const innerOrganicResponses = statsDB
       .select({
         id: OrganicRequest.id,
         hotkey: OrganicRequest.hotkey,
@@ -283,8 +283,8 @@ export default async function MinerChart({
 
     const [stats, latestSyntheticResponses, latestOrganicResponses] =
       await Promise.all([
-        db.select().from(inner).orderBy(desc(inner.block)),
-        db
+        statsDB.select().from(inner).orderBy(desc(inner.block)),
+        statsDB
           .select()
           .from(innerSyntheticResponses)
           .orderBy(desc(innerSyntheticResponses.id))
@@ -302,7 +302,7 @@ export default async function MinerChart({
               };
             });
           }) as Promise<Response[]>,
-        db
+        statsDB
           .select()
           .from(innerOrganicResponses)
           .orderBy(desc(innerOrganicResponses.id))
