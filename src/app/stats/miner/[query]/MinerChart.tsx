@@ -170,9 +170,9 @@ function extractUsageData(
   return undefined;
 }
 
-function serializeMinerDoc(doc: TargonDoc | null) {
+function serializeMinerDoc(doc: TargonDoc | null): TargonDoc | null {
   if (!doc) return null;
-  return JSON.parse(JSON.stringify(doc));
+  return JSON.parse(JSON.stringify(doc)) as TargonDoc;
 }
 
 export default async function MinerChart({
