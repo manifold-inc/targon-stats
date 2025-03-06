@@ -1,7 +1,8 @@
 import { Suspense } from "react";
 import { and, avg, eq, gte, inArray, sql } from "drizzle-orm";
 
-import { db } from "@/schema/db";
+import { getMongoDb } from "@/schema/mongoDB";
+import { statsDB } from "@/schema/psDB";
 import { MinerResponse, Validator, ValidatorRequest } from "@/schema/schema";
 import ClientPage from "./ClientPage";
 import Loading from "./loading";
@@ -13,6 +14,33 @@ interface PageProps {
   };
 }
 export const revalidate = 60 * 5;
+
+interface TargonDoc {
+  _id: string;
+  uid: number;
+  last_updated: number;
+  models: string[];
+  gpus: {
+    h100: number;
+    h200: number;
+  };
+  [key: string]:
+    | {
+        miner_cache: {
+          weight: number;
+          nodes_endpoint_error: string | null;
+          models: string[];
+          gpus: {
+            h100: number;
+            h200: number;
+          } | null;
+        };
+      }
+    | string
+    | number
+    | string[]
+    | { h100: number; h200: number };
+}
 
 export default function Page({ searchParams = {} }: PageProps) {
   return (
@@ -26,8 +54,39 @@ async function PageContent({ searchParams = {} }: PageProps) {
   const verified = searchParams.verified === "true";
   const validatorFlags = searchParams.validators || "";
 
+  const mongoDb = getMongoDb();
+  const targonCollection = (await mongoDb
+    .collection("uid_responses")
+    .find({})
+    .toArray()) as unknown as TargonDoc[];
+
+  let totalGPUs = { h100: 0, h200: 0 };
+
   try {
-    const activeValidators = await db
+    totalGPUs = targonCollection.reduce(
+      (acc, validator) => {
+        if (
+          "targon-hub-api" in validator &&
+          typeof validator["targon-hub-api"] === "object" &&
+          "miner_cache" in validator["targon-hub-api"] &&
+          validator["targon-hub-api"].miner_cache?.gpus
+        ) {
+          const gpus = validator["targon-hub-api"].miner_cache.gpus;
+          return {
+            h100: (acc.h100 || 0) + (gpus.h100 || 0),
+            h200: (acc.h200 || 0) + (gpus.h200 || 0),
+          };
+        }
+        return acc;
+      },
+      { h100: 0, h200: 0 },
+    );
+  } catch (error) {
+    console.error("Error calculating GPU stats:", error);
+  }
+
+  try {
+    const activeValidators = await statsDB
       .select({
         name: Validator.valiName,
         hotkey: Validator.hotkey,
@@ -48,7 +107,7 @@ async function PageContent({ searchParams = {} }: PageProps) {
       (_, index) => validatorFlags[index] === "1",
     );
 
-    const innerAvg = db
+    const innerAvg = statsDB
       .select({
         minute:
           sql<string>`DATE_FORMAT(${MinerResponse.timestamp}, '%Y-%m-%d %H:%i:00')`
@@ -94,12 +153,12 @@ async function PageContent({ searchParams = {} }: PageProps) {
       )
       .as("innerAvg");
 
-    const orderedStats = await db
+    const orderedStats = await statsDB
       .select()
       .from(innerAvg)
       .orderBy(innerAvg.minute);
 
-    const valiModels = await db.select().from(Validator);
+    const valiModels = await statsDB.select().from(Validator);
 
     const mappedStats = orderedStats.map((stat) => ({
       ...stat,
@@ -114,10 +173,11 @@ async function PageContent({ searchParams = {} }: PageProps) {
         initialVerified={verified}
         initialValidators={selectedValidators}
         valiModels={valiModels}
+        gpuStats={totalGPUs}
       />
     );
   } catch (error) {
     console.error("Error fetching stats:", error);
-    return <div> Error fetching stats...</div>;
+    return <div>Error fetching stats...</div>;
   }
 }

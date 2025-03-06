@@ -1,16 +1,45 @@
 import { and, desc, eq, gte, inArray, or, sql } from "drizzle-orm";
 
-import { db } from "@/schema/db";
+import { getMongoDb } from "@/schema/mongoDB";
+import { statsDB } from "@/schema/psDB";
 import {
   MinerResponse,
   OrganicRequest,
   Validator,
   ValidatorRequest,
 } from "@/schema/schema";
+import GPUStats from "./GPUStats";
 import KeysTable from "./KeysTable";
 import MinerChartClient from "./MinerChartClient";
 import OrganicResponseComparison from "./OrganicResponseComparison";
 import ResponseComparison from "./ResponseComparison";
+
+interface TargonDoc {
+  _id: string;
+  uid: number;
+  last_updated: number;
+  models: string[];
+  gpus: {
+    h100: number;
+    h200: number;
+  };
+  [key: string]:
+    | {
+        miner_cache: {
+          weight: number;
+          nodes_endpoint_error: string | null;
+          models: string[];
+          gpus: {
+            h100: number;
+            h200: number;
+          } | null;
+        };
+      }
+    | string
+    | number
+    | string[]
+    | { h100: number; h200: number };
+}
 
 export const revalidate = 60;
 
@@ -142,7 +171,7 @@ export default async function MinerChart({
     const validatorFlags = searchParams.validators || "";
 
     const [activeValidators, latestBlock] = await Promise.all([
-      db
+      statsDB
         .select({
           name: Validator.valiName,
           hotkey: Validator.hotkey,
@@ -154,7 +183,7 @@ export default async function MinerChart({
         )
         .where(gte(ValidatorRequest.timestamp, sql`NOW() - INTERVAL 2 HOUR`))
         .groupBy(Validator.valiName, Validator.hotkey),
-      db
+      statsDB
         .select({ maxBlock: sql<number>`MAX(${ValidatorRequest.block})` })
         .from(ValidatorRequest)
         .then((result) => result[0]?.maxBlock ?? 0),
@@ -170,7 +199,7 @@ export default async function MinerChart({
 
     const startBlock = latestBlock - Math.min(block, 360);
 
-    const inner = db
+    const inner = statsDB
       .select({
         tps: MinerResponse.tps,
         time_for_all_tokens: MinerResponse.timeForAllTokens,
@@ -203,7 +232,7 @@ export default async function MinerChart({
       )
       .as("inner");
 
-    const innerSyntheticResponses = db
+    const innerSyntheticResponses = statsDB
       .select({
         id: MinerResponse.id,
         hotkey: MinerResponse.hotkey,
@@ -248,7 +277,7 @@ export default async function MinerChart({
       )
       .as("innerSyntheticResponses");
 
-    const innerOrganicResponses = db
+    const innerOrganicResponses = statsDB
       .select({
         id: OrganicRequest.id,
         hotkey: OrganicRequest.hotkey,
@@ -283,8 +312,8 @@ export default async function MinerChart({
 
     const [stats, latestSyntheticResponses, latestOrganicResponses] =
       await Promise.all([
-        db.select().from(inner).orderBy(desc(inner.block)),
-        db
+        statsDB.select().from(inner).orderBy(desc(inner.block)),
+        statsDB
           .select()
           .from(innerSyntheticResponses)
           .orderBy(desc(innerSyntheticResponses.id))
@@ -302,7 +331,7 @@ export default async function MinerChart({
               };
             });
           }) as Promise<Response[]>,
-        db
+        statsDB
           .select()
           .from(innerOrganicResponses)
           .orderBy(desc(innerOrganicResponses.id))
@@ -318,12 +347,114 @@ export default async function MinerChart({
       miners.set(m.uid, { hotkey: m.hotkey, coldkey: m.coldkey });
     });
 
+    const gpuStats = {
+      avg: { h100: 0, h200: 0 },
+      validators: [] as Array<{
+        name: string;
+        gpus: { h100: number; h200: number };
+        models: string[];
+      }>,
+    };
+
+    try {
+      const mongoDb = getMongoDb();
+      if (!mongoDb) {
+        throw new Error("Failed to connect to MongoDB");
+      }
+
+      // First find the UID if we're querying by hotkey/coldkey
+      let targetUid: number | undefined;
+      if (query.length >= 5) {
+        // Query is hotkey/coldkey, find the UID from our stats
+        for (const [uid, keys] of miners.entries()) {
+          if (keys.hotkey === query || keys.coldkey === query) {
+            targetUid = uid;
+            break;
+          }
+        }
+      } else {
+        // Query is UID
+        targetUid = parseInt(query);
+      }
+
+      if (targetUid) {
+        const targonCollection = (await mongoDb
+          .collection("uid_responses")
+          .find({ uid: targetUid })
+          .toArray()) as unknown as TargonDoc[];
+
+        const minerDoc = targonCollection[0];
+
+        if (minerDoc) {
+          // Add base GPU stats from the document
+          if (minerDoc.gpus) {
+            gpuStats.validators.push({
+              name: "base",
+              gpus: {
+                h100: minerDoc.gpus.h100 || 0,
+                h200: minerDoc.gpus.h200 || 0,
+              },
+              models: minerDoc.models || [],
+            });
+          }
+
+          // Add GPU stats from all API endpoints
+          Object.entries(minerDoc).forEach(([key, value]) => {
+            if (
+              key !== "gpus" && // Skip the base gpus field
+              key !== "_id" && // Skip MongoDB _id
+              key !== "uid" && // Skip uid
+              key !== "last_updated" && // Skip last_updated
+              key !== "models" && // Skip models
+              typeof value === "object" &&
+              value !== null &&
+              "miner_cache" in value &&
+              value.miner_cache?.gpus
+            ) {
+              const gpus = value.miner_cache.gpus;
+              gpuStats.validators.push({
+                name: key,
+                gpus: {
+                  h100: gpus.h100 || 0,
+                  h200: gpus.h200 || 0,
+                },
+                models: value.miner_cache.models || [],
+              });
+            }
+          });
+
+          // Calculate averages
+          if (gpuStats.validators.length > 0) {
+            gpuStats.avg = {
+              h100: Math.round(
+                gpuStats.validators.reduce(
+                  (acc, validator) => acc + validator.gpus.h100,
+                  0,
+                ) / gpuStats.validators.length,
+              ),
+              h200: Math.round(
+                gpuStats.validators.reduce(
+                  (acc, validator) => acc + validator.gpus.h200,
+                  0,
+                ) / gpuStats.validators.length,
+              ),
+            };
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error calculating GPU stats:", error);
+    }
+
     return (
       <>
         <MinerChartClient
           minerStats={orderedStats}
           query={query}
           valiNames={selectedValidators}
+          gpuStats={{
+            avg: gpuStats.avg,
+          }}
         />
         <div className="flex flex-col gap-4 pt-8">
           <div className="flex-1">
@@ -334,6 +465,9 @@ export default async function MinerChart({
           </div>
           <div className="flex-1 pt-8">
             <OrganicResponseComparison responses={latestOrganicResponses} />
+          </div>
+          <div className="flex-1 pt-8">
+            <GPUStats gpuStats={gpuStats} />
           </div>
         </div>
       </>

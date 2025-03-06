@@ -21,7 +21,10 @@ interface ClientPageProps {
 const ClientPage = ({ data }: ClientPageProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [validatorFilter, setValidatorFilter] = useState<string>("all");
-  const [selectedScores, setSelectedScores] = useState<Record<string, number | number[] | null> | null>(null);
+  const [selectedScores, setSelectedScores] = useState<Record<
+    string,
+    number | number[] | null
+  > | null>(null);
   const [selectedValidator, setSelectedValidator] = useState<{
     hotkey: string;
     valiName: string | null;
@@ -34,8 +37,10 @@ const ClientPage = ({ data }: ClientPageProps) => {
     toast.success("Copied to clipboard!");
   };
 
-  const openScoresModal = (scores: Record<string, number | number[] | null>, validator: { hotkey: string; valiName: string | null; lastUpdated: Date }) => {
-    console.log("Opening modal with scores:", scores);
+  const openScoresModal = (
+    scores: Record<string, number | number[] | null>,
+    validator: { hotkey: string; valiName: string | null; lastUpdated: Date },
+  ) => {
     setSelectedScores(scores);
     setSelectedValidator(validator);
     setUidFilter(""); // Reset UID filter when opening modal
@@ -198,17 +203,23 @@ const ClientPage = ({ data }: ClientPageProps) => {
                             <div className="flex items-center gap-2">
                               <button
                                 className="rounded bg-gray-100 px-2 py-1 text-gray-700 hover:bg-gray-200 dark:bg-neutral-700 dark:text-gray-200 dark:hover:bg-neutral-600"
-                                onClick={() => openScoresModal(vali.scores, {
-                                  hotkey: vali.hotkey,
-                                  valiName: vali.valiName,
-                                  lastUpdated: vali.lastUpdated
-                                })}
+                                onClick={() =>
+                                  openScoresModal(vali.scores, {
+                                    hotkey: vali.hotkey,
+                                    valiName: vali.valiName,
+                                    lastUpdated: vali.lastUpdated,
+                                  })
+                                }
                               >
                                 View Scores
                               </button>
                               <button
                                 className="cursor-pointer"
-                                onClick={() => handleCopyClipboard(JSON.stringify(vali.scores))}
+                                onClick={() =>
+                                  handleCopyClipboard(
+                                    JSON.stringify(vali.scores),
+                                  )
+                                }
                               >
                                 <Copy className="z-10 h-4 w-4 text-gray-500 dark:text-gray-300" />
                               </button>
@@ -247,19 +258,29 @@ const ClientPage = ({ data }: ClientPageProps) => {
             <div className="sticky top-0 z-10 border-b border-gray-200 bg-white dark:border-gray-700 dark:bg-neutral-800">
               <div className="flex items-center justify-between px-6 py-4">
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">Validator Scores</h3>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                    Validator Scores
+                  </h3>
                   <div className="mt-1 flex items-center gap-2">
                     <span className="text-sm text-gray-600 dark:text-gray-400">
-                      {selectedValidator.valiName || 'Unnamed Validator'}
+                      {selectedValidator.valiName || "Unnamed Validator"}
                     </span>
                     <span className="text-xs text-gray-500 dark:text-gray-500">
-                      ({selectedValidator.hotkey.substring(0, 4) + "..." + selectedValidator.hotkey.substring(selectedValidator.hotkey.length - 4)})
+                      (
+                      {selectedValidator.hotkey.substring(0, 4) +
+                        "..." +
+                        selectedValidator.hotkey.substring(
+                          selectedValidator.hotkey.length - 4,
+                        )}
+                      )
                     </span>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <button
-                    onClick={() => handleCopyClipboard(JSON.stringify(selectedScores))}
+                    onClick={() =>
+                      handleCopyClipboard(JSON.stringify(selectedScores))
+                    }
                     className="flex items-center gap-2 rounded-md bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-200 dark:bg-neutral-700 dark:text-gray-200 dark:hover:bg-neutral-600"
                   >
                     <Copy className="h-4 w-4" /> Copy All Scores
@@ -276,15 +297,19 @@ const ClientPage = ({ data }: ClientPageProps) => {
               <div className="border-t border-gray-100 px-6 py-2 dark:border-gray-700">
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-gray-500 dark:text-gray-400">
-                    Last Updated: {new Date(selectedValidator.lastUpdated).toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      hour12: true,
-                    })}
+                    Last Updated:{" "}
+                    {new Date(selectedValidator.lastUpdated).toLocaleDateString(
+                      "en-US",
+                      {
+                        month: "short",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: true,
+                      },
+                    )}
                   </span>
-                  
+
                   <div className="flex items-center gap-3">
                     {/* UID Filter Input */}
                     <div className="relative z-20 w-64">
@@ -297,7 +322,7 @@ const ClientPage = ({ data }: ClientPageProps) => {
                           className="w-full rounded border border-gray-200 bg-white py-1.5 pl-3 pr-3 text-xs text-gray-700 shadow-sm dark:border-gray-600 dark:bg-neutral-700 dark:text-gray-200"
                         />
                         {uidFilter && (
-                          <button 
+                          <button
                             onClick={() => setUidFilter("")}
                             className="absolute right-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                           >
@@ -310,7 +335,7 @@ const ClientPage = ({ data }: ClientPageProps) => {
                 </div>
               </div>
             </div>
-            
+
             {/* Modal Content */}
             <div className="h-[calc(90vh-130px)] overflow-y-auto p-6 pt-4">
               <div className="rounded-lg border border-gray-200 dark:border-gray-700">
@@ -318,9 +343,15 @@ const ClientPage = ({ data }: ClientPageProps) => {
                   <table className="w-full divide-y divide-gray-200 dark:divide-gray-700">
                     <thead className="sticky top-0 bg-white dark:bg-neutral-800">
                       <tr>
-                        <th className="w-1/6 px-6 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-200">UID</th>
-                        <th className="w-4/6 px-6 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-200">Scores</th>
-                        <th className="w-1/6 px-6 py-3.5 text-center text-sm font-semibold text-gray-900 dark:text-gray-200">Actions</th>
+                        <th className="w-1/6 px-6 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-200">
+                          UID
+                        </th>
+                        <th className="w-4/6 px-6 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-200">
+                          Scores
+                        </th>
+                        <th className="w-1/6 px-6 py-3.5 text-center text-sm font-semibold text-gray-900 dark:text-gray-200">
+                          Actions
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-neutral-800">
@@ -330,15 +361,15 @@ const ClientPage = ({ data }: ClientPageProps) => {
                           if (uidFilter.trim() !== "") {
                             return key === uidFilter.trim();
                           }
-                          
+
                           return true;
                         })
                         .map(([key, value], _index) => {
                           // Use the value directly
                           const displayValue: number | number[] | null = value;
-                          
+
                           return (
-                            <tr 
+                            <tr
                               key={key}
                               className="border-b border-gray-200 dark:border-gray-700"
                             >
@@ -346,35 +377,50 @@ const ClientPage = ({ data }: ClientPageProps) => {
                                 {key}
                               </td>
                               <td className="px-6 py-4">
-                                {typeof displayValue === 'number' ? (
+                                {typeof displayValue === "number" ? (
                                   <div className="flex items-center">
-                                    <span className="text-sm text-gray-600 dark:text-gray-300">{displayValue.toFixed(4)}</span>
+                                    <span className="text-sm text-gray-600 dark:text-gray-300">
+                                      {displayValue.toFixed(4)}
+                                    </span>
                                   </div>
                                 ) : Array.isArray(displayValue) ? (
                                   <div className="max-w-full">
                                     <div className="mb-2 flex items-center">
-                                      <span className="text-xs text-gray-500 dark:text-gray-400">{displayValue.filter(v => v !== null).length} values, {displayValue.filter(v => v === null).length} nulls</span>
+                                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                                        {
+                                          displayValue.filter((v) => v !== null)
+                                            .length
+                                        }{" "}
+                                        values,{" "}
+                                        {
+                                          displayValue.filter((v) => v === null)
+                                            .length
+                                        }{" "}
+                                        nulls
+                                      </span>
                                     </div>
                                     <div className="flex flex-wrap gap-1">
                                       {displayValue.map((v, i) => (
-                                        <span 
-                                          key={i} 
+                                        <span
+                                          key={i}
                                           className={`inline-block rounded px-1.5 py-0.5 text-xs ${
-                                            v === null 
-                                              ? 'bg-gray-100 text-gray-400 dark:bg-neutral-700 dark:text-gray-500' 
-                                              : 'bg-gray-200 text-gray-700 dark:bg-neutral-600 dark:text-gray-300'
+                                            v === null
+                                              ? "bg-gray-100 text-gray-400 dark:bg-neutral-700 dark:text-gray-500"
+                                              : "bg-gray-200 text-gray-700 dark:bg-neutral-600 dark:text-gray-300"
                                           }`}
                                         >
-                                          {v === null ? 'null' : v.toFixed(2)}
+                                          {v === null ? "null" : v.toFixed(2)}
                                         </span>
                                       ))}
                                     </div>
                                   </div>
                                 ) : displayValue === null ? (
-                                  <span className="text-sm text-gray-500 dark:text-gray-400">null</span>
+                                  <span className="text-sm text-gray-500 dark:text-gray-400">
+                                    null
+                                  </span>
                                 ) : (
                                   <pre className="max-w-full overflow-hidden rounded bg-white p-3 font-mono text-xs text-gray-700 dark:bg-neutral-800 dark:text-gray-300">
-                                    <code className="break-all whitespace-pre-wrap">
+                                    <code className="whitespace-pre-wrap break-all">
                                       {JSON.stringify(displayValue, null, 2)}
                                     </code>
                                   </pre>
@@ -382,8 +428,12 @@ const ClientPage = ({ data }: ClientPageProps) => {
                               </td>
                               <td className="px-6 py-4 text-center">
                                 <button
-                                  onClick={() => handleCopyClipboard(JSON.stringify({ [key]: displayValue }))}
-                                  className="inline-flex items-center gap-1 rounded whitespace-nowrap bg-gray-100 px-2 py-1 text-xs font-medium text-gray-700 hover:bg-gray-200 dark:bg-neutral-700 dark:text-gray-200 dark:hover:bg-neutral-600"
+                                  onClick={() =>
+                                    handleCopyClipboard(
+                                      JSON.stringify({ [key]: displayValue }),
+                                    )
+                                  }
+                                  className="inline-flex items-center gap-1 whitespace-nowrap rounded bg-gray-100 px-2 py-1 text-xs font-medium text-gray-700 hover:bg-gray-200 dark:bg-neutral-700 dark:text-gray-200 dark:hover:bg-neutral-600"
                                   title="Copy this row's data"
                                 >
                                   <Copy className="h-3 w-3" /> Copy UID Scores
@@ -391,8 +441,7 @@ const ClientPage = ({ data }: ClientPageProps) => {
                               </td>
                             </tr>
                           );
-                        })
-                      }
+                        })}
                     </tbody>
                   </table>
                 </div>

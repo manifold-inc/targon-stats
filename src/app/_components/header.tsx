@@ -1,11 +1,11 @@
 import { eq, gte, sql } from "drizzle-orm";
 
-import { db } from "@/schema/db";
+import { statsDB } from "@/schema/psDB";
 import { Validator, ValidatorRequest } from "@/schema/schema";
 import ClientHeader from "./ClientHeader";
 
 export default async function Header() {
-  const activeValidators = await db
+  const activeValidators = await statsDB
     .select({
       name: Validator.valiName,
       hotkey: Validator.hotkey,

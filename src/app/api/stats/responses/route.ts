@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { and, desc, eq, gte, inArray, lte, or, sql } from "drizzle-orm";
 import { z } from "zod";
 
-import { db } from "@/schema/db";
+import { statsDB } from "@/schema/psDB";
 import {
   ApiKey,
   MinerResponse,
@@ -75,7 +75,7 @@ export const POST = async (req: NextRequest) => {
   const offsetValue = offset ?? 0;
 
   // Determine the latest block
-  const latestBlock = await db
+  const latestBlock = await statsDB
     .select({ maxBlock: sql<number>`MAX(${ValidatorRequest.block})` })
     .from(ValidatorRequest)
     .then((result) => result[0]?.maxBlock ?? 0);
@@ -91,7 +91,7 @@ export const POST = async (req: NextRequest) => {
       : [eq(MinerResponse.hotkey, query), eq(MinerResponse.coldkey, query)];
 
   // Get user first for authentication
-  const [user] = await db
+  const [user] = await statsDB
     .select({
       id: User.id,
     })
@@ -109,7 +109,7 @@ export const POST = async (req: NextRequest) => {
 
   if (extras.organics) {
     const [recordCount, rawResponses] = await Promise.all([
-      db
+      statsDB
         .select({ totalRecords: sql<number>`COUNT(*)` })
         .from(OrganicRequest)
         .where(
@@ -122,7 +122,7 @@ export const POST = async (req: NextRequest) => {
                 ),
           ),
         ),
-      db
+      statsDB
         .select({
           tps: OrganicRequest.tps,
           totalTime: OrganicRequest.total_time,
@@ -174,7 +174,7 @@ export const POST = async (req: NextRequest) => {
 
   if (!extras.organics) {
     const [recordCount, responses] = await Promise.all([
-      db
+      statsDB
         .select({ totalRecords: sql<number>`COUNT(*)` })
         .from(MinerResponse)
         .innerJoin(
@@ -192,7 +192,7 @@ export const POST = async (req: NextRequest) => {
               : []),
           ),
         ),
-      db
+      statsDB
         .select({
           tps: MinerResponse.tps,
           totalTime: MinerResponse.totalTime,

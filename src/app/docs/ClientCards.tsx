@@ -19,7 +19,11 @@ export const ApiSection = () => {
         <label className="text-sm font-medium text-gray-500 dark:text-gray-400">
           Endpoint
         </label>
-        <div className="font-mono">{API_BASE_URL}</div>
+        <div className="overflow-x-auto">
+          <div className="whitespace-nowrap font-mono text-sm sm:text-base">
+            {API_BASE_URL}
+          </div>
+        </div>
       </div>
       {apiKeys.data?.length ? (
         <ApiKey apiKey={apiKeys.data[0]!.key} />

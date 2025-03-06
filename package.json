@@ -35,6 +35,7 @@
     "lucide-react": "^0.331.0",
     "moment": "^2.30.1",
     "moment-timezone": "^0.5.45",
+    "mongodb": "^6.14.2",
     "next": "^14.0.0",
     "next-themes": "^0.3.0",
     "react": "18.2.0",

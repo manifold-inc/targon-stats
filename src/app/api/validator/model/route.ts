@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { and, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
 
-import { db } from "@/schema/db";
+import { statsDB } from "@/schema/psDB";
 import { ApiKey, User, Validator } from "@/schema/schema";
 
 // Define the input schema
@@ -32,7 +32,7 @@ export const POST = async (req: NextRequest) => {
 
   const body = response.data;
 
-  const user = await db
+  const user = await statsDB
     .select({
       id: User.id,
     })
@@ -49,7 +49,7 @@ export const POST = async (req: NextRequest) => {
   }
 
   try {
-    const validatorModels = await db
+    const validatorModels = await statsDB
       .select({
         hotkey: Validator.hotkey,
         valiName: Validator.valiName,

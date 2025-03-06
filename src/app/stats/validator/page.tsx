@@ -1,6 +1,6 @@
 import { and, eq, gte, sql } from "drizzle-orm";
 
-import { db } from "@/schema/db";
+import { statsDB } from "@/schema/psDB";
 import { Validator, ValidatorRequest } from "@/schema/schema";
 import ClientPage from "./ClientPage";
 
@@ -8,7 +8,7 @@ export const revalidate = 60 * 5;
 
 export default async function PageContent() {
   try {
-    const validatorStats = await db
+    const validatorStats = await statsDB
       .select({
         hotkey: Validator.hotkey,
         valiName: Validator.valiName,

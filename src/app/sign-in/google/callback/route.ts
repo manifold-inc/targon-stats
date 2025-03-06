@@ -3,7 +3,7 @@ import { type NextRequest } from "next/server";
 import { OAuth2RequestError } from "arctic";
 import { eq } from "drizzle-orm";
 
-import { db } from "@/schema/db";
+import { statsDB } from "@/schema/psDB";
 import { User } from "@/schema/schema";
 import { createAccount, google, lucia } from "@/server/auth";
 
@@ -45,14 +45,14 @@ async function handle(req: NextRequest): Promise<Response> {
   }
 
   const user = (await response.json()) as GoogleUser;
-  const [existing] = await db
+  const [existing] = await statsDB
     .select()
     .from(User)
     .where(eq(User.googleId, user.sub));
   const userId =
     existing?.id ??
     (await createAccount({
-      db,
+      db: statsDB,
       email: user.email,
       googleId: user.sub,
     }));

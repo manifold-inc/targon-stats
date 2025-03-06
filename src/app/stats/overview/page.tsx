@@ -1,6 +1,6 @@
 import { gte, sql } from "drizzle-orm";
 
-import { db } from "@/schema/db";
+import { statsDB } from "@/schema/psDB";
 import { MinerResponseHistoricalStats } from "@/schema/schema";
 import ClientPage from "./ClientPage";
 
@@ -8,7 +8,7 @@ export const revalidate = 60 * 60 * 24;
 
 export default async function PageContent() {
   try {
-    const historicalStats = await db
+    const historicalStats = await statsDB
       .select({
         date: MinerResponseHistoricalStats.date,
         avgTimeToFirstToken: MinerResponseHistoricalStats.avgTimeToFirstToken,
