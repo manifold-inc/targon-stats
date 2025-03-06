@@ -15,6 +15,8 @@ export const env = createEnv({
     STATS_DATABASE_USERNAME: z.string(),
     STATS_DATABASE_PASSWORD: z.string(),
 
+    MONGO_URI: z.string(),
+
     HUB_API_ENDPOINT: z.string(),
     VERCEL_URL: z.string(),
   },
@@ -28,6 +30,7 @@ export const env = createEnv({
     STATS_DATABASE_HOST: process.env.STATS_DATABASE_HOST,
     STATS_DATABASE_USERNAME: process.env.STATS_DATABASE_USERNAME,
     STATS_DATABASE_PASSWORD: process.env.STATS_DATABASE_PASSWORD,
+    MONGO_URI: process.env.MONGO_URI,
     HUB_API_ENDPOINT: process.env.HUB_API_ENDPOINT,
     VERCEL_URL: process.env.VERCEL_ENV ?? "http://localhost:3000",
   },
