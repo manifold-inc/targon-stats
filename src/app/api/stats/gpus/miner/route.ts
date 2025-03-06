@@ -77,56 +77,18 @@ export async function POST(request: Request) {
     }
 
     const query = body.data.query;
+    const targetUid = parseInt(query);
+
+    if (isNaN(targetUid)) {
+      return NextResponse.json(
+        { error: "Query must be a valid UID" },
+        { status: 400 },
+      );
+    }
 
     const mongoDb = getMongoDb();
     if (!mongoDb) {
       throw new Error("Failed to connect to MongoDB");
-    }
-
-    // First try to find by UID if query is short enough
-    let targetUid: number | undefined;
-    if (query.length < 5) {
-      targetUid = parseInt(query);
-    } else {
-      // For hotkey/coldkey, we need to find the UID first
-      const targonCollection = (await mongoDb
-        .collection("uid_responses")
-        .find({})
-        .toArray()) as unknown as TargonDoc[];
-
-      const minerDoc = targonCollection.find((doc) => {
-        // Check if any of the API endpoints have this hotkey/coldkey
-        return Object.entries(doc).some(([key, value]) => {
-          if (
-            key !== "gpus" &&
-            key !== "_id" &&
-            key !== "uid" &&
-            key !== "last_updated" &&
-            key !== "models" &&
-            typeof value === "object" &&
-            value !== null &&
-            "miner_cache" in value
-          ) {
-            const cache = value.miner_cache as {
-              hotkey?: string;
-              coldkey?: string;
-            };
-            return cache.hotkey === query || cache.coldkey === query;
-          }
-          return false;
-        });
-      });
-
-      if (minerDoc) {
-        targetUid = minerDoc.uid;
-      }
-    }
-
-    if (!targetUid) {
-      return NextResponse.json(
-        { error: "No GPU data found for the given query" },
-        { status: 404 },
-      );
     }
 
     const targonCollection = (await mongoDb
@@ -142,71 +104,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const gpuStats = {
-      avg: { h100: 0, h200: 0 },
-      validators: [] as Array<{
-        name: string;
-        gpus: { h100: number; h200: number };
-        models: string[];
-      }>,
-    };
-
-    // Add base GPU stats from the document
-    if (minerDoc.gpus) {
-      gpuStats.validators.push({
-        name: "base",
-        gpus: {
-          h100: minerDoc.gpus.h100 || 0,
-          h200: minerDoc.gpus.h200 || 0,
-        },
-        models: minerDoc.models || [],
-      });
-    }
-
-    // Add GPU stats from all API endpoints
-    Object.entries(minerDoc).forEach(([key, value]) => {
-      if (
-        key !== "gpus" && // Skip the base gpus field
-        key !== "_id" && // Skip MongoDB _id
-        key !== "uid" && // Skip uid
-        key !== "last_updated" && // Skip last_updated
-        key !== "models" && // Skip models
-        typeof value === "object" &&
-        value !== null &&
-        "miner_cache" in value &&
-        value.miner_cache?.gpus
-      ) {
-        const gpus = value.miner_cache.gpus;
-        gpuStats.validators.push({
-          name: key,
-          gpus: {
-            h100: gpus.h100 || 0,
-            h200: gpus.h200 || 0,
-          },
-          models: value.miner_cache.models || [],
-        });
-      }
-    });
-
-    // Calculate averages
-    if (gpuStats.validators.length > 0) {
-      gpuStats.avg = {
-        h100: Math.round(
-          gpuStats.validators.reduce(
-            (acc, validator) => acc + validator.gpus.h100,
-            0,
-          ) / gpuStats.validators.length,
-        ),
-        h200: Math.round(
-          gpuStats.validators.reduce(
-            (acc, validator) => acc + validator.gpus.h200,
-            0,
-          ) / gpuStats.validators.length,
-        ),
-      };
-    }
-
-    return NextResponse.json(gpuStats);
+    return NextResponse.json(minerDoc);
   } catch (error) {
     console.error("Error fetching GPU stats:", error);
     return NextResponse.json(

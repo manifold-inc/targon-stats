@@ -353,6 +353,7 @@ export default async function MinerChart({
         name: string;
         gpus: { h100: number; h200: number };
         models: string[];
+        weight: number;
       }>,
     };
 
@@ -395,6 +396,7 @@ export default async function MinerChart({
                 h200: minerDoc.gpus.h200 || 0,
               },
               models: minerDoc.models || [],
+              weight: 0,
             });
           }
 
@@ -419,6 +421,7 @@ export default async function MinerChart({
                   h200: gpus.h200 || 0,
                 },
                 models: value.miner_cache.models || [],
+                weight: value.miner_cache.weight || 0,
               });
             }
           });

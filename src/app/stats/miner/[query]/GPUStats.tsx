@@ -7,6 +7,7 @@ interface GPUStatsProps {
       name: string;
       gpus: { h100: number; h200: number };
       models: string[];
+      weight: number;
     }>;
   };
 }
@@ -51,6 +52,12 @@ const GPUStats: React.FC<GPUStatsProps> = ({ gpuStats }) => {
                     scope="col"
                     className="w-[10%] whitespace-nowrap px-3 py-3.5 text-center text-sm font-semibold text-gray-900 dark:text-gray-200"
                   >
+                    Weight
+                  </th>
+                  <th
+                    scope="col"
+                    className="w-[10%] whitespace-nowrap px-3 py-3.5 text-center text-sm font-semibold text-gray-900 dark:text-gray-200"
+                  >
                     H100 GPUs
                   </th>
                   <th
@@ -61,7 +68,7 @@ const GPUStats: React.FC<GPUStatsProps> = ({ gpuStats }) => {
                   </th>
                   <th
                     scope="col"
-                    className="w-[65%] px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-200"
+                    className="w-[55%] px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-200"
                   >
                     Supported Models
                   </th>
@@ -72,6 +79,9 @@ const GPUStats: React.FC<GPUStatsProps> = ({ gpuStats }) => {
                   <tr key={validator.name}>
                     <td className="whitespace-nowrap px-3 py-4 text-left text-sm font-medium text-gray-900 dark:text-gray-200">
                       {validator.name}
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-4 text-center text-sm text-gray-500 dark:text-gray-300">
+                      {validator.weight.toFixed(2)}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-center text-sm text-gray-500 dark:text-gray-300">
                       {validator.gpus.h100}

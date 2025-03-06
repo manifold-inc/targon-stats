@@ -714,7 +714,7 @@ export default function Page() {
           <div className="overflow-x-scroll pb-4">
             <div className="w-fit whitespace-nowrap rounded bg-gray-200 px-2 py-2 font-mono text-sm leading-3 dark:bg-neutral-900">
               {`{
-  "query": "5CcW...7V58"  // Miner UID (< 5 chars) or hotkey/coldkey
+  "query": "5CcW...7V58"  // Miner UID (< 5 chars ONLY)
 }`}
             </div>
           </div>
