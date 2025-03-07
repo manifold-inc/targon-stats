@@ -729,23 +729,34 @@ export default function Page() {
                   dangerouslySetInnerHTML={{
                     __html: hljs.highlight(
                       `{
-  "avg": {
-    "h100": 32,
-    "h200": 16
-  },
-  "validators": [
-    {
-      "name": "targon-hub-api",
-      "gpus": {
-        "h100": 32,
-        "h200": 16
-      },
+  "_id": "67c9f0ed974f793d67eb11d8",
+  "uid": 129,
+  "last_updated": 1741383637846,
+  "targon-hub-api": {
+    "miner_cache": {
+      "weight": 1120,
+      "nodes_endpoint_error": null,
       "models": [
+        "EnvyIrys/EnvyIrys_sn111_14",
+        "NousResearch/Hermes-3-Llama-3.1-8B",
+        "deepseek-ai/DeepSeek-R1",
         "deepseek-ai/DeepSeek-V3",
-        "NousResearch/Hermes-3-Llama-3.1-8B"
-      ]
+        "deepseek-ai/DeepSeek-R1-Distill-Llama-70B",
+        "nvidia/Llama-3.1-Nemotron-70B-Instruct-HF",
+        "TheDrummer/Cydonia-22B-v1.3"
+      ],
+      "gpus": {
+        "h100": 80,
+        "h200": 520
+      }
+    },
+    "api": {
+      "completed": 768,
+      "attempted": 848,
+      "partial": 70,
+      "lastReset": "2025-03-07T21:30:36.389632322Z"
     }
-  ]
+  }
 }`,
                       { language: "json" },
                     ).value,
