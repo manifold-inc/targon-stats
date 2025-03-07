@@ -772,29 +772,45 @@ export default function Page() {
           </div>
           <ul className="list-disc pb-4 pl-5">
             <li>
-              <strong>avg</strong>: Average GPU counts across all validators
-              <ul className="list-disc pl-5 pt-2">
-                <li>
-                  <strong>h100</strong>: Average number of H100 GPUs
-                </li>
-                <li>
-                  <strong>h200</strong>: Average number of H200 GPUs
-                </li>
-              </ul>
+              <strong>_id</strong>: Unique identifier for the miner record
             </li>
             <li>
-              <strong>validators</strong>: Array of validator information
+              <strong>uid</strong>: Miner&apos;s unique identifier number
+            </li>
+            <li>
+              <strong>last_updated</strong>: Timestamp of the last update
+            </li>
+            <li>
+              <strong>targon-hub-api</strong>: Contains miner&apos;s API information
               <ul className="list-disc pl-5 pt-2">
                 <li>
-                  <strong>name</strong>: Validator name or endpoint identifier
+                  <strong>miner_cache</strong>: Cached miner information
+                  <ul className="list-disc pl-5 pt-2">
+                    <li>
+                      <strong>weight</strong>: Miner&apos;s weight value
+                    </li>
+                    <li>
+                      <strong>nodes_endpoint_error</strong>: Any endpoint errors
+                      (if present)
+                    </li>
+                    <li>
+                      <strong>models</strong>: List of AI models supported by this
+                      miner
+                    </li>
+                    <li>
+                      <strong>gpus</strong>: Number of H100 and H200 GPUs for
+                      this miner
+                    </li>
+                  </ul>
                 </li>
                 <li>
-                  <strong>gpus</strong>: Number of H100 and H200 GPUs for this
-                  validator
-                </li>
-                <li>
-                  <strong>models</strong>: List of AI models supported by this
-                  validator
+                  <strong>api</strong>: API usage statistics
+                  <ul className="list-disc pl-5 pt-2">
+                    <li><strong>completed</strong>: Number of completed requests</li>
+                    <li><strong>attempted</strong>: Number of attempted requests</li>
+                    <li><strong>partial</strong>: Number of partial completions</li>
+                    <li><strong>lastReset</strong>: Timestamp of the last statistics reset</li>
+                  </ul>
                 </li>
               </ul>
             </li>
