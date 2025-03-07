@@ -11,6 +11,7 @@ interface GPUStatsProps {
 }
 
 const GPUStats: React.FC<GPUStatsProps> = ({ gpuStats }) => {
+  console.log(gpuStats);
   if (!gpuStats) {
     return (
       <div className="flex h-96 items-center justify-center rounded border border-gray-200 shadow">

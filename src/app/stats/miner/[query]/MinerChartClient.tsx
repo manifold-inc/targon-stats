@@ -16,9 +16,6 @@ interface MinerChartClientProps {
   }[];
   query: string;
   valiNames?: string[];
-  gpuStats: {
-    avg: { h100: number; h200: number };
-  };
 }
 
 export interface Keys {
@@ -30,7 +27,6 @@ const MinerChartClient: React.FC<MinerChartClientProps> = ({
   minerStats,
   query,
   valiNames,
-  gpuStats,
 }) => {
   const cardStyles =
     "flex flex-col flex-grow bg-white dark:bg-neutral-800 p-8 shadow-md rounded-2xl hover:shadow-lg transition-all dark:hover:bg-gray-800 text-center items-center";
@@ -86,7 +82,7 @@ const MinerChartClient: React.FC<MinerChartClientProps> = ({
     <>
       {!!minerStats.length && (
         <>
-          <dl className="grid grid-cols-1 gap-4 text-center sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+          <dl className="grid grid-cols-1 gap-4 text-center sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             <button
               onClick={handleCategoryClick("total_time")}
               className={cardStyles}
@@ -175,24 +171,6 @@ const MinerChartClient: React.FC<MinerChartClientProps> = ({
                   : "_"}
               </dd>
             </button>
-
-            <div className="flex flex-grow flex-col items-center justify-center rounded-2xl bg-white p-8 text-center shadow-md transition-all dark:bg-neutral-800">
-              <dt className="text-sm font-semibold leading-6 text-gray-600 dark:text-gray-400">
-                Average H100 GPUs
-              </dt>
-              <dd className="order-first text-3xl font-semibold tracking-tight text-yellow-500">
-                {gpuStats.avg.h100}
-              </dd>
-            </div>
-
-            <div className="flex flex-grow flex-col items-center justify-center rounded-2xl bg-white p-8 text-center shadow-md transition-all dark:bg-neutral-800">
-              <dt className="text-sm font-semibold leading-6 text-gray-600 dark:text-gray-400">
-                Average H200 GPUs
-              </dt>
-              <dd className="order-first text-3xl font-semibold tracking-tight text-green-500">
-                {gpuStats.avg.h200}
-              </dd>
-            </div>
           </dl>
 
           <div className="pt-8">
