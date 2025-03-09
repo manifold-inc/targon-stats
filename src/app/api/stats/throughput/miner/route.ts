@@ -9,7 +9,7 @@ import { type TargonDoc } from "@/app/stats/miner/[query]/MinerChart";
 
 // Define the input schema with limit and offset
 const schema = z.object({
-  query: z.string(),
+  uid: z.string(),
 });
 
 export async function POST(request: Request) {
@@ -48,7 +48,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const query = body.data.query;
+    const query = body.data.uid;
     const targetUid = parseInt(query);
 
     if (isNaN(targetUid)) {

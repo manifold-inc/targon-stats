@@ -644,7 +644,7 @@ export default function Page() {
           <div className="overflow-x-scroll pb-4">
             <div className="w-fit whitespace-nowrap rounded bg-gray-200 px-2 py-2 font-mono text-sm leading-3 dark:bg-neutral-900">
               {`{
-  "query": "12"  // Miner UID (< 5 chars ONLY)
+  "uid": "12"  // Miner UID ONLY
 }`}
             </div>
           </div>
