@@ -611,15 +611,16 @@ export default function Page() {
 
         <Container>
           <h4 className="pb-2 text-xl font-semibold leading-6 text-gray-900 dark:text-gray-50">
-            GPU Stats
+            Throughput Stats By Miner
           </h4>
           <div className="overflow-x-scroll pb-4">
             <div className="w-fit whitespace-nowrap rounded bg-gray-200 px-2 py-2 font-mono text-sm leading-3 dark:bg-neutral-900">
-              POST {API_BASE_URL}/stats/gpus
+              POST {API_BASE_URL}/stats/throughput/miner
             </div>
           </div>
           <div className="pb-4">
-            Retrieves the total number of H100 and H200 GPUs in the network.
+            Retrieves throughput statistics for a specific miner, identified by
+            their UID.
           </div>
 
           <h4 className="pb-2 text-xl font-semibold leading-6 text-gray-900 dark:text-gray-50">
@@ -627,7 +628,7 @@ export default function Page() {
           </h4>
           <div className="overflow-x-scroll pb-4">
             <div className="w-fit whitespace-nowrap rounded bg-gray-200 px-2 py-2 font-mono text-sm leading-3 dark:bg-neutral-900">
-              POST {API_BASE_URL}/stats/gpus
+              POST {API_BASE_URL}/stats/throughput/miner
             </div>
           </div>
           <div className="pb-4">
@@ -639,78 +640,7 @@ export default function Page() {
               Authorization: Bearer [your-api-key]
             </div>
           </div>
-
-          <div className="pb-2 text-xl font-semibold leading-6 text-gray-900 dark:text-gray-50">
-            Example Response
-          </div>
-          <div className="overflow-x-scroll pb-4">
-            <div className="w-full whitespace-nowrap rounded bg-gray-800 px-2 py-2 text-sm leading-3 text-gray-50 dark:bg-neutral-900">
-              <pre className="hljs prose-sm w-full overflow-x-scroll rounded bg-gray-800 px-2 py-2 dark:bg-neutral-900">
-                <code
-                  dangerouslySetInnerHTML={{
-                    __html: hljs.highlight(
-                      `{
-    "h100": 42,
-    "h200": 12
-}`,
-                      { language: "json" },
-                    ).value,
-                  }}
-                />
-              </pre>
-            </div>
-          </div>
-
-          <div className="pb-4">
-            This response contains the total number of GPUs across all
-            validators:
-          </div>
-          <ul className="list-disc pb-4 pl-5">
-            <li>
-              <strong>h100</strong>: The total number of H100 GPUs across all
-              validators
-            </li>
-            <li>
-              <strong>h200</strong>: The total number of H200 GPUs across all
-              validators
-            </li>
-          </ul>
-        </Container>
-
-        <Container>
-          <h4 className="pb-2 text-xl font-semibold leading-6 text-gray-900 dark:text-gray-50">
-            GPU Stats By Miner
-          </h4>
-          <div className="overflow-x-scroll pb-4">
-            <div className="w-fit whitespace-nowrap rounded bg-gray-200 px-2 py-2 font-mono text-sm leading-3 dark:bg-neutral-900">
-              POST {API_BASE_URL}/stats/gpus/miner
-            </div>
-          </div>
-          <div className="pb-4">
-            Retrieves GPU statistics and supported models for a specific miner,
-            identified by either UID or hotkey/coldkey.
-          </div>
-
-          <h4 className="pb-2 text-xl font-semibold leading-6 text-gray-900 dark:text-gray-50">
-            Example Request
-          </h4>
-          <div className="overflow-x-scroll pb-4">
-            <div className="w-fit whitespace-nowrap rounded bg-gray-200 px-2 py-2 font-mono text-sm leading-3 dark:bg-neutral-900">
-              POST {API_BASE_URL}/stats/gpus/miner
-            </div>
-          </div>
-          <div className="pb-4">
-            Ensure the request includes a Bearer Token in the Authorization
-            header:
-          </div>
-          <div className="overflow-x-scroll pb-4">
-            <div className="w-fit whitespace-nowrap rounded bg-gray-200 px-2 py-2 font-mono text-sm leading-3 dark:bg-neutral-900">
-              Authorization: Bearer [your-api-key]
-            </div>
-          </div>
-          <div className="pb-4">
-            Request body should include the miner query:
-          </div>
+          <div className="pb-4">Request body should include the miner UID:</div>
           <div className="overflow-x-scroll pb-4">
             <div className="w-fit whitespace-nowrap rounded bg-gray-200 px-2 py-2 font-mono text-sm leading-3 dark:bg-neutral-900">
               {`{
@@ -729,32 +659,52 @@ export default function Page() {
                   dangerouslySetInnerHTML={{
                     __html: hljs.highlight(
                       `{
-  "_id": "67c9f0ed974f793d67eb11d8",
-  "uid": 129,
-  "last_updated": 1741383637846,
+  "_id": "67c9f0ed974f793d67eb1157",
+  "uid": 0,
+  "last_updated": 1741538820453,
   "targon-hub-api": {
     "miner_cache": {
-      "weight": 1120,
-      "nodes_endpoint_error": null,
-      "models": [
-        "EnvyIrys/EnvyIrys_sn111_14",
-        "NousResearch/Hermes-3-Llama-3.1-8B",
-        "deepseek-ai/DeepSeek-R1",
-        "deepseek-ai/DeepSeek-V3",
-        "deepseek-ai/DeepSeek-R1-Distill-Llama-70B",
-        "nvidia/Llama-3.1-Nemotron-70B-Instruct-HF",
-        "TheDrummer/Cydonia-22B-v1.3"
-      ],
-      "gpus": {
-        "h100": 80,
-        "h200": 520
+      "models_error": "",
+      "models": {
+        "NousResearch/Hermes-3-Llama-3.1-8B": 16,
+        "deepseek-ai/DeepSeek-R1": 8,
+        "deepseek-ai/DeepSeek-R1-Distill-Llama-70B": 16,
+        "EnvyIrys/EnvyIrys_sn111_14": 16,
+        "nvidia/Llama-3.1-Nemotron-70B-Instruct-HF": 16,
+        "deepseek-ai/DeepSeek-V3": 8,
+        "TheDrummer/Cydonia-22B-v1.3": 16
       }
     },
     "api": {
-      "completed": 768,
-      "attempted": 848,
-      "partial": 70,
-      "lastReset": "2025-03-07T21:30:36.389632322Z"
+      "completed": 0,
+      "completedOverTime": [
+        0,
+        0,
+        1,
+        10,
+        13,
+        11,
+        9,
+        116,
+        21,
+        8
+      ],
+      "attempted": 0,
+      "partial": 0,
+      "successRateOverTime": [
+        1,
+        1,
+        1,
+        0.5882353,
+        0.8666667,
+        0.78571427,
+        1,
+        0.5888325,
+        1,
+        0.8
+      ],
+      "avgSuccessRate": 0.8629449,
+      "lastReset": "2025-03-09T16:46:40.370004337Z"
     }
   }
 }`,
@@ -781,35 +731,51 @@ export default function Page() {
               <strong>last_updated</strong>: Timestamp of the last update
             </li>
             <li>
-              <strong>targon-hub-api</strong>: Contains miner&apos;s API information
+              <strong>targon-hub-api</strong>: Contains miner&apos;s API
+              information
               <ul className="list-disc pl-5 pt-2">
                 <li>
                   <strong>miner_cache</strong>: Cached miner information
                   <ul className="list-disc pl-5 pt-2">
                     <li>
-                      <strong>weight</strong>: Miner&apos;s weight value
+                      <strong>models_error</strong>: Any errors related to
+                      models (if present)
                     </li>
                     <li>
-                      <strong>nodes_endpoint_error</strong>: Any endpoint errors
-                      (if present)
-                    </li>
-                    <li>
-                      <strong>models</strong>: List of AI models supported by this
-                      miner
-                    </li>
-                    <li>
-                      <strong>gpus</strong>: Number of H100 and H200 GPUs for
-                      this miner
+                      <strong>models</strong>: Dictionary of AI models supported
+                      by this miner with their estimated queries per second
+                      (QPS)
                     </li>
                   </ul>
                 </li>
                 <li>
                   <strong>api</strong>: API usage statistics
                   <ul className="list-disc pl-5 pt-2">
-                    <li><strong>completed</strong>: Number of completed requests</li>
-                    <li><strong>attempted</strong>: Number of attempted requests</li>
-                    <li><strong>partial</strong>: Number of partial completions</li>
-                    <li><strong>lastReset</strong>: Timestamp of the last statistics reset</li>
+                    <li>
+                      <strong>completed</strong>: Number of completed requests
+                    </li>
+                    <li>
+                      <strong>completedOverTime</strong>: Array of completed
+                      requests over time periods
+                    </li>
+                    <li>
+                      <strong>attempted</strong>: Number of attempted requests
+                    </li>
+                    <li>
+                      <strong>partial</strong>: Number of partial completions
+                    </li>
+                    <li>
+                      <strong>successRateOverTime</strong>: Array of success
+                      rates over time periods
+                    </li>
+                    <li>
+                      <strong>avgSuccessRate</strong>: Average success rate of
+                      requests
+                    </li>
+                    <li>
+                      <strong>lastReset</strong>: Timestamp of the last
+                      statistics reset
+                    </li>
                   </ul>
                 </li>
               </ul>

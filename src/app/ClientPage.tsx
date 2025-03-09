@@ -21,17 +21,12 @@ interface ClientPageProps {
     hotkey: string;
     models: string[];
   }[];
-  gpuStats: {
-    h100: number;
-    h200: number;
-  };
 }
 
 const ClientPage = ({
   data,
   initialVerified,
   initialValidators: valiNames,
-  gpuStats,
 }: ClientPageProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -99,7 +94,7 @@ const ClientPage = ({
                 Your hub for validator stats!
               </p>
             </div>
-            <dl className="mt-16 grid grid-cols-1 gap-4 text-center md:grid-cols-5">
+            <dl className="mt-16 grid grid-cols-1 gap-4 text-center md:grid-cols-3">
               <button
                 onClick={handleCategoryClick("avg_tps")}
                 className={cardStyles}
@@ -160,22 +155,6 @@ const ClientPage = ({
                     : "_"}
                 </dd>
               </button>
-              <div className="flex flex-grow flex-col items-center justify-center rounded-2xl bg-white p-8 text-center shadow-md transition-all dark:bg-neutral-800">
-                <dt className="text-sm font-semibold leading-6 text-gray-600 dark:text-gray-400">
-                  H100 GPUs
-                </dt>
-                <dd className="order-first text-3xl font-semibold tracking-tight text-blue-500">
-                  {gpuStats.h100}
-                </dd>
-              </div>
-              <div className="flex flex-grow flex-col items-center justify-center rounded-2xl bg-white p-8 text-center shadow-md transition-all dark:bg-neutral-800">
-                <dt className="text-sm font-semibold leading-6 text-gray-600 dark:text-gray-400">
-                  H200 GPUs
-                </dt>
-                <dd className="order-first text-3xl font-semibold tracking-tight text-green-500">
-                  {gpuStats.h200}
-                </dd>
-              </div>
             </dl>
           </div>
           <div className="pt-8">

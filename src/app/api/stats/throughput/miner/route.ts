@@ -5,35 +5,7 @@ import { z } from "zod";
 import { getMongoDb } from "@/schema/mongoDB";
 import { statsDB } from "@/schema/psDB";
 import { ApiKey, User } from "@/schema/schema";
-
-interface TargonDoc {
-  _id: string;
-  uid: number;
-  last_updated: number;
-  models: string[];
-  gpus: {
-    h100: number;
-    h200: number;
-  };
-  [key: string]:
-    | {
-        miner_cache: {
-          weight: number;
-          nodes_endpoint_error: string | null;
-          models: string[];
-          gpus: {
-            h100: number;
-            h200: number;
-          } | null;
-          hotkey?: string;
-          coldkey?: string;
-        };
-      }
-    | string
-    | number
-    | string[]
-    | { h100: number; h200: number };
-}
+import { type TargonDoc } from "@/app/stats/miner/[query]/MinerChart";
 
 // Define the input schema with limit and offset
 const schema = z.object({

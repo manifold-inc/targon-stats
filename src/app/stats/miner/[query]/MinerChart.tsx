@@ -8,37 +8,34 @@ import {
   Validator,
   ValidatorRequest,
 } from "@/schema/schema";
-import GPUStats from "./GPUStats";
 import KeysTable from "./KeysTable";
 import MinerChartClient from "./MinerChartClient";
 import OrganicResponseComparison from "./OrganicResponseComparison";
 import ResponseComparison from "./ResponseComparison";
+import ThroughputStats from "./ThroughputStats";
 
 export interface TargonDoc {
   _id: string;
   uid: number;
   last_updated: number;
-  models: string[];
-  gpus: {
-    h100: number;
-    h200: number;
-  };
   [key: string]:
     | {
-        miner_cache: {
-          weight: number;
-          nodes_endpoint_error: string | null;
-          models: string[];
-          gpus: {
-            h100: number;
-            h200: number;
-          } | null;
+        miner_cache?: {
+          models_error: string;
+          models: Record<string, number>;
+        };
+        api?: {
+          completed: number;
+          completedOverTime: number[];
+          attempted: number;
+          partial: number;
+          successRateOverTime: number[];
+          avgSuccessRate: number;
+          lastReset: string;
         };
       }
     | string
-    | number
-    | string[]
-    | { h100: number; h200: number };
+    | number;
 }
 
 export const revalidate = 60;
@@ -408,7 +405,7 @@ export default async function MinerChart({
             <OrganicResponseComparison responses={latestOrganicResponses} />
           </div>
           <div className="flex-1 pt-8">
-            <GPUStats gpuStats={serializedMinerDoc} />
+            <ThroughputStats throughputStats={serializedMinerDoc} />
           </div>
         </div>
       </>
