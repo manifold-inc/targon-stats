@@ -1,4 +1,4 @@
-import { and, desc, eq, or } from "drizzle-orm";
+import { and, desc, eq, or, sql } from "drizzle-orm";
 
 import { getMongoDb } from "@/schema/mongoDB";
 import { statsDB } from "@/schema/psDB";
@@ -163,6 +163,7 @@ export default async function MinerChart({ query }: MinerChartProps) {
       .from(OrganicRequest)
       .where(
         and(
+          sql`${OrganicRequest.created_at} > NOW() - INTERVAL 2 HOUR`,
           query.length < 5
             ? eq(OrganicRequest.uid, parseInt(query))
             : or(
