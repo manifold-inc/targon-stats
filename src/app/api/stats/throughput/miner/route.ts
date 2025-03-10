@@ -2,10 +2,10 @@ import { NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 
+import { type TargonDoc } from "@/app/stats/miner/[query]/MinerChart";
 import { getMongoDb } from "@/schema/mongoDB";
 import { statsDB } from "@/schema/psDB";
 import { ApiKey, User } from "@/schema/schema";
-import { type TargonDoc } from "@/app/stats/miner/[query]/MinerChart";
 
 // Define the input schema with limit and offset
 const schema = z.object({

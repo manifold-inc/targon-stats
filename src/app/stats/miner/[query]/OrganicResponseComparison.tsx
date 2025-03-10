@@ -136,19 +136,34 @@ const OrganicResponseComparison: React.FC<OrganicResponseComparisonProps> = ({
                       {response.total_tokens}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
-                      {response.tps.toFixed(2)}
+                      {response.tps.toFixed(3)}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
-                      {response.time_for_all_tokens.toFixed(2)}
+                      {(response.time_for_all_tokens / 1000).toFixed(3)}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
-                      {response.total_time.toFixed(2)}
+                      {(response.total_time / 1000).toFixed(3)}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
-                      {response.time_to_first_token.toFixed(2)}
+                      {(response.time_to_first_token / 1000).toFixed(3)}
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
-                      {response.error || "No Error"}
+                    <td className="max-w-[200px] truncate whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
+                      <div className="flex items-center justify-center gap-1">
+                        <span
+                          className="truncate"
+                          title={response.error || "No Error"}
+                        >
+                          {response.error || "No Error"}
+                        </span>
+                        {response.error && (
+                          <button
+                            onClick={() => handleCopyClipboard(response.error)}
+                            className="text-blue-500 hover:text-blue-700"
+                          >
+                            <Copy className="z-10 h-4 w-4 text-gray-500 dark:text-gray-300" />
+                          </button>
+                        )}
+                      </div>
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
                       {response.cause || "No Cause"}

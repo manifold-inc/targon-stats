@@ -5,12 +5,9 @@ import MinerChart from "./MinerChart";
 
 export default function Page({
   params,
-  searchParams,
 }: {
   params: { query: string };
-  searchParams: { block?: string; validators?: string };
 }) {
-  const block = searchParams.block ?? "360";
   return (
     <div className="mx-auto max-w-7xl px-12 pb-12">
       <div className="py-24 sm:py-24">
@@ -22,15 +19,10 @@ export default function Page({
               </h2>
               <MinerInputForm
                 initialQuery={params.query}
-                initialBlock={block}
               />
               {params.query && (
                 <Suspense fallback="Loading data...">
-                  <MinerChart
-                    query={params.query}
-                    block={parseInt(block)}
-                    searchParams={searchParams}
-                  />
+                  <MinerChart query={params.query} />
                 </Suspense>
               )}
             </div>

@@ -63,7 +63,7 @@ export default function ClientPage({ data }: ClientPageProps) {
           <div className="mx-auto max-w-2xl lg:max-w-none">
             <div className="text-center">
               <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-50 sm:text-4xl">
-                Targon Metrics
+                Targon Synthetic Metrics
               </h2>
             </div>
             <dl className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">

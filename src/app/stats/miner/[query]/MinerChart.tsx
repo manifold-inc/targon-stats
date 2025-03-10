@@ -1,17 +1,10 @@
-import { and, desc, eq, gte, inArray, or, sql } from "drizzle-orm";
+import { and, desc, eq, or } from "drizzle-orm";
 
 import { getMongoDb } from "@/schema/mongoDB";
 import { statsDB } from "@/schema/psDB";
-import {
-  MinerResponse,
-  OrganicRequest,
-  Validator,
-  ValidatorRequest,
-} from "@/schema/schema";
+import { OrganicRequest } from "@/schema/schema";
 import KeysTable from "./KeysTable";
-import MinerChartClient from "./MinerChartClient";
 import OrganicResponseComparison from "./OrganicResponseComparison";
-import ResponseComparison from "./ResponseComparison";
 import ThroughputStats from "./ThroughputStats";
 
 export interface TargonDoc {
@@ -49,10 +42,6 @@ export interface Token {
 
 interface MinerChartProps {
   query: string;
-  block: number;
-  searchParams?: {
-    validators?: string;
-  };
 }
 
 enum Cause {
@@ -109,7 +98,10 @@ export interface Response {
 }
 
 export interface OrganicResponse {
+  id: number;
   hotkey: string;
+  coldkey?: string;
+  uid?: number;
   request_endpoint: RequestEndpoint;
   temperature: number;
   max_tokens: number;
@@ -126,45 +118,9 @@ export interface OrganicResponse {
   cause: Cause;
 }
 
-interface Keys {
+export interface Keys {
   hotkey: string;
   coldkey: string;
-}
-
-function extractUsageData(
-  chunks: unknown[],
-):
-  | { completion_tokens: number; prompt_tokens: number; total_tokens: number }
-  | undefined {
-  if (!Array.isArray(chunks)) return undefined;
-
-  const lastChunk = chunks[chunks.length - 1];
-  if (
-    lastChunk &&
-    typeof lastChunk === "object" &&
-    "usage" in lastChunk &&
-    lastChunk.usage &&
-    typeof lastChunk.usage === "object" &&
-    "completion_tokens" in lastChunk.usage &&
-    "prompt_tokens" in lastChunk.usage &&
-    "total_tokens" in lastChunk.usage
-  ) {
-    const usage = lastChunk.usage as {
-      completion_tokens: number;
-      prompt_tokens: number;
-      total_tokens: number;
-    };
-
-    if (
-      typeof usage.completion_tokens === "number" &&
-      typeof usage.prompt_tokens === "number" &&
-      typeof usage.total_tokens === "number"
-    ) {
-      return usage;
-    }
-  }
-
-  return undefined;
 }
 
 function serializeMinerDoc(doc: TargonDoc | null): TargonDoc | null {
@@ -172,126 +128,14 @@ function serializeMinerDoc(doc: TargonDoc | null): TargonDoc | null {
   return JSON.parse(JSON.stringify(doc)) as TargonDoc;
 }
 
-export default async function MinerChart({
-  query,
-  block,
-  searchParams = {},
-}: MinerChartProps) {
+export default async function MinerChart({ query }: MinerChartProps) {
   try {
-    const validatorFlags = searchParams.validators || "";
-
-    const [activeValidators, latestBlock] = await Promise.all([
-      statsDB
-        .select({
-          name: Validator.valiName,
-          hotkey: Validator.hotkey,
-        })
-        .from(Validator)
-        .innerJoin(
-          ValidatorRequest,
-          eq(Validator.hotkey, ValidatorRequest.hotkey),
-        )
-        .where(gte(ValidatorRequest.timestamp, sql`NOW() - INTERVAL 2 HOUR`))
-        .groupBy(Validator.valiName, Validator.hotkey),
-      statsDB
-        .select({ maxBlock: sql<number>`MAX(${ValidatorRequest.block})` })
-        .from(ValidatorRequest)
-        .then((result) => result[0]?.maxBlock ?? 0),
-    ]);
-
-    const sortedValis = activeValidators
-      .map((validator) => validator.name ?? validator.hotkey.substring(0, 5))
-      .sort((a, b) => a.localeCompare(b));
-
-    const selectedValidators = sortedValis.filter(
-      (_, index) => validatorFlags[index] === "1",
-    );
-
-    const startBlock = latestBlock - Math.min(block, 360);
-
-    const inner = statsDB
-      .select({
-        tps: MinerResponse.tps,
-        time_for_all_tokens: MinerResponse.timeForAllTokens,
-        time_to_first_token: MinerResponse.timeToFirstToken,
-        total_time: MinerResponse.totalTime,
-        uid: MinerResponse.uid,
-        hotkey: MinerResponse.hotkey,
-        coldkey: MinerResponse.coldkey,
-        block: ValidatorRequest.block,
-      })
-      .from(MinerResponse)
-      .innerJoin(
-        ValidatorRequest,
-        eq(ValidatorRequest.r_nanoid, MinerResponse.r_nanoid),
-      )
-      .innerJoin(Validator, eq(Validator.hotkey, ValidatorRequest.hotkey))
-
-      .where(
-        and(
-          gte(ValidatorRequest.block, startBlock),
-          query.length < 5
-            ? eq(MinerResponse.uid, parseInt(query))
-            : or(
-                eq(MinerResponse.hotkey, query),
-                eq(MinerResponse.coldkey, query),
-              ),
-          ...(selectedValidators?.length !== 0
-            ? [inArray(Validator.valiName, selectedValidators)]
-            : []),
-        ),
-      )
-      .as("inner");
-
-    const innerSyntheticResponses = statsDB
-      .select({
-        id: MinerResponse.id,
-        hotkey: MinerResponse.hotkey,
-        tps: MinerResponse.tps,
-        time_for_all_tokens: MinerResponse.timeForAllTokens,
-        total_time: MinerResponse.totalTime,
-        time_to_first_token: MinerResponse.timeToFirstToken,
-        tokens: MinerResponse.tokens,
-        verified: MinerResponse.verified,
-        error: MinerResponse.error,
-        cause: MinerResponse.cause,
-        validator: Validator.valiName,
-        messages: ValidatorRequest.messages,
-        seed: ValidatorRequest.seed,
-        model: ValidatorRequest.model,
-        max_tokens: ValidatorRequest.max_tokens,
-        temperature: ValidatorRequest.temperature,
-        request_endpoint: ValidatorRequest.request_endpoint,
-        r_nanoid: ValidatorRequest.r_nanoid,
-        version: ValidatorRequest.version,
-        timestamp: MinerResponse.timestamp,
-      })
-      .from(MinerResponse)
-      .innerJoin(
-        ValidatorRequest,
-        eq(ValidatorRequest.r_nanoid, MinerResponse.r_nanoid),
-      )
-      .innerJoin(Validator, eq(Validator.hotkey, ValidatorRequest.hotkey))
-      .where(
-        and(
-          gte(MinerResponse.timestamp, sql`NOW() - INTERVAL 2 HOUR`),
-          query.length < 5
-            ? eq(MinerResponse.uid, parseInt(query))
-            : or(
-                eq(MinerResponse.hotkey, query),
-                eq(MinerResponse.coldkey, query),
-              ),
-          ...(selectedValidators?.length !== 0
-            ? [inArray(Validator.valiName, selectedValidators)]
-            : []),
-        ),
-      )
-      .as("innerSyntheticResponses");
-
-    const innerOrganicResponses = statsDB
+    const stats = await statsDB
       .select({
         id: OrganicRequest.id,
+        uid: OrganicRequest.uid,
         hotkey: OrganicRequest.hotkey,
+        coldkey: OrganicRequest.coldkey,
         request_endpoint: OrganicRequest.request_endpoint,
         temperature: OrganicRequest.temperature,
         max_tokens: OrganicRequest.max_tokens,
@@ -310,7 +154,6 @@ export default async function MinerChart({
       .from(OrganicRequest)
       .where(
         and(
-          gte(OrganicRequest.created_at, sql`NOW() - INTERVAL 2 HOUR`),
           query.length < 5
             ? eq(OrganicRequest.uid, parseInt(query))
             : or(
@@ -319,43 +162,21 @@ export default async function MinerChart({
               ),
         ),
       )
-      .as("innerOrganicResponses");
+      .orderBy(desc(OrganicRequest.created_at))
+      .limit(100);
 
-    const [stats, latestSyntheticResponses, latestOrganicResponses] =
-      await Promise.all([
-        statsDB.select().from(inner).orderBy(desc(inner.block)),
-        statsDB
-          .select()
-          .from(innerSyntheticResponses)
-          .orderBy(desc(innerSyntheticResponses.id))
-          .limit(100)
-          .then((responses) => {
-            return responses.map((response) => {
-              const usage = Array.isArray(response.tokens)
-                ? extractUsageData(response.tokens)
-                : undefined;
-
-              return {
-                ...response,
-                tokens: response.tokens,
-                usage,
-              };
-            });
-          }) as Promise<Response[]>,
-        statsDB
-          .select()
-          .from(innerOrganicResponses)
-          .orderBy(desc(innerOrganicResponses.id))
-          .limit(100) as Promise<OrganicResponse[]>,
-      ]);
-
-    const orderedStats = stats.reverse().map((stat) => ({
-      ...stat,
-    }));
+    const orderedStats = [...stats].reverse();
 
     const miners = new Map<number, Keys>();
     orderedStats.forEach((m) => {
-      miners.set(m.uid, { hotkey: m.hotkey, coldkey: m.coldkey });
+      if (
+        m.uid !== null &&
+        m.uid !== undefined &&
+        m.hotkey !== null &&
+        m.coldkey !== null
+      ) {
+        miners.set(m.uid, { hotkey: m.hotkey, coldkey: m.coldkey ?? "" });
+      }
     });
 
     const mongoDb = getMongoDb();
@@ -389,20 +210,20 @@ export default async function MinerChart({
 
     return (
       <>
-        <MinerChartClient
-          minerStats={orderedStats}
-          query={query}
-          valiNames={selectedValidators}
-        />
         <div className="flex flex-col gap-4 pt-8">
           <div className="flex-1">
             <KeysTable miners={miners} />
           </div>
           <div className="flex-1 pt-8">
-            <ResponseComparison responses={latestSyntheticResponses} />
-          </div>
-          <div className="flex-1 pt-8">
-            <OrganicResponseComparison responses={latestOrganicResponses} />
+            {orderedStats.length > 0 ? (
+              <OrganicResponseComparison
+                responses={orderedStats as OrganicResponse[]}
+              />
+            ) : (
+              <div className="rounded-md bg-gray-100 p-4 text-center dark:bg-gray-800">
+                No recent organic responses found
+              </div>
+            )}
           </div>
           <div className="flex-1 pt-8">
             <ThroughputStats throughputStats={serializedMinerDoc} />

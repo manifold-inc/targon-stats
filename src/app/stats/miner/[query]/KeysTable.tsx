@@ -5,7 +5,7 @@ import { Copy } from "lucide-react";
 import { toast } from "sonner";
 
 import { copyToClipboard } from "@/utils/utils";
-import { type Keys } from "./MinerChartClient";
+import { type Keys } from "./MinerChart";
 
 interface KeysTableProps {
   miners: Map<number, Keys>;

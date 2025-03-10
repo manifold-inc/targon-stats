@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Field, Label, Switch } from "@headlessui/react";
 import { LineChart } from "@tremor/react";
@@ -94,116 +95,154 @@ const ClientPage = ({
                 Your hub for validator stats!
               </p>
             </div>
-            <dl className="mt-16 grid grid-cols-1 gap-4 text-center md:grid-cols-3">
-              <button
-                onClick={handleCategoryClick("avg_tps")}
-                className={cardStyles}
-              >
-                <dt className="text-sm font-semibold leading-6 text-gray-600 dark:text-gray-400">
-                  Peak Tokens Per Second
-                </dt>
-                <dd
-                  className={`order-first text-center text-3xl font-semibold tracking-tight ${textColor(
-                    "avg_tps",
-                    "text-red-500",
-                  )}`}
-                >
-                  {data
-                    ? Math.max(...data.map((d) => d.avg_tps)).toFixed(0)
-                    : "_"}
-                </dd>
-              </button>
 
-              <button
-                onClick={handleCategoryClick("avg_time_to_first_token")}
-                className={cardStyles}
-              >
-                <dt className="text-sm font-semibold leading-6 text-gray-600 dark:text-gray-400">
-                  Avg Time to First Token
-                </dt>
-                <dd
-                  className={`order-first text-3xl font-semibold tracking-tight ${textColor(
-                    "avg_time_to_first_token",
-                    "text-purple-500",
-                  )}`}
-                >
-                  {data
-                    ? Math.min(
-                        ...data.map((d) => d.avg_time_to_first_token),
-                      ).toFixed(2) + "s"
-                    : "_"}
-                </dd>
-              </button>
-
-              <button
-                onClick={handleCategoryClick("avg_time_for_all_tokens")}
-                className={cardStyles}
-              >
-                <dt className="text-sm font-semibold leading-6 text-gray-600 dark:text-gray-400">
-                  Avg Time for All Tokens
-                </dt>
-                <dd
-                  className={`order-first text-3xl font-semibold tracking-tight ${textColor(
-                    "avg_time_for_all_tokens",
-                    "text-orange-500",
-                  )}`}
-                >
-                  {data
-                    ? Math.min(
-                        ...data.map((d) => d.avg_time_for_all_tokens),
-                      ).toFixed(2) + "s"
-                    : "_"}
-                </dd>
-              </button>
-            </dl>
-          </div>
-          <div className="pt-8">
-            <div
-              className={`flex w-full flex-1 flex-col rounded-2xl bg-white p-8 shadow-md dark:bg-neutral-800 sm:w-full`}
-            >
-              <h3 className="pb-4 text-center text-2xl font-semibold text-gray-800 dark:text-gray-50">
-                Avg Stats of Last 2 Hours on{" "}
-                {valiNames.length === 0
-                  ? " All Validators"
-                  : valiNames.length > 3
-                    ? `${valiNames[0]}, ... , ${valiNames[valiNames.length - 1]}`
-                    : valiNames.join(", ")}
-              </h3>
-              <LineChart
-                data={(processedData ?? []).map((s) => ({
-                  ...s,
-                  minute: moment(s.minute).format("LT"),
-                }))}
-                index="minute"
-                noDataText="Loading..."
-                xAxisLabel="Time"
-                categories={visibleCategories}
-                colors={visibleCategories.map(
-                  (category) => categoryColorMap[category]!,
-                )}
-                yAxisWidth={40}
-                showLegend={false}
-              />
-              <div className="flex flex-wrap items-center justify-end gap-3 pb-2 pt-4">
-                <Field className="flex items-center py-2">
-                  <Switch
-                    checked={verified}
-                    onChange={setVerified}
-                    className="group relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-gray-200 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 data-[checked]:bg-blue-600"
+            {data && data.length > 0 ? (
+              <>
+                <dl className="mt-16 grid grid-cols-1 gap-4 text-center md:grid-cols-3">
+                  <button
+                    onClick={handleCategoryClick("avg_tps")}
+                    className={cardStyles}
                   >
-                    <span
-                      aria-hidden="true"
-                      className="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out group-data-[checked]:translate-x-5"
+                    <dt className="text-sm font-semibold leading-6 text-gray-600 dark:text-gray-400">
+                      Peak Tokens Per Second
+                    </dt>
+                    <dd
+                      className={`order-first text-center text-3xl font-semibold tracking-tight ${textColor(
+                        "avg_tps",
+                        "text-red-500",
+                      )}`}
+                    >
+                      {data
+                        ? Math.max(...data.map((d) => d.avg_tps)).toFixed(0)
+                        : "_"}
+                    </dd>
+                  </button>
+
+                  <button
+                    onClick={handleCategoryClick("avg_time_to_first_token")}
+                    className={cardStyles}
+                  >
+                    <dt className="text-sm font-semibold leading-6 text-gray-600 dark:text-gray-400">
+                      Avg Time to First Token
+                    </dt>
+                    <dd
+                      className={`order-first text-3xl font-semibold tracking-tight ${textColor(
+                        "avg_time_to_first_token",
+                        "text-purple-500",
+                      )}`}
+                    >
+                      {data
+                        ? Math.min(
+                            ...data.map((d) => d.avg_time_to_first_token),
+                          ).toFixed(2) + "s"
+                        : "_"}
+                    </dd>
+                  </button>
+
+                  <button
+                    onClick={handleCategoryClick("avg_time_for_all_tokens")}
+                    className={cardStyles}
+                  >
+                    <dt className="text-sm font-semibold leading-6 text-gray-600 dark:text-gray-400">
+                      Avg Time for All Tokens
+                    </dt>
+                    <dd
+                      className={`order-first text-3xl font-semibold tracking-tight ${textColor(
+                        "avg_time_for_all_tokens",
+                        "text-orange-500",
+                      )}`}
+                    >
+                      {data
+                        ? Math.min(
+                            ...data.map((d) => d.avg_time_for_all_tokens),
+                          ).toFixed(2) + "s"
+                        : "_"}
+                    </dd>
+                  </button>
+                </dl>
+                <div className="pt-8">
+                  <div
+                    className={`flex w-full flex-1 flex-col rounded-2xl bg-white p-8 shadow-md dark:bg-neutral-800 sm:w-full`}
+                  >
+                    <h3 className="pb-4 text-center text-2xl font-semibold text-gray-800 dark:text-gray-50">
+                      Avg Stats of Last 2 Hours on{" "}
+                      {valiNames.length === 0
+                        ? " All Validators"
+                        : valiNames.length > 3
+                          ? `${valiNames[0]}, ... , ${valiNames[valiNames.length - 1]}`
+                          : valiNames.join(", ")}
+                    </h3>
+                    <LineChart
+                      data={(processedData ?? []).map((s) => ({
+                        ...s,
+                        minute: moment(s.minute).format("LT"),
+                      }))}
+                      index="minute"
+                      noDataText="Loading..."
+                      xAxisLabel="Time"
+                      categories={visibleCategories}
+                      colors={visibleCategories.map(
+                        (category) => categoryColorMap[category]!,
+                      )}
+                      yAxisWidth={40}
+                      showLegend={false}
                     />
-                  </Switch>
-                  <Label as="span" className="ml-3 text-sm">
-                    <span className="font-medium text-gray-900 dark:text-gray-50">
-                      Verified Only
-                    </span>
-                  </Label>
-                </Field>
-              </div>
-            </div>
+                    <div className="flex flex-wrap items-center justify-end gap-3 pb-2 pt-4">
+                      <Field className="flex items-center py-2">
+                        <Switch
+                          checked={verified}
+                          onChange={setVerified}
+                          className="group relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-gray-200 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 data-[checked]:bg-blue-600"
+                        >
+                          <span
+                            aria-hidden="true"
+                            className="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out group-data-[checked]:translate-x-5"
+                          />
+                        </Switch>
+                        <Label as="span" className="ml-3 text-sm">
+                          <span className="font-medium text-gray-900 dark:text-gray-50">
+                            Verified Only
+                          </span>
+                        </Label>
+                      </Field>
+                    </div>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <Link href="/stats/miner" className="mt-16 flex justify-center">
+                <div className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-8 shadow-lg transition-all hover:shadow-xl dark:bg-neutral-800">
+                  <div className="flex flex-col items-center text-center">
+                    <div className="mb-4 rounded-full bg-gray-100 p-3 dark:bg-gray-700">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-8 w-8 text-gray-500 dark:text-gray-300"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                    </div>
+                    <h3 className="mb-2 text-xl font-bold text-gray-900 dark:text-white">
+                      No Synthetic Data Available
+                    </h3>
+                    <p className="mb-6 text-gray-600 dark:text-gray-400">
+                      There is currently no synthetic data from the past 2 hours
+                      to display.
+                    </p>
+                    <p className="mb-6 text-gray-600 dark:text-gray-400">
+                      Click here to view miner-specific organic data instead.
+                    </p>
+                  </div>
+                </div>
+              </Link>
+            )}
           </div>
         </div>
       </div>
