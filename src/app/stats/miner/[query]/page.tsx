@@ -3,11 +3,7 @@ import { Suspense } from "react";
 import MinerInputForm from "../MinerInputForm";
 import MinerChart from "./MinerChart";
 
-export default function Page({
-  params,
-}: {
-  params: { query: string };
-}) {
+export default function Page({ params }: { params: { query: string } }) {
   return (
     <div className="mx-auto max-w-7xl px-12 pb-12">
       <div className="py-24 sm:py-24">
@@ -17,9 +13,7 @@ export default function Page({
               <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-50 sm:text-4xl">
                 Targon Miner Status
               </h2>
-              <MinerInputForm
-                initialQuery={params.query}
-              />
+              <MinerInputForm initialQuery={params.query} />
               {params.query && (
                 <Suspense fallback="Loading data...">
                   <MinerChart query={params.query} />

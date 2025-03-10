@@ -10,6 +10,68 @@ interface ThroughputStatsProps {
   throughputStats: TargonDoc | null;
 }
 
+// Function to format time difference in a human-readable format
+const getTimeSince = (timestamp: number | string): string => {
+  const date =
+    typeof timestamp === "number" ? new Date(timestamp) : new Date(timestamp);
+
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+
+  // Convert to seconds, minutes, hours, days
+  const diffSec = Math.floor(diffMs / 1000);
+  const diffMin = Math.floor(diffSec / 60);
+  const diffHrs = Math.floor(diffMin / 60);
+  const diffDays = Math.floor(diffHrs / 24);
+
+  if (diffDays > 0) {
+    return `${diffDays} day${diffDays !== 1 ? "s" : ""} ago`;
+  } else if (diffHrs > 0) {
+    return `${diffHrs} hour${diffHrs !== 1 ? "s" : ""} ago`;
+  } else if (diffMin > 0) {
+    return `${diffMin} minute${diffMin !== 1 ? "s" : ""} ago`;
+  } else {
+    return `${diffSec} second${diffSec !== 1 ? "s" : ""} ago`;
+  }
+};
+
+// Function to format the stats with time since information
+const formatStatsWithTimeSince = (
+  stats: TargonDoc,
+): Record<string, unknown> => {
+  // Create a deep copy to avoid modifying the original
+  const formattedStats = JSON.parse(JSON.stringify(stats)) as Record<
+    string,
+    unknown
+  >;
+
+  // Add time since last_updated
+  if (typeof formattedStats.last_updated === "number") {
+    const originalTime = formattedStats.last_updated;
+    formattedStats.last_updated = `${originalTime} (${getTimeSince(originalTime)})`;
+  }
+
+  // Add time since lastReset for api data if it exists
+  Object.keys(formattedStats).forEach((key) => {
+    const value = formattedStats[key];
+    if (
+      typeof value === "object" &&
+      value !== null &&
+      "api" in value &&
+      typeof value.api === "object" &&
+      value.api !== null &&
+      "lastReset" in value.api &&
+      typeof value.api.lastReset === "string"
+    ) {
+      const originalReset = value.api.lastReset;
+      (value.api as Record<string, unknown>).lastReset =
+        `${originalReset} (${getTimeSince(originalReset)})`;
+    }
+  });
+
+  return formattedStats;
+};
+
 const ThroughputStats: React.FC<ThroughputStatsProps> = ({
   throughputStats,
 }) => {
@@ -28,6 +90,9 @@ const ThroughputStats: React.FC<ThroughputStatsProps> = ({
     toast.success("Copied to clipboard!");
   };
 
+  // Format the stats with time since information
+  const formattedStats = formatStatsWithTimeSince(throughputStats);
+
   return (
     <div className="w-full max-w-full">
       <div className="sm:flex sm:items-center">
@@ -44,7 +109,7 @@ const ThroughputStats: React.FC<ThroughputStatsProps> = ({
         <div className="rounded-lg border border-gray-200 bg-gray-50 shadow dark:bg-neutral-900">
           <div className="flex p-3">
             <pre className="overflow-y-auto text-left font-mono text-sm text-gray-900 dark:text-gray-200">
-              {JSON.stringify(throughputStats, null, 2)}
+              {JSON.stringify(formattedStats, null, 2)}
             </pre>
             <button
               className="ml-4 cursor-pointer text-right"

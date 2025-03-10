@@ -26,6 +26,15 @@ export interface TargonDoc {
           avgSuccessRate: number;
           lastReset: string;
         };
+        final_weight_after_expo_before_normal?: number;
+        final_weight_before_expo?: number;
+        formula?: string;
+        is_exploiting?: boolean;
+        miner_completed?: number;
+        miner_success_rate?: number;
+        overall_organics?: number;
+        safe_mean_scores?: Record<string, number>;
+        tested_organics?: Record<string, Array<number | null>>;
       }
     | string
     | number;
