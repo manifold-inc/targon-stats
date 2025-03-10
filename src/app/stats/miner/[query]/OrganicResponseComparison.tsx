@@ -4,7 +4,7 @@ import { Copy } from "lucide-react";
 import { toast } from "sonner";
 
 import { copyToClipboard } from "@/utils/utils";
-import { type OrganicResponse } from "./MinerChart";
+import { type OrganicResponse } from "./MinerData";
 
 interface OrganicResponseComparisonProps {
   responses: OrganicResponse[];

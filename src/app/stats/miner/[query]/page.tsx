@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 
 import MinerInputForm from "../MinerInputForm";
-import MinerChart from "./MinerChart";
+import MinerChart from "./MinerData";
 
 export default function Page({ params }: { params: { query: string } }) {
   return (

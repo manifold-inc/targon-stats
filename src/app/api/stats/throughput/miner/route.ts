@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 
-import { type TargonDoc } from "@/app/stats/miner/[query]/MinerChart";
+import { type TargonDoc } from "@/app/stats/miner/[query]/MinerData";
 import { getMongoDb } from "@/schema/mongoDB";
 import { statsDB } from "@/schema/psDB";
 import { ApiKey, User } from "@/schema/schema";

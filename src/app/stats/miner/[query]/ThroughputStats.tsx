@@ -4,7 +4,7 @@ import { Copy } from "lucide-react";
 import { toast } from "sonner";
 
 import { copyToClipboard } from "@/utils/utils";
-import { type TargonDoc } from "./MinerChart";
+import { type TargonDoc } from "./MinerData";
 
 interface ThroughputStatsProps {
   throughputStats: TargonDoc | null;
