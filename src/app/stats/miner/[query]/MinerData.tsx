@@ -175,10 +175,8 @@ export default async function MinerChart({ query }: MinerChartProps) {
       .orderBy(desc(OrganicRequest.created_at))
       .limit(100);
 
-    const orderedStats = [...stats].reverse();
-
     const miners = new Map<number, Keys>();
-    orderedStats.forEach((m) => {
+    stats.forEach((m) => {
       if (
         m.uid !== null &&
         m.uid !== undefined &&
@@ -225,9 +223,9 @@ export default async function MinerChart({ query }: MinerChartProps) {
             <KeysTable miners={miners} />
           </div>
           <div className="flex-1 pt-8">
-            {orderedStats.length > 0 ? (
+            {stats.length > 0 ? (
               <OrganicResponseComparison
-                responses={orderedStats as OrganicResponse[]}
+                responses={stats as OrganicResponse[]}
               />
             ) : (
               <div className="rounded-md bg-gray-100 p-4 text-center dark:bg-gray-800">
