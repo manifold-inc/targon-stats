@@ -108,6 +108,7 @@ export interface Response {
 
 export interface OrganicResponse {
   id: number;
+  th_pub_id: string;
   hotkey: string;
   coldkey?: string;
   uid?: number;
@@ -142,6 +143,7 @@ export default async function MinerChart({ query }: MinerChartProps) {
     const stats = await statsDB
       .select({
         id: OrganicRequest.id,
+        th_pub_id: OrganicRequest.th_pub_id,
         uid: OrganicRequest.uid,
         hotkey: OrganicRequest.hotkey,
         coldkey: OrganicRequest.coldkey,

@@ -164,6 +164,7 @@ export const Session = mysqlTable("session", {
 
 export const OrganicRequest = mysqlTable("organic_requests", {
   id: int("id").autoincrement().notNull(),
+  th_pub_id: varchar("th_pub_id", { length: 32 }),
   request_endpoint: mysqlEnum("request_endpoint", [
     "CHAT",
     "COMPLETION",

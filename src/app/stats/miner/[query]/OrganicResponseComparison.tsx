@@ -50,7 +50,7 @@ const OrganicResponseComparison: React.FC<OrganicResponseComparisonProps> = ({
                     scope="col"
                     className="whitespace-nowrap px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-200"
                   >
-                    Hotkey
+                    Request Id
                   </th>
                   <th
                     scope="col"
@@ -113,14 +113,7 @@ const OrganicResponseComparison: React.FC<OrganicResponseComparisonProps> = ({
                   <tr key={response.hotkey + index}>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
                       <div className="flex items-center justify-between font-mono">
-                        <span>
-                          {response.hotkey.substring(0, 4) +
-                            "..." +
-                            response.hotkey.substring(
-                              response.hotkey.length - 4,
-                              response.hotkey.length,
-                            )}
-                        </span>
+                        <span>req_{response.th_pub_id}</span>
                         <button
                           className="ml-2 cursor-pointer"
                           onClick={() => handleCopyClipboard(response.hotkey)}
