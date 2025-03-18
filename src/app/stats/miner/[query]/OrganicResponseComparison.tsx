@@ -116,7 +116,9 @@ const OrganicResponseComparison: React.FC<OrganicResponseComparisonProps> = ({
                         <span>req_{response.th_pub_id}</span>
                         <button
                           className="ml-2 cursor-pointer"
-                          onClick={() => handleCopyClipboard(response.th_pub_id)}
+                          onClick={() =>
+                            handleCopyClipboard(response.th_pub_id)
+                          }
                         >
                           <Copy className="z-10 h-4 w-4 text-gray-500 dark:text-gray-300" />
                         </button>
