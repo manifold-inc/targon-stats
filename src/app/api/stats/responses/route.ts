@@ -124,6 +124,7 @@ export const POST = async (req: NextRequest) => {
         ),
       statsDB
         .select({
+          req_id: OrganicRequest.th_pub_id,
           tps: OrganicRequest.tps,
           totalTime: OrganicRequest.total_time,
           timeToFirstToken: OrganicRequest.time_to_first_token,
