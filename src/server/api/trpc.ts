@@ -7,19 +7,15 @@
  * need to use are documented accordingly near the end.
  */
 import { type NextRequest } from "next/server";
-import { initTRPC, TRPCError } from "@trpc/server";
+import { initTRPC } from "@trpc/server";
 import { type Session, type User } from "lucia";
 import superjson from "superjson";
 import { ZodError } from "zod";
-
-import { statsDB } from "@/schema/psDB";
-import { validateRequest } from "../auth";
 
 export const createTRPCContext = (opts: { req: NextRequest }) => {
   // Fetch stuff that depends on the request
   return {
     req: opts.req as NextRequest | null,
-    db: statsDB,
     user: null as User | null,
     session: null as Session | null,
   };
@@ -39,36 +35,6 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
   },
 });
 
-const useUserAuth = t.middleware(async ({ ctx, next }) => {
-  const { user, session } = await validateRequest();
-  return next({
-    ctx: {
-      // infers the `session` as non-nullable
-      ...ctx,
-      user,
-      session,
-    },
-  });
-});
-
-const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
-  if (!ctx.session?.userId || ctx.user === null) {
-    throw new TRPCError({ code: "UNAUTHORIZED" });
-  }
-  return next({
-    ctx: {
-      // infers the `session` as non-nullable
-      ...ctx,
-      user: ctx.user,
-      session: ctx.session,
-    },
-  });
-});
-
 export const createCallerFactory = t.createCallerFactory;
 export const createTRPCRouter = t.router;
 export const publicAuthlessProcedure = t.procedure;
-export const publicProcedure = t.procedure.use(useUserAuth);
-export const protectedProcedure = t.procedure
-  .use(useUserAuth)
-  .use(enforceUserIsAuthed);

@@ -11,24 +11,30 @@ const client = new MongoClient(env.MONGO_URI, {
   },
 });
 
-let db: Db;
+let db: Db | null = null;
 
-if (process.env.NODE_ENV === "development") {
-  // In development mode, use a global variable so that the value
-  // is preserved across module reloads caused by HMR
-  const globalWithMongo = global as typeof globalThis & {
-    _mongoDb?: Db;
-  };
+export async function connectToMongoDb() {
+  if (db) return db;
 
-  if (!globalWithMongo._mongoDb) {
-    // Initialize the connection once
-    globalWithMongo._mongoDb = await client
-      .connect()
-      .then((client) => client.db("targon"));
+  if (process.env.NODE_ENV === "development") {
+    // In development mode, use a global variable so that the value
+    // is preserved across module reloads caused by HMR
+    const globalWithMongo = global as typeof globalThis & {
+      _mongoDb?: Db;
+    };
+
+    if (!globalWithMongo._mongoDb) {
+      // Initialize the connection once
+      globalWithMongo._mongoDb = await client
+        .connect()
+        .then((client) => client.db("targon"));
+    }
+    db = globalWithMongo._mongoDb!;
+  } else {
+    db = await client.connect().then((client) => client.db("targon"));
   }
-  db = globalWithMongo._mongoDb!;
-} else {
-  db = await client.connect().then((client) => client.db("targon"));
+
+  return db;
 }
 
 export function getMongoDb() {

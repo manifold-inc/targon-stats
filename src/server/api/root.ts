@@ -2,8 +2,6 @@ import { type inferReactQueryProcedureOptions } from "@trpc/react-query";
 import { type inferRouterInputs, type inferRouterOutputs } from "@trpc/server";
 
 import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
-import { accountRouter } from "./account";
-import { coreRouter } from "./core";
 
 /**
  * This is the primary router for your server.
@@ -11,10 +9,7 @@ import { coreRouter } from "./core";
  * All routers added in /api/routers should be manually added here.
  */
 
-export const appRouter = createTRPCRouter({
-  account: accountRouter,
-  core: coreRouter,
-});
+export const appRouter = createTRPCRouter({});
 
 export type ReactQueryOptions = inferReactQueryProcedureOptions<AppRouter>;
 export type RouterInputs = inferRouterInputs<AppRouter>;

@@ -1,11 +1,8 @@
 import { NextResponse } from "next/server";
-import { eq } from "drizzle-orm";
 import { z } from "zod";
 
-import { type TargonDoc } from "@/app/stats/miner/[query]/MinerData";
+import { type TargonDoc } from "@/app/page";
 import { getMongoDb } from "@/schema/mongoDB";
-import { statsDB } from "@/schema/psDB";
-import { ApiKey, User } from "@/schema/schema";
 
 // Define the input schema with limit and offset
 const schema = z.object({
@@ -14,32 +11,6 @@ const schema = z.object({
 
 export async function POST(request: Request) {
   try {
-    // Bearer Token Authentications
-    const bearerToken = request.headers.get("Authorization")?.split(" ").at(1);
-    if (!bearerToken) {
-      return NextResponse.json(
-        { error: "Missing Bearer Token" },
-        { status: 401 },
-      );
-    }
-
-    // Get user first for authentication
-    const [user] = await statsDB
-      .select({
-        id: User.id,
-      })
-      .from(User)
-      .innerJoin(ApiKey, eq(ApiKey.userId, User.id))
-      .where(eq(ApiKey.key, bearerToken))
-      .limit(1);
-
-    if (!user) {
-      return NextResponse.json(
-        { error: "Invalid Bearer Token" },
-        { status: 401 },
-      );
-    }
-
     const body = schema.safeParse(await request.json());
     if (!body.success) {
       return NextResponse.json(
@@ -49,9 +20,9 @@ export async function POST(request: Request) {
     }
 
     const query = body.data.uid;
-    const targetUid = parseInt(query);
+    const targetUid = query;
 
-    if (isNaN(targetUid)) {
+    if (!targetUid) {
       return NextResponse.json(
         { error: "Query must be a valid UID" },
         { status: 400 },
@@ -68,7 +39,7 @@ export async function POST(request: Request) {
       .find({ uid: targetUid })
       .toArray()) as unknown as TargonDoc[];
 
-    const minerDoc = targonCollection[0];
+    const minerDoc = targonCollection[0] as TargonDoc | undefined;
     if (!minerDoc) {
       return NextResponse.json(
         { error: "No GPU data found for the given UID" },
