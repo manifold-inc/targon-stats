@@ -35,7 +35,7 @@ export default function Page() {
           </h4>
           <div className="overflow-x-scroll pb-4">
             <div className="w-fit whitespace-nowrap rounded bg-gray-200 px-2 py-2 font-mono text-sm leading-3 dark:bg-neutral-900">
-              POST {API_BASE_URL}/stats/gpu/miner
+              POST {API_BASE_URL}/stats/nodes/miner
             </div>
           </div>
           <div className="pb-4">

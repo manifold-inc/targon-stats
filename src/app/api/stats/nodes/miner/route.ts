@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { type TargonDoc } from "@/app/page";
-import { getMongoDb } from "@/schema/mongoDB";
+import { connectToMongoDb } from "@/schema/mongoDB";
 
 // Define the input schema with limit and offset
 const schema = z.object({
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const mongoDb = getMongoDb();
+    const mongoDb = await connectToMongoDb();
     if (!mongoDb) {
       throw new Error("Failed to connect to MongoDB");
     }
