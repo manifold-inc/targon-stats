@@ -172,7 +172,7 @@ const BidTable = ({ searchTerm }: BidTableProps) => {
                 {node.gpus}
               </td>
               <td className="whitespace-nowrap px-6 py-4 text-end text-sm text-gray-900 dark:text-gray-100">
-                ${(node.payout / node.gpus / 1.233).toFixed(2)}/h
+                ${(node.payout / node.gpus).toFixed(2)}/h
               </td>
               <td className="whitespace-nowrap px-6 py-4 text-end text-sm">
                 <span className="inline-flex rounded-full px-2 text-end text-xs font-semibold leading-5">
