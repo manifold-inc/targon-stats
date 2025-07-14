@@ -24,7 +24,7 @@ export default function MinerDetails({
 }: MinerDetailsProps) {
   if (isLoading) {
     return (
-      <div className="text-center text-gray-600 dark:text-gray-400">
+      <div className="py-4 text-center text-gray-600 dark:text-gray-400">
         Loading miner details...
       </div>
     );
@@ -32,7 +32,7 @@ export default function MinerDetails({
 
   if (error) {
     return (
-      <div className="text-center text-red-600 dark:text-red-400">
+      <div className="py-4 text-center text-red-600 dark:text-red-400">
         Error loading miner details: {error.message}
       </div>
     );
@@ -40,34 +40,37 @@ export default function MinerDetails({
 
   if (!minerNodes || minerNodes.length === 0) {
     return (
-      <div className="text-center text-gray-600 dark:text-gray-400">
-        No details found for this miner.
-      </div>
+      <tr>
+        <td
+          colSpan={4}
+          className="py-4 text-center text-gray-600 dark:text-gray-400"
+        >
+          No details found for this miner.
+        </td>
+      </tr>
     );
   }
 
   return (
-    <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-      <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
-        {minerNodes.map((node, index) => (
-          <tr key={index}>
-            <td className="whitespace-nowrap px-6 py-4 font-mono text-sm text-gray-900 dark:text-gray-100">
-              {node.uid}
-            </td>
-            <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
-              ${(node.price / 100).toFixed(2)}
-            </td>
-            <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
-              {node.gpus}
-            </td>
-            <td className="whitespace-nowrap px-6 py-4 text-sm">
-              <span className="inline-flex rounded-full px-2 text-xs font-semibold leading-5">
-                {InstancePaymentStatus(node)}
-              </span>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <>
+      {minerNodes.map((node, index) => (
+        <tr key={index} className="bg-gray-50 dark:bg-gray-800/50">
+          <td className="whitespace-nowrap border-l-4 border-blue-200 px-6 py-4 font-mono text-sm text-gray-900 dark:border-blue-900/40 dark:text-gray-100">
+            {node.uid}
+          </td>
+          <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
+            ${(node.price / 100).toFixed(2)}
+          </td>
+          <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
+            {node.gpus}
+          </td>
+          <td className="whitespace-nowrap px-6 py-4 text-sm">
+            <span className="inline-flex rounded-full px-2 text-xs font-semibold leading-5">
+              {InstancePaymentStatus(node)}
+            </span>
+          </td>
+        </tr>
+      ))}
+    </>
   );
 }

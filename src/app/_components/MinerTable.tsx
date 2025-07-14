@@ -101,15 +101,11 @@ export default function MinerTable() {
               </tr>
 
               {selectedUid === miner.uid && (
-                <tr>
-                  <td colSpan={4}>
-                    <MinerDetails
-                      minerNodes={minerNodes || []}
-                      isLoading={isMinerNodesLoading}
-                      error={minerNodesError as Error | null}
-                    />
-                  </td>
-                </tr>
+                <MinerDetails
+                  minerNodes={minerNodes || []}
+                  isLoading={isMinerNodesLoading}
+                  error={minerNodesError as Error | null}
+                />
               )}
             </>
           ))}
