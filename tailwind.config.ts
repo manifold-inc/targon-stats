@@ -45,6 +45,11 @@ export default {
             inverted: colors.white,
           },
         },
+        mf: {
+          night: {
+            500: "#22242E",
+          },
+        },
         // dark mode
         "dark-tremor": {
           brand: {
