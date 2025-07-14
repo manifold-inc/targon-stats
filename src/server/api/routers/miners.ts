@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 import { connectToMongoDb } from "@/schema/mongoDB";
 import { createTRPCRouter, publicAuthlessProcedure } from "@/server/api/trpc";
 
@@ -13,7 +15,7 @@ export type Miner = {
   average_payout: number;
   total_payout: number;
   gpus: number;
-  count: number;
+  nodes: number;
 };
 
 async function getAuctionResults(): Promise<Auction> {
@@ -31,7 +33,7 @@ async function getAuctionResults(): Promise<Auction> {
   return data[0]?.auction_results as unknown as Auction;
 }
 
-async function getPaidMiners(): Promise<Miner[]> {
+async function getAllMiners(): Promise<Miner[]> {
   const auction_results = await getAuctionResults();
   const miners: Record<string, Miner> = {};
 
@@ -45,24 +47,51 @@ async function getPaidMiners(): Promise<Miner[]> {
           average_payout: miner.payout,
           total_payout: miner.payout,
           gpus: miner.gpus,
-          count: 1,
+          nodes: 1,
         };
       }
       miners[miner.uid]!.total_price += miner.price;
       miners[miner.uid]!.total_payout += miner.payout;
-      miners[miner.uid]!.count += 1;
+      miners[miner.uid]!.nodes += 1;
     }
   }
 
   return Object.values(miners).map((miner) => ({
     ...miner,
-    average_price: miner.total_price / miner.count,
-    average_payout: miner.total_payout / miner.count,
+    average_price: miner.total_price / miner.nodes,
+    average_payout: miner.total_payout / miner.nodes,
   }));
 }
 
+async function getMiner(uid: string): Promise<Miner | null> {
+  const auction_results = await getAuctionResults();
+
+  for (const gpu in auction_results) {
+    const miner = auction_results[gpu]!.find((m) => m.uid === uid);
+    if (miner) {
+      return {
+        uid: miner.uid,
+        average_price: miner.price,
+        average_payout: miner.payout,
+        total_price: miner.price,
+        total_payout: miner.payout,
+        gpus: miner.gpus,
+        nodes: 1,
+      };
+    }
+  }
+
+  return null;
+}
+
 export const minersRouter = createTRPCRouter({
-  getPaidMiners: publicAuthlessProcedure.query(async () => {
-    return await getPaidMiners();
+  getAllMiners: publicAuthlessProcedure.query(async () => {
+    return await getAllMiners();
   }),
+
+  getMiner: publicAuthlessProcedure
+    .input(z.string())
+    .query(async ({ input }) => {
+      return await getMiner(input);
+    }),
 });
