@@ -185,7 +185,7 @@ export default function MinerTable({ searchTerm }: MinerTableProps) {
                   {miner.uid}
                 </td>
                 <td className="whitespace-nowrap px-6 text-end py-4 text-sm text-gray-900 dark:text-gray-100">
-                  {`$${(miner.average_price / 100).toFixed(2)}`}
+                  {`$${(miner.average_price / 100).toFixed(2)}`}/h
                 </td>
                 <td className="whitespace-nowrap text-end px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
                   {miner.nodes}
