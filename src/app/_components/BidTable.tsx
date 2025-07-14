@@ -18,6 +18,13 @@ const BidTable = ({ searchTerm }: BidTableProps) => {
       node.uid.toLowerCase().includes(searchTerm.toLowerCase()),
     ) || [];
 
+  // Sort by lowest to highest UUID
+  const sortedNodes = [...filteredNodes].sort((a, b) => {
+    const aPos = parseInt(a.uid, 10);
+    const bPos = parseInt(b.uid, 10);
+    return aPos - bPos;
+  });
+
   if (isLoading) {
     return (
       <div className="text-center text-gray-600 dark:text-gray-400">
@@ -65,7 +72,7 @@ const BidTable = ({ searchTerm }: BidTableProps) => {
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
-          {filteredNodes.map((node: MinerNode, idx: number) => (
+          {sortedNodes.map((node: MinerNode, idx: number) => (
             <tr key={idx}>
               <td className="whitespace-nowrap px-6 py-4 font-mono text-sm text-gray-900 dark:text-gray-100">
                 {node.uid}
