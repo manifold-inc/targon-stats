@@ -27,25 +27,37 @@ const BidTable = ({ searchTerm }: BidTableProps) => {
 
   if (isLoading) {
     return (
-      <div className="text-center text-gray-600 dark:text-gray-400">
-        Loading nodes...
-      </div>
+      <tr>
+        <td
+          colSpan={4}
+          className="text-center text-gray-600 dark:text-gray-400"
+        >
+          Loading nodes...
+        </td>
+      </tr>
     );
   }
 
   if (error) {
     return (
-      <div className="text-center text-red-600 dark:text-red-400">
-        Error loading nodes: {error.message}
-      </div>
+      <tr>
+        <td colSpan={4} className="text-center text-red-600 dark:text-red-400">
+          Error loading nodes: {error.message}
+        </td>
+      </tr>
     );
   }
 
   if (searchTerm && filteredNodes.length === 0) {
     return (
-      <div className="text-center text-gray-600 dark:text-gray-400">
-        No nodes found matching {searchTerm}
-      </div>
+      <tr>
+        <td
+          colSpan={4}
+          className="text-center text-gray-600 dark:text-gray-400"
+        >
+          No nodes found matching {searchTerm}
+        </td>
+      </tr>
     );
   }
 

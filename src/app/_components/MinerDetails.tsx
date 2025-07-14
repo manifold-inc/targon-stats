@@ -24,17 +24,27 @@ export default function MinerDetails({
 }: MinerDetailsProps) {
   if (isLoading) {
     return (
-      <div className="py-4 text-center text-gray-600 dark:text-gray-400">
-        Loading miner details...
-      </div>
+      <tr>
+        <td
+          colSpan={4}
+          className="py-4 text-center text-gray-600 dark:text-gray-400"
+        >
+          Loading miner details...
+        </td>
+      </tr>
     );
   }
 
   if (error) {
     return (
-      <div className="py-4 text-center text-red-600 dark:text-red-400">
-        Error loading miner details: {error.message}
-      </div>
+      <tr>
+        <td
+          colSpan={4}
+          className="py-4 text-center text-red-600 dark:text-red-400"
+        >
+          Error loading miner details: {error.message}
+        </td>
+      </tr>
     );
   }
 
