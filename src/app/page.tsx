@@ -2,14 +2,12 @@
 
 import { useState } from "react";
 
-import BuyoutTable from "@/app/_components/BuyoutTable";
+import BidTable from "@/app/_components/BidTable";
 import MinerTable from "@/app/_components/MinerTable";
 import ToggleTable from "@/app/_components/ToggleTable";
 
 export default function HomePage() {
-  const [selectedTable, setSelectedTable] = useState<"miners" | "buyout">(
-    "miners",
-  );
+  const [selectedTable, setSelectedTable] = useState<"miner" | "bid">("miner");
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
@@ -26,7 +24,7 @@ export default function HomePage() {
         </div>
 
         <div className="mt-8">
-          {selectedTable === "miners" ? <MinerTable /> : <BuyoutTable />}
+          {selectedTable === "miner" ? <MinerTable /> : <BidTable />}
         </div>
       </div>
     </div>

@@ -2,7 +2,7 @@ import { NodePaymentStatus } from "@/app/_components/MinerDetails";
 import { type MinerNode } from "@/server/api/routers/miners";
 import { reactClient } from "@/trpc/react";
 
-const BuyoutTable = () => {
+const BidTable = () => {
   const {
     data: nodes,
     isLoading,
@@ -34,10 +34,13 @@ const BuyoutTable = () => {
               UUID
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
-              Price
+              Bid
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
               Number of GPUs
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+              Payout
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
               Payment Status
@@ -56,6 +59,9 @@ const BuyoutTable = () => {
               <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
                 {node.gpus}
               </td>
+              <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
+                ${node.payout.toFixed(2)}
+              </td>
               <td className="whitespace-nowrap px-6 py-4 text-sm">
                 <span className="inline-flex rounded-full px-2 text-xs font-semibold leading-5">
                   {NodePaymentStatus(node)}
@@ -69,4 +75,4 @@ const BuyoutTable = () => {
   );
 };
 
-export default BuyoutTable;
+export default BidTable;
