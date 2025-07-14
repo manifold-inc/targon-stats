@@ -40,12 +40,12 @@ async function getPaidMiners(): Promise<Miner[]> {
       if (!miners[miner.uid]) {
         miners[miner.uid] = {
           uid: miner.uid,
-          average_price: 0,
-          total_price: 0,
-          average_payout: 0,
-          total_payout: 0,
+          average_price: miner.price,
+          total_price: miner.price,
+          average_payout: miner.payout,
+          total_payout: miner.payout,
           gpus: miner.gpus,
-          count: 0,
+          count: 1,
         };
       }
       miners[miner.uid]!.total_price += miner.price;
