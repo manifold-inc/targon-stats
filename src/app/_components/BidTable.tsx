@@ -1,5 +1,5 @@
 import { NodePaymentStatus } from "@/app/_components/MinerDetails";
-import { type MinerNode } from "@/server/api/routers/miners";
+import { type MinerNode } from "@/server/api/routers/bids";
 import { reactClient } from "@/trpc/react";
 
 interface BidTableProps {
@@ -11,7 +11,7 @@ const BidTable = ({ searchTerm }: BidTableProps) => {
     data: nodes,
     isLoading,
     error,
-  } = reactClient.miners.getAllNodes.useQuery();
+  } = reactClient.bids.getAllBids.useQuery();
 
   const filteredNodes =
     nodes?.filter((node) =>

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { getAllBids } from "@/server/api/routers/miners";
+import { getAllBids } from "@/server/api/routers/bids";
 
 export async function GET() {
   try {
