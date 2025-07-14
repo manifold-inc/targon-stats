@@ -1,16 +1,28 @@
 "use client";
 
+import { useState } from "react";
 import { CircleCheck, CircleMinus, CircleX } from "lucide-react";
 
+import MinerDetails from "@/app/_components/MinerDetails";
 import { type Miner } from "@/server/api/routers/miners";
 import { reactClient } from "@/trpc/react";
 
 export default function MinerTable() {
+  const [selectedUid, setSelectedUid] = useState<string | null>(null);
+
   const {
     data: miners,
     isLoading,
     error,
   } = reactClient.miners.getAllMiners.useQuery();
+
+  const getMinerQuery = reactClient.miners.getMiner.useQuery(selectedUid!, {
+    enabled: !!selectedUid,
+  });
+
+  const handleRowClick = (uid: string) => {
+    setSelectedUid(selectedUid === uid ? null : uid);
+  };
 
   const paymentStatus = (miner: Miner) => {
     switch (true) {
@@ -60,25 +72,46 @@ export default function MinerTable() {
         </thead>
         <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
           {miners?.map((miner) => (
-            <tr
-              key={miner.uid}
-              className="hover:bg-gray-50 dark:hover:bg-gray-800"
-            >
-              <td className="whitespace-nowrap px-6 py-4 font-mono text-sm text-gray-900 dark:text-gray-100">
-                {miner.uid}
-              </td>
-              <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
-                {`$${(miner.average_price / 100).toFixed(2)}`}
-              </td>
-              <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
-                {miner.nodes}
-              </td>
-              <td className="whitespace-nowrap px-6 py-4 text-sm">
-                <span className="inline-flex rounded-full px-2 text-xs font-semibold leading-5">
-                  {paymentStatus(miner)}
-                </span>
-              </td>
-            </tr>
+            <>
+              <tr
+                key={miner.uid}
+                className={`cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 ${
+                  selectedUid === miner.uid
+                    ? "bg-blue-50 dark:bg-blue-900/20"
+                    : ""
+                }`}
+                onClick={() => handleRowClick(miner.uid)}
+              >
+                <td className="whitespace-nowrap px-6 py-4 font-mono text-sm text-gray-900 dark:text-gray-100">
+                  {miner.uid}
+                </td>
+                <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
+                  {`$${(miner.average_price / 100).toFixed(2)}`}
+                </td>
+                <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
+                  {miner.nodes}
+                </td>
+                <td className="whitespace-nowrap px-6 py-4 text-sm">
+                  <span className="inline-flex rounded-full px-2 text-xs font-semibold leading-5">
+                    {paymentStatus(miner)}
+                  </span>
+                </td>
+              </tr>
+              {/* Expanded details row */}
+              {selectedUid === miner.uid && (
+                <tr>
+                  <td colSpan={4} className="bg-gray-50 dark:bg-gray-800">
+                    <div className="px-6 py-4">
+                      <MinerDetails
+                        minerInstances={getMinerQuery.data || []}
+                        isLoading={getMinerQuery.isLoading}
+                        error={getMinerQuery.error as Error | null}
+                      />
+                    </div>
+                  </td>
+                </tr>
+              )}
+            </>
           ))}
         </tbody>
       </table>

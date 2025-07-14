@@ -11,11 +11,18 @@ type Auction = Record<
 export type Miner = {
   uid: string;
   average_price: number;
-  total_price: number;
   average_payout: number;
+  total_price: number;
   total_payout: number;
   gpus: number;
   nodes: number;
+};
+
+export type MinerInstance = {
+  uid: string;
+  price: number;
+  payout: number;
+  gpus: number;
 };
 
 async function getAuctionResults(): Promise<Auction> {
@@ -63,25 +70,24 @@ async function getAllMiners(): Promise<Miner[]> {
   }));
 }
 
-async function getMiner(uid: string): Promise<Miner | null> {
+async function getMiner(uid: string): Promise<MinerInstance[]> {
   const auction_results = await getAuctionResults();
+  const instances: MinerInstance[] = [];
 
   for (const gpu in auction_results) {
-    const miner = auction_results[gpu]!.find((m) => m.uid === uid);
-    if (miner) {
-      return {
-        uid: miner.uid,
-        average_price: miner.price,
-        average_payout: miner.payout,
-        total_price: miner.price,
-        total_payout: miner.payout,
-        gpus: miner.gpus,
-        nodes: 1,
-      };
+    const minerInstances = auction_results[gpu]?.filter((m) => m.uid === uid);
+    if (!minerInstances) continue;
+    for (const instance of minerInstances) {
+      instances.push({
+        uid: instance.uid,
+        price: instance.price,
+        payout: instance.payout,
+        gpus: instance.gpus,
+      });
     }
   }
 
-  return null;
+  return instances;
 }
 
 export const minersRouter = createTRPCRouter({
