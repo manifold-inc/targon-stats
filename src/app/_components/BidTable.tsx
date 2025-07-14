@@ -57,16 +57,16 @@ const BidTable = ({ searchTerm }: BidTableProps) => {
             <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
               UUID
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+            <th className="px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
               Bid
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+            <th className="px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
               Number of GPUs
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+            <th className="px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
               Payout
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+            <th className="px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
               Payment Status
             </th>
           </tr>
@@ -77,17 +77,17 @@ const BidTable = ({ searchTerm }: BidTableProps) => {
               <td className="whitespace-nowrap px-6 py-4 font-mono text-sm text-gray-900 dark:text-gray-100">
                 {node.uid}
               </td>
-              <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
+              <td className="whitespace-nowrap px-6 text-end py-4 text-sm text-gray-900 dark:text-gray-100">
                 ${(node.price / 100).toFixed(2)}
               </td>
-              <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
+              <td className="whitespace-nowrap px-6 py-4 text-end text-sm text-gray-900 dark:text-gray-100">
                 {node.gpus}
               </td>
-              <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
+              <td className="whitespace-nowrap px-6 py-4 text-sm text-end text-gray-900 dark:text-gray-100">
                 ${node.payout.toFixed(2)}
               </td>
-              <td className="whitespace-nowrap px-6 py-4 text-sm">
-                <span className="inline-flex rounded-full px-2 text-xs font-semibold leading-5">
+              <td className="whitespace-nowrap px-6 py-4 text-end text-sm">
+                <span className="inline-flex rounded-full px-2 text-end text-xs font-semibold leading-5">
                   {NodePaymentStatus(node)}
                 </span>
               </td>

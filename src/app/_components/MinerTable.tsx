@@ -78,13 +78,13 @@ export default function MinerTable({ searchTerm }: MinerTableProps) {
             <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
               UUID
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+            <th className="px-6 py-3 text-xs font-medium text-end uppercase tracking-wider text-gray-500 dark:text-gray-400">
               Average Bid
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+            <th className="px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
               Number of Nodes
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+            <th className="px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
               Payment Status
             </th>
           </tr>
@@ -104,13 +104,13 @@ export default function MinerTable({ searchTerm }: MinerTableProps) {
                 <td className="whitespace-nowrap px-6 py-4 font-mono text-sm text-gray-900 dark:text-gray-100">
                   {miner.uid}
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
+                <td className="whitespace-nowrap px-6 text-end py-4 text-sm text-gray-900 dark:text-gray-100">
                   {`$${(miner.average_price / 100).toFixed(2)}`}
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
+                <td className="whitespace-nowrap text-end px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
                   {miner.nodes}
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 text-sm">
+                <td className="whitespace-nowrap text-end px-6 py-4 text-sm">
                   <span className="inline-flex rounded-full px-2 text-xs font-semibold leading-5">
                     {MinerPaymentStatus(miner)}
                   </span>
