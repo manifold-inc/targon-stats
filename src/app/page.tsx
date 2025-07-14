@@ -18,14 +18,11 @@ export default function HomePage() {
           Targon Miner Stats
         </h1>
 
-        <div className="mt-8">
+        <div className="mt-8 flex justify-between">
           <ToggleTable
             selectedTable={selectedTable}
             setSelectedTable={setSelectedTable}
           />
-        </div>
-
-        <div className="mt-6">
           <Search value={searchTerm} onChange={setSearchTerm} />
         </div>
 
