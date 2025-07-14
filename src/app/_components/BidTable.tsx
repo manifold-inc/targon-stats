@@ -18,46 +18,122 @@ const BidTable = ({ searchTerm }: BidTableProps) => {
       node.uid.toLowerCase().includes(searchTerm.toLowerCase()),
     ) || [];
 
-  // Sort by lowest to highest UUID
+  // Sort by lowest to highest price
   const sortedNodes = [...filteredNodes].sort((a, b) => {
-    const aPos = parseInt(a.uid, 10);
-    const bPos = parseInt(b.uid, 10);
-    return aPos - bPos;
+    return a.price - b.price;
   });
 
   if (isLoading) {
     return (
-      <tr>
-        <td
-          colSpan={4}
-          className="text-center text-gray-600 dark:text-gray-400"
-        >
-          Loading nodes...
-        </td>
-      </tr>
+      <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+          <thead className="bg-gray-50 dark:bg-gray-800">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                UUID
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                Bid
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                Number of GPUs
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                Payout
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                Payment Status
+              </th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
+            <tr>
+              <td
+                colSpan={5}
+                className="text-center text-gray-600 dark:text-gray-400"
+              >
+                Loading nodes...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     );
   }
 
   if (error) {
     return (
-      <tr>
-        <td colSpan={4} className="text-center text-red-600 dark:text-red-400">
-          Error loading nodes: {error.message}
-        </td>
-      </tr>
+      <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+          <thead className="bg-gray-50 dark:bg-gray-800">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                UUID
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                Bid
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                Number of GPUs
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                Payout
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                Payment Status
+              </th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
+            <tr>
+              <td
+                colSpan={5}
+                className="text-center text-red-600 dark:text-red-400"
+              >
+                Error loading nodes: {error.message}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     );
   }
 
   if (searchTerm && filteredNodes.length === 0) {
     return (
-      <tr>
-        <td
-          colSpan={4}
-          className="text-center text-gray-600 dark:text-gray-400"
-        >
-          No nodes found matching {searchTerm}
-        </td>
-      </tr>
+      <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+          <thead className="bg-gray-50 dark:bg-gray-800">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                UUID
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                Bid
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                Number of GPUs
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                Payout
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                Payment Status
+              </th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
+            <tr>
+              <td
+                colSpan={5}
+                className="text-center text-gray-600 dark:text-gray-400"
+              >
+                No nodes found matching {searchTerm}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     );
   }
 
@@ -96,7 +172,7 @@ const BidTable = ({ searchTerm }: BidTableProps) => {
                 {node.gpus}
               </td>
               <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
-                ${node.payout.toFixed(2)}
+                ${(node.payout / node.gpus / 1.233).toFixed(2)}
               </td>
               <td className="whitespace-nowrap px-6 py-4 text-sm">
                 <span className="inline-flex rounded-full px-2 text-xs font-semibold leading-5">

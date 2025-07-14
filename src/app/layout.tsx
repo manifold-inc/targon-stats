@@ -41,7 +41,9 @@ export default function RootLayout({
         <link rel="manifest" href="/site.webmanifest" />
         <link rel="icon" href="/Delta.png" />
       </head>
-      <body className={`relative bg-[#22242E] text-gray-100 transition-colors`}>
+      <body
+        className={`bg-mf-night-500 relative text-gray-100 transition-colors`}
+      >
         <WithGlobalProvider>
           <ThemeProvider attribute="class">
             <Header />
