@@ -4,10 +4,12 @@ import { useState } from "react";
 
 import BidTable from "@/app/_components/BidTable";
 import MinerTable from "@/app/_components/MinerTable";
+import Search from "@/app/_components/Search";
 import ToggleTable from "@/app/_components/ToggleTable";
 
 export default function HomePage() {
   const [selectedTable, setSelectedTable] = useState<"miner" | "bid">("miner");
+  const [searchTerm, setSearchTerm] = useState("");
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
@@ -23,8 +25,16 @@ export default function HomePage() {
           />
         </div>
 
+        <div className="mt-6">
+          <Search value={searchTerm} onChange={setSearchTerm} />
+        </div>
+
         <div className="mt-8">
-          {selectedTable === "miner" ? <MinerTable /> : <BidTable />}
+          {selectedTable === "miner" ? (
+            <MinerTable searchTerm={searchTerm} />
+          ) : (
+            <BidTable searchTerm={searchTerm} />
+          )}
         </div>
       </div>
     </div>

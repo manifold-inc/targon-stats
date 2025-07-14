@@ -2,12 +2,21 @@ import { NodePaymentStatus } from "@/app/_components/MinerDetails";
 import { type MinerNode } from "@/server/api/routers/miners";
 import { reactClient } from "@/trpc/react";
 
-const BidTable = () => {
+interface BidTableProps {
+  searchTerm: string;
+}
+
+const BidTable = ({ searchTerm }: BidTableProps) => {
   const {
     data: nodes,
     isLoading,
     error,
   } = reactClient.miners.getAllNodes.useQuery();
+
+  const filteredNodes =
+    nodes?.filter((node) =>
+      node.uid.toLowerCase().includes(searchTerm.toLowerCase()),
+    ) || [];
 
   if (isLoading) {
     return (
@@ -21,6 +30,14 @@ const BidTable = () => {
     return (
       <div className="text-center text-red-600 dark:text-red-400">
         Error loading nodes: {error.message}
+      </div>
+    );
+  }
+
+  if (searchTerm && filteredNodes.length === 0) {
+    return (
+      <div className="text-center text-gray-600 dark:text-gray-400">
+        No nodes found matching {searchTerm}
       </div>
     );
   }
@@ -48,7 +65,7 @@ const BidTable = () => {
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
-          {nodes?.map((node: MinerNode, idx: number) => (
+          {filteredNodes.map((node: MinerNode, idx: number) => (
             <tr key={idx}>
               <td className="whitespace-nowrap px-6 py-4 font-mono text-sm text-gray-900 dark:text-gray-100">
                 {node.uid}

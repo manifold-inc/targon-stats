@@ -7,6 +7,10 @@ import MinerDetails from "@/app/_components/MinerDetails";
 import { type Miner } from "@/server/api/routers/miners";
 import { reactClient } from "@/trpc/react";
 
+interface MinerTableProps {
+  searchTerm: string;
+}
+
 function MinerPaymentStatus(miner: Miner) {
   switch (true) {
     case !miner.diluted:
@@ -16,7 +20,7 @@ function MinerPaymentStatus(miner: Miner) {
   }
 }
 
-export default function MinerTable() {
+export default function MinerTable({ searchTerm }: MinerTableProps) {
   const [selectedUid, setSelectedUid] = useState<string | null>(null);
 
   const {
@@ -37,6 +41,11 @@ export default function MinerTable() {
     setSelectedUid(selectedUid === uid ? null : uid);
   };
 
+  const filteredMiners =
+    miners?.filter((miner) =>
+      miner.uid.toLowerCase().includes(searchTerm.toLowerCase()),
+    ) || [];
+
   if (isLoading) {
     return (
       <div className="text-center text-gray-600 dark:text-gray-400">
@@ -49,6 +58,14 @@ export default function MinerTable() {
     return (
       <div className="text-center text-red-600 dark:text-red-400">
         Error loading miners: {error.message}
+      </div>
+    );
+  }
+
+  if (searchTerm && filteredMiners.length === 0) {
+    return (
+      <div className="text-center text-gray-600 dark:text-gray-400">
+        No miners found matching {searchTerm}
       </div>
     );
   }
@@ -73,7 +90,7 @@ export default function MinerTable() {
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
-          {miners?.map((miner) => (
+          {filteredMiners.map((miner) => (
             <>
               <tr
                 key={miner.uid}
