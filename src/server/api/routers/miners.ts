@@ -3,10 +3,7 @@ import { z } from "zod";
 import { connectToMongoDb } from "@/schema/mongoDB";
 import { createTRPCRouter, publicAuthlessProcedure } from "@/server/api/trpc";
 
-type Auction = Record<
-  string,
-  { uid: string; price: number; gpus: number; payout: number }[]
->;
+type Auction = Record<string, MinerNode[]>;
 
 export type Miner = {
   uid: string;
@@ -16,6 +13,7 @@ export type Miner = {
   total_payout: number;
   gpus: number;
   nodes: number;
+  diluted: boolean;
 };
 
 export type MinerNode = {
@@ -23,6 +21,7 @@ export type MinerNode = {
   price: number;
   payout: number;
   gpus: number;
+  diluted: boolean;
 };
 
 async function getAuctionResults(): Promise<Auction> {
@@ -55,7 +54,9 @@ async function getAllMiners(): Promise<Miner[]> {
           total_payout: miner.payout,
           gpus: miner.gpus,
           nodes: 1,
+          diluted: miner.diluted,
         };
+        continue;
       }
       miners[miner.uid]!.total_price += miner.price;
       miners[miner.uid]!.total_payout += miner.payout;
@@ -75,15 +76,16 @@ async function getMiner(uid: string): Promise<MinerNode[]> {
   const nodes: MinerNode[] = [];
 
   for (const gpu in auction_results) {
-    const minerNodes = auction_results[gpu]?.filter((m) => m.uid === uid);
-    if (!minerNodes) continue;
-    for (const node of minerNodes) {
-      nodes.push({
-        uid: node.uid,
-        price: node.price,
-        payout: node.payout,
-        gpus: node.gpus,
-      });
+    for (const miner of auction_results[gpu]!) {
+      if (miner.uid === uid) {
+        nodes.push({
+          uid: miner.uid,
+          price: miner.price,
+          payout: miner.payout,
+          gpus: miner.gpus,
+          diluted: miner.diluted,
+        });
+      }
     }
   }
 

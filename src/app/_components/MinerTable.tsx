@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CircleCheck, CircleMinus, CircleX } from "lucide-react";
+import { CircleCheck, CircleMinus } from "lucide-react";
 
 import MinerDetails from "@/app/_components/MinerDetails";
 import { type Miner } from "@/server/api/routers/miners";
@@ -9,12 +9,10 @@ import { reactClient } from "@/trpc/react";
 
 function MinerPaymentStatus(miner: Miner) {
   switch (true) {
-    case miner.average_payout >= miner.average_price:
+    case !miner.diluted:
       return <CircleCheck className="h-4 w-4 text-green-500" />;
-    case miner.average_payout > 0 && miner.average_payout < miner.average_price:
+    case miner.diluted:
       return <CircleMinus className="h-4 w-4 text-yellow-500" />;
-    default:
-      return <CircleX className="h-4 w-4 text-red-500" />;
   }
 }
 
