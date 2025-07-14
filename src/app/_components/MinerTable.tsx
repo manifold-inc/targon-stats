@@ -37,8 +37,6 @@ export default function MinerTable({ searchTerm }: MinerTableProps) {
     enabled: !!selectedUid,
   });
 
-  console.log("Miners: ", miners);
-
   const handleRowClick = (uid: string) => {
     setSelectedUid(selectedUid === uid ? null : uid);
   };
