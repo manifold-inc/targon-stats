@@ -7,6 +7,17 @@ import MinerDetails from "@/app/_components/MinerDetails";
 import { type Miner } from "@/server/api/routers/miners";
 import { reactClient } from "@/trpc/react";
 
+function MinerPaymentStatus(miner: Miner) {
+  switch (true) {
+    case miner.average_payout >= miner.average_price:
+      return <CircleCheck className="h-4 w-4 text-green-500" />;
+    case miner.average_payout > 0 && miner.average_payout < miner.average_price:
+      return <CircleMinus className="h-4 w-4 text-yellow-500" />;
+    default:
+      return <CircleX className="h-4 w-4 text-red-500" />;
+  }
+}
+
 export default function MinerTable() {
   const [selectedUid, setSelectedUid] = useState<string | null>(null);
 
@@ -16,23 +27,16 @@ export default function MinerTable() {
     error,
   } = reactClient.miners.getAllMiners.useQuery();
 
-  const getMinerQuery = reactClient.miners.getMiner.useQuery(selectedUid!, {
+  const {
+    data: minerNodes,
+    isLoading: isMinerNodesLoading,
+    error: minerNodesError,
+  } = reactClient.miners.getMiner.useQuery(selectedUid!, {
     enabled: !!selectedUid,
   });
 
   const handleRowClick = (uid: string) => {
     setSelectedUid(selectedUid === uid ? null : uid);
-  };
-
-  const paymentStatus = (miner: Miner) => {
-    switch (true) {
-      case miner.average_payout >= miner.average_price:
-        return <CircleCheck className="h-4 w-4 text-green-500" />;
-      case miner.average_payout > 0:
-        return <CircleMinus className="h-4 w-4 text-yellow-500" />;
-      default:
-        return <CircleX className="h-4 w-4 text-red-500" />;
-    }
   };
 
   if (isLoading) {
@@ -93,21 +97,19 @@ export default function MinerTable() {
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-sm">
                   <span className="inline-flex rounded-full px-2 text-xs font-semibold leading-5">
-                    {paymentStatus(miner)}
+                    {MinerPaymentStatus(miner)}
                   </span>
                 </td>
               </tr>
-              {/* Expanded details row */}
+
               {selectedUid === miner.uid && (
                 <tr>
-                  <td colSpan={4} className="bg-gray-50 dark:bg-gray-800">
-                    <div className="px-6 py-4">
-                      <MinerDetails
-                        minerInstances={getMinerQuery.data || []}
-                        isLoading={getMinerQuery.isLoading}
-                        error={getMinerQuery.error as Error | null}
-                      />
-                    </div>
+                  <td colSpan={4}>
+                    <MinerDetails
+                      minerNodes={minerNodes || []}
+                      isLoading={isMinerNodesLoading}
+                      error={minerNodesError as Error | null}
+                    />
                   </td>
                 </tr>
               )}
