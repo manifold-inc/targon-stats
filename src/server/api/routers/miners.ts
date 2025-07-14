@@ -24,7 +24,7 @@ export type MinerNode = {
   diluted: boolean;
 };
 
-async function getAuctionResults(): Promise<Auction> {
+async function getAllBids(): Promise<MinerNode[]> {
   const mongoDb = await connectToMongoDb();
   if (!mongoDb) throw new Error("Failed to connect to MongoDB");
 
@@ -35,12 +35,36 @@ async function getAuctionResults(): Promise<Auction> {
     .sort({ block: -1 })
     .limit(1)
     .toArray();
+  const auction_results = data[0]?.auction_results as unknown as Auction;
+  const miners: MinerNode[] = [];
+  for (const gpu in auction_results) {
+    for (const miner of auction_results[gpu]!) {
+      const minernode = {
+        gpus: miner.gpus,
+        payout: miner.payout,
+        uid: miner.uid,
+        price: miner.price,
+        diluted: miner.diluted,
+      } as MinerNode;
+      miners.push(minernode);
+    }
+  }
 
-  return data[0]?.auction_results as unknown as Auction;
+  return miners;
 }
 
 async function getAllMiners(): Promise<Miner[]> {
-  const auction_results = await getAuctionResults();
+  const mongoDb = await connectToMongoDb();
+  if (!mongoDb) throw new Error("Failed to connect to MongoDB");
+
+  const data = await mongoDb
+    .collection("miner_info")
+    .find({ auction_results: { $exists: true, $ne: [] } })
+    .project({ auction_results: 1, _id: 0 })
+    .sort({ block: -1 })
+    .limit(1)
+    .toArray();
+  const auction_results = data[0]?.auction_results as unknown as Auction;
   const miners: Record<string, Miner> = {};
 
   for (const gpu in auction_results) {
@@ -72,37 +96,8 @@ async function getAllMiners(): Promise<Miner[]> {
 }
 
 async function getMiner(uid: string): Promise<MinerNode[]> {
-  const auction_results = await getAuctionResults();
-  const nodes: MinerNode[] = [];
-
-  for (const gpu in auction_results) {
-    for (const miner of auction_results[gpu]!) {
-      if (miner.uid === uid) {
-        nodes.push({
-          uid: miner.uid,
-          price: miner.price,
-          payout: miner.payout,
-          gpus: miner.gpus,
-          diluted: miner.diluted,
-        });
-      }
-    }
-  }
-
-  return nodes;
-}
-
-async function getAllNodes(): Promise<MinerNode[]> {
-  const auction_results = await getAuctionResults();
-  const nodes: MinerNode[] = [];
-
-  for (const gpu in auction_results) {
-    for (const miner of auction_results[gpu]!) {
-      nodes.push(miner);
-    }
-  }
-
-  return nodes;
+  const auction_results = await getAllBids();
+  return auction_results.filter((b) => b.uid === uid);
 }
 
 export const minersRouter = createTRPCRouter({
@@ -117,6 +112,6 @@ export const minersRouter = createTRPCRouter({
     }),
 
   getAllNodes: publicAuthlessProcedure.query(async () => {
-    return await getAllNodes();
+    return await getAllBids();
   }),
 });
