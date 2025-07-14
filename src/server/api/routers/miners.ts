@@ -24,7 +24,7 @@ export type MinerNode = {
   diluted: boolean;
 };
 
-async function getAllBids(): Promise<MinerNode[]> {
+export async function getAllBids(): Promise<MinerNode[]> {
   const mongoDb = await connectToMongoDb();
   if (!mongoDb) throw new Error("Failed to connect to MongoDB");
 
@@ -53,7 +53,7 @@ async function getAllBids(): Promise<MinerNode[]> {
   return miners;
 }
 
-async function getAllMiners(): Promise<Miner[]> {
+export async function getAllMiners(): Promise<Miner[]> {
   const mongoDb = await connectToMongoDb();
   if (!mongoDb) throw new Error("Failed to connect to MongoDB");
 
@@ -95,7 +95,7 @@ async function getAllMiners(): Promise<Miner[]> {
   }));
 }
 
-async function getMiner(uid: string): Promise<MinerNode[]> {
+export async function getMiner(uid: string): Promise<MinerNode[]> {
   const auction_results = await getAllBids();
   return auction_results.filter((b) => b.uid === uid);
 }

@@ -37,6 +37,12 @@ const Header = () => {
           >
             Home
           </Link>
+          <Link
+            href="/docs"
+            className="text-sm/6 font-semibold text-gray-900 dark:text-gray-100"
+          >
+            API Docs
+          </Link>
         </div>
       </nav>
 
@@ -70,6 +76,13 @@ const Header = () => {
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Home
+                </Link>
+                <Link
+                  href="/docs"
+                  className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50 dark:text-gray-100 dark:hover:bg-neutral-800"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  API Docs
                 </Link>
               </div>
             </div>
