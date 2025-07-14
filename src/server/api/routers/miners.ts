@@ -32,7 +32,7 @@ async function getAuctionResults(): Promise<Auction> {
     .collection("miner_info")
     .find({ auction_results: { $exists: true, $ne: [] } })
     .project({ auction_results: 1, _id: 0 })
-    .sort({ createdAt: -1 })
+    .sort({ block: -1 })
     .limit(1)
     .toArray();
 
