@@ -1,8 +1,16 @@
 "use client";
 
+import { useState } from "react";
+
+import BuyoutTable from "@/app/_components/BuyoutTable";
 import MinerTable from "@/app/_components/MinerTable";
+import ToggleTable from "@/app/_components/ToggleTable";
 
 export default function HomePage() {
+  const [selectedTable, setSelectedTable] = useState<"miners" | "buyout">(
+    "miners",
+  );
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-4xl">
@@ -11,7 +19,14 @@ export default function HomePage() {
         </h1>
 
         <div className="mt-8">
-          <MinerTable />
+          <ToggleTable
+            selectedTable={selectedTable}
+            setSelectedTable={setSelectedTable}
+          />
+        </div>
+
+        <div className="mt-8">
+          {selectedTable === "miners" ? <MinerTable /> : <BuyoutTable />}
         </div>
       </div>
     </div>

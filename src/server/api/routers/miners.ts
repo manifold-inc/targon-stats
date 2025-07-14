@@ -92,6 +92,19 @@ async function getMiner(uid: string): Promise<MinerNode[]> {
   return nodes;
 }
 
+async function getAllNodes(): Promise<MinerNode[]> {
+  const auction_results = await getAuctionResults();
+  const nodes: MinerNode[] = [];
+
+  for (const gpu in auction_results) {
+    for (const miner of auction_results[gpu]!) {
+      nodes.push(miner);
+    }
+  }
+
+  return nodes;
+}
+
 export const minersRouter = createTRPCRouter({
   getAllMiners: publicAuthlessProcedure.query(async () => {
     return await getAllMiners();
@@ -102,4 +115,8 @@ export const minersRouter = createTRPCRouter({
     .query(async ({ input }) => {
       return await getMiner(input);
     }),
+
+  getAllNodes: publicAuthlessProcedure.query(async () => {
+    return await getAllNodes();
+  }),
 });

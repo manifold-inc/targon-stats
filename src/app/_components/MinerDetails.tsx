@@ -8,7 +8,7 @@ interface MinerDetailsProps {
   error: Error | null;
 }
 
-function InstancePaymentStatus(miner: MinerNode) {
+export function NodePaymentStatus(miner: MinerNode) {
   switch (true) {
     case !miner.diluted:
       return <CircleCheck className="h-4 w-4 text-green-500" />;
@@ -66,7 +66,7 @@ export default function MinerDetails({
           </td>
           <td className="whitespace-nowrap px-6 py-4 text-sm">
             <span className="inline-flex rounded-full px-2 text-xs font-semibold leading-5">
-              {InstancePaymentStatus(node)}
+              {NodePaymentStatus(node)}
             </span>
           </td>
         </tr>
