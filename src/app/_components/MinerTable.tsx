@@ -29,6 +29,7 @@ export default function MinerTable({ searchTerm }: MinerTableProps) {
     error,
   } = reactClient.miners.getAllMiners.useQuery();
 
+  console.log(miners);
   const {
     data: minerNodes,
     isLoading: isMinerNodesLoading,
@@ -163,6 +164,9 @@ export default function MinerTable({ searchTerm }: MinerTableProps) {
               Average Bid
             </th>
             <th className="px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+              Average Payout
+            </th>
+            <th className="px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
               Number of Nodes
             </th>
             <th className="px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
@@ -185,7 +189,10 @@ export default function MinerTable({ searchTerm }: MinerTableProps) {
                   {miner.uid}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-end text-sm text-gray-900 dark:text-gray-100">
-                  {`$${(miner.average_price / 100).toFixed(2)}`}/h
+                  ${(miner.average_price / 100).toFixed(2)}/h
+                </td>
+                <td className="whitespace-nowrap px-6 py-4 text-end text-sm text-gray-900 dark:text-gray-100">
+                  ${(miner.average_payout / 1.233).toFixed(2)}/h
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-end text-sm text-gray-900 dark:text-gray-100">
                   {miner.nodes}
