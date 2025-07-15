@@ -1,29 +1,31 @@
 "use client";
 
-import React, { useState } from "react";
-import { CircleCheck, CircleMinus } from "lucide-react";
+import { Fragment, useEffect, useState } from "react";
 
 import MinerDetails from "@/app/_components/MinerDetails";
-import { type Miner } from "@/server/api/routers/miners";
+import PaymentStatusIcon from "@/app/_components/PaymentStatusIcon";
 import { reactClient } from "@/trpc/react";
 
 interface MinerTableProps {
   searchTerm: string;
+  selectedMinerUid: string | null;
+  onSelectedMinerChange: (uid: string | null) => void;
 }
 
-function MinerPaymentStatus(miner: Miner) {
-  switch (true) {
-    case !miner.diluted:
-      return <CircleCheck className="h-4 w-4 text-green-500" />;
-    case miner.diluted:
-      return <CircleMinus className="h-4 w-4 text-yellow-500" />;
-  }
-}
-
-export default function MinerTable({ searchTerm }: MinerTableProps) {
+export default function MinerTable({
+  searchTerm,
+  selectedMinerUid,
+  onSelectedMinerChange,
+}: MinerTableProps) {
   const [selectedMinerUids, setSelectedMinerUids] = useState<Set<string>>(
     new Set(),
   );
+
+  useEffect(() => {
+    if (selectedMinerUid) {
+      setSelectedMinerUids(new Set([selectedMinerUid]));
+    }
+  }, [selectedMinerUid]);
 
   const {
     data: miners,
@@ -38,11 +40,14 @@ export default function MinerTable({ searchTerm }: MinerTableProps) {
   } = reactClient.bids.getAllBids.useQuery();
 
   const handleRowClick = (uid: string) => {
-    setSelectedMinerUids((prev) =>
-      prev.has(uid)
-        ? new Set([...prev].filter((id) => id !== uid))
-        : new Set([...prev, uid]),
-    );
+    const filteredMinerUids = selectedMinerUids.has(uid)
+      ? new Set([...selectedMinerUids].filter((id) => id !== uid))
+      : new Set([...selectedMinerUids, uid]);
+    setSelectedMinerUids(filteredMinerUids);
+
+    const selectedMinerUid = Array.from(filteredMinerUids)[0];
+    if (!selectedMinerUid) return;
+    onSelectedMinerChange(selectedMinerUid);
   };
 
   const filteredMiners =
@@ -52,7 +57,7 @@ export default function MinerTable({ searchTerm }: MinerTableProps) {
 
   if (isLoading) {
     return (
-      <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+      <div className="rounded-lg border border-gray-200 dark:border-gray-700">
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
           <thead className="bg-gray-50 dark:bg-gray-800">
             <tr>
@@ -87,7 +92,7 @@ export default function MinerTable({ searchTerm }: MinerTableProps) {
 
   if (error) {
     return (
-      <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+      <div className="rounded-lg border border-gray-200 dark:border-gray-700">
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
           <thead className="bg-gray-50 dark:bg-gray-800">
             <tr>
@@ -122,7 +127,7 @@ export default function MinerTable({ searchTerm }: MinerTableProps) {
 
   if (searchTerm && filteredMiners.length === 0) {
     return (
-      <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+      <div className="rounded-lg border border-gray-200 dark:border-gray-700">
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
           <thead className="bg-gray-50 dark:bg-gray-800">
             <tr>
@@ -156,7 +161,7 @@ export default function MinerTable({ searchTerm }: MinerTableProps) {
   }
 
   return (
-    <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+    <div className="rounded-lg border border-gray-200 dark:border-gray-700">
       <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
         <thead className="bg-gray-50 dark:bg-gray-800">
           <tr>
@@ -179,7 +184,7 @@ export default function MinerTable({ searchTerm }: MinerTableProps) {
         </thead>
         <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
           {filteredMiners.map((miner) => (
-            <React.Fragment key={miner.uid}>
+            <Fragment key={miner.uid}>
               <tr
                 className={`cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 ${
                   selectedMinerUids.has(miner.uid)
@@ -201,8 +206,8 @@ export default function MinerTable({ searchTerm }: MinerTableProps) {
                   {miner.nodes}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-end text-sm">
-                  <span className="inline-flex rounded-full px-2 text-xs font-semibold leading-5">
-                    {MinerPaymentStatus(miner)}
+                  <span className="px-2">
+                    <PaymentStatusIcon miner={miner} />
                   </span>
                 </td>
               </tr>
@@ -216,7 +221,7 @@ export default function MinerTable({ searchTerm }: MinerTableProps) {
                   error={minerNodesError as Error | null}
                 />
               )}
-            </React.Fragment>
+            </Fragment>
           ))}
         </tbody>
       </table>
