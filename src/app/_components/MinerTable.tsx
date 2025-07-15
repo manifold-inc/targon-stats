@@ -29,7 +29,6 @@ export default function MinerTable({ searchTerm }: MinerTableProps) {
     error,
   } = reactClient.miners.getAllMiners.useQuery();
 
-  console.log(miners);
   const {
     data: minerNodes,
     isLoading: isMinerNodesLoading,
