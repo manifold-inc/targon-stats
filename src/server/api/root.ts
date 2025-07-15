@@ -1,6 +1,7 @@
 import { type inferReactQueryProcedureOptions } from "@trpc/react-query";
 import { type inferRouterInputs, type inferRouterOutputs } from "@trpc/server";
 
+import { bidsRouter } from "@/server/api/routers/bids";
 import { minersRouter } from "@/server/api/routers/miners";
 import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
 
@@ -12,6 +13,7 @@ import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
 
 export const appRouter = createTRPCRouter({
   miners: minersRouter,
+  bids: bidsRouter,
 });
 
 export type ReactQueryOptions = inferReactQueryProcedureOptions<AppRouter>;

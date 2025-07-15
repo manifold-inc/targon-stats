@@ -42,7 +42,7 @@ export default function RootLayout({
         <link rel="icon" href="/Delta.png" />
       </head>
       <body
-        className={`bg-mf-night-500 relative text-gray-100 transition-colors`}
+        className={`relative bg-mf-night-500 text-gray-100 transition-colors`}
       >
         <WithGlobalProvider>
           <ThemeProvider attribute="class">

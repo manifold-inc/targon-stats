@@ -1,27 +1,31 @@
 "use client";
 
-import React, { useState } from "react";
-import { CircleCheck, CircleMinus } from "lucide-react";
+import { Fragment, useEffect, useState } from "react";
 
 import MinerDetails from "@/app/_components/MinerDetails";
-import { type Miner } from "@/server/api/routers/miners";
+import PaymentStatusIcon from "@/app/_components/PaymentStatusIcon";
 import { reactClient } from "@/trpc/react";
 
 interface MinerTableProps {
   searchTerm: string;
+  selectedMinerUid: string | null;
+  onSelectedMinerChange: (uid: string | null) => void;
 }
 
-function MinerPaymentStatus(miner: Miner) {
-  switch (true) {
-    case !miner.diluted:
-      return <CircleCheck className="h-4 w-4 text-green-500" />;
-    case miner.diluted:
-      return <CircleMinus className="h-4 w-4 text-yellow-500" />;
-  }
-}
+export default function MinerTable({
+  searchTerm,
+  selectedMinerUid,
+  onSelectedMinerChange,
+}: MinerTableProps) {
+  const [selectedMinerUids, setSelectedMinerUids] = useState<Set<string>>(
+    new Set(),
+  );
 
-export default function MinerTable({ searchTerm }: MinerTableProps) {
-  const [selectedUid, setSelectedUid] = useState<string | null>(null);
+  useEffect(() => {
+    if (selectedMinerUid) {
+      setSelectedMinerUids(new Set([selectedMinerUid]));
+    }
+  }, [selectedMinerUid]);
 
   const {
     data: miners,
@@ -33,12 +37,17 @@ export default function MinerTable({ searchTerm }: MinerTableProps) {
     data: minerNodes,
     isLoading: isMinerNodesLoading,
     error: minerNodesError,
-  } = reactClient.miners.getMiner.useQuery(selectedUid!, {
-    enabled: !!selectedUid,
-  });
+  } = reactClient.bids.getAllBids.useQuery();
 
   const handleRowClick = (uid: string) => {
-    setSelectedUid(selectedUid === uid ? null : uid);
+    const filteredMinerUids = selectedMinerUids.has(uid)
+      ? new Set([...selectedMinerUids].filter((id) => id !== uid))
+      : new Set([...selectedMinerUids, uid]);
+    setSelectedMinerUids(filteredMinerUids);
+
+    const selectedMinerUid = Array.from(filteredMinerUids)[0];
+    if (!selectedMinerUid) return;
+    onSelectedMinerChange(selectedMinerUid);
   };
 
   const filteredMiners =
@@ -48,7 +57,7 @@ export default function MinerTable({ searchTerm }: MinerTableProps) {
 
   if (isLoading) {
     return (
-      <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+      <div className="rounded-lg border border-gray-200 dark:border-gray-700">
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
           <thead className="bg-gray-50 dark:bg-gray-800">
             <tr>
@@ -83,7 +92,7 @@ export default function MinerTable({ searchTerm }: MinerTableProps) {
 
   if (error) {
     return (
-      <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+      <div className="rounded-lg border border-gray-200 dark:border-gray-700">
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
           <thead className="bg-gray-50 dark:bg-gray-800">
             <tr>
@@ -118,7 +127,7 @@ export default function MinerTable({ searchTerm }: MinerTableProps) {
 
   if (searchTerm && filteredMiners.length === 0) {
     return (
-      <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+      <div className="rounded-lg border border-gray-200 dark:border-gray-700">
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
           <thead className="bg-gray-50 dark:bg-gray-800">
             <tr>
@@ -152,15 +161,18 @@ export default function MinerTable({ searchTerm }: MinerTableProps) {
   }
 
   return (
-    <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+    <div className="rounded-lg border border-gray-200 dark:border-gray-700">
       <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
         <thead className="bg-gray-50 dark:bg-gray-800">
           <tr>
             <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
               UUID
             </th>
-            <th className="px-6 py-3 text-xs font-medium text-end uppercase tracking-wider text-gray-500 dark:text-gray-400">
+            <th className="px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
               Average Bid
+            </th>
+            <th className="px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+              Average Payout
             </th>
             <th className="px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
               Number of Nodes
@@ -172,10 +184,10 @@ export default function MinerTable({ searchTerm }: MinerTableProps) {
         </thead>
         <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
           {filteredMiners.map((miner) => (
-            <React.Fragment key={miner.uid}>
+            <Fragment key={miner.uid}>
               <tr
                 className={`cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 ${
-                  selectedUid === miner.uid
+                  selectedMinerUids.has(miner.uid)
                     ? "bg-blue-50 dark:bg-blue-900/20"
                     : ""
                 }`}
@@ -184,27 +196,32 @@ export default function MinerTable({ searchTerm }: MinerTableProps) {
                 <td className="whitespace-nowrap px-6 py-4 font-mono text-sm text-gray-900 dark:text-gray-100">
                   {miner.uid}
                 </td>
-                <td className="whitespace-nowrap px-6 text-end py-4 text-sm text-gray-900 dark:text-gray-100">
-                  {`$${(miner.average_price / 100).toFixed(2)}`}/h
+                <td className="whitespace-nowrap px-6 py-4 text-end text-sm text-gray-900 dark:text-gray-100">
+                  ${(miner.average_price / 100).toFixed(2)}/h
                 </td>
-                <td className="whitespace-nowrap text-end px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
+                <td className="whitespace-nowrap px-6 py-4 text-end text-sm text-gray-900 dark:text-gray-100">
+                  ${miner.average_payout.toFixed(2)}/h
+                </td>
+                <td className="whitespace-nowrap px-6 py-4 text-end text-sm text-gray-900 dark:text-gray-100">
                   {miner.nodes}
                 </td>
-                <td className="whitespace-nowrap text-end px-6 py-4 text-sm">
-                  <span className="inline-flex rounded-full px-2 text-xs font-semibold leading-5">
-                    {MinerPaymentStatus(miner)}
+                <td className="whitespace-nowrap px-6 py-4 text-end text-sm">
+                  <span className="px-2">
+                    <PaymentStatusIcon miner={miner} />
                   </span>
                 </td>
               </tr>
 
-              {selectedUid === miner.uid && (
+              {selectedMinerUids.has(miner.uid) && (
                 <MinerDetails
-                  minerNodes={minerNodes || []}
+                  minerNodes={
+                    minerNodes?.filter((bid) => bid.uid === miner.uid) || []
+                  }
                   isLoading={isMinerNodesLoading}
                   error={minerNodesError as Error | null}
                 />
               )}
-            </React.Fragment>
+            </Fragment>
           ))}
         </tbody>
       </table>
