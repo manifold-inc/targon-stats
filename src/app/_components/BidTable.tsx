@@ -1,4 +1,4 @@
-import { NodePaymentStatus } from "@/app/_components/MinerDetails";
+import NodePaymentStatusIcon from "@/app/_components/NodePaymentStatusIcon";
 import { type MinerNode } from "@/server/api/routers/bids";
 import { reactClient } from "@/trpc/react";
 
@@ -180,8 +180,8 @@ const BidTable = ({ searchTerm, onNavigateToMiner }: BidTableProps) => {
                 {node.gpus}
               </td>
               <td className="whitespace-nowrap px-6 py-4 text-end text-sm">
-                <span className="inline-flex rounded-full px-2 text-end text-xs font-semibold leading-5">
-                  {NodePaymentStatus(node)}
+                <span className="px-2">
+                  <NodePaymentStatusIcon node={node} />
                 </span>
               </td>
             </tr>

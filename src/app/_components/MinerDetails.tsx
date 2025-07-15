@@ -1,20 +1,10 @@
-import { CircleCheck, CircleMinus } from "lucide-react";
-
+import NodePaymentStatusIcon from "@/app/_components/NodePaymentStatusIcon";
 import { type MinerNode } from "@/server/api/routers/bids";
 
 interface MinerDetailsProps {
   minerNodes: MinerNode[];
   isLoading: boolean;
   error: Error | null;
-}
-
-export function NodePaymentStatus(miner: MinerNode) {
-  switch (true) {
-    case !miner.diluted:
-      return <CircleCheck className="h-4 w-4 text-green-500" />;
-    case miner.diluted:
-      return <CircleMinus className="h-4 w-4 text-yellow-500" />;
-  }
 }
 
 export default function MinerDetails({
@@ -79,8 +69,8 @@ export default function MinerDetails({
             {node.gpus}
           </td>
           <td className="whitespace-nowrap px-6 py-4 text-end text-sm dark:border-gray-700">
-            <span className="inline-flex rounded-full px-2 text-xs font-semibold leading-5">
-              {NodePaymentStatus(node)}
+            <span className="px-2">
+              <NodePaymentStatusIcon node={node} />
             </span>
           </td>
         </tr>
