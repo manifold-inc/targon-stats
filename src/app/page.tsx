@@ -29,6 +29,7 @@ export default function HomePage() {
           <ToggleTable
             selectedTable={selectedTable}
             setSelectedTable={setSelectedTable}
+            onTableChange={() => setSearchTerm("")}
           />
           <Search value={searchTerm} onChange={setSearchTerm} />
         </div>
