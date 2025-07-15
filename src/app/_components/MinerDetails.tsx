@@ -26,7 +26,7 @@ export default function MinerDetails({
     return (
       <tr>
         <td
-          colSpan={4}
+          colSpan={5}
           className="py-4 text-center text-gray-600 dark:text-gray-400"
         >
           Loading miner details...
@@ -39,7 +39,7 @@ export default function MinerDetails({
     return (
       <tr>
         <td
-          colSpan={4}
+          colSpan={5}
           className="py-4 text-center text-red-600 dark:text-red-400"
         >
           Error loading miner details: {error.message}
@@ -52,7 +52,7 @@ export default function MinerDetails({
     return (
       <tr>
         <td
-          colSpan={4}
+          colSpan={5}
           className="py-4 text-center text-gray-600 dark:text-gray-400"
         >
           No details found for this miner.
@@ -67,7 +67,10 @@ export default function MinerDetails({
         <tr key={index} className="border-none bg-gray-50 dark:bg-gray-800/50">
           <td className="whitespace-nowrap px-6 py-4 dark:bg-gray-900"></td>
           <td className="whitespace-nowrap border-l border-t border-gray-200 px-6 py-4 text-end text-sm text-gray-900 dark:border-gray-700 dark:text-gray-100">
-            ${(node.price / 100).toFixed(2)}
+            ${(node.price / 100).toFixed(2)}/h
+          </td>
+          <td className="whitespace-nowrap border-t border-gray-200 px-6 py-4 text-end text-sm text-gray-900 dark:border-gray-700 dark:text-gray-100">
+            ${node.payout.toFixed(2)}/h
           </td>
           <td className="whitespace-nowrap border-t border-gray-200 px-6 py-4 text-end text-sm text-gray-900 dark:border-gray-700 dark:text-gray-100">
             {node.gpus}
