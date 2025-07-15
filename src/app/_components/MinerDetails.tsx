@@ -64,18 +64,21 @@ export default function MinerDetails({
   return (
     <>
       {minerNodes.map((node, index) => (
-        <tr key={index} className="border-none bg-gray-50 dark:bg-gray-800/50">
+        <tr
+          key={index}
+          className="divide-y divide-gray-200 border-none bg-gray-50 dark:divide-gray-700 dark:bg-gray-800/50"
+        >
           <td className="whitespace-nowrap px-6 py-4 dark:bg-gray-900"></td>
-          <td className="whitespace-nowrap border-l border-t border-gray-200 px-6 py-4 text-end text-sm text-gray-900 dark:border-gray-700 dark:text-gray-100">
+          <td className="whitespace-nowrap px-6 py-4 text-end text-sm text-gray-900 dark:border-gray-700 dark:text-gray-100">
             ${(node.price / 100).toFixed(2)}/h
           </td>
-          <td className="whitespace-nowrap border-t border-gray-200 px-6 py-4 text-end text-sm text-gray-900 dark:border-gray-700 dark:text-gray-100">
+          <td className="whitespace-nowrap px-6 py-4 text-end text-sm text-gray-900 dark:border-gray-700 dark:text-gray-100">
             ${node.payout.toFixed(2)}/h
           </td>
-          <td className="whitespace-nowrap border-t border-gray-200 px-6 py-4 text-end text-sm text-gray-900 dark:border-gray-700 dark:text-gray-100">
+          <td className="whitespace-nowrap px-6 py-4 text-end text-sm text-gray-900 dark:border-gray-700 dark:text-gray-100">
             {node.gpus}
           </td>
-          <td className="whitespace-nowrap border-r border-t border-gray-200 px-6 py-4 text-end text-sm dark:border-gray-700">
+          <td className="whitespace-nowrap px-6 py-4 text-end text-sm dark:border-gray-700">
             <span className="inline-flex rounded-full px-2 text-xs font-semibold leading-5">
               {NodePaymentStatus(node)}
             </span>
