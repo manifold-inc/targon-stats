@@ -26,7 +26,7 @@ const BidTable = ({ searchTerm, onNavigateToMiner }: BidTableProps) => {
 
   if (isLoading) {
     return (
-      <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+      <div className="rounded-lg border border-gray-200 dark:border-gray-700">
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
           <thead className="bg-gray-50 dark:bg-gray-800">
             <tr>
@@ -102,7 +102,7 @@ const BidTable = ({ searchTerm, onNavigateToMiner }: BidTableProps) => {
 
   if (searchTerm && filteredNodes.length === 0) {
     return (
-      <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+      <div className="rounded-lg border border-gray-200 dark:border-gray-700">
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
           <thead className="bg-gray-50 dark:bg-gray-800">
             <tr>
@@ -139,7 +139,7 @@ const BidTable = ({ searchTerm, onNavigateToMiner }: BidTableProps) => {
   }
 
   return (
-    <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+    <div className="rounded-lg border border-gray-200 dark:border-gray-700">
       <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
         <thead className="bg-gray-50 dark:bg-gray-800">
           <tr>

@@ -16,21 +16,16 @@ export default function NodePaymentStatusIcon({
     if (!node.diluted) {
       return {
         icon: <CircleCheck className="h-4 w-4 text-green-500" />,
-        tooltip: "Payment received - Node is active and receiving payments",
+        tooltip: "Individual node received full payment",
       };
     } else {
       return {
         icon: <CircleMinus className="h-4 w-4 text-yellow-500" />,
-        tooltip: "Payment diluted - Node payments have been reduced",
+        tooltip: "Individual node received a diluted payment",
       };
     }
   };
-
   const { icon, tooltip } = getStatusInfo();
 
-  return (
-    <Tooltip content={tooltip} position="top">
-      {icon}
-    </Tooltip>
-  );
+  return <Tooltip content={tooltip}>{icon}</Tooltip>;
 }
