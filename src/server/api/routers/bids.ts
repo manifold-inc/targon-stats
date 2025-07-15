@@ -40,8 +40,28 @@ export async function getAllBids(): Promise<MinerNode[]> {
   return miners;
 }
 
+export async function getMaxBid(): Promise<number> {
+  const mongoDb = await connectToMongoDb();
+  if (!mongoDb) throw new Error("Failed to connect to MongoDB");
+
+  const data = await mongoDb
+    .collection("miner_info")
+    .find({})
+    .sort({ block: -1 })
+    .limit(1)
+    .toArray();
+  if (!data[0]) throw new Error("Failed to get most recent block");
+  if (!data[0].max_bid) throw new Error("Failed to get max bid");
+
+  return data[0].max_bid as number;
+}
+
 export const bidsRouter = createTRPCRouter({
   getAllBids: publicAuthlessProcedure.query(async () => {
     return await getAllBids();
+  }),
+
+  getMaxBid: publicAuthlessProcedure.query(async () => {
+    return await getMaxBid();
   }),
 });

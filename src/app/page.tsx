@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import BidTable from "@/app/_components/BidTable";
 import CurrentBlock from "@/app/_components/CurrentBlock";
+import MaxBid from "@/app/_components/MaxBid";
 import MinerTable from "@/app/_components/MinerTable";
 import Search from "@/app/_components/Search";
 import ToggleTable from "@/app/_components/ToggleTable";
@@ -35,8 +36,9 @@ export default function HomePage() {
           <Search value={searchTerm} onChange={setSearchTerm} />
         </div>
 
-        <div className="mt-4">
+        <div className="mt-4 flex justify-between">
           <CurrentBlock />
+          <MaxBid />
         </div>
 
         <div className="mt-8">
