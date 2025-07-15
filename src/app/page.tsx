@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import BidTable from "@/app/_components/BidTable";
+import CurrentBlock from "@/app/_components/CurrentBlock";
 import MinerTable from "@/app/_components/MinerTable";
 import Search from "@/app/_components/Search";
 import ToggleTable from "@/app/_components/ToggleTable";
@@ -32,6 +33,10 @@ export default function HomePage() {
             onTableChange={() => setSearchTerm("")}
           />
           <Search value={searchTerm} onChange={setSearchTerm} />
+        </div>
+
+        <div className="mt-4">
+          <CurrentBlock />
         </div>
 
         <div className="mt-8">
