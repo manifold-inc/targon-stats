@@ -21,7 +21,9 @@ function MinerPaymentStatus(miner: Miner) {
 }
 
 export default function MinerTable({ searchTerm }: MinerTableProps) {
-  const [selectedUid, setSelectedUid] = useState<string | null>(null);
+  const [selectedMinerUids, setSelectedMinerUids] = useState<Set<string>>(
+    new Set(),
+  );
 
   const {
     data: miners,
@@ -30,15 +32,17 @@ export default function MinerTable({ searchTerm }: MinerTableProps) {
   } = reactClient.miners.getAllMiners.useQuery();
 
   const {
-    data: minerNodes,
+    data: allMinerNodes,
     isLoading: isMinerNodesLoading,
     error: minerNodesError,
-  } = reactClient.miners.getMiner.useQuery(selectedUid!, {
-    enabled: !!selectedUid,
-  });
+  } = reactClient.bids.getAllBids.useQuery();
 
   const handleRowClick = (uid: string) => {
-    setSelectedUid(selectedUid === uid ? null : uid);
+    setSelectedMinerUids((prev) =>
+      prev.has(uid)
+        ? new Set([...prev].filter((id) => id !== uid))
+        : new Set([...prev, uid]),
+    );
   };
 
   const filteredMiners =
@@ -178,7 +182,7 @@ export default function MinerTable({ searchTerm }: MinerTableProps) {
             <React.Fragment key={miner.uid}>
               <tr
                 className={`cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 ${
-                  selectedUid === miner.uid
+                  selectedMinerUids.has(miner.uid)
                     ? "bg-blue-50 dark:bg-blue-900/20"
                     : ""
                 }`}
@@ -203,9 +207,11 @@ export default function MinerTable({ searchTerm }: MinerTableProps) {
                 </td>
               </tr>
 
-              {selectedUid === miner.uid && (
+              {selectedMinerUids.has(miner.uid) && (
                 <MinerDetails
-                  minerNodes={minerNodes || []}
+                  minerNodes={
+                    allMinerNodes?.filter((bid) => bid.uid === miner.uid) || []
+                  }
                   isLoading={isMinerNodesLoading}
                   error={minerNodesError as Error | null}
                 />
