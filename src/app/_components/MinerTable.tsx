@@ -32,7 +32,7 @@ export default function MinerTable({ searchTerm }: MinerTableProps) {
   } = reactClient.miners.getAllMiners.useQuery();
 
   const {
-    data: allMinerNodes,
+    data: minerNodes,
     isLoading: isMinerNodesLoading,
     error: minerNodesError,
   } = reactClient.bids.getAllBids.useQuery();
@@ -210,7 +210,7 @@ export default function MinerTable({ searchTerm }: MinerTableProps) {
               {selectedMinerUids.has(miner.uid) && (
                 <MinerDetails
                   minerNodes={
-                    allMinerNodes?.filter((bid) => bid.uid === miner.uid) || []
+                    minerNodes?.filter((bid) => bid.uid === miner.uid) || []
                   }
                   isLoading={isMinerNodesLoading}
                   error={minerNodesError as Error | null}
