@@ -10,6 +10,13 @@ import ToggleTable from "@/app/_components/ToggleTable";
 export default function HomePage() {
   const [selectedTable, setSelectedTable] = useState<"miner" | "bid">("miner");
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedMinerUid, setSelectedMinerUid] = useState<string | null>(null);
+
+  const handleNavigateToMiner = (uid: string) => {
+    setSelectedTable("miner");
+    setSearchTerm(uid);
+    setSelectedMinerUid(uid);
+  };
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
@@ -28,9 +35,16 @@ export default function HomePage() {
 
         <div className="mt-8">
           {selectedTable === "miner" ? (
-            <MinerTable searchTerm={searchTerm} />
+            <MinerTable
+              searchTerm={searchTerm}
+              selectedMinerUid={selectedMinerUid}
+              onSelectedMinerChange={setSelectedMinerUid}
+            />
           ) : (
-            <BidTable searchTerm={searchTerm} />
+            <BidTable
+              searchTerm={searchTerm}
+              onNavigateToMiner={handleNavigateToMiner}
+            />
           )}
         </div>
       </div>
