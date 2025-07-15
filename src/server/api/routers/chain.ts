@@ -1,7 +1,10 @@
 import { connectToMongoDb } from "@/schema/mongoDB";
-import { createTRPCRouter, publicAuthlessProcedure } from "../trpc";
+import { type MinerNode } from "@/server/api/routers/bids";
+import { createTRPCRouter, publicAuthlessProcedure } from "@/server/api/trpc";
 
-const getCurrentBlock = publicAuthlessProcedure.query(async () => {
+export type Auction = Record<string, MinerNode[]>;
+
+const getAuctionState = publicAuthlessProcedure.query(async () => {
   const mongoDb = await connectToMongoDb();
   if (!mongoDb) throw new Error("Failed to connect to MongoDB");
 
@@ -11,11 +14,11 @@ const getCurrentBlock = publicAuthlessProcedure.query(async () => {
     .sort({ block: -1 })
     .limit(1)
     .toArray();
-  if (!data[0]) throw new Error("Failed to get current block");
+  if (!data[0]) throw new Error("Failed to get most recent auction");
 
-  return data[0].block as number;
+  return data[0];
 });
 
 export const chainRouter = createTRPCRouter({
-  getCurrentBlock,
+  getAuctionState,
 });

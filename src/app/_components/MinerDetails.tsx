@@ -2,13 +2,13 @@ import NodePaymentStatusIcon from "@/app/_components/NodePaymentStatusIcon";
 import { type MinerNode } from "@/server/api/routers/bids";
 
 interface MinerDetailsProps {
-  minerNodes: MinerNode[];
+  nodes: MinerNode[];
   isLoading: boolean;
   error: Error | null;
 }
 
 export default function MinerDetails({
-  minerNodes,
+  nodes,
   isLoading,
   error,
 }: MinerDetailsProps) {
@@ -38,7 +38,7 @@ export default function MinerDetails({
     );
   }
 
-  if (!minerNodes || minerNodes.length === 0) {
+  if (!nodes || nodes.length === 0) {
     return (
       <tr>
         <td
@@ -53,7 +53,7 @@ export default function MinerDetails({
 
   return (
     <>
-      {minerNodes.map((node, index) => (
+      {nodes.map((node, index) => (
         <tr
           key={index}
           className="divide-y divide-gray-200 border-none bg-gray-50 dark:divide-gray-700 dark:bg-gray-800/50"

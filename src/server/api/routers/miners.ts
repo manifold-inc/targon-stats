@@ -2,9 +2,8 @@ import { z } from "zod";
 
 import { connectToMongoDb } from "@/schema/mongoDB";
 import { getAllBids, type MinerNode } from "@/server/api/routers/bids";
+import { type Auction } from "@/server/api/routers/chain";
 import { createTRPCRouter, publicAuthlessProcedure } from "@/server/api/trpc";
-
-type Auction = Record<string, MinerNode[]>;
 
 export type Miner = {
   uid: string;
@@ -28,7 +27,7 @@ export async function getAllMiners(): Promise<Miner[]> {
     .sort({ block: -1 })
     .limit(1)
     .toArray();
-  const auction_results = data[0]?.auction_results as unknown as Auction;
+  const auction_results = data[0]?.auction_results as Auction;
   const miners: Record<string, Miner> = {};
 
   for (const gpu in auction_results) {

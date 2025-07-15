@@ -22,7 +22,7 @@ export async function getAllBids(): Promise<MinerNode[]> {
     .sort({ block: -1 })
     .limit(1)
     .toArray();
-  const auction_results = data[0]?.auction_results as unknown as Auction;
+  const auction_results = data[0]?.auction_results as Auction;
   const miners: MinerNode[] = [];
   for (const gpu in auction_results) {
     for (const miner of auction_results[gpu]!) {
