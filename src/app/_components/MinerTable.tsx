@@ -1,25 +1,15 @@
 "use client";
 
 import { Fragment, useEffect, useState } from "react";
-import { CircleCheck, CircleMinus } from "lucide-react";
 
 import MinerDetails from "@/app/_components/MinerDetails";
-import { type Miner } from "@/server/api/routers/miners";
+import PaymentStatusIcon from "@/app/_components/PaymentStatusIcon";
 import { reactClient } from "@/trpc/react";
 
 interface MinerTableProps {
   searchTerm: string;
   selectedMinerUid: string | null;
   onSelectedMinerChange: (uid: string | null) => void;
-}
-
-function MinerPaymentStatus(miner: Miner) {
-  switch (true) {
-    case !miner.diluted:
-      return <CircleCheck className="h-4 w-4 text-green-500" />;
-    case miner.diluted:
-      return <CircleMinus className="h-4 w-4 text-yellow-500" />;
-  }
 }
 
 export default function MinerTable({
@@ -67,7 +57,7 @@ export default function MinerTable({
 
   if (isLoading) {
     return (
-      <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+      <div className="rounded-lg border border-gray-200 dark:border-gray-700">
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
           <thead className="bg-gray-50 dark:bg-gray-800">
             <tr>
@@ -102,7 +92,7 @@ export default function MinerTable({
 
   if (error) {
     return (
-      <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+      <div className="rounded-lg border border-gray-200 dark:border-gray-700">
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
           <thead className="bg-gray-50 dark:bg-gray-800">
             <tr>
@@ -137,7 +127,7 @@ export default function MinerTable({
 
   if (searchTerm && filteredMiners.length === 0) {
     return (
-      <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+      <div className="rounded-lg border border-gray-200 dark:border-gray-700">
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
           <thead className="bg-gray-50 dark:bg-gray-800">
             <tr>
@@ -171,7 +161,7 @@ export default function MinerTable({
   }
 
   return (
-    <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+    <div className="rounded-lg border border-gray-200 dark:border-gray-700">
       <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
         <thead className="bg-gray-50 dark:bg-gray-800">
           <tr>
@@ -216,8 +206,8 @@ export default function MinerTable({
                   {miner.nodes}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-end text-sm">
-                  <span className="inline-flex rounded-full px-2 text-xs font-semibold leading-5">
-                    {MinerPaymentStatus(miner)}
+                  <span className="px-2">
+                    <PaymentStatusIcon miner={miner} />
                   </span>
                 </td>
               </tr>

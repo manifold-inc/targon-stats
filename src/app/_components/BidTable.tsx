@@ -1,4 +1,4 @@
-import { NodePaymentStatus } from "@/app/_components/MinerDetails";
+import NodePaymentStatusIcon from "@/app/_components/NodePaymentStatusIcon";
 import { type MinerNode } from "@/server/api/routers/bids";
 import { reactClient } from "@/trpc/react";
 
@@ -26,7 +26,7 @@ const BidTable = ({ searchTerm, onNavigateToMiner }: BidTableProps) => {
 
   if (isLoading) {
     return (
-      <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+      <div className="rounded-lg border border-gray-200 dark:border-gray-700">
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
           <thead className="bg-gray-50 dark:bg-gray-800">
             <tr>
@@ -102,7 +102,7 @@ const BidTable = ({ searchTerm, onNavigateToMiner }: BidTableProps) => {
 
   if (searchTerm && filteredNodes.length === 0) {
     return (
-      <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+      <div className="rounded-lg border border-gray-200 dark:border-gray-700">
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
           <thead className="bg-gray-50 dark:bg-gray-800">
             <tr>
@@ -139,7 +139,7 @@ const BidTable = ({ searchTerm, onNavigateToMiner }: BidTableProps) => {
   }
 
   return (
-    <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+    <div className="rounded-lg border border-gray-200 dark:border-gray-700">
       <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
         <thead className="bg-gray-50 dark:bg-gray-800">
           <tr>
@@ -180,8 +180,8 @@ const BidTable = ({ searchTerm, onNavigateToMiner }: BidTableProps) => {
                 {node.gpus}
               </td>
               <td className="whitespace-nowrap px-6 py-4 text-end text-sm">
-                <span className="inline-flex rounded-full px-2 text-end text-xs font-semibold leading-5">
-                  {NodePaymentStatus(node)}
+                <span className="px-2">
+                  <NodePaymentStatusIcon node={node} />
                 </span>
               </td>
             </tr>
