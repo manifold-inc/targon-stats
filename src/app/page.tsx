@@ -11,7 +11,6 @@ import MinerTable from "@/app/_components/MinerTable";
 import Search from "@/app/_components/Search";
 import TaoPrice from "@/app/_components/TaoPrice";
 import ToggleTable from "@/app/_components/ToggleTable";
-import { type AuctionState } from "@/server/api/routers/chain";
 import { reactClient } from "@/trpc/react";
 import { getNodes, getNodesByMiner } from "@/utils/utils";
 
@@ -22,17 +21,11 @@ export default function HomePage() {
   const [searchTerm, setSearchTerm] = useState("");
 
   const {
-    data: currentAuction,
+    data: auction,
     isLoading,
     error,
-  } = reactClient.chain.getAuctionState.useQuery<AuctionState>();
-  const { data: selectedAuction } =
-    reactClient.chain.getPreviousAuctionState.useQuery(
-      selectedBlock ?? currentAuction?.block ?? 0,
-      { enabled: !!selectedBlock || !!currentAuction?.block },
-    );
+  } = reactClient.chain.getAuctionState.useQuery(selectedBlock ?? undefined);
 
-  const auctionState = selectedAuction || currentAuction;
   const handleNavigateToMiner = (uid: string) => {
     setSelectedTable("miner");
     setSearchTerm(uid);
@@ -55,9 +48,9 @@ export default function HomePage() {
             onTableChange={() => setSearchTerm("")}
           />
           <div className="flex items-center gap-4">
-            {currentAuction && (
+            {auction && (
               <BlockSelector
-                block={currentAuction.block}
+                block={auction.block}
                 onBlockChange={setSelectedBlock}
                 isLoading={isLoading}
               />
@@ -67,26 +60,26 @@ export default function HomePage() {
         </div>
 
         <div className="mt-4 flex justify-between">
-          <CurrentBlock block={auctionState?.block || 0} />
-          <MaxBid maxBid={auctionState?.max_bid || 0} />
-          <TaoPrice price={auctionState?.tao_price || 0} />
-          <EmissionPool pool={auctionState?.emission_pool || 0} />
+          <CurrentBlock block={auction?.block || 0} />
+          <MaxBid maxBid={auction?.max_bid || 0} />
+          <TaoPrice price={auction?.tao_price || 0} />
+          <EmissionPool pool={auction?.emission_pool || 0} />
         </div>
 
         <div className="mt-8">
           {selectedTable === "miner" ? (
             <MinerTable
-              miners={getNodesByMiner(auctionState?.auction_results ?? {})}
-              nodes={getNodes(auctionState?.auction_results ?? {})}
+              miners={getNodesByMiner(auction?.auction_results ?? {})}
+              nodes={getNodes(auction?.auction_results ?? {})}
               searchTerm={searchTerm}
               selectedMinerUid={selectedMinerUid}
               onSelectedMinerChange={setSelectedMinerUid}
               isLoading={isLoading}
-              error={error as Error | null}
+              error={error ? new Error(error.message) : null}
             />
           ) : (
             <BidTable
-              nodes={getNodes(auctionState?.auction_results ?? {})}
+              nodes={getNodes(auction?.auction_results ?? {})}
               searchTerm={searchTerm}
               onNavigateToMiner={handleNavigateToMiner}
               isLoading={isLoading}
