@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import BidTable from "@/app/_components/BidTable";
 import CurrentBlock from "@/app/_components/CurrentBlock";
+import EmissionPool from "@/app/_components/EmissionPool";
 import MaxBid from "@/app/_components/MaxBid";
 import MinerTable from "@/app/_components/MinerTable";
 import Search from "@/app/_components/Search";
@@ -46,6 +47,7 @@ export default function HomePage() {
           <CurrentBlock block={data?.block || 0} />
           <MaxBid maxBid={data?.max_bid || 0} />
           <TaoPrice price={data?.tao_price || 0} />
+          <EmissionPool pool={data?.emission_pool || 0} />
         </div>
 
         <div className="mt-8">
