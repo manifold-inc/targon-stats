@@ -6,7 +6,6 @@ import { createTRPCRouter, publicAuthlessProcedure } from "@/server/api/trpc";
 import { removeIPAddress } from "@/utils/utils";
 
 export type Auction = Record<string, MinerNode[]>;
-
 export interface AuctionState {
   auction_results: Auction;
   emission_pool: number;
