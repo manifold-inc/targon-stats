@@ -1,24 +1,17 @@
 import { NextResponse } from "next/server";
 
 import { getAuctionState } from "@/server/api/routers/chain";
-import { getNodes } from "@/utils/utils";
-
-export type MinerNode = {
-  uid: string;
-  price: number;
-  payout: number;
-  gpus: number;
-  diluted: boolean;
-};
 
 export async function GET() {
   try {
     const auction = await getAuctionState();
     if (!auction) throw new Error("Failed to get most recent auction");
-    const bids = getNodes(auction.auction_results);
+    const bid = auction.max_bid;
+    if (!bid) throw new Error("Failed to get max bid");
+
     return NextResponse.json({
       success: true,
-      data: bids,
+      data: bid,
       timestamp: new Date().toISOString(),
     });
   } catch (error) {

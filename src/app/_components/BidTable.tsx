@@ -1,23 +1,24 @@
 import NodePaymentStatusIcon from "@/app/_components/NodePaymentStatusIcon";
-import { type MinerNode } from "@/server/api/routers/bids";
-import { reactClient } from "@/trpc/react";
+import { type MinerNode } from "@/app/api/bids/route";
 
 interface BidTableProps {
   searchTerm: string;
   onNavigateToMiner: (uid: string) => void;
+  nodes: MinerNode[];
+  isLoading: boolean;
+  error: Error | null;
 }
 
-const BidTable = ({ searchTerm, onNavigateToMiner }: BidTableProps) => {
-  const {
-    data: nodes,
-    isLoading,
-    error,
-  } = reactClient.bids.getAllBids.useQuery();
-
-  const filteredNodes =
-    nodes?.filter((node) =>
-      node.uid.toLowerCase().includes(searchTerm.toLowerCase()),
-    ) || [];
+const BidTable = ({
+  searchTerm,
+  onNavigateToMiner,
+  nodes,
+  isLoading,
+  error,
+}: BidTableProps) => {
+  const filteredNodes = nodes.filter((node: MinerNode) =>
+    node.uid.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
 
   // Sort by lowest to highest price
   const sortedNodes = [...filteredNodes].sort((a, b) => {

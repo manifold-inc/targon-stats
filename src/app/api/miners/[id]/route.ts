@@ -1,6 +1,15 @@
 import { NextResponse } from "next/server";
 
-import { getMiner } from "@/server/api/routers/miners";
+import { type Miner } from "@/app/api/miners/route";
+import { getAuctionState } from "@/server/api/routers/chain";
+import { getNodesByMiner } from "@/utils/utils";
+
+async function getMiner(uid: string): Promise<Miner | null> {
+  const auction = await getAuctionState();
+  if (!auction) throw new Error("Failed to get most recent auction");
+  const miners = getNodesByMiner(auction.auction_results);
+  return miners.find((miner) => miner.uid === uid) || null;
+}
 
 export async function GET(
   _request: Request,
@@ -24,8 +33,8 @@ export async function GET(
       );
     }
 
-    const minerNodes = await getMiner(id);
-    if (minerNodes.length === 0) {
+    const miner = await getMiner(id);
+    if (!miner) {
       return NextResponse.json(
         {
           success: false,
@@ -42,7 +51,7 @@ export async function GET(
 
     return NextResponse.json({
       success: true,
-      data: minerNodes,
+      data: miner,
       timestamp: new Date().toISOString(),
     });
   } catch (error) {

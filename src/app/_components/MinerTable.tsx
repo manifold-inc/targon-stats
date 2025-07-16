@@ -4,15 +4,24 @@ import { Fragment, useEffect, useState } from "react";
 
 import MinerDetails from "@/app/_components/MinerDetails";
 import PaymentStatusIcon from "@/app/_components/PaymentStatusIcon";
-import { reactClient } from "@/trpc/react";
+import { type MinerNode } from "@/app/api/bids/route";
+import { type Miner } from "@/app/api/miners/route";
 
 interface MinerTableProps {
+  miners: Miner[];
+  nodes: MinerNode[];
+  isLoading: boolean;
+  error: Error | null;
   searchTerm: string;
   selectedMinerUid: string | null;
   onSelectedMinerChange: (uid: string | null) => void;
 }
 
 export default function MinerTable({
+  miners,
+  nodes,
+  isLoading,
+  error,
   searchTerm,
   selectedMinerUid,
   onSelectedMinerChange,
@@ -26,18 +35,6 @@ export default function MinerTable({
       setSelectedMinerUids(new Set([selectedMinerUid]));
     }
   }, [selectedMinerUid]);
-
-  const {
-    data: miners,
-    isLoading,
-    error,
-  } = reactClient.miners.getAllMiners.useQuery();
-
-  const {
-    data: minerNodes,
-    isLoading: isMinerNodesLoading,
-    error: minerNodesError,
-  } = reactClient.bids.getAllBids.useQuery();
 
   const handleRowClick = (uid: string) => {
     const filteredMinerUids = selectedMinerUids.has(uid)
@@ -214,11 +211,11 @@ export default function MinerTable({
 
               {selectedMinerUids.has(miner.uid) && (
                 <MinerDetails
-                  minerNodes={
-                    minerNodes?.filter((bid) => bid.uid === miner.uid) || []
-                  }
-                  isLoading={isMinerNodesLoading}
-                  error={minerNodesError as Error | null}
+                  nodes={nodes.filter(
+                    (node: MinerNode) => node.uid === miner.uid,
+                  )}
+                  isLoading={false}
+                  error={null}
                 />
               )}
             </Fragment>
