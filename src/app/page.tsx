@@ -7,6 +7,7 @@ import CurrentBlock from "@/app/_components/CurrentBlock";
 import MaxBid from "@/app/_components/MaxBid";
 import MinerTable from "@/app/_components/MinerTable";
 import Search from "@/app/_components/Search";
+import TaoPrice from "@/app/_components/TaoPrice";
 import ToggleTable from "@/app/_components/ToggleTable";
 import { type AuctionState } from "@/server/api/routers/chain";
 import { reactClient } from "@/trpc/react";
@@ -44,6 +45,7 @@ export default function HomePage() {
         <div className="mt-4 flex justify-between">
           <CurrentBlock block={data?.block || 0} />
           <MaxBid maxBid={data?.max_bid || 0} />
+          <TaoPrice price={data?.tao_price || 0} />
         </div>
 
         <div className="mt-8">
