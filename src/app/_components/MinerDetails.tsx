@@ -63,7 +63,8 @@ export default function MinerDetails({
             ${(node.price / 100).toFixed(2)}/h
           </td>
           <td className="whitespace-nowrap px-6 py-4 text-end text-sm text-gray-900 dark:border-gray-700 dark:text-gray-100">
-            ${(node.payout / 8).toFixed(2)}/h
+            {/* TODO: Remove division once payout is calculated correctly */}$
+            {(node.payout / 8).toFixed(2)}/h
           </td>
           <td className="whitespace-nowrap px-6 py-4 text-end text-sm text-gray-900 dark:border-gray-700 dark:text-gray-100">
             {node.gpus}
