@@ -13,7 +13,7 @@ export type MinerNode = {
   diluted: boolean;
 };
 
-export async function getAllBids(): Promise<MinerNode[]> {
+async function getAllBids(): Promise<MinerNode[]> {
   const mongoDb = await connectToMongoDb();
   if (!mongoDb) throw new Error("Failed to connect to MongoDB");
 

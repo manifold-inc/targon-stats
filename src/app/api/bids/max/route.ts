@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 import { connectToMongoDb } from "@/schema/mongoDB";
 
-export async function getMaxBid(): Promise<number> {
+async function getMaxBid(): Promise<number> {
   const mongoDb = await connectToMongoDb();
   if (!mongoDb) throw new Error("Failed to connect to MongoDB");
 
