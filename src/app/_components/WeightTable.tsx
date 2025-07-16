@@ -19,7 +19,9 @@ const WeightTable = ({
 }: WeightTableProps) => {
   const uids = weights.uids;
   const incentive = weights.incentives;
-  const weightMap = new Map(uids?.map((uid, index) => [String(uid), incentive?.[index]]));
+  const weightMap = new Map(
+    uids?.map((uid, index) => [String(uid), incentive?.[index]]),
+  );
 
   const filteredNodes = nodes.filter((node: MinerNode) =>
     node.uid.toLowerCase().includes(searchTerm.toLowerCase()),
@@ -32,7 +34,7 @@ const WeightTable = ({
 
   // Deduplicate nodes by uid
   const uniqueNodes = Array.from(
-    new Map(sortedNodes.map(node => [node.uid, node])).values()
+    new Map(sortedNodes.map((node) => [node.uid, node])).values(),
   );
 
   if (isLoading) {
