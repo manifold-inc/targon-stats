@@ -20,14 +20,14 @@ export default function HomePage() {
     "miner" | "bid" | "weight"
   >("miner");
   const [selectedMinerUid, setSelectedMinerUid] = useState<string | null>(null);
-  const [selectedBlock, setSelectedBlock] = useState<number | null>(null);
+  const [selectedBlock, setSelectedBlock] = useState<number>(0);
   const [searchTerm, setSearchTerm] = useState("");
 
   const {
     data: auction,
     isLoading,
     error,
-  } = reactClient.chain.getAuctionState.useQuery(selectedBlock ?? undefined);
+  } = reactClient.chain.getAuctionState.useQuery(selectedBlock);
 
   const {
     data: auctionLatest,

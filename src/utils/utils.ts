@@ -25,6 +25,7 @@ export async function copyToClipboard(text: string) {
   }
 }
 
+// TODO: Calculate average payout based on total gpu count
 export function getNodesByMiner(auction_results: Auction): Miner[] {
   const miners: Record<string, Miner> = {};
 

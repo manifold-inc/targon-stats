@@ -6,7 +6,6 @@ import { createTRPCRouter, publicAuthlessProcedure } from "@/server/api/trpc";
 import { removeIPAddress } from "@/utils/utils";
 
 export type Auction = Record<string, MinerNode[]>;
-
 export interface AuctionState {
   auction_results: Auction;
   emission_pool: number;
@@ -23,8 +22,8 @@ export async function getAuctionState(block?: number): Promise<AuctionState> {
 
   const data = await mongoDb
     .collection("miner_info")
-    .find(block !== undefined ? { block } : {})
-    .sort(block === undefined ? { block: -1 } : {})
+    .find(block === undefined ? {} : { block })
+    .sort({ block: -1 })
     .limit(1)
     .toArray();
 
