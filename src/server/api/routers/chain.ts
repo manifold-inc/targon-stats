@@ -11,6 +11,7 @@ export interface AuctionState {
   max_bid: number;
   tao_price: number;
   timestamp: Date;
+  weights: Record<string, number[]>;
 }
 
 export async function getAuctionState(): Promise<AuctionState> {
@@ -41,6 +42,7 @@ export async function getAuctionState(): Promise<AuctionState> {
     max_bid: data[0].max_bid as number,
     tao_price: data[0].tao_price as number,
     timestamp: data[0].timestamp as Date,
+    weights: data[0].weights as Record<string, number[]>,
   };
 
   return state;

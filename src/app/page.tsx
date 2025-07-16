@@ -10,6 +10,7 @@ import MinerTable from "@/app/_components/MinerTable";
 import Search from "@/app/_components/Search";
 import TaoPrice from "@/app/_components/TaoPrice";
 import ToggleTable from "@/app/_components/ToggleTable";
+import WeightTable from "@/app/_components/WeightTable";
 import { type AuctionState } from "@/server/api/routers/chain";
 import { reactClient } from "@/trpc/react";
 import { getNodes, getNodesByMiner } from "@/utils/utils";
@@ -17,7 +18,9 @@ import { getNodes, getNodesByMiner } from "@/utils/utils";
 export default function HomePage() {
   const { data, isLoading, error } =
     reactClient.chain.getAuctionState.useQuery<AuctionState>();
-  const [selectedTable, setSelectedTable] = useState<"miner" | "bid">("miner");
+  const [selectedTable, setSelectedTable] = useState<
+    "miner" | "bid" | "weight"
+  >("miner");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedMinerUid, setSelectedMinerUid] = useState<string | null>(null);
 
@@ -61,8 +64,17 @@ export default function HomePage() {
               isLoading={isLoading}
               error={error as Error | null}
             />
-          ) : (
+          ) : selectedTable === "bid" ? (
             <BidTable
+              nodes={getNodes(data?.auction_results ?? {})}
+              searchTerm={searchTerm}
+              onNavigateToMiner={handleNavigateToMiner}
+              isLoading={isLoading}
+              error={error as Error | null}
+            />
+          ) : (
+            <WeightTable
+              weights={data?.weights ?? {}}
               nodes={getNodes(data?.auction_results ?? {})}
               searchTerm={searchTerm}
               onNavigateToMiner={handleNavigateToMiner}
