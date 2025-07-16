@@ -22,7 +22,7 @@ export default function BlockSelector({
   const [isOpen, setIsOpen] = useState(false);
 
   const blocks = Array.from({ length: 10 }, (_, i) => {
-    return latestBlock - (i * 360);
+    return latestBlock - i * 360;
   });
 
   const handleBlockSelect = (block: number) => {

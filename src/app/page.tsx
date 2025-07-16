@@ -20,7 +20,9 @@ export default function HomePage() {
     "miner" | "bid" | "weight"
   >("miner");
   const [selectedMinerUid, setSelectedMinerUid] = useState<string | null>(null);
-  const [selectedBlock, setSelectedBlock] = useState<number | undefined>(undefined);
+  const [selectedBlock, setSelectedBlock] = useState<number | undefined>(
+    undefined,
+  );
   const [searchTerm, setSearchTerm] = useState("");
 
   const {
@@ -29,9 +31,8 @@ export default function HomePage() {
     error,
   } = reactClient.chain.getAuctionState.useQuery(selectedBlock);
 
-  const {
-    data: auctionLatest,
-  } = reactClient.chain.getAuctionState.useQuery(undefined);
+  const { data: auctionLatest } =
+    reactClient.chain.getAuctionState.useQuery(undefined);
 
   const handleNavigateToMiner = (uid: string) => {
     setSelectedTable("miner");
