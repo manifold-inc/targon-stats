@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useState } from "react";
 
 import MinerDetails from "@/app/_components/MinerDetails";
 import PaymentStatusIcon from "@/app/_components/PaymentStatusIcon";
@@ -27,14 +27,8 @@ export default function MinerTable({
   onSelectedMinerChange,
 }: MinerTableProps) {
   const [selectedMinerUids, setSelectedMinerUids] = useState<Set<string>>(
-    new Set(),
+    selectedMinerUid ? new Set([selectedMinerUid]) : new Set(),
   );
-
-  useEffect(() => {
-    if (selectedMinerUid) {
-      setSelectedMinerUids(new Set([selectedMinerUid]));
-    }
-  }, [selectedMinerUid]);
 
   const handleRowClick = (uid: string) => {
     const filteredMinerUids = selectedMinerUids.has(uid)
