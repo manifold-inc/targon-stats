@@ -1,26 +1,14 @@
 import { NextResponse } from "next/server";
 
-import { connectToMongoDb } from "@/schema/mongoDB";
-
-async function getMaxBid(): Promise<number> {
-  const mongoDb = await connectToMongoDb();
-  if (!mongoDb) throw new Error("Failed to connect to MongoDB");
-
-  const data = await mongoDb
-    .collection("miner_info")
-    .find({})
-    .sort({ block: -1 })
-    .limit(1)
-    .toArray();
-  if (!data[0]) throw new Error("Failed to get most recent block");
-  if (!data[0].max_bid) throw new Error("Failed to get max bid");
-
-  return data[0].max_bid as number;
-}
+import { getAuctionState } from "@/server/api/routers/chain";
 
 export async function GET() {
   try {
-    const bid = await getMaxBid();
+    const auction = await getAuctionState();
+    if (!auction) throw new Error("Failed to get most recent auction");
+    const bid = auction.max_bid;
+    if (!bid) throw new Error("Failed to get max bid");
+
     return NextResponse.json({
       success: true,
       data: bid,
