@@ -1,4 +1,3 @@
-import NodePaymentStatusIcon from "@/app/_components/NodePaymentStatusIcon";
 import { type MinerNode } from "@/app/api/bids/route";
 
 interface WeightTableProps {
@@ -18,8 +17,8 @@ const WeightTable = ({
   isLoading,
   error,
 }: WeightTableProps) => {
-  const uids = weights["uids"];
-  const incentive = weights["incentives"];
+  const uids = weights.uids;
+  const incentive = weights.incentives;
   const weightMap = new Map(uids?.map((uid, index) => [String(uid), incentive?.[index]]));
 
   const filteredNodes = nodes.filter((node: MinerNode) =>
