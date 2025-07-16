@@ -1,9 +1,12 @@
+import { z } from "zod";
+
 import { type MinerNode } from "@/app/api/bids/route";
 import { connectToMongoDb } from "@/schema/mongoDB";
 import { createTRPCRouter, publicAuthlessProcedure } from "@/server/api/trpc";
 import { removeIPAddress } from "@/utils/utils";
 
 export type Auction = Record<string, MinerNode[]>;
+
 export interface AuctionState {
   auction_results: Auction;
   emission_pool: number;
@@ -14,17 +17,17 @@ export interface AuctionState {
   weights: Record<string, number[]>;
 }
 
-export async function getAuctionState(): Promise<AuctionState> {
+export async function getAuctionState(block?: number): Promise<AuctionState> {
   const mongoDb = await connectToMongoDb();
   if (!mongoDb) throw new Error("Failed to connect to MongoDB");
 
   const data = await mongoDb
     .collection("miner_info")
-    .find({})
-    .sort({ block: -1 })
+    .find({ block: block ?? -1 })
     .limit(1)
     .toArray();
-  if (!data[0]) throw new Error("Failed to get most recent auction");
+  if (!data[0])
+    throw new Error("Failed to get auction for block " + block ?? "latest");
 
   const auction_results = data[0].auction_results as Auction;
   const parsedNodes: Auction = {};
@@ -49,5 +52,7 @@ export async function getAuctionState(): Promise<AuctionState> {
 }
 
 export const chainRouter = createTRPCRouter({
-  getAuctionState: publicAuthlessProcedure.query(getAuctionState),
+  getAuctionState: publicAuthlessProcedure
+    .input(z.number().optional())
+    .query(async ({ input }) => getAuctionState(input)),
 });

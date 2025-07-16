@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import BidTable from "@/app/_components/BidTable";
+import BlockSelector from "@/app/_components/BlockSelector";
 import CurrentBlock from "@/app/_components/CurrentBlock";
 import EmissionPool from "@/app/_components/EmissionPool";
 import MaxBid from "@/app/_components/MaxBid";
@@ -11,18 +12,22 @@ import Search from "@/app/_components/Search";
 import TaoPrice from "@/app/_components/TaoPrice";
 import ToggleTable from "@/app/_components/ToggleTable";
 import WeightTable from "@/app/_components/WeightTable";
-import { type AuctionState } from "@/server/api/routers/chain";
 import { reactClient } from "@/trpc/react";
 import { getNodes, getNodesByMiner } from "@/utils/utils";
 
 export default function HomePage() {
-  const { data, isLoading, error } =
-    reactClient.chain.getAuctionState.useQuery<AuctionState>();
   const [selectedTable, setSelectedTable] = useState<
     "miner" | "bid" | "weight"
   >("miner");
-  const [searchTerm, setSearchTerm] = useState("");
   const [selectedMinerUid, setSelectedMinerUid] = useState<string | null>(null);
+  const [selectedBlock, setSelectedBlock] = useState<number | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const {
+    data: auction,
+    isLoading,
+    error,
+  } = reactClient.chain.getAuctionState.useQuery(selectedBlock ?? undefined);
 
   const handleNavigateToMiner = (uid: string) => {
     setSelectedTable("miner");
@@ -33,9 +38,11 @@ export default function HomePage() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-4xl">
-        <h1 className="text-center text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-50 sm:text-4xl">
-          Targon Miner Stats
-        </h1>
+        <div className="text-center">
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-50 sm:text-4xl">
+            Targon Miner Stats
+          </h1>
+        </div>
 
         <div className="mt-8 flex justify-between">
           <ToggleTable
@@ -43,30 +50,39 @@ export default function HomePage() {
             setSelectedTable={setSelectedTable}
             onTableChange={() => setSearchTerm("")}
           />
-          <Search value={searchTerm} onChange={setSearchTerm} />
+          <div className="flex items-center gap-4">
+            {auction && (
+              <BlockSelector
+                block={auction.block}
+                onBlockChange={setSelectedBlock}
+                isLoading={isLoading}
+              />
+            )}
+            <Search value={searchTerm} onChange={setSearchTerm} />
+          </div>
         </div>
 
         <div className="mt-4 flex justify-between">
-          <CurrentBlock block={data?.block || 0} />
-          <MaxBid maxBid={data?.max_bid || 0} />
-          <TaoPrice price={data?.tao_price || 0} />
-          <EmissionPool pool={data?.emission_pool || 0} />
+          <CurrentBlock block={auction?.block || 0} />
+          <MaxBid maxBid={auction?.max_bid || 0} />
+          <TaoPrice price={auction?.tao_price || 0} />
+          <EmissionPool pool={auction?.emission_pool || 0} />
         </div>
 
         <div className="mt-8">
           {selectedTable === "miner" ? (
             <MinerTable
-              miners={getNodesByMiner(data?.auction_results ?? {})}
-              nodes={getNodes(data?.auction_results ?? {})}
+              miners={getNodesByMiner(auction?.auction_results ?? {})}
+              nodes={getNodes(auction?.auction_results ?? {})}
               searchTerm={searchTerm}
               selectedMinerUid={selectedMinerUid}
               onSelectedMinerChange={setSelectedMinerUid}
               isLoading={isLoading}
-              error={error as Error | null}
+              error={error ? new Error(error.message) : null}
             />
           ) : selectedTable === "bid" ? (
             <BidTable
-              nodes={getNodes(data?.auction_results ?? {})}
+              nodes={getNodes(auction?.auction_results ?? {})}
               searchTerm={searchTerm}
               onNavigateToMiner={handleNavigateToMiner}
               isLoading={isLoading}
@@ -74,8 +90,8 @@ export default function HomePage() {
             />
           ) : (
             <WeightTable
-              weights={data?.weights ?? {}}
-              nodes={getNodes(data?.auction_results ?? {})}
+              weights={auction?.weights ?? {}}
+              nodes={getNodes(auction?.auction_results ?? {})}
               searchTerm={searchTerm}
               onNavigateToMiner={handleNavigateToMiner}
               isLoading={isLoading}
