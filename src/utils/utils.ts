@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 import { type MinerNode } from "@/app/api/bids/route";
+import { type Miner } from "@/app/api/miners/route";
 import { type Auction } from "@/server/api/routers/chain";
-import { type Miner } from "@/server/api/routers/miners";
 
 export const StatsSchema = z.object({
   max_tokens_per_second: z.number(),
@@ -60,10 +60,10 @@ export function getNodes(auction_results: Auction): MinerNode[] {
   for (const gpu in auction_results) {
     for (const miner of auction_results[gpu]!) {
       const node = {
-        gpus: miner.gpus,
-        payout: miner.payout,
         uid: miner.uid,
+        gpus: miner.gpus,
         price: miner.price,
+        payout: miner.payout,
         diluted: miner.diluted,
       } as MinerNode;
       miners.push(node);
@@ -72,13 +72,13 @@ export function getNodes(auction_results: Auction): MinerNode[] {
   return miners;
 }
 
-export function filterIPAddress(node: MinerNode): MinerNode {
-  const filteredNode = {
+export function removeIPAddress(node: MinerNode): MinerNode {
+  const parsedNode = {
     uid: node.uid,
     gpus: node.gpus,
     price: node.price,
     payout: node.payout,
     diluted: node.diluted,
   } as MinerNode;
-  return filteredNode;
+  return parsedNode;
 }

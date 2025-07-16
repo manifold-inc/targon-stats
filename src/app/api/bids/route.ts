@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { connectToMongoDb } from "@/schema/mongoDB";
-import { filterIPAddress } from "@/utils/utils";
+import { getNodes } from "@/utils/utils";
 
 type Auction = Record<string, MinerNode[]>;
 
@@ -13,7 +13,7 @@ export type MinerNode = {
   diluted: boolean;
 };
 
-export async function getAllBids(): Promise<Auction> {
+export async function getAllBids(): Promise<MinerNode[]> {
   const mongoDb = await connectToMongoDb();
   if (!mongoDb) throw new Error("Failed to connect to MongoDB");
 
@@ -26,14 +26,7 @@ export async function getAllBids(): Promise<Auction> {
   if (!data[0]) throw new Error("Failed to get most recent auction");
 
   const auction_results = data[0].auction_results as Auction;
-  const filteredNodes: Auction = {};
-  for (const gpu in auction_results) {
-    filteredNodes[gpu] = auction_results[gpu]!.map((node: MinerNode) =>
-      filterIPAddress(node),
-    );
-  }
-
-  return filteredNodes;
+  return getNodes(auction_results);
 }
 
 export async function GET() {

@@ -20,10 +20,10 @@ export async function getMaxBid(): Promise<number> {
 
 export async function GET() {
   try {
-    const maxBid = await getMaxBid();
+    const bid = await getMaxBid();
     return NextResponse.json({
       success: true,
-      data: maxBid,
+      data: bid,
       timestamp: new Date().toISOString(),
     });
   } catch (error) {

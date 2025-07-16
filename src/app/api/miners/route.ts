@@ -1,6 +1,35 @@
 import { NextResponse } from "next/server";
 
-import { getAllMiners } from "@/server/api/routers/miners";
+import { connectToMongoDb } from "@/schema/mongoDB";
+import { type Auction } from "@/server/api/routers/chain";
+import { getNodesByMiner } from "@/utils/utils";
+
+export type Miner = {
+  uid: string;
+  average_price: number;
+  average_payout: number;
+  total_price: number;
+  total_payout: number;
+  gpus: number;
+  nodes: number;
+  diluted: boolean;
+};
+
+export async function getAllMiners(): Promise<Miner[]> {
+  const mongoDb = await connectToMongoDb();
+  if (!mongoDb) throw new Error("Failed to connect to MongoDB");
+
+  const data = await mongoDb
+    .collection("miner_info")
+    .find({})
+    .sort({ block: -1 })
+    .limit(1)
+    .toArray();
+  if (!data[0]) throw new Error("Failed to get most recent auction");
+
+  const auction_results = data[0].auction_results as Auction;
+  return getNodesByMiner(auction_results);
+}
 
 export async function GET() {
   try {

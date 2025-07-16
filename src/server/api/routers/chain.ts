@@ -1,7 +1,7 @@
 import { type MinerNode } from "@/app/api/bids/route";
 import { connectToMongoDb } from "@/schema/mongoDB";
 import { createTRPCRouter, publicAuthlessProcedure } from "@/server/api/trpc";
-import { filterIPAddress } from "@/utils/utils";
+import { removeIPAddress } from "@/utils/utils";
 
 export type Auction = Record<string, MinerNode[]>;
 export interface AuctionState {
@@ -26,16 +26,16 @@ const getAuctionState = publicAuthlessProcedure.query(async () => {
   if (!data[0]) throw new Error("Failed to get most recent auction");
 
   const auction_results = data[0].auction_results as Auction;
-  const filteredNodes: Auction = {};
+  const parsedNodes: Auction = {};
 
   for (const gpu in auction_results) {
-    filteredNodes[gpu] = auction_results[gpu]!.map((node: MinerNode) =>
-      filterIPAddress(node),
+    parsedNodes[gpu] = auction_results[gpu]!.map((node: MinerNode) =>
+      removeIPAddress(node),
     );
   }
 
   const state: AuctionState = {
-    auction_results: filteredNodes,
+    auction_results: parsedNodes,
     emission_pool: data[0].emission_pool as number,
     block: data[0].block as number,
     max_bid: data[0].max_bid as number,

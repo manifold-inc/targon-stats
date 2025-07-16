@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
 
-import { getMiner } from "@/server/api/routers/miners";
+import { getAllMiners, type Miner } from "@/app/api/miners/route";
+
+export async function getMiner(uid: string): Promise<Miner | null> {
+  const auction_results = await getAllMiners();
+  if (!auction_results) throw new Error("Failed to get miners");
+  return auction_results.find((miner) => miner.uid === uid) || null;
+}
 
 export async function GET(
   _request: Request,
@@ -24,8 +30,8 @@ export async function GET(
       );
     }
 
-    const minerNodes = await getMiner(id);
-    if (minerNodes.length === 0) {
+    const miner = await getMiner(id);
+    if (!miner) {
       return NextResponse.json(
         {
           success: false,
@@ -42,7 +48,7 @@ export async function GET(
 
     return NextResponse.json({
       success: true,
-      data: minerNodes,
+      data: miner,
       timestamp: new Date().toISOString(),
     });
   } catch (error) {

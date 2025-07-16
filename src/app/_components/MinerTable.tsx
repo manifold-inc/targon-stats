@@ -5,7 +5,7 @@ import { Fragment, useEffect, useState } from "react";
 import MinerDetails from "@/app/_components/MinerDetails";
 import PaymentStatusIcon from "@/app/_components/PaymentStatusIcon";
 import { type MinerNode } from "@/app/api/bids/route";
-import { type Miner } from "@/server/api/routers/miners";
+import { type Miner } from "@/app/api/miners/route";
 
 interface MinerTableProps {
   miners: Miner[];
