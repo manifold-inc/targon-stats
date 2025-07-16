@@ -1,8 +1,8 @@
 import React from "react";
 
 interface ToggleTableProps {
-  selectedTable: "miner" | "bid";
-  setSelectedTable: (table: "miner" | "bid") => void;
+  selectedTable: "miner" | "bid" | "weight";
+  setSelectedTable: (table: "miner" | "bid" | "weight") => void;
   onTableChange: () => void;
 }
 
@@ -11,7 +11,7 @@ const ToggleTable = ({
   setSelectedTable,
   onTableChange,
 }: ToggleTableProps) => {
-  const handleTableChange = (table: "miner" | "bid") => {
+  const handleTableChange = (table: "miner" | "bid" | "weight") => {
     setSelectedTable(table);
     onTableChange();
   };
@@ -31,6 +31,13 @@ const ToggleTable = ({
         onClick={() => handleTableChange("bid")}
       >
         Bids
+      </button>
+      <button
+        type="button"
+        className={`rounded-md px-6 py-2 text-sm font-medium focus:z-10 focus:outline-none ${selectedTable === "weight" ? "bg-blue-600 text-white" : "bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100"}`}
+        onClick={() => handleTableChange("weight")}
+      >
+        Weights
       </button>
     </div>
   );
