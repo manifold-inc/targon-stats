@@ -3,7 +3,7 @@
 import { CircleCheck, CircleMinus } from "lucide-react";
 
 import Tooltip from "@/app/_components/Tooltip";
-import { type MinerNode } from "@/server/api/routers/bids";
+import { type MinerNode } from "@/app/api/bids/route";
 
 interface NodePaymentStatusIconProps {
   node: MinerNode;

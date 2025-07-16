@@ -1,5 +1,5 @@
 import NodePaymentStatusIcon from "@/app/_components/NodePaymentStatusIcon";
-import { type MinerNode } from "@/server/api/routers/bids";
+import { type MinerNode } from "@/app/api/bids/route";
 
 interface MinerDetailsProps {
   nodes: MinerNode[];

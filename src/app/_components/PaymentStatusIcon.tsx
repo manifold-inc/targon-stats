@@ -3,7 +3,7 @@
 import { CircleCheck, CircleMinus } from "lucide-react";
 
 import Tooltip from "@/app/_components/Tooltip";
-import { type Miner } from "@/server/api/routers/miners";
+import { type Miner } from "@/app/api/miners/route";
 
 export default function PaymentStatusIcon({ miner }: { miner: Miner }) {
   const getStatusInfo = () => {
