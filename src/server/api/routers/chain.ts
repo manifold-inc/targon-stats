@@ -21,22 +21,13 @@ export async function getAuctionState(block?: number): Promise<AuctionState> {
   const mongoDb = await connectToMongoDb();
   if (!mongoDb) throw new Error("Failed to connect to MongoDB");
 
-  let data;
-  if (block !== undefined) {
-    data = await mongoDb
-      .collection("miner_info")
-      .find({ block: block })
-      .toArray();
-    if (!data[0]) throw new Error("Failed to get auction for block " + block);
-  } else {
-    data = await mongoDb
-      .collection("miner_info")
-      .find({})
-      .sort({ block: -1 })
-      .limit(1)
-      .toArray();
-    if (!data[0]) throw new Error("Failed to get most recent auction");
-  }
+  const data = await mongoDb
+    .collection("miner_info")
+    .find({ block: block ?? -1 })
+    .limit(1)
+    .toArray();
+  if (!data[0])
+    throw new Error("Failed to get auction for block " + block ?? "latest");
 
   const auction_results = data[0].auction_results as Auction;
   const parsedNodes: Auction = {};
