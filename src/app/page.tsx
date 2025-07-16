@@ -12,15 +12,13 @@ import Search from "@/app/_components/Search";
 import TaoPrice from "@/app/_components/TaoPrice";
 import ToggleTable from "@/app/_components/ToggleTable";
 import WeightTable from "@/app/_components/WeightTable";
-import { type AuctionState } from "@/server/api/routers/chain";
 import { reactClient } from "@/trpc/react";
 import { getNodes, getNodesByMiner } from "@/utils/utils";
 
 export default function HomePage() {
-  const { data, isLoading, error } =
-    reactClient.chain.getAuctionState.useQuery<AuctionState>();
-  const [selectedTable, setSelectedTable] = useState<"miner" | "bid">("miner");
-  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedTable, setSelectedTable] = useState<
+    "miner" | "bid" | "weight"
+  >("miner");
   const [selectedMinerUid, setSelectedMinerUid] = useState<string | null>(null);
   const [selectedBlock, setSelectedBlock] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -92,8 +90,8 @@ export default function HomePage() {
             />
           ) : (
             <WeightTable
-              weights={data?.weights ?? {}}
-              nodes={getNodes(data?.auction_results ?? {})}
+              weights={auction?.weights ?? {}}
+              nodes={getNodes(auction?.auction_results ?? {})}
               searchTerm={searchTerm}
               onNavigateToMiner={handleNavigateToMiner}
               isLoading={isLoading}
