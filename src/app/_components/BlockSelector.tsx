@@ -47,20 +47,19 @@ export default function BlockSelector({
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 z-10 mt-1 w-56 rounded-md border border-gray-200 bg-white shadow-lg dark:border-gray-600 dark:bg-gray-800">
+        <div className="absolute right-0 z-10 mt-1 rounded-md border border-gray-200 bg-white shadow-lg dark:border-gray-600 dark:bg-gray-800">
           <ul className="max-h-60 overflow-auto py-1">
             {intervals.map((interval) => (
               <li key={interval}>
                 <button
                   type="button"
                   onClick={() => handleBlockSelect(interval)}
-                  className={`block w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700 ${
-                    selectedBlock === interval
+                  className={`block w-full text-nowrap px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700 ${selectedBlock === interval
                       ? "bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300"
                       : "text-gray-700 dark:text-gray-200"
-                  }`}
+                    }`}
                 >
-                  {`Interval ${interval} (Block ${interval})`}
+                  {`Interval ${CalculateInterval(interval)} (Block ${interval})`}
                 </button>
               </li>
             ))}

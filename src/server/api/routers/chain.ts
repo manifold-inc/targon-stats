@@ -23,8 +23,8 @@ export async function getAuctionState(block?: number): Promise<AuctionState> {
 
   const data = await mongoDb
     .collection("miner_info")
-    .find(block !== undefined ? { block } : {})
-    .sort(block === undefined ? { block: -1 } : {})
+    .find(block === undefined ? {} : { block })
+    .sort({ block: -1 })
     .limit(1)
     .toArray();
 
