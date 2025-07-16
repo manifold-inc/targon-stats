@@ -148,7 +148,7 @@ const WeightTable = ({
                 {node.uid}
               </td>
               <td className="whitespace-nowrap px-6 py-4 text-end text-sm text-gray-900 dark:text-gray-100">
-                {weightMap.get(node.uid)}
+                {(weightMap.get(node.uid) ?? 0 * 100).toFixed(2)}%
               </td>
             </tr>
           ))}
