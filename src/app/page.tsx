@@ -16,19 +16,23 @@ import { reactClient } from "@/trpc/react";
 import { getNodes, getNodesByMiner } from "@/utils/utils";
 
 export default function HomePage() {
+  const [selectedTable, setSelectedTable] = useState<"miner" | "bid">("miner");
+  const [selectedMinerUid, setSelectedMinerUid] = useState<string | null>(null);
+  const [selectedBlock, setSelectedBlock] = useState<number | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+
   const {
     data: currentAuction,
     isLoading,
     error,
   } = reactClient.chain.getAuctionState.useQuery<AuctionState>();
-  const [selectedTable, setSelectedTable] = useState<"miner" | "bid">("miner");
-  const [selectedMinerUid, setSelectedMinerUid] = useState<string | null>(null);
-  const [selectedAuction, setSelectedAuction] = useState<AuctionState | null>(
-    null,
-  );
-  const [searchTerm, setSearchTerm] = useState("");
-  const auctionState = selectedAuction || currentAuction;
+  const { data: selectedAuction } =
+    reactClient.chain.getPreviousAuctionState.useQuery(
+      selectedBlock ?? currentAuction?.block ?? 0,
+      { enabled: !!selectedBlock || !!currentAuction?.block },
+    );
 
+  const auctionState = selectedAuction || currentAuction;
   const handleNavigateToMiner = (uid: string) => {
     setSelectedTable("miner");
     setSearchTerm(uid);
@@ -54,8 +58,8 @@ export default function HomePage() {
             {currentAuction && (
               <BlockSelector
                 block={currentAuction.block}
+                onBlockChange={setSelectedBlock}
                 isLoading={isLoading}
-                onBlockChange={setSelectedAuction}
               />
             )}
             <Search value={searchTerm} onChange={setSearchTerm} />

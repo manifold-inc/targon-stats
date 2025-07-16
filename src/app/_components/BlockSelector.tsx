@@ -1,16 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 
-import { type AuctionState } from "@/server/api/routers/chain";
-import { reactClient } from "@/trpc/react";
 import { CalculateInterval } from "@/utils/utils";
 
 interface BlockSelectorProps {
   block: number;
   isLoading: boolean;
-  onBlockChange: (auctionState: AuctionState | null) => void;
+  onBlockChange: (block: number) => void;
 }
 
 export default function BlockSelector({
@@ -20,25 +18,15 @@ export default function BlockSelector({
 }: BlockSelectorProps) {
   const [selectedBlock, setSelectedBlock] = useState<number>(block);
   const [isOpen, setIsOpen] = useState(false);
-  const { data: selectedAuctionData } =
-    reactClient.chain.getPreviousAuctionState.useQuery(selectedBlock, {
-      enabled: selectedBlock !== block,
-    });
 
   const intervals = Array.from({ length: 10 }, (_, i) => {
     const interval = CalculateInterval(block) - i;
     return interval * 360;
   });
 
-  const selectedAuctionState =
-    selectedBlock === block ? null : selectedAuctionData || null;
-
-  useEffect(() => {
-    onBlockChange(selectedAuctionState);
-  }, [selectedAuctionState, onBlockChange]);
-
   const handleBlockSelect = (block: number) => {
     setSelectedBlock(block);
+    onBlockChange(block);
     setIsOpen(false);
   };
 
