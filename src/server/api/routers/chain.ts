@@ -23,11 +23,14 @@ export async function getAuctionState(block?: number): Promise<AuctionState> {
 
   const data = await mongoDb
     .collection("miner_info")
-    .find({ block: block ?? -1 })
+    .find(block !== undefined ? { block } : {})
+    .sort(block === undefined ? { block: -1 } : {})
     .limit(1)
     .toArray();
-  if (!data[0])
-    throw new Error("Failed to get auction for block " + block ?? "latest");
+
+  if (!data[0]) {
+    throw new Error("Failed to get auction for block " + (block ?? "latest"));
+  }
 
   const auction_results = data[0].auction_results as Auction;
   const parsedNodes: Auction = {};
