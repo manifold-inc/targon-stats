@@ -1,19 +1,8 @@
 import { NextResponse } from "next/server";
 
 import { connectToMongoDb } from "@/schema/mongoDB";
-import { filterIPAddress } from "@/utils/utils";
 
-type Auction = Record<string, MinerNode[]>;
-
-export type MinerNode = {
-  uid: string;
-  price: number;
-  payout: number;
-  gpus: number;
-  diluted: boolean;
-};
-
-export async function getAllBids(): Promise<Auction> {
+export async function getMaxBid(): Promise<number> {
   const mongoDb = await connectToMongoDb();
   if (!mongoDb) throw new Error("Failed to connect to MongoDB");
 
@@ -23,25 +12,18 @@ export async function getAllBids(): Promise<Auction> {
     .sort({ block: -1 })
     .limit(1)
     .toArray();
-  if (!data[0]) throw new Error("Failed to get most recent auction");
+  if (!data[0]) throw new Error("Failed to get most recent block");
+  if (!data[0].max_bid) throw new Error("Failed to get max bid");
 
-  const auction_results = data[0].auction_results as Auction;
-  const filteredNodes: Auction = {};
-  for (const gpu in auction_results) {
-    filteredNodes[gpu] = auction_results[gpu]!.map((node: MinerNode) =>
-      filterIPAddress(node),
-    );
-  }
-
-  return filteredNodes;
+  return data[0].max_bid as number;
 }
 
 export async function GET() {
   try {
-    const bids = await getAllBids();
+    const maxBid = await getMaxBid();
     return NextResponse.json({
       success: true,
-      data: bids,
+      data: maxBid,
       timestamp: new Date().toISOString(),
     });
   } catch (error) {

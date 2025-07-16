@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { type MinerNode } from "@/server/api/routers/bids";
+import { type MinerNode } from "@/app/api/bids/route";
 import { type Auction } from "@/server/api/routers/chain";
 import { type Miner } from "@/server/api/routers/miners";
 

@@ -1,7 +1,6 @@
 import { z } from "zod";
 
 import { connectToMongoDb } from "@/schema/mongoDB";
-import { getAllBids, type MinerNode } from "@/server/api/routers/bids";
 import { type Auction } from "@/server/api/routers/chain";
 import { createTRPCRouter, publicAuthlessProcedure } from "@/server/api/trpc";
 
@@ -58,9 +57,10 @@ export async function getAllMiners(): Promise<Miner[]> {
   }));
 }
 
-export async function getMiner(uid: string): Promise<MinerNode[]> {
-  const auction_results = await getAllBids();
-  return auction_results.filter((b) => b.uid === uid);
+export async function getMiner(uid: string): Promise<Miner | null> {
+  const auction_results = await getAllMiners();
+  if (!auction_results) throw new Error("Failed to get miners");
+  return auction_results.find((miner) => miner.uid === uid) || null;
 }
 
 export const minersRouter = createTRPCRouter({

@@ -1,5 +1,5 @@
+import { type MinerNode } from "@/app/api/bids/route";
 import { connectToMongoDb } from "@/schema/mongoDB";
-import { type MinerNode } from "@/server/api/routers/bids";
 import { createTRPCRouter, publicAuthlessProcedure } from "@/server/api/trpc";
 import { filterIPAddress } from "@/utils/utils";
 
