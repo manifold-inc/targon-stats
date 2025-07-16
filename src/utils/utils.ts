@@ -71,3 +71,14 @@ export function getNodes(auction_results: Auction): MinerNode[] {
   }
   return miners;
 }
+
+export function filterIPAddress(node: MinerNode): MinerNode {
+  const filteredNode = {
+    uid: node.uid,
+    gpus: node.gpus,
+    price: node.price,
+    payout: node.payout,
+    diluted: node.diluted,
+  } as MinerNode;
+  return filteredNode;
+}
