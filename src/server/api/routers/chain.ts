@@ -13,7 +13,7 @@ export interface AuctionState {
   timestamp: Date;
 }
 
-const getAuctionState = publicAuthlessProcedure.query(async () => {
+export async function getAuctionState(): Promise<AuctionState> {
   const mongoDb = await connectToMongoDb();
   if (!mongoDb) throw new Error("Failed to connect to MongoDB");
 
@@ -44,8 +44,8 @@ const getAuctionState = publicAuthlessProcedure.query(async () => {
   };
 
   return state;
-});
+}
 
 export const chainRouter = createTRPCRouter({
-  getAuctionState,
+  getAuctionState: publicAuthlessProcedure.query(getAuctionState),
 });
