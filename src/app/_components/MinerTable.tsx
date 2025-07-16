@@ -183,11 +183,10 @@ export default function MinerTable({
           {filteredMiners.map((miner) => (
             <Fragment key={miner.uid}>
               <tr
-                className={`cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 ${
-                  selectedMinerUids.has(miner.uid)
+                className={`cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 ${selectedMinerUids.has(miner.uid)
                     ? "bg-blue-50 dark:bg-blue-900/20"
                     : ""
-                }`}
+                  }`}
                 onClick={() => handleRowClick(miner.uid)}
               >
                 <td className="whitespace-nowrap px-6 py-4 font-mono text-sm text-gray-900 dark:text-gray-100">
@@ -197,7 +196,7 @@ export default function MinerTable({
                   ${(miner.average_price / 100).toFixed(2)}/h
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-end text-sm text-gray-900 dark:text-gray-100">
-                  ${(miner.average_payout / (miner.nodes * 8)).toFixed(2)}/h
+                  ${(miner.average_payout / 8).toFixed(2)}/h
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-end text-sm text-gray-900 dark:text-gray-100">
                   {miner.nodes}
