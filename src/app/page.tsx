@@ -29,6 +29,14 @@ export default function HomePage() {
     error,
   } = reactClient.chain.getAuctionState.useQuery(selectedBlock ?? undefined);
 
+  const {
+    data: auctionLatest,
+    isLoading: isLoadingLatest,
+    error: errorLatest,
+  } = reactClient.chain.getAuctionState.useQuery(undefined);
+
+
+
   const handleNavigateToMiner = (uid: string) => {
     setSelectedTable("miner");
     setSearchTerm(uid);
@@ -53,7 +61,8 @@ export default function HomePage() {
           <div className="flex items-center gap-4">
             {auction && (
               <BlockSelector
-                block={auction.block}
+                block={selectedBlock ?? auction.block}
+                latestBlock={auctionLatest?.block}
                 onBlockChange={setSelectedBlock}
                 isLoading={isLoading}
               />
