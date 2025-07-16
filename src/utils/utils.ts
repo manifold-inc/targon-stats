@@ -10,6 +10,7 @@ export const StatsSchema = z.object({
   range_tokens_per_second: z.number(),
   average_tokens_per_second: z.number(),
 });
+
 export async function copyToClipboard(text: string) {
   try {
     await navigator.clipboard.writeText(text);
@@ -81,4 +82,8 @@ export function removeIPAddress(node: MinerNode): MinerNode {
     diluted: node.diluted,
   } as MinerNode;
   return parsedNode;
+}
+
+export function CalculateInterval(block: number): number {
+  return Math.floor(block / 360);
 }
