@@ -16,6 +16,11 @@ export interface AuctionState {
   weights: Record<string, number[]>;
 }
 
+interface AttestationReport {
+  passed: Record<string, string[]>;
+  failed: Record<string, string>;
+}
+
 export async function getAuctionState(block?: number): Promise<AuctionState> {
   const mongoDb = await connectToMongoDb();
   if (!mongoDb) throw new Error("Failed to connect to MongoDB");
@@ -53,8 +58,44 @@ export async function getAuctionState(block?: number): Promise<AuctionState> {
   return state;
 }
 
+export async function getAttestationReport(uid: string) {
+  const mongoDb = await connectToMongoDb();
+  if (!mongoDb) throw new Error("Failed to connect to MongoDB");
+
+  const data = await mongoDb
+    .collection("miner_info")
+    .find(
+      {},
+      { projection: { attest_errors: 1, passed_attestation: 1, _id: 0 } },
+    )
+    .sort({ block: -1 })
+    .limit(1)
+    .toArray();
+  if (!data[0]) throw new Error("Failed to get attestation report");
+
+  const passed = data[0].passed_attestation as Record<
+    string,
+    Record<string, string[]>
+  >;
+  const failed = data[0].attest_errors as Record<
+    string,
+    Record<string, string>
+  >;
+
+  const report: AttestationReport = {
+    passed: passed[uid] || {},
+    failed: failed[uid] || {},
+  };
+
+  return report;
+}
+
 export const chainRouter = createTRPCRouter({
   getAuctionState: publicAuthlessProcedure
     .input(z.number().optional())
     .query(async ({ input }) => getAuctionState(input)),
+
+  getAttestationReport: publicAuthlessProcedure
+    .input(z.string())
+    .query(async ({ input }) => getAttestationReport(input)),
 });
