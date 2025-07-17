@@ -135,28 +135,28 @@ export default function MinerTable({
 
   if (isLoading) {
     return (
-      <div className="rounded-lg border border-gray-200 dark:border-gray-700">
-        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead className="bg-gray-50 dark:bg-gray-800">
+      <div className="rounded-lg border border-gray-700">
+        <table className="min-w-full divide-y divide-gray-700">
+          <thead className="bg-gray-800">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-400">
                 UUID
               </th>
-              <th className="px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+              <th className="px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-400">
                 Average Bid
               </th>
-              <th className="px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+              <th className="px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-400">
                 Average Payout
               </th>
-              <th className="px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+              <th className="px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-400">
                 Number of Nodes
               </th>
-              <th className="px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+              <th className="px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-400">
                 Payment Status
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
+          <tbody className="divide-y divide-gray-700 bg-gray-900">
             <tr>
               <td
                 colSpan={5}
@@ -173,32 +173,32 @@ export default function MinerTable({
 
   if (error) {
     return (
-      <div className="rounded-lg border border-gray-200 dark:border-gray-700">
-        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead className="bg-gray-50 dark:bg-gray-800">
+      <div className="rounded-lg border border-gray-700">
+        <table className="min-w-full divide-y divide-gray-700">
+          <thead className="bg-gray-800">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-400">
                 UUID
               </th>
-              <th className="px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+              <th className="px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-400">
                 Average Bid
               </th>
-              <th className="px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+              <th className="px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-400">
                 Average Payout
               </th>
-              <th className="px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+              <th className="px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-400">
                 Number of Nodes
               </th>
-              <th className="px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+              <th className="px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-400">
                 Payment Status
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
+          <tbody className="divide-y divide-gray-700 bg-gray-900">
             <tr>
               <td
                 colSpan={5}
-                className="text-center text-red-600 dark:text-red-400"
+                className="text-center text-red-400"
               >
                 Error loading miners: {error.message}
               </td>
@@ -248,12 +248,12 @@ export default function MinerTable({
   }
 
   return (
-    <div className="rounded-lg border border-gray-200 dark:border-gray-700">
-      <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-        <thead className="bg-gray-50 dark:bg-gray-800">
+    <div className="rounded-lg border border-gray-700">
+      <table className="min-w-full divide-y divide-gray-700">
+        <thead className="bg-gray-800">
           <tr>
             <th
-              className="cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
+              className="cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-400 hover:bg-gray-700"
               onClick={() => handleSort(SortField.UID)}
             >
               <div className="flex items-center gap-1">
@@ -262,7 +262,7 @@ export default function MinerTable({
               </div>
             </th>
             <th
-              className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
+              className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-400 hover:bg-gray-700"
               onClick={() => handleSort(SortField.AVERAGE_PRICE)}
             >
               <div className="flex items-center justify-end gap-1">
@@ -271,7 +271,7 @@ export default function MinerTable({
               </div>
             </th>
             <th
-              className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
+              className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-400 hover:bg-gray-700"
               onClick={() => handleSort(SortField.AVERAGE_PAYOUT)}
             >
               <div className="flex items-center justify-end gap-1">
@@ -280,7 +280,7 @@ export default function MinerTable({
               </div>
             </th>
             <th
-              className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
+              className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-400 hover:bg-gray-700"
               onClick={() => handleSort(SortField.NODES)}
             >
               <div className="flex items-center justify-end gap-1">
@@ -289,7 +289,7 @@ export default function MinerTable({
               </div>
             </th>
             <th
-              className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
+              className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-400 hover:bg-gray-700"
               onClick={() => handleSort(SortField.PAYMENT_STATUS)}
             >
               <div className="flex items-center justify-end gap-1">
@@ -299,28 +299,28 @@ export default function MinerTable({
             </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
+        <tbody className="divide-y divide-gray-700 bg-gray-900">
           {sorted.map((miner) => (
             <Fragment key={miner.uid}>
               <tr
-                className={`cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 ${
+                className={`cursor-pointer hover:bg-gray-800 ${
                   selectedMinerUids.has(miner.uid)
-                    ? "bg-blue-50 dark:bg-blue-900/20"
+                    ? "bg-blue-900/20"
                     : ""
                 }`}
                 onClick={() => handleRowClick(miner.uid)}
               >
-                <td className="whitespace-nowrap px-6 py-4 font-mono text-sm text-gray-900 dark:text-gray-100">
+                <td className="whitespace-nowrap px-6 py-4 font-mono text-sm text-gray-100">
                   {miner.uid}
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 text-end text-sm text-gray-900 dark:text-gray-100">
+                <td className="whitespace-nowrap px-6 py-4 text-end text-sm text-gray-100">
                   ${(miner.average_price / 100).toFixed(2)}/h
                 </td>
                 {/* TODO: Remove division once payout is calculated correctly */}
-                <td className="whitespace-nowrap px-6 py-4 text-end text-sm text-gray-900 dark:text-gray-100">
+                <td className="whitespace-nowrap px-6 py-4 text-end text-sm text-gray-100">
                   ${(miner.average_payout / 8).toFixed(2)}/h
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 text-end text-sm text-gray-900 dark:text-gray-100">
+                <td className="whitespace-nowrap px-6 py-4 text-end text-sm text-gray-100">
                   {miner.nodes}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-end text-sm">

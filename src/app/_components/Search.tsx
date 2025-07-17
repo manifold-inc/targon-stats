@@ -22,7 +22,7 @@ export default function Search({
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="block w-full rounded-md border border-gray-300 bg-white py-2 pl-10 pr-3 text-sm placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-400 dark:focus:border-blue-400 dark:focus:ring-blue-400"
+        className="block w-full rounded-md border border-gray-600 bg-gray-800 py-2 pl-10 pr-3 text-sm text-gray-100 placeholder-gray-400 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400"
         placeholder={placeholder}
       />
     </div>

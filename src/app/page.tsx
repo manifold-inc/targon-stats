@@ -14,6 +14,7 @@ import ToggleTable from "@/app/_components/ToggleTable";
 import WeightTable from "@/app/_components/WeightTable";
 import { reactClient } from "@/trpc/react";
 import { getNodes, getNodesByMiner } from "@/utils/utils";
+import BackgroundSVG from "@/app/_components/BackgroundSVG";
 
 export default function HomePage() {
   const [selectedTable, setSelectedTable] = useState<
@@ -42,11 +43,21 @@ export default function HomePage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      <BackgroundSVG />
       <div className="mx-auto max-w-4xl">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-50 sm:text-4xl">
-            Targon Miner Stats
-          </h1>
+        <div className="flex items-center justify-between px-6 py-4 border-y border-mf-ash-300 bg-mf-night-500">
+          <div className="flex items-center gap-2">
+            <img src="/targonStatsLogo.svg" alt="Targon-logo" width={30} height={30} className="h-10 w-10" />
+            <h1 className="text-xl font-semibold text-white">
+              Targon Stats
+            </h1>
+          </div>
+          <div className="flex items-center gap-8">
+            <MaxBid maxBid={auction?.max_bid || 0} />
+            <TaoPrice price={auction?.tao_price || 0} />
+            <EmissionPool pool={auction?.emission_pool || 0} />
+            <CurrentBlock block={auction?.block || 0} />
+          </div>
         </div>
 
         <div className="mt-8 flex justify-between">
@@ -67,15 +78,10 @@ export default function HomePage() {
             <Search value={searchTerm} onChange={setSearchTerm} />
           </div>
         </div>
-
-        <div className="mt-4 flex justify-between">
-          <CurrentBlock block={auction?.block || 0} />
-          <MaxBid maxBid={auction?.max_bid || 0} />
-          <TaoPrice price={auction?.tao_price || 0} />
-          <EmissionPool pool={auction?.emission_pool || 0} />
-        </div>
-
+            
         <div className="mt-8">
+          <div className="border-y border-mf-ash-300 bg-mf-night-700 rounded-lg p-8"> 
+          <h2 className="text-lg font-bold text-white mb-7">Targon Miners</h2>
           {selectedTable === "miner" ? (
             <MinerTable
               miners={getNodesByMiner(auction?.auction_results ?? {})}
@@ -104,6 +110,7 @@ export default function HomePage() {
               error={error as Error | null}
             />
           )}
+        </div>
         </div>
       </div>
     </div>

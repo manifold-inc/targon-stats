@@ -20,21 +20,21 @@ const ToggleTable = ({
     <div className="flex justify-center gap-2">
       <button
         type="button"
-        className={`rounded-md px-6 py-2 text-sm font-medium focus:z-10 focus:outline-none ${selectedTable === "miner" ? "bg-blue-600 text-white" : "bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100"}`}
+        className={`rounded-md px-6 py-2 text-lg font-medium focus:z-10 focus:outline-none ${selectedTable === "miner" ? "bg-blue-600 text-white" : "bg-gray-900 text-mf-edge-500"}`}
         onClick={() => handleTableChange("miner")}
       >
         Miners
       </button>
       <button
         type="button"
-        className={`rounded-md px-6 py-2 text-sm font-medium focus:z-10 focus:outline-none ${selectedTable === "bid" ? "bg-blue-600 text-white" : "bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100"}`}
+        className={`rounded-md px-6 py-2 text-lg font-medium focus:z-10 focus:outline-none ${selectedTable === "bid" ? "bg-blue-600 text-white" : "bg-gray-900 text-mf-edge-500"}`}
         onClick={() => handleTableChange("bid")}
       >
-        Bids
+        Buyouts
       </button>
       <button
         type="button"
-        className={`rounded-md px-6 py-2 text-sm font-medium focus:z-10 focus:outline-none ${selectedTable === "weight" ? "bg-blue-600 text-white" : "bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100"}`}
+        className={`rounded-md px-6 py-2 text-lg font-medium focus:z-10 focus:outline-none ${selectedTable === "weight" ? "bg-blue-600 text-white" : "bg-gray-900 text-mf-edge-500"}`}
         onClick={() => handleTableChange("weight")}
       >
         Weights

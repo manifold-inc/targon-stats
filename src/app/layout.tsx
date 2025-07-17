@@ -1,6 +1,4 @@
 import type { Metadata } from "next";
-import dynamic from "next/dynamic";
-import { ThemeProvider } from "next-themes";
 
 import "@/styles/globals.css";
 
@@ -11,10 +9,6 @@ import { Toaster } from "sonner";
 
 import Header from "./_components/header";
 import { WithGlobalProvider } from "./_components/providers";
-
-const ToggleTheme = dynamic(() => import("./_components/ToggleTheme"), {
-  ssr: false,
-});
 
 const inter = Inter({
   subsets: ["latin"],
@@ -35,7 +29,7 @@ export default function RootLayout({
     <html
       suppressHydrationWarning
       lang="en"
-      className={clsx("h-full", inter.variable)}
+      className={clsx("h-full dark", inter.variable)}
     >
       <head>
         <link rel="manifest" href="/site.webmanifest" />
@@ -45,13 +39,8 @@ export default function RootLayout({
         className={`relative bg-mf-night-500 text-gray-100 transition-colors`}
       >
         <WithGlobalProvider>
-          <ThemeProvider attribute="class">
             <Header />
             <main>{children}</main>
-            <div className="fixed bottom-5 right-5 z-40">
-              <ToggleTheme />
-            </div>
-          </ThemeProvider>
         </WithGlobalProvider>
 
         <Toaster />
