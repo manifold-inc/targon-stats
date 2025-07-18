@@ -34,11 +34,6 @@ export default function HomePage() {
   const { data: auctionLatest } =
     reactClient.chain.getAuctionState.useQuery(undefined);
 
-  const { data: report } =
-    reactClient.chain.getAttestationReport.useQuery("88");
-
-  console.log("Attestation Report: ", report);
-
   const handleNavigateToMiner = (uid: string) => {
     setSelectedTable("miner");
     setSearchTerm(uid);
