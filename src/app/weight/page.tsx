@@ -36,9 +36,9 @@ function Content() {
     (term: string) => {
       setSearchTerm(term);
       if (term.trim()) {
-        router.push(`/weight?search=${encodeURIComponent(term)}`);
+        router.push(`/miner?search=${encodeURIComponent(term)}`);
       } else {
-        router.push("/weight");
+        router.push("/miner");
       }
     },
     [router],

@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 
 import MinerDetails from "@/app/_components/MinerDetails";
 import PaymentStatusIcon from "@/app/_components/PaymentStatusIcon";
 import { type MinerNode } from "@/app/api/bids/route";
 import { type Miner } from "@/app/api/miners/route";
+import { useSearchParams } from "next/navigation";
 
 enum SortField {
   UID = "uid",
@@ -42,7 +43,15 @@ export default function MinerTable({
 }: MinerTableProps) {
   const [field, setField] = useState<SortField>(SortField.NULL);
   const [direction, setDirection] = useState<SortDirection>(SortDirection.NULL);
-  const [expandedMiner, setExpandedMiner] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+  const [expandedMiner, setExpandedMiner] = useState<string[] | null>([searchParams.get("search") || ""]);
+
+  useEffect(() => {
+    if (!searchTerm.trim()) {
+      setExpandedMiner([]);
+    }
+  }, [searchTerm]);
+
   const handleSort = (selectedField: SortField) => {
     if (field === selectedField) {
       switch (direction) {
@@ -127,10 +136,10 @@ export default function MinerTable({
   const sorted = sortMiners(filtered);
 
   const handleMinerClick = (uid: string) => {
-    if (expandedMiner === uid) {
-      setExpandedMiner(null);
+    if (expandedMiner?.includes(uid)) {
+      setExpandedMiner(expandedMiner.filter((u) => u !== uid));
     } else {
-      setExpandedMiner(uid);
+      setExpandedMiner([...(expandedMiner || []), uid]);
     }
     onNavigateToMiner(uid);
   };
@@ -332,7 +341,7 @@ export default function MinerTable({
                   </span>
                 </td>
               </tr>
-              {expandedMiner === miner.uid && (
+              {expandedMiner?.includes(miner.uid) && (
                 <MinerDetails
                   nodes={getNodesForMiner(miner.uid)}
                   isLoading={false}
