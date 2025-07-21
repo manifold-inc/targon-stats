@@ -53,9 +53,9 @@ export default function HomePage() {
                 alt="Targon-logo"
                 width={30}
                 height={30}
-                className="h-10 w-10"
+                className="h-7 w-7"
               />
-              <h1 className="text-xl font-semibold text-mf-edge-500">Targon Stats</h1>
+              <h1 className="text-xl font-semibold text-mf-edge-500 flex items-center font-blinker ">Targon Stats</h1>
             </div>
             <div className="flex items-center gap-2">
               <MaxBid maxBid={auction?.max_bid || 0} />
@@ -89,7 +89,7 @@ export default function HomePage() {
 
         <div className="mt-5">
           <div className="rounded-lg border-2 border-mf-ash-300 bg-mf-ash-700 p-8">
-            <h2 className="mb-7 text-lg font-bold text-mf-edge-500">Targon Miners</h2>
+            <h2 className="mb-7 text-lg font-bold text-mf-edge-500 font-blinker tracking-wider">Targon Miners</h2>
             {selectedTable === "miner" ? (
               <MinerTable
                 miners={getNodesByMiner(auction?.auction_results ?? {})}

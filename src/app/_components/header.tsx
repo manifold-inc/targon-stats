@@ -14,17 +14,17 @@ const Header = () => {
         aria-label="Global"
         className="w-fullitems-center mx-auto flex justify-between p-6 lg:px-8"
       >
-        <div className="flex lg:flex-1">
+        <div className="flex lg:flex-1 items-center">
           <img
             src="/targonLogo.svg"
             alt="Targon-logo"
             width={24}
             height={24}
-            className="mr-2"
+            className="mr-2 w-5 h-5"
           />
           <Link href="/" className="-m-1.5 p-1.5">
             <span className="sr-only">Targon </span>
-            <span className="text-xl font-bold text-mf-edge-500">TARGON </span>
+            <span className="text-xl font-bold text-mf-edge-500 font-blinker tracking-wider ">TARGON </span>
           </Link>
         </div>
         <div className="flex lg:hidden">

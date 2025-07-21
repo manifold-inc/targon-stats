@@ -20,9 +20,9 @@ const ToggleTable = ({
     <div className="flex items-center gap-2 p-1">
       <button
         type="button"
-        className={`flex items-center gap-2 rounded-lg px-4 py-2 text-lg font-medium ${
+        className={`flex items-center gap-2 rounded-lg px-4 py-2 text-lg font-semibold ${
           selectedTable === "miner"
-            ? "bg-[#272D38] text-white"
+            ? "bg-[#272D38] text-mf-edge-500"
             : "bg-transparent text-mf-edge-300 hover:bg-[#272D38]/50"
         }`}
         onClick={() => handleTableChange("miner")}
@@ -34,14 +34,14 @@ const ToggleTable = ({
           height={24}
           className="h-4 w-4 text-current"
         />
-        <span>Miners</span>
+        <span className="font-blinker">Miners</span>
       </button>
 
       <button
         type="button"
-        className={`flex items-center gap-2 rounded-lg px-4 py-2 text-lg font-medium ${
+        className={`flex items-center gap-2 rounded-lg px-4 py-2 text-lg font-semibold ${
           selectedTable === "bid"
-            ? "bg-[#272D38] text-white"
+            ? "bg-[#272D38] text-mf-edge-500"
             : "bg-transparent text-mf-edge-300 hover:bg-[#272D38]/50"
         }`}
         onClick={() => handleTableChange("bid")}
@@ -53,14 +53,14 @@ const ToggleTable = ({
           height={24}
           className="h-4 w-4 text-current"
         />
-        <span>Buyouts</span>
+        <span className="font-blinker">Buyouts</span>
       </button>
 
       <button
         type="button"
-        className={`flex items-center gap-2 rounded-lg px-4 py-2 text-lg font-medium  ${
+        className={`flex items-center gap-2 rounded-lg px-4 py-2 text-lg font-semibold  ${
           selectedTable === "weight"
-            ? "bg-[#272D38] text-white"
+            ? "bg-[#272D38] text-mf-edge-500"
             : "bg-transparent text-mf-edge-300 hover:bg-[#272D38]/50"
         }`}
         onClick={() => handleTableChange("weight")}
@@ -72,7 +72,7 @@ const ToggleTable = ({
           height={24}
           className="h-4 w-4 text-current"
         />
-        <span>Weights</span>
+        <span className="font-blinker">Weights</span>
       </button>
     </div>
   );

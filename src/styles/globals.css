@@ -195,3 +195,12 @@
 .hljs-tag {
   /* purposely ignored */
 }
+
+/* Font utility classes */
+.font-blinker {
+  font-family: var(--font-family-sans);
+}
+
+.font-poppins {
+  font-family: var(--font-family-poppins);
+}

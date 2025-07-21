@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 import "@/styles/globals.css";
 
-import { Inter } from "next/font/google";
+import { Blinker, Poppins } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import clsx from "clsx";
 import { Toaster } from "sonner";
@@ -10,9 +10,17 @@ import { Toaster } from "sonner";
 import Header from "./_components/header";
 import { WithGlobalProvider } from "./_components/providers";
 
-const inter = Inter({
+const blinker = Blinker({
   subsets: ["latin"],
-  variable: "--font-inter",
+  weight: ["100", "200", "300", "400", "600", "700", "800", "900"],
+  variable: "--font-blinker",
+  display: "swap",
+});
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  variable: "--font-poppins",
   display: "swap",
 });
 
@@ -29,7 +37,7 @@ export default function RootLayout({
     <html
       suppressHydrationWarning
       lang="en"
-      className={clsx("dark h-full", inter.variable)}
+      className={clsx("dark h-full", blinker.variable, poppins.variable)}
     >
       <head>
         <link rel="manifest" href="/site.webmanifest" />
