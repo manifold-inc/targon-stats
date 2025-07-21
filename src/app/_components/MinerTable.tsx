@@ -3,8 +3,10 @@
 import { useState } from "react";
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 
+import MinerDetails from "@/app/_components/MinerDetails";
 import PaymentStatusIcon from "@/app/_components/PaymentStatusIcon";
 import { type Miner } from "@/app/api/miners/route";
+import { type MinerNode } from "@/app/api/bids/route";
 
 enum SortField {
   UID = "uid",
@@ -23,6 +25,7 @@ enum SortDirection {
 
 interface MinerTableProps {
   miners: Miner[];
+  nodes: MinerNode[];
   isLoading: boolean;
   error: Error | null;
   searchTerm: string;
@@ -31,6 +34,7 @@ interface MinerTableProps {
 
 export default function MinerTable({
   miners,
+  nodes,
   isLoading,
   error,
   searchTerm,
@@ -38,6 +42,7 @@ export default function MinerTable({
 }: MinerTableProps) {
   const [field, setField] = useState<SortField>(SortField.NULL);
   const [direction, setDirection] = useState<SortDirection>(SortDirection.NULL);
+  const [expandedMiner, setExpandedMiner] = useState<string | null>(null);
   const handleSort = (selectedField: SortField) => {
     if (field === selectedField) {
       switch (direction) {
@@ -120,6 +125,19 @@ export default function MinerTable({
       return false;
     }) || [];
   const sorted = sortMiners(filtered);
+
+  const handleMinerClick = (uid: string) => {
+    if (expandedMiner === uid) {
+      setExpandedMiner(null);
+    } else {
+      setExpandedMiner(uid);
+    }
+    onNavigateToMiner(uid);
+  };
+
+  const getNodesForMiner = (uid: string): MinerNode[] => {
+    return nodes?.filter((node) => node.uid === uid) || [];
+  };
 
   if (isLoading) {
     return (
@@ -289,30 +307,39 @@ export default function MinerTable({
         </thead>
         <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
           {sorted.map((miner) => (
-            <tr
-              key={miner.uid}
-              className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
-              onClick={() => onNavigateToMiner(miner.uid)}
-            >
-              <td className="whitespace-nowrap px-6 py-4 font-mono text-sm text-gray-900 dark:text-gray-100">
-                {miner.uid}
-              </td>
-              <td className="whitespace-nowrap px-6 py-4 text-end text-sm text-gray-900 dark:text-gray-100">
-                ${(miner.average_price / 100).toFixed(2)}/h
-              </td>
-              {/* TODO: Remove division once payout is calculated correctly */}
-              <td className="whitespace-nowrap px-6 py-4 text-end text-sm text-gray-900 dark:text-gray-100">
-                ${(miner.average_payout / 8).toFixed(2)}/h
-              </td>
-              <td className="whitespace-nowrap px-6 py-4 text-end text-sm text-gray-900 dark:text-gray-100">
-                {miner.nodes}
-              </td>
-              <td className="whitespace-nowrap px-6 py-4 text-end text-sm">
-                <span className="px-2">
-                  <PaymentStatusIcon miner={miner} />
-                </span>
-              </td>
-            </tr>
+            <>
+              <tr
+                key={miner.uid}
+                className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
+                onClick={() => handleMinerClick(miner.uid)}
+              >
+                <td className="whitespace-nowrap px-6 py-4 font-mono text-sm text-gray-900 dark:text-gray-100">
+                  {miner.uid}
+                </td>
+                <td className="whitespace-nowrap px-6 py-4 text-end text-sm text-gray-900 dark:text-gray-100">
+                  ${(miner.average_price / 100).toFixed(2)}/h
+                </td>
+                {/* TODO: Remove division once payout is calculated correctly */}
+                <td className="whitespace-nowrap px-6 py-4 text-end text-sm text-gray-900 dark:text-gray-100">
+                  ${(miner.average_payout / 8).toFixed(2)}/h
+                </td>
+                <td className="whitespace-nowrap px-6 py-4 text-end text-sm text-gray-900 dark:text-gray-100">
+                  {miner.nodes}
+                </td>
+                <td className="whitespace-nowrap px-6 py-4 text-end text-sm">
+                  <span className="px-2">
+                    <PaymentStatusIcon miner={miner} />
+                  </span>
+                </td>
+              </tr>
+              {expandedMiner === miner.uid && (
+                <MinerDetails
+                  nodes={getNodesForMiner(miner.uid)}
+                  isLoading={false}
+                  error={null}
+                />
+              )}
+            </>
           ))}
         </tbody>
       </table>

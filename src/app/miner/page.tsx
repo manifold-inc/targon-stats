@@ -12,7 +12,7 @@ import Navigation from "@/app/_components/Navigation";
 import Search from "@/app/_components/Search";
 import TaoPrice from "@/app/_components/TaoPrice";
 import { reactClient } from "@/trpc/react";
-import { getNodesByMiner } from "@/utils/utils";
+import { getNodesByMiner, getNodes } from "@/utils/utils";
 
 function Content() {
   const [selectedBlock, setSelectedBlock] = useState<number | undefined>(
@@ -96,6 +96,7 @@ function Content() {
         <div className="mt-8">
           <MinerTable
             miners={getNodesByMiner(auction?.auction_results ?? {})}
+            nodes={getNodes(auction?.auction_results ?? {})}
             searchTerm={searchTerm}
             isLoading={isLoading}
             error={error ? new Error(error.message) : null}
