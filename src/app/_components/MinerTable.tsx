@@ -135,33 +135,40 @@ export default function MinerTable({
 
   if (isLoading) {
     return (
-      <div className="rounded-lg">
-        <table className="min-w-full divide-y divide-gray-700">
-          <thead className="bg-gray-800">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-400">
-                UUID
+      <div className="space-y-1">
+        <table className="min-w-full">
+          <thead className="bg-mf-sally-500/15 rounded-lg">
+            <tr className="[&>th:first-child]:rounded-l-lg [&>th:last-child]:rounded-r-lg">
+              <th className="cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
+                <div className="flex items-center gap-1">
+                  UUID
+                </div>
               </th>
-              <th className="px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-400">
-                Average Bid
+              <th className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
+                <div className="flex items-center justify-end gap-1">
+                  Average Bid
+                </div>
               </th>
-              <th className="px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-400">
-                Average Payout
+              <th className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
+                <div className="flex items-center justify-end gap-1">
+                  Average Payout
+                </div>
               </th>
-              <th className="px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-400">
-                Number of Nodes
+              <th className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
+                <div className="flex items-center justify-end gap-1">
+                  Number of Nodes
+                </div>
               </th>
-              <th className="px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-400">
-                Payment Status
+              <th className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
+                <div className="flex items-center justify-end gap-1">
+                  Payment Status
+                </div>
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-700 bg-gray-900">
-            <tr>
-              <td
-                colSpan={5}
-                className="text-center text-gray-600 dark:text-gray-400"
-              >
+          <tbody className="bg-mf-ash-500/15">
+            <tr className="cursor-pointer hover:bg-mf-ash-500/30 outline outline-2 outline-mf-ash-300 outline-offset-[-1px] rounded-lg bg-mf-ash-500/15 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
+              <td colSpan={5} className="whitespace-nowrap px-6 py-4 text-center text-sm text-white">
                 Loading miners...
               </td>
             </tr>
@@ -173,30 +180,40 @@ export default function MinerTable({
 
   if (error) {
     return (
-      <div className="rounded-lg border border-gray-700">
-        <table className="min-w-full divide-y divide-gray-700">
-          <thead className="bg-gray-800">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-400">
-                UUID
+      <div className="space-y-1">
+        <table className="min-w-full">
+          <thead className="bg-mf-sally-500/15 rounded-lg">
+            <tr className="[&>th:first-child]:rounded-l-lg [&>th:last-child]:rounded-r-lg">
+              <th className="cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
+                <div className="flex items-center gap-1">
+                  UUID
+                </div>
               </th>
-              <th className="px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-400">
-                Average Bid
+              <th className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
+                <div className="flex items-center justify-end gap-1">
+                  Average Bid
+                </div>
               </th>
-              <th className="px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-400">
-                Average Payout
+              <th className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
+                <div className="flex items-center justify-end gap-1">
+                  Average Payout
+                </div>
               </th>
-              <th className="px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-400">
-                Number of Nodes
+              <th className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
+                <div className="flex items-center justify-end gap-1">
+                  Number of Nodes
+                </div>
               </th>
-              <th className="px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-400">
-                Payment Status
+              <th className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
+                <div className="flex items-center justify-end gap-1">
+                  Payment Status
+                </div>
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-700 bg-gray-900">
-            <tr>
-              <td colSpan={5} className="text-center text-red-400">
+          <tbody className="bg-mf-ash-500/15">
+            <tr className="cursor-pointer hover:bg-mf-ash-500/30 outline outline-2 outline-mf-ash-300 outline-offset-[-1px] rounded-lg bg-mf-ash-500/15 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
+              <td colSpan={5} className="whitespace-nowrap px-6 py-4 text-center text-sm text-red-400">
                 Error loading miners: {error.message}
               </td>
             </tr>
@@ -208,33 +225,40 @@ export default function MinerTable({
 
   if (searchTerm && filtered.length === 0) {
     return (
-      <div className="rounded-lg border border-gray-200 dark:border-gray-700">
-        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead className="bg-gray-50 dark:bg-gray-800">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                UUID
+      <div className="space-y-1">
+        <table className="min-w-full">
+          <thead className="bg-mf-sally-500/15 rounded-lg">
+            <tr className="[&>th:first-child]:rounded-l-lg [&>th:last-child]:rounded-r-lg">
+              <th className="cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
+                <div className="flex items-center gap-1">
+                  UUID
+                </div>
               </th>
-              <th className="px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                Average Bid
+              <th className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
+                <div className="flex items-center justify-end gap-1">
+                  Average Bid
+                </div>
               </th>
-              <th className="px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                Average Payout
+              <th className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
+                <div className="flex items-center justify-end gap-1">
+                  Average Payout
+                </div>
               </th>
-              <th className="px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                Number of Nodes
+              <th className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
+                <div className="flex items-center justify-end gap-1">
+                  Number of Nodes
+                </div>
               </th>
-              <th className="px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                Payment Status
+              <th className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
+                <div className="flex items-center justify-end gap-1">
+                  Payment Status
+                </div>
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
-            <tr>
-              <td
-                colSpan={5}
-                className="text-center text-gray-600 dark:text-gray-400"
-              >
+          <tbody className="bg-mf-ash-500/15">
+            <tr className="cursor-pointer hover:bg-mf-ash-500/30 outline outline-2 outline-mf-ash-300 outline-offset-[-1px] rounded-lg bg-mf-ash-500/15 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
+              <td colSpan={5} className="whitespace-nowrap px-6 py-4 text-center text-sm text-white">
                 No miners found matching {searchTerm}
               </td>
             </tr>
