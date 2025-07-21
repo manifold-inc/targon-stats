@@ -38,6 +38,7 @@ function Content() {
 
   useEffect(() => {
     const searchParam = searchParams.get("search");
+    console.log("[Page]Search Param: ", searchParam);
     if (searchParam) {
       setSearchTerm(searchParam);
     } else {
@@ -100,7 +101,6 @@ function Content() {
             searchTerm={searchTerm}
             isLoading={isLoading}
             error={error ? new Error(error.message) : null}
-            onNavigateToMiner={handleSearchChange}
           />
         </div>
       </div>

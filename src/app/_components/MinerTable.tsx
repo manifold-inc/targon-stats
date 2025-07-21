@@ -7,7 +7,6 @@ import MinerDetails from "@/app/_components/MinerDetails";
 import PaymentStatusIcon from "@/app/_components/PaymentStatusIcon";
 import { type MinerNode } from "@/app/api/bids/route";
 import { type Miner } from "@/app/api/miners/route";
-import { useSearchParams } from "next/navigation";
 
 enum SortField {
   UID = "uid",
@@ -30,7 +29,6 @@ interface MinerTableProps {
   isLoading: boolean;
   error: Error | null;
   searchTerm: string;
-  onNavigateToMiner: (uid: string) => void;
 }
 
 export default function MinerTable({
@@ -39,18 +37,18 @@ export default function MinerTable({
   isLoading,
   error,
   searchTerm,
-  onNavigateToMiner,
 }: MinerTableProps) {
   const [field, setField] = useState<SortField>(SortField.NULL);
   const [direction, setDirection] = useState<SortDirection>(SortDirection.NULL);
-  const searchParams = useSearchParams();
-  const [expandedMiner, setExpandedMiner] = useState<string[] | null>([searchParams.get("search") || ""]);
+  const [expandedMiners, setExpandedMiners] = useState<string[]>([searchTerm]);
 
   useEffect(() => {
     if (!searchTerm.trim()) {
-      setExpandedMiner([]);
+      setExpandedMiners([]);
+    } else {
+      setExpandedMiners([...expandedMiners, searchTerm]);
     }
-  }, [searchTerm]);
+  }, [searchTerm, expandedMiners]);
 
   const handleSort = (selectedField: SortField) => {
     if (field === selectedField) {
@@ -136,12 +134,11 @@ export default function MinerTable({
   const sorted = sortMiners(filtered);
 
   const handleMinerClick = (uid: string) => {
-    if (expandedMiner?.includes(uid)) {
-      setExpandedMiner(expandedMiner.filter((u) => u !== uid));
+    if (expandedMiners?.includes(uid)) {
+      setExpandedMiners(expandedMiners.filter((u) => u !== uid));
     } else {
-      setExpandedMiner([...(expandedMiner || []), uid]);
+      setExpandedMiners([...(expandedMiners || []), uid]);
     }
-    onNavigateToMiner(uid);
   };
 
   const getNodesForMiner = (uid: string): MinerNode[] => {
@@ -341,7 +338,7 @@ export default function MinerTable({
                   </span>
                 </td>
               </tr>
-              {expandedMiner?.includes(miner.uid) && (
+              {expandedMiners?.includes(miner.uid) && (
                 <MinerDetails
                   nodes={getNodesForMiner(miner.uid)}
                   isLoading={false}
