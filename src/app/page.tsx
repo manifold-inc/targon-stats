@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import BackgroundSVG from "@/app/_components/BackgroundSVG";
 import BidTable from "@/app/_components/BidTable";
 import BlockSelector from "@/app/_components/BlockSelector";
 import CurrentBlock from "@/app/_components/CurrentBlock";
@@ -14,7 +15,6 @@ import ToggleTable from "@/app/_components/ToggleTable";
 import WeightTable from "@/app/_components/WeightTable";
 import { reactClient } from "@/trpc/react";
 import { getNodes, getNodesByMiner } from "@/utils/utils";
-import BackgroundSVG from "@/app/_components/BackgroundSVG";
 
 export default function HomePage() {
   const [selectedTable, setSelectedTable] = useState<
@@ -42,25 +42,33 @@ export default function HomePage() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+    <div className="w-full">
       <BackgroundSVG />
-      <div className="mx-auto max-w-4xl">
-        <div className="flex items-center justify-between px-6 py-4 border-y border-mf-ash-300 bg-mf-night-500">
-          <div className="flex items-center gap-2">
-            <img src="/targonStatsLogo.svg" alt="Targon-logo" width={30} height={30} className="h-10 w-10" />
-            <h1 className="text-xl font-semibold text-white">
-              Targon Stats
-            </h1>
-          </div>
-          <div className="flex items-center gap-8">
-            <MaxBid maxBid={auction?.max_bid || 0} />
-            <TaoPrice price={auction?.tao_price || 0} />
-            <EmissionPool pool={auction?.emission_pool || 0} />
-            <CurrentBlock block={auction?.block || 0} />
+      <div className="w-full border-y-2 border-mf-ash-300 bg-mf-night-500">
+        <div className="mx-auto max-w-5xl">
+          <div className="flex items-center justify-between px-6 py-4">
+            <div className="flex items-center gap-2">
+              <img
+                src="/targonStatsLogo.svg"
+                alt="Targon-logo"
+                width={30}
+                height={30}
+                className="h-10 w-10"
+              />
+              <h1 className="text-xl font-semibold text-mf-edge-500">Targon Stats</h1>
+            </div>
+            <div className="flex items-center gap-2">
+              <MaxBid maxBid={auction?.max_bid || 0} />
+              <TaoPrice price={auction?.tao_price || 0} />
+              <EmissionPool pool={auction?.emission_pool || 0} />
+              <CurrentBlock block={auction?.block || 0} />
+            </div>
           </div>
         </div>
+      </div>
 
-        <div className="mt-8 flex justify-between">
+      <div className="mx-auto max-w-5xl px-8 py-2">
+        <div className="mt-4 flex justify-between">
           <ToggleTable
             selectedTable={selectedTable}
             setSelectedTable={setSelectedTable}
@@ -78,39 +86,39 @@ export default function HomePage() {
             <Search value={searchTerm} onChange={setSearchTerm} />
           </div>
         </div>
-            
-        <div className="mt-8">
-          <div className="border-y border-mf-ash-300 bg-mf-night-700 rounded-lg p-8"> 
-          <h2 className="text-lg font-bold text-white mb-7">Targon Miners</h2>
-          {selectedTable === "miner" ? (
-            <MinerTable
-              miners={getNodesByMiner(auction?.auction_results ?? {})}
-              nodes={getNodes(auction?.auction_results ?? {})}
-              searchTerm={searchTerm}
-              selectedMinerUid={selectedMinerUid}
-              onSelectedMinerChange={setSelectedMinerUid}
-              isLoading={isLoading}
-              error={error ? new Error(error.message) : null}
-            />
-          ) : selectedTable === "bid" ? (
-            <BidTable
-              nodes={getNodes(auction?.auction_results ?? {})}
-              searchTerm={searchTerm}
-              onNavigateToMiner={handleNavigateToMiner}
-              isLoading={isLoading}
-              error={error as Error | null}
-            />
-          ) : (
-            <WeightTable
-              weights={auction?.weights ?? {}}
-              nodes={getNodes(auction?.auction_results ?? {})}
-              searchTerm={searchTerm}
-              onNavigateToMiner={handleNavigateToMiner}
-              isLoading={isLoading}
-              error={error as Error | null}
-            />
-          )}
-        </div>
+
+        <div className="mt-5">
+          <div className="rounded-lg border-2 border-mf-ash-300 bg-mf-ash-700 p-8">
+            <h2 className="mb-7 text-lg font-bold text-mf-edge-500">Targon Miners</h2>
+            {selectedTable === "miner" ? (
+              <MinerTable
+                miners={getNodesByMiner(auction?.auction_results ?? {})}
+                nodes={getNodes(auction?.auction_results ?? {})}
+                searchTerm={searchTerm}
+                selectedMinerUid={selectedMinerUid}
+                onSelectedMinerChange={setSelectedMinerUid}
+                isLoading={isLoading}
+                error={error ? new Error(error.message) : null}
+              />
+            ) : selectedTable === "bid" ? (
+              <BidTable
+                nodes={getNodes(auction?.auction_results ?? {})}
+                searchTerm={searchTerm}
+                onNavigateToMiner={handleNavigateToMiner}
+                isLoading={isLoading}
+                error={error as Error | null}
+              />
+            ) : (
+              <WeightTable
+                weights={auction?.weights ?? {}}
+                nodes={getNodes(auction?.auction_results ?? {})}
+                searchTerm={searchTerm}
+                onNavigateToMiner={handleNavigateToMiner}
+                isLoading={isLoading}
+                error={error as Error | null}
+              />
+            )}
+          </div>
         </div>
       </div>
     </div>

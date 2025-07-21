@@ -135,7 +135,7 @@ export default function MinerTable({
 
   if (isLoading) {
     return (
-      <div className="rounded-lg border border-gray-700">
+      <div className="rounded-lg">
         <table className="min-w-full divide-y divide-gray-700">
           <thead className="bg-gray-800">
             <tr>
@@ -196,10 +196,7 @@ export default function MinerTable({
           </thead>
           <tbody className="divide-y divide-gray-700 bg-gray-900">
             <tr>
-              <td
-                colSpan={5}
-                className="text-center text-red-400"
-              >
+              <td colSpan={5} className="text-center text-red-400">
                 Error loading miners: {error.message}
               </td>
             </tr>
@@ -248,12 +245,12 @@ export default function MinerTable({
   }
 
   return (
-    <div className="rounded-lg border border-gray-700">
-      <table className="min-w-full divide-y divide-gray-700">
-        <thead className="bg-gray-800">
-          <tr>
+    <div className="space-y-1">
+      <table className="min-w-full">
+        <thead className="bg-mf-sally-500/15 rounded-lg">
+          <tr className="[&>th:first-child]:rounded-l-lg [&>th:last-child]:rounded-r-lg">
             <th
-              className="cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-400 hover:bg-gray-700"
+              className="cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 "
               onClick={() => handleSort(SortField.UID)}
             >
               <div className="flex items-center gap-1">
@@ -262,7 +259,7 @@ export default function MinerTable({
               </div>
             </th>
             <th
-              className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-400 hover:bg-gray-700"
+              className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700"
               onClick={() => handleSort(SortField.AVERAGE_PRICE)}
             >
               <div className="flex items-center justify-end gap-1">
@@ -271,7 +268,7 @@ export default function MinerTable({
               </div>
             </th>
             <th
-              className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-400 hover:bg-gray-700"
+              className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700"
               onClick={() => handleSort(SortField.AVERAGE_PAYOUT)}
             >
               <div className="flex items-center justify-end gap-1">
@@ -280,7 +277,7 @@ export default function MinerTable({
               </div>
             </th>
             <th
-              className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-400 hover:bg-gray-700"
+              className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700"
               onClick={() => handleSort(SortField.NODES)}
             >
               <div className="flex items-center justify-end gap-1">
@@ -289,7 +286,7 @@ export default function MinerTable({
               </div>
             </th>
             <th
-              className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-400 hover:bg-gray-700"
+              className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700"
               onClick={() => handleSort(SortField.PAYMENT_STATUS)}
             >
               <div className="flex items-center justify-end gap-1">
@@ -299,31 +296,32 @@ export default function MinerTable({
             </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-700 bg-gray-900">
+        <tbody className="bg-mf-ash-500/15">
           {sorted.map((miner) => (
             <Fragment key={miner.uid}>
               <tr
-                className={`cursor-pointer hover:bg-gray-800 ${
-                  selectedMinerUids.has(miner.uid)
-                    ? "bg-blue-900/20"
-                    : ""
-                }`}
+                className={`cursor-pointer hover:bg-mf-ash-500/30 outline outline-2 outline-mf-ash-300 outline-offset-[-1px] rounded-lg ${
+                  selectedMinerUids.has(miner.uid) ? "bg-mf-ash-500/30" : "bg-mf-ash-500/15"
+                } [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg`}
                 onClick={() => handleRowClick(miner.uid)}
               >
-                <td className="whitespace-nowrap px-6 py-4 font-mono text-sm text-gray-100">
+                <td className="whitespace-nowrap px-6 py-4 font-mono text-sm text-white flex items-center gap-2">
                   {miner.uid}
+                  {selectedMinerUids.has(miner.uid) && (
+                    <img src="/downArrow.svg" alt="Down Arrow" className="h-4 w-4" />
+                  )}
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 text-end text-sm text-gray-100">
+                <td className="whitespace-nowrap px-6 py-4 text-end text-sm text-white">
                   ${(miner.average_price / 100).toFixed(2)}/h
                 </td>
                 {/* TODO: Remove division once payout is calculated correctly */}
-                <td className="whitespace-nowrap px-6 py-4 text-end text-sm text-gray-100">
+                <td className="whitespace-nowrap px-6 py-4 text-end text-sm text-white">
                   ${(miner.average_payout / 8).toFixed(2)}/h
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 text-end text-sm text-gray-100">
+                <td className="whitespace-nowrap px-6 py-4 text-end text-sm text-white">
                   {miner.nodes}
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 text-end text-sm">
+                <td className="whitespace-nowrap px-6 py-4 text-end text-sm last:rounded-r-lg">
                   <span className="px-2">
                     <PaymentStatusIcon miner={miner} />
                   </span>

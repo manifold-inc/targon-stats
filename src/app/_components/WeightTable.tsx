@@ -53,10 +53,7 @@ const WeightTable = ({
           </thead>
           <tbody className="divide-y divide-gray-700 bg-gray-900">
             <tr>
-              <td
-                colSpan={5}
-                className="text-center text-gray-400"
-              >
+              <td colSpan={5} className="text-center text-gray-400">
                 Loading nodes...
               </td>
             </tr>
@@ -82,10 +79,7 @@ const WeightTable = ({
           </thead>
           <tbody className="divide-y divide-gray-700 bg-gray-900">
             <tr>
-              <td
-                colSpan={5}
-                className="text-center text-red-400"
-              >
+              <td colSpan={5} className="text-center text-red-400">
                 Error loading nodes: {error.message}
               </td>
             </tr>
@@ -111,10 +105,7 @@ const WeightTable = ({
           </thead>
           <tbody className="divide-y divide-gray-700 bg-gray-900">
             <tr>
-              <td
-                colSpan={5}
-                className="text-center text-gray-400"
-              >
+              <td colSpan={5} className="text-center text-gray-400">
                 No nodes found matching {searchTerm}
               </td>
             </tr>

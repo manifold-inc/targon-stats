@@ -29,7 +29,7 @@ export default function RootLayout({
     <html
       suppressHydrationWarning
       lang="en"
-      className={clsx("h-full dark", inter.variable)}
+      className={clsx("dark h-full", inter.variable)}
     >
       <head>
         <link rel="manifest" href="/site.webmanifest" />
@@ -39,8 +39,8 @@ export default function RootLayout({
         className={`relative bg-mf-night-500 text-gray-100 transition-colors`}
       >
         <WithGlobalProvider>
-            <Header />
-            <main>{children}</main>
+          <Header />
+          <main>{children}</main>
         </WithGlobalProvider>
 
         <Toaster />

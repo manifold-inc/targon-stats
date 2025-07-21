@@ -9,16 +9,22 @@ const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="">
+    <header>
       <nav
         aria-label="Global"
-        className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8"
+        className="w-fullitems-center mx-auto flex justify-between p-6 lg:px-8"
       >
         <div className="flex lg:flex-1">
-          <img src="/targonLogo.svg" alt="Targon-logo" width={24} height={24} className="mr-2"/>
+          <img
+            src="/targonLogo.svg"
+            alt="Targon-logo"
+            width={24}
+            height={24}
+            className="mr-2"
+          />
           <Link href="/" className="-m-1.5 p-1.5">
             <span className="sr-only">Targon </span>
-            <span className="text-xl font-bold">TARGON </span>
+            <span className="text-xl font-bold text-mf-edge-500">TARGON </span>
           </Link>
         </div>
         <div className="flex lg:hidden">
@@ -34,13 +40,13 @@ const Header = () => {
         <div className="hidden lg:flex lg:gap-x-3">
           <Link
             href="/"
-            className="text-sm/6 font-poppins font-medium text-[#8DC7FE] bg-[#272D38] px-7 py-0.5 rounded-lg"
+            className="font-poppins rounded-lg bg-[#272D38] px-7 py-0.5 text-sm/6 font-medium text-[#8DC7FE]"
           >
             Home
           </Link>
           <Link
             href="/docs"
-            className="text-sm/6 font-semibold font-poppins text-mf-ash-500 bg-mf-sally-500 px-7 py-0.5 rounded-lg"
+            className="font-poppins rounded-lg bg-mf-sally-500 px-7 py-0.5 text-sm/6 font-semibold text-mf-ash-500"
           >
             API Docs
           </Link>

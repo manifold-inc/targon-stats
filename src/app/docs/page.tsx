@@ -1,7 +1,6 @@
 "use client";
 
 import BackgroundSVG from "@/app/_components/BackgroundSVG";
-
 import { API_ENDPOINT } from "@/utils/constant";
 
 export default function DocsPage() {

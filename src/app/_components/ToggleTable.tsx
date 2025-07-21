@@ -17,27 +17,62 @@ const ToggleTable = ({
   };
 
   return (
-    <div className="flex justify-center gap-2">
+    <div className="flex items-center gap-2 p-1">
       <button
         type="button"
-        className={`rounded-md px-6 py-2 text-lg font-medium focus:z-10 focus:outline-none ${selectedTable === "miner" ? "bg-blue-600 text-white" : "bg-gray-900 text-mf-edge-500"}`}
+        className={`flex items-center gap-2 rounded-lg px-4 py-2 text-lg font-medium ${
+          selectedTable === "miner"
+            ? "bg-[#272D38] text-white"
+            : "bg-transparent text-mf-edge-300 hover:bg-[#272D38]/50"
+        }`}
         onClick={() => handleTableChange("miner")}
       >
-        Miners
+        <img
+          src="/miners.svg"
+          alt="Miner"
+          width={24}
+          height={24}
+          className="h-4 w-4 text-current"
+        />
+        <span>Miners</span>
       </button>
+
       <button
         type="button"
-        className={`rounded-md px-6 py-2 text-lg font-medium focus:z-10 focus:outline-none ${selectedTable === "bid" ? "bg-blue-600 text-white" : "bg-gray-900 text-mf-edge-500"}`}
+        className={`flex items-center gap-2 rounded-lg px-4 py-2 text-lg font-medium ${
+          selectedTable === "bid"
+            ? "bg-[#272D38] text-white"
+            : "bg-transparent text-mf-edge-300 hover:bg-[#272D38]/50"
+        }`}
         onClick={() => handleTableChange("bid")}
       >
-        Buyouts
+        <img
+          src="/buyouts.svg"
+          alt="Buyouts"
+          width={24}
+          height={24}
+          className="h-4 w-4 text-current"
+        />
+        <span>Buyouts</span>
       </button>
+
       <button
         type="button"
-        className={`rounded-md px-6 py-2 text-lg font-medium focus:z-10 focus:outline-none ${selectedTable === "weight" ? "bg-blue-600 text-white" : "bg-gray-900 text-mf-edge-500"}`}
+        className={`flex items-center gap-2 rounded-lg px-4 py-2 text-lg font-medium  ${
+          selectedTable === "weight"
+            ? "bg-[#272D38] text-white"
+            : "bg-transparent text-mf-edge-300 hover:bg-[#272D38]/50"
+        }`}
         onClick={() => handleTableChange("weight")}
       >
-        Weights
+        <img
+          src="/weights.svg"
+          alt="Weights"
+          width={24}
+          height={24}
+          className="h-4 w-4 text-current"
+        />
+        <span>Weights</span>
       </button>
     </div>
   );
