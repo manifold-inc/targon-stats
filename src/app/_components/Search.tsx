@@ -1,6 +1,6 @@
 "use client";
 
-import { Search as SearchIcon } from "lucide-react";
+import { Search as SearchIcon, X } from "lucide-react";
 
 interface SearchProps {
   value: string;
@@ -25,6 +25,14 @@ export default function Search({
         className="block w-full rounded-lg border border-gray-600 bg-mf-night-500 py-2 pl-10 pr-3 text-sm text-mf-edge-700 placeholder-font-poppins placeholder-mf-edge-700 focus:border-mf-sally-500 focus:outline-none focus:ring-2 focus:ring-mf-sally-500"
         placeholder={placeholder}
       />
+      {value && (
+        <button
+          onClick={() => onChange("")}
+          className="absolute bottom-0 right-0 top-0 px-4 py-2 text-gray-500 hover:opacity-80 dark:text-gray-400 dark:hover:text-gray-200"
+        >
+          <X className="h-4 w-4" />
+        </button>
+      )}
     </div>
   );
 }

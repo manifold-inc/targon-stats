@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
+import BackgroundSVG from "@/app/_components/BackgroundSVG";
 import BlockSelector from "@/app/_components/BlockSelector";
 import CurrentBlock from "@/app/_components/CurrentBlock";
 import EmissionPool from "@/app/_components/EmissionPool";
@@ -36,15 +37,33 @@ export default function WeightPage() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-4xl">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-50 sm:text-4xl">
-            Targon Miner Stats
-          </h1>
+    <div className="w-full">
+      <BackgroundSVG />
+      <div className="w-full border-y-2 border-mf-ash-300 bg-mf-night-500">
+        <div className="mx-auto max-w-5xl">
+          <div className="flex items-center justify-between px-6 py-4">
+            <div className="flex items-center gap-2">
+              <img
+                src="/targonStatsLogo.svg"
+                alt="Targon-logo"
+                width={30}
+                height={30}
+                className="h-7 w-7"
+              />
+              <h1 className="text-xl font-semibold text-mf-edge-500 flex items-center font-blinker">Targon Stats</h1>
+            </div>
+            <div className="flex items-center gap-2">
+              <MaxBid maxBid={auction?.max_bid || 0} />
+              <TaoPrice price={auction?.tao_price || 0} />
+              <EmissionPool pool={auction?.emission_pool || 0} />
+              <CurrentBlock block={auction?.block || 0} />
+            </div>
+          </div>
         </div>
+      </div>
 
-        <div className="mt-8 flex justify-between">
+      <div className="mx-auto max-w-5xl px-8 py-2">
+        <div className="mt-4 flex justify-between">
           <Navigation />
           <div className="flex items-center gap-4">
             {auction && (
@@ -59,22 +78,18 @@ export default function WeightPage() {
           </div>
         </div>
 
-        <div className="mt-4 flex justify-between">
-          <CurrentBlock block={auction?.block || 0} />
-          <MaxBid maxBid={auction?.max_bid || 0} />
-          <TaoPrice price={auction?.tao_price || 0} />
-          <EmissionPool pool={auction?.emission_pool || 0} />
-        </div>
-
-        <div className="mt-8">
-          <WeightTable
-            weights={auction?.weights ?? {}}
-            nodes={getNodes(auction?.auction_results ?? {})}
-            searchTerm={searchTerm}
-            onNavigateToMiner={handleNavigateToMiner}
-            isLoading={isLoading}
-            error={error as Error | null}
-          />
+        <div className="mt-5 pb-20">
+          <div className="rounded-lg border-2 border-mf-ash-300 bg-mf-ash-700 p-8">
+            <h2 className="mb-7 text-lg font-semibold text-mf-edge-500 font-blinker tracking-wider">Targon Weights</h2>
+            <WeightTable
+              weights={auction?.weights ?? {}}
+              nodes={getNodes(auction?.auction_results ?? {})}
+              searchTerm={searchTerm}
+              onNavigateToMiner={handleNavigateToMiner}
+              isLoading={isLoading}
+              error={error as Error | null}
+            />
+          </div>
         </div>
       </div>
     </div>
