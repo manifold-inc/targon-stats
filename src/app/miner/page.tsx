@@ -12,7 +12,7 @@ import Navigation from "@/app/_components/Navigation";
 import Search from "@/app/_components/Search";
 import TaoPrice from "@/app/_components/TaoPrice";
 import { reactClient } from "@/trpc/react";
-import { getNodesByMiner, getNodes } from "@/utils/utils";
+import { getNodes, getNodesByMiner } from "@/utils/utils";
 
 function Content() {
   const [selectedBlock, setSelectedBlock] = useState<number | undefined>(

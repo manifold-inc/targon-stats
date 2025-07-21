@@ -5,8 +5,8 @@ import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 
 import MinerDetails from "@/app/_components/MinerDetails";
 import PaymentStatusIcon from "@/app/_components/PaymentStatusIcon";
-import { type Miner } from "@/app/api/miners/route";
 import { type MinerNode } from "@/app/api/bids/route";
+import { type Miner } from "@/app/api/miners/route";
 
 enum SortField {
   UID = "uid",
