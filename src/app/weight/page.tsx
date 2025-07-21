@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 
 import BlockSelector from "@/app/_components/BlockSelector";
 import CurrentBlock from "@/app/_components/CurrentBlock";
@@ -26,15 +26,18 @@ export default function WeightPage() {
     setSearchTerm("");
   }, [pathname]);
 
-  const handleSearchChange = useCallback((term: string) => {
-    setSearchTerm(term);
-    if (term.trim()) {
-      router.push(`/weight?search=${encodeURIComponent(term)}`);
-    } else {
-      router.push('/weight');
-    }
-  }, [router]);
-  
+  const handleSearchChange = useCallback(
+    (term: string) => {
+      setSearchTerm(term);
+      if (term.trim()) {
+        router.push(`/weight?search=${encodeURIComponent(term)}`);
+      } else {
+        router.push("/weight");
+      }
+    },
+    [router],
+  );
+
   const {
     data: auction,
     isLoading,

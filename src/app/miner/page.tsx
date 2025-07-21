@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense, useCallback, useEffect, useState } from "react";
-import { useSearchParams, usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import BlockSelector from "@/app/_components/BlockSelector";
 import CurrentBlock from "@/app/_components/CurrentBlock";
@@ -15,7 +15,6 @@ import { reactClient } from "@/trpc/react";
 import { getNodesByMiner } from "@/utils/utils";
 
 function Content() {
-
   const [selectedBlock, setSelectedBlock] = useState<number | undefined>(
     undefined,
   );
@@ -25,18 +24,24 @@ function Content() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
-  const handleNavigateToMiner = useCallback((uid: string) => {
-    router.push(`/miner?search=${encodeURIComponent(uid)}`);
-  }, [router]);
+  const handleNavigateToMiner = useCallback(
+    (uid: string) => {
+      router.push(`/miner?search=${encodeURIComponent(uid)}`);
+    },
+    [router],
+  );
 
-  const handleSearchChange = useCallback((term: string) => {
-    setSearchTerm(term);
-    if (term.trim()) {
-      router.push(`/miner?search=${encodeURIComponent(term)}`);
-    } else {
-      router.push('/miner');
-    }
-  }, [router]);
+  const handleSearchChange = useCallback(
+    (term: string) => {
+      setSearchTerm(term);
+      if (term.trim()) {
+        router.push(`/miner?search=${encodeURIComponent(term)}`);
+      } else {
+        router.push("/miner");
+      }
+    },
+    [router],
+  );
 
   useEffect(() => {
     const searchParam = searchParams.get("search");
@@ -56,10 +61,9 @@ function Content() {
   const { data: auctionLatest } =
     reactClient.chain.getAuctionState.useQuery(undefined);
 
-
-    const handleClearSearch = () => {
-      router.push('/miner');
-    };
+  const handleClearSearch = () => {
+    router.push("/miner");
+  };
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
@@ -81,7 +85,11 @@ function Content() {
                 isLoading={isLoading}
               />
             )}
-            <Search value={searchTerm} onChange={handleSearchChange} onClear={handleClearSearch} />
+            <Search
+              value={searchTerm}
+              onChange={handleSearchChange}
+              onClear={handleClearSearch}
+            />
           </div>
         </div>
 

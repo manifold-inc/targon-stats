@@ -16,7 +16,6 @@ const BidTable = ({
   isLoading,
   error,
 }: BidTableProps) => {
-
   searchTerm = searchTerm.replaceAll(" ", "");
 
   const searchArray = searchTerm.split(",");

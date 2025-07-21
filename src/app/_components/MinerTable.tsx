@@ -294,25 +294,25 @@ export default function MinerTable({
               className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
               onClick={() => onNavigateToMiner(miner.uid)}
             >
-                <td className="whitespace-nowrap px-6 py-4 font-mono text-sm text-gray-900 dark:text-gray-100">
-                  {miner.uid}
-                </td>
-                <td className="whitespace-nowrap px-6 py-4 text-end text-sm text-gray-900 dark:text-gray-100">
-                  ${(miner.average_price / 100).toFixed(2)}/h
-                </td>
-                {/* TODO: Remove division once payout is calculated correctly */}
-                <td className="whitespace-nowrap px-6 py-4 text-end text-sm text-gray-900 dark:text-gray-100">
-                  ${(miner.average_payout / 8).toFixed(2)}/h
-                </td>
-                <td className="whitespace-nowrap px-6 py-4 text-end text-sm text-gray-900 dark:text-gray-100">
-                  {miner.nodes}
-                </td>
-                <td className="whitespace-nowrap px-6 py-4 text-end text-sm">
-                  <span className="px-2">
-                    <PaymentStatusIcon miner={miner} />
-                  </span>
-                </td>
-              </tr>
+              <td className="whitespace-nowrap px-6 py-4 font-mono text-sm text-gray-900 dark:text-gray-100">
+                {miner.uid}
+              </td>
+              <td className="whitespace-nowrap px-6 py-4 text-end text-sm text-gray-900 dark:text-gray-100">
+                ${(miner.average_price / 100).toFixed(2)}/h
+              </td>
+              {/* TODO: Remove division once payout is calculated correctly */}
+              <td className="whitespace-nowrap px-6 py-4 text-end text-sm text-gray-900 dark:text-gray-100">
+                ${(miner.average_payout / 8).toFixed(2)}/h
+              </td>
+              <td className="whitespace-nowrap px-6 py-4 text-end text-sm text-gray-900 dark:text-gray-100">
+                {miner.nodes}
+              </td>
+              <td className="whitespace-nowrap px-6 py-4 text-end text-sm">
+                <span className="px-2">
+                  <PaymentStatusIcon miner={miner} />
+                </span>
+              </td>
+            </tr>
           ))}
         </tbody>
       </table>
