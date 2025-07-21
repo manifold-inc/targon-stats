@@ -14,7 +14,7 @@ import TaoPrice from "@/app/_components/TaoPrice";
 import { reactClient } from "@/trpc/react";
 import { getNodes, getNodesByMiner } from "@/utils/utils";
 
-function MinerPageContent() {
+function Content() {
   const [selectedMinerUid, setSelectedMinerUid] = useState<string | null>(null);
   const [selectedBlock, setSelectedBlock] = useState<number | undefined>(
     undefined,
@@ -90,7 +90,7 @@ function MinerPageContent() {
 export default function MinerPage() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <MinerPageContent />
+      <Content />
     </Suspense>
   );
 }
