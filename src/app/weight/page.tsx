@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import BlockSelector from "@/app/_components/BlockSelector";
 import CurrentBlock from "@/app/_components/CurrentBlock";
@@ -21,10 +21,16 @@ export default function WeightPage() {
     undefined,
   );
   const [searchTerm, setSearchTerm] = useState("");
+  const searchParams = useSearchParams();
 
   useEffect(() => {
-    setSearchTerm("");
-  }, [pathname]);
+    const searchParam = searchParams.get("search");
+    if (searchParam) {
+      setSearchTerm(searchParam);
+    } else {
+      setSearchTerm("");
+    }
+  }, [searchParams, pathname]);
 
   const handleSearchChange = useCallback(
     (term: string) => {
