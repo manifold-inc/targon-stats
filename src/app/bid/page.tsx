@@ -37,7 +37,6 @@ export default function BidPage() {
     reactClient.chain.getAuctionState.useQuery(undefined);
 
   const handleNavigateToMiner = (uid: string) => {
-    // Navigate to miner page with search term
     router.push(`/miner?search=${encodeURIComponent(uid)}`);
   };
 
