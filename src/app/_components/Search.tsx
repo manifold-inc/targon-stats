@@ -26,10 +26,10 @@ export default function Search({
         placeholder={placeholder}
       />
       {value && (
-      <button
-        onClick={() => onChange("")}
-        className="absolute bottom-0 right-0 top-0 px-4 py-2 text-gray-500 hover:opacity-80 dark:text-gray-400 dark:hover:text-gray-200"
-      >
+        <button
+          onClick={() => onChange("")}
+          className="absolute bottom-0 right-0 top-0 px-4 py-2 text-gray-500 hover:opacity-80 dark:text-gray-400 dark:hover:text-gray-200"
+        >
           <X className="h-4 w-4" />
         </button>
       )}
