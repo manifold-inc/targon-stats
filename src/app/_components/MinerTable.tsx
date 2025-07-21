@@ -18,7 +18,7 @@ enum SortField {
 }
 
 enum SortDirection {
-  ASC = "asc", 
+  ASC = "asc",
   DESC = "desc",
   NULL = 0,
 }
