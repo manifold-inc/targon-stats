@@ -29,8 +29,8 @@ interface MinerTableProps {
   isLoading: boolean;
   error: Error | null;
   searchTerm: string;
-  selectedMinerUid: string | null;
-  onSelectedMinerChange: (uid: string | null) => void;
+  selectedMinerUids: Array<string>;
+  onSelectedMinerChange: (uids: Array<string>) => void;
 }
 
 export default function MinerTable({
@@ -39,25 +39,27 @@ export default function MinerTable({
   isLoading,
   error,
   searchTerm,
-  selectedMinerUid,
+  selectedMinerUids,
   onSelectedMinerChange,
 }: MinerTableProps) {
   const [field, setField] = useState<SortField>(SortField.NULL);
   const [direction, setDirection] = useState<SortDirection>(SortDirection.NULL);
-  const [selectedMinerUids, setSelectedMinerUids] = useState<Set<string>>(
-    selectedMinerUid ? new Set([selectedMinerUid]) : new Set(),
+  const [selectedUids, setSelectedUids] = useState<Set<string>>(
+    selectedMinerUids ? new Set(selectedMinerUids) : new Set(),
   );
 
-  const handleRowClick = (uid: string) => {
-    const filteredMinerUids = selectedMinerUids.has(uid)
-      ? new Set([...selectedMinerUids].filter((id) => id !== uid))
-      : new Set([...selectedMinerUids, uid]);
-    setSelectedMinerUids(filteredMinerUids);
+  const handleRowClick = (uid: string, isSelected: boolean) => {
+    const filteredMinerUids = isSelected
+      ? new Set([...selectedUids].filter((id) => id !== uid))
+      : new Set([...selectedUids, uid]);
+    setSelectedUids(filteredMinerUids);
 
-    const selectedMinerUid = Array.from(filteredMinerUids)[0];
-    if (!selectedMinerUid) return;
-    onSelectedMinerChange(selectedMinerUid);
+    const selectedMinerUids = Array.from(filteredMinerUids);
+    if (!selectedMinerUids) return;
+    onSelectedMinerChange(selectedMinerUids);
   };
+
+  console.log(selectedUids);
 
   const handleSort = (selectedField: SortField) => {
     if (field === selectedField) {
@@ -304,11 +306,11 @@ export default function MinerTable({
             <Fragment key={miner.uid}>
               <tr
                 className={`cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 ${
-                  selectedMinerUids.has(miner.uid)
+                  selectedUids.has(miner.uid)
                     ? "bg-blue-50 dark:bg-blue-900/20"
                     : ""
                 }`}
-                onClick={() => handleRowClick(miner.uid)}
+                onClick={() => handleRowClick(miner.uid, selectedUids.has(miner.uid))}
               >
                 <td className="whitespace-nowrap px-6 py-4 font-mono text-sm text-gray-900 dark:text-gray-100">
                   {miner.uid}
@@ -330,7 +332,7 @@ export default function MinerTable({
                 </td>
               </tr>
 
-              {selectedMinerUids.has(miner.uid) && (
+              {selectedUids.has(miner.uid) && (
                 <MinerDetails
                   nodes={nodes.filter(
                     (node: MinerNode) => node.uid === miner.uid,

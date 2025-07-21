@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense, useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, usePathname } from "next/navigation";
 
 import BlockSelector from "@/app/_components/BlockSelector";
 import CurrentBlock from "@/app/_components/CurrentBlock";
@@ -15,21 +15,25 @@ import { reactClient } from "@/trpc/react";
 import { getNodes, getNodesByMiner } from "@/utils/utils";
 
 function MinerPageContent() {
-  const [selectedMinerUid, setSelectedMinerUid] = useState<string | null>(null);
+  const [selectedMinerUids, setSelectedMinerUids] = useState<Array<string>>([]);
   const [selectedBlock, setSelectedBlock] = useState<number | undefined>(
     undefined,
   );
   const [searchTerm, setSearchTerm] = useState("");
 
   const searchParams = useSearchParams();
+  const pathname = usePathname();
 
   useEffect(() => {
     const searchParam = searchParams.get("search");
     if (searchParam) {
       setSearchTerm(searchParam);
-      setSelectedMinerUid(searchParam);
+      setSelectedMinerUids([searchParam]);
+    } else {
+      setSearchTerm("");
+      setSelectedMinerUids([]);
     }
-  }, [searchParams]);
+  }, [searchParams, pathname]);
 
   const {
     data: auction,
@@ -76,8 +80,8 @@ function MinerPageContent() {
             miners={getNodesByMiner(auction?.auction_results ?? {})}
             nodes={getNodes(auction?.auction_results ?? {})}
             searchTerm={searchTerm}
-            selectedMinerUid={selectedMinerUid}
-            onSelectedMinerChange={setSelectedMinerUid}
+            selectedMinerUids={selectedMinerUids}
+            onSelectedMinerChange={setSelectedMinerUids}
             isLoading={isLoading}
             error={error ? new Error(error.message) : null}
           />

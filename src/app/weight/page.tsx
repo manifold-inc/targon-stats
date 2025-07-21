@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
 
 import BlockSelector from "@/app/_components/BlockSelector";
 import CurrentBlock from "@/app/_components/CurrentBlock";
@@ -16,10 +16,15 @@ import { getNodes } from "@/utils/utils";
 
 export default function WeightPage() {
   const router = useRouter();
+  const pathname = usePathname();
   const [selectedBlock, setSelectedBlock] = useState<number | undefined>(
     undefined,
   );
   const [searchTerm, setSearchTerm] = useState("");
+
+  useEffect(() => {
+    setSearchTerm("");
+  }, [pathname]);
 
   const {
     data: auction,

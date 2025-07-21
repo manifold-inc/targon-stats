@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
 
 import BidTable from "@/app/_components/BidTable";
 import BlockSelector from "@/app/_components/BlockSelector";
@@ -16,10 +16,16 @@ import { getNodes } from "@/utils/utils";
 
 export default function BidPage() {
   const router = useRouter();
+  const pathname = usePathname();
   const [selectedBlock, setSelectedBlock] = useState<number | undefined>(
     undefined,
   );
   const [searchTerm, setSearchTerm] = useState("");
+
+
+  useEffect(() => {
+    setSearchTerm("");
+  }, [pathname]);
 
   const {
     data: auction,
