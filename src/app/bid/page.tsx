@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import BidTable from "@/app/_components/BidTable";
@@ -14,7 +14,7 @@ import TaoPrice from "@/app/_components/TaoPrice";
 import { reactClient } from "@/trpc/react";
 import { getNodes } from "@/utils/utils";
 
-export default function BidPage() {
+function Content() {
   const router = useRouter();
   const pathname = usePathname();
   const [selectedBlock, setSelectedBlock] = useState<number | undefined>(
@@ -58,10 +58,6 @@ export default function BidPage() {
   const { data: auctionLatest } =
     reactClient.chain.getAuctionState.useQuery(undefined);
 
-  const handleNavigateToMiner = (uid: string) => {
-    router.push(`/miner?search=${encodeURIComponent(uid)}`);
-  };
-
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-4xl">
@@ -97,12 +93,20 @@ export default function BidPage() {
           <BidTable
             nodes={getNodes(auction?.auction_results ?? {})}
             searchTerm={searchTerm}
-            onNavigateToMiner={handleNavigateToMiner}
+            onNavigateToMiner={handleSearchChange}
             isLoading={isLoading}
             error={error as Error | null}
           />
         </div>
       </div>
     </div>
+  );
+}
+
+export default function BidPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <Content />
+    </Suspense>
   );
 }

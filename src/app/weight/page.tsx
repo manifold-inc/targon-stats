@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import BlockSelector from "@/app/_components/BlockSelector";
@@ -14,7 +14,7 @@ import WeightTable from "@/app/_components/WeightTable";
 import { reactClient } from "@/trpc/react";
 import { getNodes } from "@/utils/utils";
 
-export default function WeightPage() {
+function Content() {
   const router = useRouter();
   const pathname = usePathname();
   const [selectedBlock, setSelectedBlock] = useState<number | undefined>(
@@ -53,11 +53,6 @@ export default function WeightPage() {
   const { data: auctionLatest } =
     reactClient.chain.getAuctionState.useQuery(undefined);
 
-  const handleNavigateToMiner = (uid: string) => {
-    // Navigate to miner page with search term
-    router.push(`/miner?search=${encodeURIComponent(uid)}`);
-  };
-
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-4xl">
@@ -94,12 +89,20 @@ export default function WeightPage() {
             weights={auction?.weights ?? {}}
             nodes={getNodes(auction?.auction_results ?? {})}
             searchTerm={searchTerm}
-            onNavigateToMiner={handleNavigateToMiner}
+            onNavigateToMiner={handleSearchChange}
             isLoading={isLoading}
             error={error as Error | null}
           />
         </div>
       </div>
     </div>
+  );
+}
+
+export default function WeightPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <Content />
+    </Suspense>
   );
 }

@@ -24,13 +24,6 @@ function Content() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
-  const handleNavigateToMiner = useCallback(
-    (uid: string) => {
-      router.push(`/miner?search=${encodeURIComponent(uid)}`);
-    },
-    [router],
-  );
-
   const handleSearchChange = useCallback(
     (term: string) => {
       setSearchTerm(term);
@@ -106,7 +99,7 @@ function Content() {
             searchTerm={searchTerm}
             isLoading={isLoading}
             error={error ? new Error(error.message) : null}
-            onNavigateToMiner={handleNavigateToMiner}
+            onNavigateToMiner={handleSearchChange}
           />
         </div>
       </div>
