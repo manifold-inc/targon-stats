@@ -32,7 +32,7 @@ const ToggleTable = ({
           alt="Miner"
           width={24}
           height={24}
-          className="h-4 w-4 text-current"
+          className="h-5 w-5 text-current"
         />
         <span className="font-blinker">Miners</span>
       </button>
@@ -51,7 +51,7 @@ const ToggleTable = ({
           alt="Buyouts"
           width={24}
           height={24}
-          className="h-4 w-4 text-current"
+          className="h-5 w-5 text-current"
         />
         <span className="font-blinker">Buyouts</span>
       </button>
@@ -70,7 +70,7 @@ const ToggleTable = ({
           alt="Weights"
           width={24}
           height={24}
-          className="h-4 w-4 text-current"
+          className="h-5 w-5 text-current"
         />
         <span className="font-blinker">Weights</span>
       </button>

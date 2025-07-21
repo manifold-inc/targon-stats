@@ -87,9 +87,9 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="mt-5">
+        <div className="mt-5 pb-20">
           <div className="rounded-lg border-2 border-mf-ash-300 bg-mf-ash-700 p-8">
-            <h2 className="mb-7 text-lg font-bold text-mf-edge-500 font-blinker tracking-wider">Targon Miners</h2>
+            <h2 className="mb-7 text-lg font-semibold text-mf-edge-500 font-blinker tracking-wider">Targon Miners</h2>
             {selectedTable === "miner" ? (
               <MinerTable
                 miners={getNodesByMiner(auction?.auction_results ?? {})}

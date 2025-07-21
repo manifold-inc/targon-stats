@@ -59,7 +59,7 @@ export default function BlockSelector({
 
       {isOpen && (
         <div className="absolute right-0 z-10 mt-1 w-full rounded-lg border-2 border-mf-ash-300 bg-mf-night-500 shadow-lg">
-          <ul className="max-h-60 overflow-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          <ul className="max-h-60 overflow-auto rounded-lg [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             {blocks.map((blockNumber) => (
               <li key={blockNumber}>
                 <button
