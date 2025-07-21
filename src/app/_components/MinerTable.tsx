@@ -1,11 +1,9 @@
 "use client";
 
-import { Fragment, useState } from "react";
+import { useState } from "react";
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 
-import MinerDetails from "@/app/_components/MinerDetails";
 import PaymentStatusIcon from "@/app/_components/PaymentStatusIcon";
-import { type MinerNode } from "@/app/api/bids/route";
 import { type Miner } from "@/app/api/miners/route";
 
 enum SortField {
@@ -25,42 +23,21 @@ enum SortDirection {
 
 interface MinerTableProps {
   miners: Miner[];
-  nodes: MinerNode[];
   isLoading: boolean;
   error: Error | null;
   searchTerm: string;
-  selectedMinerUids: Array<string>;
-  onSelectedMinerChange: (uids: Array<string>) => void;
+  onNavigateToMiner: (uid: string) => void;
 }
 
 export default function MinerTable({
   miners,
-  nodes,
   isLoading,
   error,
   searchTerm,
-  selectedMinerUids,
-  onSelectedMinerChange,
+  onNavigateToMiner,
 }: MinerTableProps) {
   const [field, setField] = useState<SortField>(SortField.NULL);
   const [direction, setDirection] = useState<SortDirection>(SortDirection.NULL);
-  const [selectedUids, setSelectedUids] = useState<Set<string>>(
-    selectedMinerUids ? new Set(selectedMinerUids) : new Set(),
-  );
-
-  const handleRowClick = (uid: string, isSelected: boolean) => {
-    const filteredMinerUids = isSelected
-      ? new Set([...selectedUids].filter((id) => id !== uid))
-      : new Set([...selectedUids, uid]);
-    setSelectedUids(filteredMinerUids);
-
-    const selectedMinerUids = Array.from(filteredMinerUids);
-    if (!selectedMinerUids) return;
-    onSelectedMinerChange(selectedMinerUids);
-  };
-
-  console.log(selectedUids);
-
   const handleSort = (selectedField: SortField) => {
     if (field === selectedField) {
       switch (direction) {
@@ -129,10 +106,19 @@ export default function MinerTable({
     });
   };
 
+  searchTerm = searchTerm.replaceAll(" ", "");
+
+  const searchArray = searchTerm.split(",");
+
   const filtered =
-    miners?.filter((miner) =>
-      miner.uid.toLowerCase().includes(searchTerm.toLowerCase()),
-    ) || [];
+    miners?.filter((miner) => {
+      for (const uid of searchArray) {
+        if (miner.uid.toLowerCase().includes(uid.toLowerCase())) {
+          return true;
+        }
+      }
+      return false;
+    }) || [];
   const sorted = sortMiners(filtered);
 
   if (isLoading) {
@@ -303,15 +289,11 @@ export default function MinerTable({
         </thead>
         <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
           {sorted.map((miner) => (
-            <Fragment key={miner.uid}>
-              <tr
-                className={`cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 ${
-                  selectedUids.has(miner.uid)
-                    ? "bg-blue-50 dark:bg-blue-900/20"
-                    : ""
-                }`}
-                onClick={() => handleRowClick(miner.uid, selectedUids.has(miner.uid))}
-              >
+            <tr
+              key={miner.uid}
+              className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
+              onClick={() => onNavigateToMiner(miner.uid)}
+            >
                 <td className="whitespace-nowrap px-6 py-4 font-mono text-sm text-gray-900 dark:text-gray-100">
                   {miner.uid}
                 </td>
@@ -331,17 +313,6 @@ export default function MinerTable({
                   </span>
                 </td>
               </tr>
-
-              {selectedUids.has(miner.uid) && (
-                <MinerDetails
-                  nodes={nodes.filter(
-                    (node: MinerNode) => node.uid === miner.uid,
-                  )}
-                  isLoading={false}
-                  error={null}
-                />
-              )}
-            </Fragment>
           ))}
         </tbody>
       </table>

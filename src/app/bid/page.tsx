@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter, usePathname } from "next/navigation";
 
 import BidTable from "@/app/_components/BidTable";
@@ -26,6 +26,15 @@ export default function BidPage() {
   useEffect(() => {
     setSearchTerm("");
   }, [pathname]);
+
+  const handleSearchChange = useCallback((term: string) => {
+    setSearchTerm(term);
+    if (term.trim()) {
+      router.push(`/bid?search=${encodeURIComponent(term)}`);
+    } else {
+      router.push('/bid');
+    }
+  }, [router]);
 
   const {
     data: auction,
@@ -60,7 +69,7 @@ export default function BidPage() {
                 isLoading={isLoading}
               />
             )}
-            <Search value={searchTerm} onChange={setSearchTerm} />
+            <Search value={searchTerm} onChange={handleSearchChange} />
           </div>
         </div>
 

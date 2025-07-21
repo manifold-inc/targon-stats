@@ -16,9 +16,19 @@ const BidTable = ({
   isLoading,
   error,
 }: BidTableProps) => {
-  const filteredNodes = nodes.filter((node: MinerNode) =>
-    node.uid.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
+
+  searchTerm = searchTerm.replaceAll(" ", "");
+
+  const searchArray = searchTerm.split(",");
+
+  const filteredNodes = nodes.filter((node: MinerNode) => {
+    for (const uid of searchArray) {
+      if (node.uid.toLowerCase().includes(uid.toLowerCase())) {
+        return true;
+      }
+    }
+    return false;
+  });
 
   // Sort by lowest to highest price
   const sortedNodes = [...filteredNodes].sort((a, b) => {

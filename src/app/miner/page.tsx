@@ -1,7 +1,7 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
-import { useSearchParams, usePathname } from "next/navigation";
+import { Suspense, useCallback, useEffect, useState } from "react";
+import { useSearchParams, usePathname, useRouter } from "next/navigation";
 
 import BlockSelector from "@/app/_components/BlockSelector";
 import CurrentBlock from "@/app/_components/CurrentBlock";
@@ -12,26 +12,38 @@ import Navigation from "@/app/_components/Navigation";
 import Search from "@/app/_components/Search";
 import TaoPrice from "@/app/_components/TaoPrice";
 import { reactClient } from "@/trpc/react";
-import { getNodes, getNodesByMiner } from "@/utils/utils";
+import { getNodesByMiner } from "@/utils/utils";
 
 function Content() {
-  const [selectedMinerUids, setSelectedMinerUids] = useState<Array<string>>([]);
+
   const [selectedBlock, setSelectedBlock] = useState<number | undefined>(
     undefined,
   );
   const [searchTerm, setSearchTerm] = useState("");
 
+  const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
+
+  const handleNavigateToMiner = useCallback((uid: string) => {
+    router.push(`/miner?search=${encodeURIComponent(uid)}`);
+  }, [router]);
+
+  const handleSearchChange = useCallback((term: string) => {
+    setSearchTerm(term);
+    if (term.trim()) {
+      router.push(`/miner?search=${encodeURIComponent(term)}`);
+    } else {
+      router.push('/miner');
+    }
+  }, [router]);
 
   useEffect(() => {
     const searchParam = searchParams.get("search");
     if (searchParam) {
       setSearchTerm(searchParam);
-      setSelectedMinerUids([searchParam]);
     } else {
       setSearchTerm("");
-      setSelectedMinerUids([]);
     }
   }, [searchParams, pathname]);
 
@@ -43,6 +55,11 @@ function Content() {
 
   const { data: auctionLatest } =
     reactClient.chain.getAuctionState.useQuery(undefined);
+
+
+    const handleClearSearch = () => {
+      router.push('/miner');
+    };
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
@@ -64,7 +81,7 @@ function Content() {
                 isLoading={isLoading}
               />
             )}
-            <Search value={searchTerm} onChange={setSearchTerm} />
+            <Search value={searchTerm} onChange={handleSearchChange} onClear={handleClearSearch} />
           </div>
         </div>
 
@@ -78,12 +95,10 @@ function Content() {
         <div className="mt-8">
           <MinerTable
             miners={getNodesByMiner(auction?.auction_results ?? {})}
-            nodes={getNodes(auction?.auction_results ?? {})}
             searchTerm={searchTerm}
-            selectedMinerUids={selectedMinerUids}
-            onSelectedMinerChange={setSelectedMinerUids}
             isLoading={isLoading}
             error={error ? new Error(error.message) : null}
+            onNavigateToMiner={handleNavigateToMiner}
           />
         </div>
       </div>
