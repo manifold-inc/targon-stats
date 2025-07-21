@@ -1,5 +1,5 @@
-import { stringToU8a } from "@polkadot/util";
-import { signatureVerify } from "@polkadot/util-crypto";
+import { createHash } from "crypto";
+import Keyring from "@polkadot/keyring";
 import { waitReady } from "@polkadot/wasm-crypto";
 
 interface Verification {
@@ -13,7 +13,7 @@ export async function verify(
   uuid: string,
   body: string,
   timestamp: string,
-  signedBy: string,
+  signedFor: string,
 ): Promise<Verification> {
   const timestampNumber: number = parseInt(timestamp, 10);
   if (isNaN(timestampNumber)) {
@@ -28,24 +28,15 @@ export async function verify(
     return { verified: false, error: "Timestamp is too old" };
   }
 
-  const bodyHash = await crypto.subtle.digest(
-    "SHA-256",
-    new TextEncoder().encode(body),
-  );
+  const bodyHash = createHash("sha256").update(body).digest("hex");
 
-  const bodyHashHex = Array.from(new Uint8Array(bodyHash))
-    .map((b) => b.toString(16).padStart(2, "0"))
-    .join("");
-
-  const parsedSignature = signature.startsWith("0x")
-    ? signature.slice(2)
-    : signature;
-  const signatureBytes = stringToU8a(parsedSignature);
-
-  const message = `${bodyHashHex}.${uuid}.${timestamp}.${ss58}`;
+  const message = `${bodyHash}.${uuid}.${timestamp}.${signedFor}`;
   await waitReady();
-  const messageBytes = stringToU8a(message);
-  const { isValid } = signatureVerify(messageBytes, signatureBytes, signedBy);
+
+  const keyring = new Keyring({ type: "sr25519" });
+  const keypair = keyring.addFromAddress(ss58);
+  const hex = Uint8Array.from(Buffer.from(signature.slice(2), "hex"));
+  const isValid = keypair.verify(message, hex, keypair.publicKey);
   if (!isValid) return { verified: false, error: "Invalid signature" };
 
   return { verified: true };
@@ -62,10 +53,9 @@ export function getEpistulaHeaders(headers: Headers) {
   if (!timestamp) throw new Error("Timestamp not found");
 
   const signedFor = headers.get("Epistula-Signed-For");
-  if (!signedFor) throw new Error("Signed for not found");
 
   const signedBy = headers.get("Epistula-Signed-By");
   if (!signedBy) throw new Error("Signed by not found");
 
-  return { signature, uuid, timestamp, signedFor, signedBy };
+  return { signature, uuid, timestamp, signedFor: signedFor ?? "", signedBy };
 }
