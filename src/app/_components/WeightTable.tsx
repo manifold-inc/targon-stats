@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
+
 import { type MinerNode } from "@/app/api/bids/route";
 
 enum SortField {
@@ -131,19 +132,15 @@ const WeightTable = ({
     return (
       <div className="space-y-1">
         <table className="min-w-full">
-          <thead className="bg-mf-sally-500/15 rounded-lg">
+          <thead className="rounded-lg bg-mf-sally-500/15">
             <tr className="[&>th:first-child]:rounded-l-lg [&>th:last-child]:rounded-r-lg">
-              <th className="cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 font-poppins">
-                <div className="flex items-center gap-1">
-                  Rank
-                </div>
+              <th className="font-poppins cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
+                <div className="flex items-center gap-1">Rank</div>
               </th>
-              <th className="cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 font-poppins">
-                <div className="flex items-center gap-1">
-                  UUID
-                </div>
+              <th className="font-poppins cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
+                <div className="flex items-center gap-1">UUID</div>
               </th>
-              <th className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 font-poppins">
+              <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
                 <div className="flex items-center justify-end gap-1">
                   Weight
                 </div>
@@ -151,8 +148,11 @@ const WeightTable = ({
             </tr>
           </thead>
           <tbody className="bg-mf-ash-500/15">
-            <tr className="cursor-pointer hover:bg-mf-ash-500/30 outline outline-2 outline-mf-ash-300 outline-offset-[-1px] rounded-lg bg-mf-ash-500/15 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
-              <td colSpan={3} className="whitespace-nowrap px-6 py-4 text-center text-sm text-mf-edge-700 font-poppins">
+            <tr className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
+              <td
+                colSpan={3}
+                className="font-poppins whitespace-nowrap px-6 py-4 text-center text-sm text-mf-edge-700"
+              >
                 Loading nodes...
               </td>
             </tr>
@@ -166,19 +166,15 @@ const WeightTable = ({
     return (
       <div className="space-y-1">
         <table className="min-w-full">
-          <thead className="bg-mf-sally-500/15 rounded-lg">
+          <thead className="rounded-lg bg-mf-sally-500/15">
             <tr className="[&>th:first-child]:rounded-l-lg [&>th:last-child]:rounded-r-lg">
-              <th className="cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 font-poppins">
-                <div className="flex items-center gap-1">
-                  Rank
-                </div>
+              <th className="font-poppins cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
+                <div className="flex items-center gap-1">Rank</div>
               </th>
-              <th className="cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 font-poppins">
-                <div className="flex items-center gap-1">
-                  UUID
-                </div>
+              <th className="font-poppins cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
+                <div className="flex items-center gap-1">UUID</div>
               </th>
-              <th className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 font-poppins">
+              <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
                 <div className="flex items-center justify-end gap-1">
                   Weight
                 </div>
@@ -186,8 +182,11 @@ const WeightTable = ({
             </tr>
           </thead>
           <tbody className="bg-mf-ash-500/15">
-            <tr className="cursor-pointer hover:bg-mf-ash-500/30 outline outline-2 outline-mf-ash-300 outline-offset-[-1px] rounded-lg bg-mf-ash-500/15 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
-              <td colSpan={3} className="whitespace-nowrap px-6 py-4 text-center text-sm text-red-400 font-poppins">
+            <tr className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
+              <td
+                colSpan={3}
+                className="font-poppins whitespace-nowrap px-6 py-4 text-center text-sm text-red-400"
+              >
                 Error loading nodes: {error.message}
               </td>
             </tr>
@@ -201,19 +200,15 @@ const WeightTable = ({
     return (
       <div className="space-y-1">
         <table className="min-w-full">
-          <thead className="bg-mf-sally-500/15 rounded-lg">
+          <thead className="rounded-lg bg-mf-sally-500/15">
             <tr className="[&>th:first-child]:rounded-l-lg [&>th:last-child]:rounded-r-lg">
-              <th className="cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 font-poppins">
-                <div className="flex items-center gap-1">
-                  Rank
-                </div>
+              <th className="font-poppins cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
+                <div className="flex items-center gap-1">Rank</div>
               </th>
-              <th className="cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 font-poppins">
-                <div className="flex items-center gap-1">
-                  UUID
-                </div>
+              <th className="font-poppins cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
+                <div className="flex items-center gap-1">UUID</div>
               </th>
-              <th className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 font-poppins">
+              <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
                 <div className="flex items-center justify-end gap-1">
                   Weight
                 </div>
@@ -221,8 +216,11 @@ const WeightTable = ({
             </tr>
           </thead>
           <tbody className="bg-mf-ash-500/15">
-            <tr className="cursor-pointer hover:bg-mf-ash-500/30 outline outline-2 outline-mf-ash-300 outline-offset-[-1px] rounded-lg bg-mf-ash-500/15 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
-              <td colSpan={3} className="whitespace-nowrap px-6 py-4 text-center text-sm text-mf-edge-700 font-poppins">
+            <tr className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
+              <td
+                colSpan={3}
+                className="font-poppins whitespace-nowrap px-6 py-4 text-center text-sm text-mf-edge-700"
+              >
                 No nodes found matching {searchTerm}
               </td>
             </tr>
@@ -235,11 +233,11 @@ const WeightTable = ({
   return (
     <div className="space-y-1">
       <table className="min-w-full">
-        <thead className="bg-mf-sally-500/15 rounded-lg">
+        <thead className="rounded-lg bg-mf-sally-500/15">
           <tr className="[&>th:first-child]:rounded-l-lg [&>th:last-child]:rounded-r-lg">
-            <th 
-              style={{ width: '33%' }}
-              className="cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 font-poppins"
+            <th
+              style={{ width: "33%" }}
+              className="font-poppins cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700"
               onClick={() => handleSort(SortField.RANK)}
             >
               <div className="flex items-center gap-1">
@@ -247,9 +245,9 @@ const WeightTable = ({
                 {getIcon(SortField.RANK)}
               </div>
             </th>
-            <th 
-              style={{ width: '20%' }}
-              className="cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 font-poppins"
+            <th
+              style={{ width: "20%" }}
+              className="font-poppins cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700"
               onClick={() => handleSort(SortField.UID)}
             >
               <div className="flex items-center gap-1">
@@ -257,9 +255,9 @@ const WeightTable = ({
                 {getIcon(SortField.UID)}
               </div>
             </th>
-            <th 
-              style={{ width: '30%' }}
-              className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 font-poppins"
+            <th
+              style={{ width: "30%" }}
+              className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700"
               onClick={() => handleSort(SortField.WEIGHT)}
             >
               <div className="flex items-center justify-end gap-1">
@@ -274,15 +272,24 @@ const WeightTable = ({
             <tr
               key={idx}
               onClick={() => onNavigateToMiner(node.uid)}
-              className="cursor-pointer hover:bg-mf-ash-500/30 bg-mf-ash-500/15 outline outline-2 outline-mf-ash-300 outline-offset-[-1px] rounded-lg [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg"
+              className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg"
             >
-              <td style={{ width: '33%' }} className="whitespace-nowrap px-6 py-4 text-left text-sm text-mf-edge-700 font-poppins">
+              <td
+                style={{ width: "33%" }}
+                className="font-poppins whitespace-nowrap px-6 py-4 text-left text-sm text-mf-edge-700"
+              >
                 {node.rank}
               </td>
-              <td style={{ width: '20%' }} className="whitespace-nowrap px-6 py-4 font-poppins text-sm text-mf-sally-300">
+              <td
+                style={{ width: "20%" }}
+                className="font-poppins whitespace-nowrap px-6 py-4 text-sm text-mf-sally-300"
+              >
                 {node.uid}
               </td>
-              <td style={{ width: '30%' }} className="whitespace-nowrap px-6 py-4 text-end text-sm font-poppins text-mf-sybil-500">
+              <td
+                style={{ width: "30%" }}
+                className="font-poppins whitespace-nowrap px-6 py-4 text-end text-sm text-mf-sybil-500"
+              >
                 {((weightMap.get(node.uid) ?? 0) * 100).toFixed(2)}%
               </td>
             </tr>

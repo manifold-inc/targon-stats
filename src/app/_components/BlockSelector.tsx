@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { ChevronDown } from "lucide-react";
-
-import { CalculateInterval } from "@/utils/utils";
 
 interface BlockSelectorProps {
   block: number;
@@ -43,14 +42,26 @@ export default function BlockSelector({
         disabled={isLoading}
         className="flex items-center gap-2 rounded-lg bg-mf-ash-500 px-4 py-2 text-sm font-medium text-white shadow-sm focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
       >
-        <img src="/box.svg" alt="Block" width={16} height={16} className="h-4 w-4" />
+        <Image
+          src="/box.svg"
+          alt="Block"
+          width={16}
+          height={16}
+          className="h-4 w-4"
+        />
         <span className="whitespace-nowrap">
           {isLoading ? (
             "Loading..."
           ) : (
             <>
               <span className="text-mf-sally-500">{selectedBlock}</span>
-              <span className="text-gray-400">  <span className="pl-1"> {getIntervalsPast(selectedBlock)} Int Past</span></span>
+              <span className="text-gray-400">
+                {" "}
+                <span className="pl-1">
+                  {" "}
+                  {getIntervalsPast(selectedBlock)} Int Past
+                </span>
+              </span>
             </>
           )}
         </span>
@@ -59,22 +70,33 @@ export default function BlockSelector({
 
       {isOpen && (
         <div className="absolute right-0 z-10 mt-1 w-full rounded-lg border-2 border-mf-ash-300 bg-mf-night-500 shadow-lg">
-          <ul className="max-h-60 overflow-auto rounded-lg [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          <ul className="max-h-60 overflow-auto rounded-lg [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {blocks.map((blockNumber) => (
               <li key={blockNumber}>
                 <button
                   type="button"
                   onClick={() => handleBlockSelect(blockNumber)}
-                  className={`flex items-center gap-2 w-full px-4 py-2 text-left text-sm ${
+                  className={`flex w-full items-center gap-2 px-4 py-2 text-left text-sm ${
                     selectedBlock === blockNumber
                       ? "bg-mf-ash-500"
                       : "bg-mf-night-500 hover:bg-mf-ash-500"
                   }`}
                 >
-                  <img src="/box.svg" alt="Block" width={16} height={16} className="h-4 w-4" />
+                  <Image
+                    src="/box.svg"
+                    alt="Block"
+                    width={16}
+                    height={16}
+                    className="h-4 w-4"
+                  />
                   <span>
                     <span className="text-mf-sally-500">{blockNumber}</span>
-                    <span className="text-gray-400"> <span className="pl-1">{getIntervalsPast(blockNumber)} Int Past</span></span>
+                    <span className="text-gray-400">
+                      {" "}
+                      <span className="pl-1">
+                        {getIntervalsPast(blockNumber)} Int Past
+                      </span>
+                    </span>
                   </span>
                 </button>
               </li>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { Dialog, DialogPanel } from "@headlessui/react";
 import { Menu, X } from "lucide-react";
@@ -14,17 +15,19 @@ const Header = () => {
         aria-label="Global"
         className="w-fullitems-center mx-auto flex justify-between p-6 lg:px-8"
       >
-        <div className="flex lg:flex-1 items-center">
-          <img
+        <div className="flex items-center lg:flex-1">
+          <Image
             src="/targonLogo.svg"
             alt="Targon-logo"
             width={24}
             height={24}
-            className="mr-2 w-5 h-5"
+            className="mr-2 h-5 w-5"
           />
           <Link href="/" className="-m-1.5 p-1.5">
             <span className="sr-only">Targon </span>
-            <span className="text-xl font-bold text-mf-edge-500 font-blinker tracking-wider ">TARGON </span>
+            <span className="font-blinker text-xl font-bold tracking-wider text-mf-edge-500 ">
+              TARGON{" "}
+            </span>
           </Link>
         </div>
         <div className="flex lg:hidden">

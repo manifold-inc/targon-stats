@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 
 interface ToggleTableProps {
   selectedTable: "miner" | "bid" | "weight";
@@ -27,7 +28,7 @@ const ToggleTable = ({
         }`}
         onClick={() => handleTableChange("miner")}
       >
-        <img
+        <Image
           src="/miners.svg"
           alt="Miner"
           width={24}
@@ -46,7 +47,7 @@ const ToggleTable = ({
         }`}
         onClick={() => handleTableChange("bid")}
       >
-        <img
+        <Image
           src="/buyouts.svg"
           alt="Buyouts"
           width={24}
@@ -65,7 +66,7 @@ const ToggleTable = ({
         }`}
         onClick={() => handleTableChange("weight")}
       >
-        <img
+        <Image
           src="/weights.svg"
           alt="Weights"
           width={24}

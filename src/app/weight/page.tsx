@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 import BackgroundSVG from "@/app/_components/BackgroundSVG";
@@ -43,14 +44,16 @@ export default function WeightPage() {
         <div className="mx-auto max-w-5xl">
           <div className="flex items-center justify-between px-6 py-4">
             <div className="flex items-center gap-2">
-              <img
+              <Image
                 src="/targonStatsLogo.svg"
                 alt="Targon-logo"
                 width={30}
                 height={30}
                 className="h-7 w-7"
               />
-              <h1 className="text-xl font-semibold text-mf-edge-500 flex items-center font-blinker">Targon Stats</h1>
+              <h1 className="font-blinker flex items-center text-xl font-semibold text-mf-edge-500">
+                Targon Stats
+              </h1>
             </div>
             <div className="flex items-center gap-2">
               <MaxBid maxBid={auction?.max_bid || 0} />
@@ -80,7 +83,9 @@ export default function WeightPage() {
 
         <div className="mt-5 pb-20">
           <div className="rounded-lg border-2 border-mf-ash-300 bg-mf-ash-700 p-8">
-            <h2 className="mb-7 text-lg font-semibold text-mf-edge-500 font-blinker tracking-wider">Targon Weights</h2>
+            <h2 className="font-blinker mb-7 text-lg font-semibold tracking-wider text-mf-edge-500">
+              Targon Weights
+            </h2>
             <WeightTable
               weights={auction?.weights ?? {}}
               nodes={getNodes(auction?.auction_results ?? {})}

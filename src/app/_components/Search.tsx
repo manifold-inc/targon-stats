@@ -22,7 +22,7 @@ export default function Search({
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="block w-full rounded-lg border border-gray-600 bg-mf-night-500 py-2 pl-10 pr-3 text-sm text-mf-edge-700 placeholder-font-poppins placeholder-mf-edge-700 focus:border-mf-sally-500 focus:outline-none focus:ring-2 focus:ring-mf-sally-500"
+        className="placeholder-font-poppins block w-full rounded-lg border border-gray-600 bg-mf-night-500 py-2 pl-10 pr-3 text-sm text-mf-edge-700 placeholder-mf-edge-700 focus:border-mf-sally-500 focus:outline-none focus:ring-2 focus:ring-mf-sally-500"
         placeholder={placeholder}
       />
       {value && (

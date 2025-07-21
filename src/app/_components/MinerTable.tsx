@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment, useState } from "react";
+import Image from "next/image";
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 
 import MinerDetails from "@/app/_components/MinerDetails";
@@ -137,29 +138,27 @@ export default function MinerTable({
     return (
       <div className="space-y-1">
         <table className="min-w-full">
-          <thead className="bg-mf-sally-500/15 rounded-lg">
+          <thead className="rounded-lg bg-mf-sally-500/15">
             <tr className="[&>th:first-child]:rounded-l-lg [&>th:last-child]:rounded-r-lg">
-              <th className="cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 font-poppins">
-                <div className="flex items-center gap-1">
-                  UUID
-                </div>
+              <th className="font-poppins cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
+                <div className="flex items-center gap-1">UUID</div>
               </th>
-              <th className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 font-poppins">
+              <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
                 <div className="flex items-center justify-end gap-1">
                   Average Bid
                 </div>
               </th>
-              <th className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 font-poppins">
+              <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
                 <div className="flex items-center justify-end gap-1">
                   Average Payout
                 </div>
               </th>
-              <th className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 font-poppins">
+              <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
                 <div className="flex items-center justify-end gap-1">
                   Number of Nodes
                 </div>
               </th>
-              <th className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 font-poppins">
+              <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
                 <div className="flex items-center justify-end gap-1">
                   Payment Status
                 </div>
@@ -167,8 +166,11 @@ export default function MinerTable({
             </tr>
           </thead>
           <tbody className="bg-mf-ash-500/15">
-            <tr className="cursor-pointer hover:bg-mf-ash-500/30 outline outline-2 outline-mf-ash-300 outline-offset-[-1px] rounded-lg bg-mf-ash-500/15 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
-              <td colSpan={5} className="whitespace-nowrap px-6 py-4 text-center text-sm text-mf-edge-700 font-poppins">
+            <tr className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
+              <td
+                colSpan={5}
+                className="font-poppins whitespace-nowrap px-6 py-4 text-center text-sm text-mf-edge-700"
+              >
                 Loading miners...
               </td>
             </tr>
@@ -182,29 +184,27 @@ export default function MinerTable({
     return (
       <div className="space-y-1">
         <table className="min-w-full">
-          <thead className="bg-mf-sally-500/15 rounded-lg">
+          <thead className="rounded-lg bg-mf-sally-500/15">
             <tr className="[&>th:first-child]:rounded-l-lg [&>th:last-child]:rounded-r-lg">
-              <th className="cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 font-poppins">
-                <div className="flex items-center gap-1">
-                  UUID
-                </div>
+              <th className="font-poppins cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
+                <div className="flex items-center gap-1">UUID</div>
               </th>
-              <th className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 font-poppins">
+              <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
                 <div className="flex items-center justify-end gap-1">
                   Average Bid
                 </div>
               </th>
-              <th className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 font-poppins">
+              <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
                 <div className="flex items-center justify-end gap-1">
                   Average Payout
                 </div>
               </th>
-              <th className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 font-poppins">
+              <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
                 <div className="flex items-center justify-end gap-1">
                   Number of Nodes
                 </div>
               </th>
-              <th className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 font-poppins">
+              <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
                 <div className="flex items-center justify-end gap-1">
                   Payment Status
                 </div>
@@ -212,8 +212,11 @@ export default function MinerTable({
             </tr>
           </thead>
           <tbody className="bg-mf-ash-500/15">
-            <tr className="cursor-pointer hover:bg-mf-ash-500/30 outline outline-2 outline-mf-ash-300 outline-offset-[-1px] rounded-lg bg-mf-ash-500/15 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
-              <td colSpan={5} className="whitespace-nowrap px-6 py-4 text-center text-sm text-red-400 font-poppins">
+            <tr className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
+              <td
+                colSpan={5}
+                className="font-poppins whitespace-nowrap px-6 py-4 text-center text-sm text-red-400"
+              >
                 Error loading miners: {error.message}
               </td>
             </tr>
@@ -227,29 +230,27 @@ export default function MinerTable({
     return (
       <div className="space-y-1">
         <table className="min-w-full">
-          <thead className="bg-mf-sally-500/15 rounded-lg">
+          <thead className="rounded-lg bg-mf-sally-500/15">
             <tr className="[&>th:first-child]:rounded-l-lg [&>th:last-child]:rounded-r-lg">
-              <th className="cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 font-poppins">
-                <div className="flex items-center gap-1">
-                  UUID
-                </div>
+              <th className="font-poppins cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
+                <div className="flex items-center gap-1">UUID</div>
               </th>
-              <th className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 font-poppins">
+              <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
                 <div className="flex items-center justify-end gap-1">
                   Average Bid
                 </div>
               </th>
-              <th className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 font-poppins">
+              <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
                 <div className="flex items-center justify-end gap-1">
                   Average Payout
                 </div>
               </th>
-              <th className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 font-poppins">
+              <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
                 <div className="flex items-center justify-end gap-1">
                   Number of Nodes
                 </div>
               </th>
-              <th className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 font-poppins">
+              <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
                 <div className="flex items-center justify-end gap-1">
                   Payment Status
                 </div>
@@ -257,8 +258,11 @@ export default function MinerTable({
             </tr>
           </thead>
           <tbody className="bg-mf-ash-500/15">
-            <tr className="cursor-pointer hover:bg-mf-ash-500/30 outline outline-2 outline-mf-ash-300 outline-offset-[-1px] rounded-lg bg-mf-ash-500/15 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
-              <td colSpan={5} className="whitespace-nowrap px-6 py-4 text-center text-sm text-mf-edge-700 font-poppins">
+            <tr className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
+              <td
+                colSpan={5}
+                className="font-poppins whitespace-nowrap px-6 py-4 text-center text-sm text-mf-edge-700"
+              >
                 No miners found matching {searchTerm}
               </td>
             </tr>
@@ -271,10 +275,10 @@ export default function MinerTable({
   return (
     <div className="space-y-1">
       <table className="min-w-full">
-        <thead className="bg-mf-sally-500/15 rounded-lg">
+        <thead className="rounded-lg bg-mf-sally-500/15">
           <tr className="[&>th:first-child]:rounded-l-lg [&>th:last-child]:rounded-r-lg">
             <th
-              className="cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 font-poppins"
+              className="font-poppins cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700"
               onClick={() => handleSort(SortField.UID)}
             >
               <div className="flex items-center gap-1">
@@ -283,7 +287,7 @@ export default function MinerTable({
               </div>
             </th>
             <th
-              className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 font-poppins"
+              className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700"
               onClick={() => handleSort(SortField.AVERAGE_PRICE)}
             >
               <div className="flex items-center justify-end gap-1">
@@ -292,7 +296,7 @@ export default function MinerTable({
               </div>
             </th>
             <th
-              className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 font-poppins"
+              className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700"
               onClick={() => handleSort(SortField.AVERAGE_PAYOUT)}
             >
               <div className="flex items-center justify-end gap-1">
@@ -301,7 +305,7 @@ export default function MinerTable({
               </div>
             </th>
             <th
-              className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 font-poppins"
+              className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700"
               onClick={() => handleSort(SortField.NODES)}
             >
               <div className="flex items-center justify-end gap-1">
@@ -310,7 +314,7 @@ export default function MinerTable({
               </div>
             </th>
             <th
-              className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 font-poppins"
+              className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700"
               onClick={() => handleSort(SortField.PAYMENT_STATUS)}
             >
               <div className="flex items-center justify-end gap-1">
@@ -324,27 +328,37 @@ export default function MinerTable({
           {sorted.map((miner) => (
             <Fragment key={miner.uid}>
               <tr
-                className={`cursor-pointer hover:bg-mf-ash-500/30 outline outline-2 outline-mf-ash-300 outline-offset-[-1px] rounded-lg ${
-                  selectedMinerUids.has(miner.uid) ? "bg-mf-ash-500/30" : "bg-mf-ash-500/15"
+                className={`cursor-pointer rounded-lg outline outline-2 outline-offset-[-1px] outline-mf-ash-300 hover:bg-mf-ash-500/30 ${
+                  selectedMinerUids.has(miner.uid)
+                    ? "bg-mf-ash-500/30"
+                    : "bg-mf-ash-500/15"
                 } [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg`}
                 onClick={() => handleRowClick(miner.uid)}
               >
-                <td className={`whitespace-nowrap px-6 py-4 font-poppins text-sm flex items-center gap-2 ${
-                  selectedMinerUids.has(miner.uid) ? "text-mf-edge-300" : "text-mf-edge-700"
-                }`}>
+                <td
+                  className={`font-poppins flex items-center gap-2 whitespace-nowrap px-6 py-4 text-sm ${
+                    selectedMinerUids.has(miner.uid)
+                      ? "text-mf-edge-300"
+                      : "text-mf-edge-700"
+                  }`}
+                >
                   {miner.uid}
                   {selectedMinerUids.has(miner.uid) && (
-                    <img src="/downArrow.svg" alt="Down Arrow" className="h-4 w-4" />
+                    <Image
+                      src="/downArrow.svg"
+                      alt="Down Arrow"
+                      className="h-4 w-4"
+                    />
                   )}
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 text-end text-sm text-mf-sybil-500 font-poppins">
+                <td className="font-poppins whitespace-nowrap px-6 py-4 text-end text-sm text-mf-sybil-500">
                   ${(miner.average_price / 100).toFixed(2)}/h
                 </td>
                 {/* TODO: Remove division once payout is calculated correctly */}
-                <td className="whitespace-nowrap px-6 py-4 text-end text-sm text-mf-sybil-500 font-poppins">
+                <td className="font-poppins whitespace-nowrap px-6 py-4 text-end text-sm text-mf-sybil-500">
                   ${(miner.average_payout / 8).toFixed(2)}/h
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 text-end text-sm text-mf-edge-700 font-poppins">
+                <td className="font-poppins whitespace-nowrap px-6 py-4 text-end text-sm text-mf-edge-700">
                   {miner.nodes}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-end text-sm last:rounded-r-lg">
