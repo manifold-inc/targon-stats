@@ -38,7 +38,6 @@ function Content() {
 
   useEffect(() => {
     const searchParam = searchParams.get("search");
-    console.log("[Page]Search Param: ", searchParam);
     if (searchParam) {
       setSearchTerm(searchParam);
     } else {

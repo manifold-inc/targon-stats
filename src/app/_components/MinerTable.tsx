@@ -18,7 +18,7 @@ enum SortField {
 }
 
 enum SortDirection {
-  ASC = "asc",
+  ASC = "asc", 
   DESC = "desc",
   NULL = 0,
 }
@@ -46,9 +46,9 @@ export default function MinerTable({
     if (!searchTerm.trim()) {
       setExpandedMiners([]);
     } else {
-      setExpandedMiners([...expandedMiners, searchTerm]);
+      setExpandedMiners([searchTerm]);
     }
-  }, [searchTerm, expandedMiners]);
+  }, [searchTerm]);
 
   const handleSort = (selectedField: SortField) => {
     if (field === selectedField) {
