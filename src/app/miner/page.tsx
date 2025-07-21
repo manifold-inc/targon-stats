@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 import BlockSelector from "@/app/_components/BlockSelector";
@@ -14,7 +14,7 @@ import TaoPrice from "@/app/_components/TaoPrice";
 import { reactClient } from "@/trpc/react";
 import { getNodes, getNodesByMiner } from "@/utils/utils";
 
-export default function MinerPage() {
+function MinerPageContent() {
   const [selectedMinerUid, setSelectedMinerUid] = useState<string | null>(null);
   const [selectedBlock, setSelectedBlock] = useState<number | undefined>(
     undefined,
@@ -84,5 +84,13 @@ export default function MinerPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function MinerPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <MinerPageContent />
+    </Suspense>
   );
 }
