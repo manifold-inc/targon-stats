@@ -124,20 +124,20 @@ const WeightTable = ({
   const sorted = sortNodes(nodesWithRanks);
 
   if (isLoading) {
-      return (
-    <div className="space-y-1">
-      <table className="min-w-full">
-        <thead className="rounded-lg bg-mf-sally-500/15 outline outline-2 outline-mf-ash-300/25">
-          <tr className="[&>th:first-child]:rounded-l-lg [&>th:last-child]:rounded-r-lg">
-            <th className="font-poppins cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
-              <div className="flex items-center gap-1">UUID</div>
-            </th>
-            <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
-              <div className="flex items-center justify-end gap-1">
-                Weight
-              </div>
-            </th>
-          </tr>
+    return (
+      <div className="space-y-1">
+        <table className="min-w-full">
+          <thead className="rounded-lg bg-mf-sally-500/15 outline outline-2 outline-mf-ash-300/25">
+            <tr className="[&>th:first-child]:rounded-l-lg [&>th:last-child]:rounded-r-lg">
+              <th className="font-poppins cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
+                <div className="flex items-center gap-1">UUID</div>
+              </th>
+              <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
+                <div className="flex items-center justify-end gap-1">
+                  Weight
+                </div>
+              </th>
+            </tr>
           </thead>
           <tbody className="bg-mf-ash-500/15">
             <tr className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300/25 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
@@ -271,4 +271,3 @@ const WeightTable = ({
 };
 
 export default WeightTable;
-

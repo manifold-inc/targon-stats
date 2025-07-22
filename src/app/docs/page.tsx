@@ -16,11 +16,9 @@ import { API_ENDPOINT } from "@/utils/constant";
 
 function Content() {
   const url = API_ENDPOINT;
-  
-  const {
-    data: auction,
-    isLoading,
-  } = reactClient.chain.getAuctionState.useQuery(undefined);
+
+  const { data: auction, isLoading } =
+    reactClient.chain.getAuctionState.useQuery(undefined);
 
   const { data: auctionLatest } =
     reactClient.chain.getAuctionState.useQuery(undefined);
@@ -69,23 +67,23 @@ function Content() {
           </div>
         </div>
 
-        <div className="mt-5 pb-20 space-y-6">
+        <div className="mt-5 space-y-6 pb-20">
           <h2 className="font-blinker mb-3 text-2xl font-semibold tracking-wider text-mf-edge-500">
             HTTP API Endpoints
           </h2>
-          
+
           <div className="rounded-lg border-2 border-mf-ash-300 bg-mf-ash-700">
             <div className="flex items-center justify-between border-b border-mf-ash-300 px-6 py-4">
               <h3 className="text-lg font-semibold text-mf-edge-500">
                 Get Specific Endpoints
               </h3>
-              <button className="rounded-lg bg-mf-sally-500 px-8 py-1 text-xs text-mf-ash-500 font-poppins font-semibold">
+              <button className="font-poppins rounded-lg bg-mf-sally-500 px-8 py-1 text-xs font-semibold text-mf-ash-500">
                 Copy
               </button>
             </div>
             <div className="p-6">
               <pre className="overflow-x-auto text-sm text-mf-edge-700">
-{`GET ${url}/api/miners/miner_id
+                {`GET ${url}/api/miners/miner_id
 Response:
 "success": 
 true,
@@ -104,13 +102,13 @@ true,
               <h3 className="text-lg font-semibold text-mf-edge-500">
                 Get All Miners
               </h3>
-              <button className="rounded-lg bg-mf-sally-500 px-8 py-1 text-xs text-mf-ash-500 font-poppins font-semibold">
+              <button className="font-poppins rounded-lg bg-mf-sally-500 px-8 py-1 text-xs font-semibold text-mf-ash-500">
                 Copy
               </button>
             </div>
             <div className="p-6">
               <pre className="overflow-x-auto text-sm text-mf-edge-700">
-{`GET ${url}/api/miners/miner_id
+                {`GET ${url}/api/miners/miner_id
 Response:
 "success":
 true,
@@ -128,13 +126,13 @@ true,
               <h3 className="text-lg font-semibold text-mf-edge-500">
                 Get All Bids
               </h3>
-              <button className="rounded-lg bg-mf-sally-500 px-8 py-1 text-xs text-mf-ash-500 font-poppins font-semibold">
+              <button className="font-poppins rounded-lg bg-mf-sally-500 px-8 py-1 text-xs font-semibold text-mf-ash-500">
                 Copy
               </button>
             </div>
             <div className="p-6">
               <pre className="overflow-x-auto text-sm text-mf-edge-700">
-{`GET ${url}/api/bids
+                {`GET ${url}/api/bids
 Response:
 "success":
 true,
@@ -153,13 +151,13 @@ true,
               <h3 className="text-lg font-semibold text-mf-edge-500">
                 Get Max Bid
               </h3>
-              <button className="rounded-lg bg-mf-sally-500 px-8 py-1 text-xs text-mf-ash-500 font-poppins font-semibold">
+              <button className="font-poppins rounded-lg bg-mf-sally-500 px-8 py-1 text-xs font-semibold text-mf-ash-500">
                 Copy
               </button>
             </div>
             <div className="p-6">
               <pre className="overflow-x-auto text-sm text-mf-edge-700">
-{`GET ${url}/api/bids/max
+                {`GET ${url}/api/bids/max
 Response:
 "success":
 true,

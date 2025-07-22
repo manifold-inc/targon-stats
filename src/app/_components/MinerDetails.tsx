@@ -48,7 +48,7 @@ export default function MinerDetails({
         <tr key={index}>
           <td className="bg-mf-ash-700" />
           <td colSpan={4} className="p-0 align-middle">
-            <div className="rounded-xl border-2 border-opacity-25 border-mf-ash-300 bg-mf-night-700/50">
+            <div className="rounded-xl border-2 border-mf-ash-300 border-opacity-25 bg-mf-night-700/50">
               <table className="w-full">
                 <tr>
                   <td
