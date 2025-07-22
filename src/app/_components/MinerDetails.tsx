@@ -48,32 +48,32 @@ export default function MinerDetails({
         <tr key={index}>
           <td className="bg-mf-ash-700" />
           <td colSpan={4} className="p-0 align-middle">
-            <div className="rounded-xl border-2 border-mf-ash-300 bg-mf-night-700/50">
+            <div className="rounded-xl border-2 border-opacity-25 border-mf-ash-300 bg-mf-night-700/50">
               <table className="w-full">
                 <tr>
                   <td
                     style={{ width: "22.5%" }}
-                    className="font-poppins whitespace-nowrap px-9 py-4 text-end text-sm text-mf-edge-500"
+                    className="font-poppins whitespace-nowrap px-9 py-3 text-end text-sm text-mf-edge-500"
                   >
                     ${(node.price / 100).toFixed(2)}
                   </td>
                   <td
                     style={{ width: "25%" }}
-                    className="font-poppins whitespace-nowrap px-9 py-4 text-end text-sm text-mf-edge-500"
+                    className="font-poppins whitespace-nowrap px-9 py-3 text-end text-sm text-mf-edge-500"
                   >
                     ${(node.payout / 8).toFixed(2)}
                   </td>
                   <td
                     style={{ width: "25%" }}
-                    className="font-poppins whitespace-nowrap px-6 py-4 text-end text-sm text-mf-edge-500"
+                    className="font-poppins whitespace-nowrap px-6 py-3 text-end text-sm text-mf-edge-500"
                   >
                     {node.gpus}
                   </td>
                   <td
                     style={{ width: "25%" }}
-                    className="whitespace-nowrap px-6 py-4 text-end text-sm"
+                    className="whitespace-nowrap px-6 py-3 text-end text-sm"
                   >
-                    <span className="px-2">
+                    <span className="px-1.5">
                       <NodePaymentStatusIcon node={node} />
                     </span>
                   </td>

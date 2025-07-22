@@ -116,7 +116,7 @@ const BidTable = ({
     return (
       <div className="space-y-1">
         <table className="min-w-full">
-          <thead className="rounded-lg bg-mf-sally-500/15">
+          <thead className="rounded-lg bg-mf-sally-500/15 outline outline-2 outline-offset-[0px] outline-mf-ash-300/25">
             <tr className="[&>th:first-child]:rounded-l-lg [&>th:last-child]:rounded-r-lg">
               <th className="font-poppins cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
                 <div className="flex items-center gap-1">UUID</div>
@@ -142,7 +142,7 @@ const BidTable = ({
             </tr>
           </thead>
           <tbody className="bg-mf-ash-500/15">
-            <tr className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
+            <tr className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300/25 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
               <td
                 colSpan={5}
                 className="font-poppins whitespace-nowrap px-6 py-4 text-center text-sm text-mf-edge-700"
@@ -160,7 +160,7 @@ const BidTable = ({
     return (
       <div className="space-y-1">
         <table className="min-w-full">
-          <thead className="rounded-lg bg-mf-sally-500/15">
+          <thead className="rounded-lg bg-mf-sally-500/15 outline outline-2 outline-offset-[0px] outline-mf-ash-300/25">
             <tr className="[&>th:first-child]:rounded-l-lg [&>th:last-child]:rounded-r-lg">
               <th className="font-poppins cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
                 <div className="flex items-center gap-1">UUID</div>
@@ -186,7 +186,7 @@ const BidTable = ({
             </tr>
           </thead>
           <tbody className="bg-mf-ash-500/15">
-            <tr className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
+            <tr className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300/25 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
               <td
                 colSpan={5}
                 className="font-poppins whitespace-nowrap px-6 py-4 text-center text-sm text-red-400"
@@ -204,7 +204,7 @@ const BidTable = ({
     return (
       <div className="space-y-1">
         <table className="min-w-full">
-          <thead className="rounded-lg bg-mf-sally-500/15">
+          <thead className="rounded-lg bg-mf-sally-500/15 outline outline-2 outline-offset-[0px] outline-mf-ash-300/25">
             <tr className="[&>th:first-child]:rounded-l-lg [&>th:last-child]:rounded-r-lg">
               <th className="font-poppins cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
                 <div className="flex items-center gap-1">UUID</div>
@@ -230,7 +230,7 @@ const BidTable = ({
             </tr>
           </thead>
           <tbody className="bg-mf-ash-500/15">
-            <tr className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
+            <tr className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300/25 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
               <td
                 colSpan={5}
                 className="font-poppins whitespace-nowrap px-6 py-4 text-center text-sm text-mf-edge-700"
@@ -247,7 +247,7 @@ const BidTable = ({
   return (
     <div className="space-y-1">
       <table className="min-w-full">
-        <thead className="rounded-lg bg-mf-sally-500/15">
+        <thead className="rounded-lg bg-mf-sally-500/15 outline outline-2 outline-offset-[0px] outline-mf-ash-300/25">
           <tr className="[&>th:first-child]:rounded-l-lg [&>th:last-child]:rounded-r-lg">
             <th
               className="font-poppins cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700"
@@ -301,7 +301,7 @@ const BidTable = ({
             <tr
               key={idx}
               onClick={() => onNavigateToMiner(node.uid)}
-              className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg"
+              className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300/25 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg"
             >
               <td className="font-poppins whitespace-nowrap px-6 py-4 text-sm text-mf-edge-700">
                 {node.uid}
