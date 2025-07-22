@@ -34,6 +34,11 @@ export default function BlockSelector({
     return Math.floor((latestBlock - blockNumber) / 360);
   };
 
+  const getIntervalText = (blockNumber: number) => {
+    const intervalsPast = getIntervalsPast(blockNumber);
+    return intervalsPast === 0 ? "Current" : `${intervalsPast} Int Past`;
+  };
+
   return (
     <div className="relative">
       <button
@@ -59,7 +64,7 @@ export default function BlockSelector({
                 {" "}
                 <span className="pl-1">
                   {" "}
-                  {getIntervalsPast(selectedBlock)} Int Past
+                  {getIntervalText(selectedBlock)}
                 </span>
               </span>
             </>
@@ -94,7 +99,7 @@ export default function BlockSelector({
                     <span className="text-gray-400">
                       {" "}
                       <span className="pl-1">
-                        {getIntervalsPast(blockNumber)} Int Past
+                        {getIntervalText(blockNumber)}
                       </span>
                     </span>
                   </span>
