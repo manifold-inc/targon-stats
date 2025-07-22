@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 
 import MinerDetails from "@/app/_components/MinerDetails";
@@ -111,7 +111,10 @@ export default function MinerTable({
     });
   };
 
-  const filtered = filterByUidSearch(miners, searchTerm);
+  const filtered = useMemo(
+    () => filterByUidSearch(miners, searchTerm),
+    [miners, searchTerm],
+  );
   const sorted = sortMiners(filtered);
 
   const handleMinerClick = (uid: string) => {
