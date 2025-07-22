@@ -43,14 +43,6 @@ export default function MinerTable({
   const [direction, setDirection] = useState<SortDirection>(SortDirection.NULL);
   const [expandedMiners, setExpandedMiners] = useState<string[]>([searchTerm]);
 
-  useEffect(() => {
-    if (!searchTerm.trim()) {
-      setExpandedMiners([]);
-    } else {
-      setExpandedMiners([searchTerm]);
-    }
-  }, [searchTerm]);
-
   const handleSort = (selectedField: SortField) => {
     if (field === selectedField) {
       switch (direction) {
@@ -133,6 +125,14 @@ export default function MinerTable({
   const getNodesForMiner = (uid: string): MinerNode[] => {
     return nodes?.filter((node) => node.uid === uid) || [];
   };
+
+  useEffect(() => {
+    if (!searchTerm.trim()) {
+      setExpandedMiners([]);
+    } else {
+      setExpandedMiners(filtered.map((miner) => miner.uid));
+    }
+  }, [searchTerm, filtered]);
 
   if (isLoading) {
     return (
