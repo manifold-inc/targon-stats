@@ -1,7 +1,7 @@
 "use client";
 
-import { CircleCheck } from "lucide-react";
 import Image from "next/image";
+import { CircleCheck } from "lucide-react";
 
 import Tooltip from "@/app/_components/Tooltip";
 import { type MinerNode } from "@/app/api/bids/route";

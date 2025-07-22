@@ -62,10 +62,7 @@ export default function BlockSelector({
               <span className="text-mf-sally-500">{selectedBlock}</span>
               <span className="text-gray-400">
                 {" "}
-                <span className="pl-1">
-                  {" "}
-                  {getIntervalText(selectedBlock)}
-                </span>
+                <span className="pl-1"> {getIntervalText(selectedBlock)}</span>
               </span>
             </>
           )}
