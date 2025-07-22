@@ -33,7 +33,7 @@ function Content() {
     if (searchTerm.trim()) {
       router.push(`/miner?search=${encodeURIComponent(searchTerm)}`);
     } else {
-      router.push('/miner');
+      router.push("/miner");
     }
   };
 
