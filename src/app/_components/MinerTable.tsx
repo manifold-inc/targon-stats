@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 
 import MinerDetails from "@/app/_components/MinerDetails";
@@ -129,13 +129,15 @@ export default function MinerTable({
     return nodes.filter((node) => node.uid === uid);
   };
 
-  useEffect(() => {
+  const searchTermRef = useRef(searchTerm);
+  if (searchTermRef.current !== searchTerm) {
     if (!searchTerm.trim()) {
       setExpandedMiners([]);
     } else {
       setExpandedMiners(filtered.map((miner) => miner.uid));
     }
-  }, [searchTerm, filtered]);
+    searchTermRef.current = searchTerm;
+  }
 
   if (isLoading) {
     return (
