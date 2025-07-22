@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 
@@ -8,6 +8,7 @@ import MinerDetails from "@/app/_components/MinerDetails";
 import PaymentStatusIcon from "@/app/_components/PaymentStatusIcon";
 import { type MinerNode } from "@/app/api/bids/route";
 import { type Miner } from "@/app/api/miners/route";
+import { filterByUidSearch } from "@/utils/utils";
 
 enum SortField {
   UID = "uid",
@@ -30,8 +31,6 @@ interface MinerTableProps {
   isLoading: boolean;
   error: Error | null;
   searchTerm: string;
-  selectedMinerUid: string | null;
-  onSelectedMinerChange: (uid: string | null) => void;
 }
 
 export default function MinerTable({
@@ -40,25 +39,10 @@ export default function MinerTable({
   isLoading,
   error,
   searchTerm,
-  selectedMinerUid,
-  onSelectedMinerChange,
 }: MinerTableProps) {
   const [field, setField] = useState<SortField>(SortField.NULL);
   const [direction, setDirection] = useState<SortDirection>(SortDirection.NULL);
-  const [selectedMinerUids, setSelectedMinerUids] = useState<Set<string>>(
-    selectedMinerUid ? new Set([selectedMinerUid]) : new Set(),
-  );
-
-  const handleRowClick = (uid: string) => {
-    const filteredMinerUids = selectedMinerUids.has(uid)
-      ? new Set([...selectedMinerUids].filter((id) => id !== uid))
-      : new Set([...selectedMinerUids, uid]);
-    setSelectedMinerUids(filteredMinerUids);
-
-    const selectedMinerUid = Array.from(filteredMinerUids)[0];
-    if (!selectedMinerUid) return;
-    onSelectedMinerChange(selectedMinerUid);
-  };
+  const [expandedMiners, setExpandedMiners] = useState<string[]>([searchTerm]);
 
   const handleSort = (selectedField: SortField) => {
     if (field === selectedField) {
@@ -128,17 +112,41 @@ export default function MinerTable({
     });
   };
 
-  const filtered =
-    miners?.filter((miner) =>
-      miner.uid.toLowerCase().includes(searchTerm.toLowerCase()),
-    ) || [];
+  const filtered = useMemo(
+    () => filterByUidSearch(miners, searchTerm),
+    [miners, searchTerm],
+  );
   const sorted = sortMiners(filtered);
+
+  const selectedMinerUids = new Set(expandedMiners);
+
+  const handleMinerClick = (uid: string) => {
+    if (expandedMiners.includes(uid)) {
+      setExpandedMiners(expandedMiners.filter((u) => u !== uid));
+    } else {
+      setExpandedMiners([...expandedMiners, uid]);
+    }
+  };
+
+  const getNodesForMiner = (uid: string): MinerNode[] => {
+    return nodes.filter((node) => node.uid === uid);
+  };
+
+  const searchTermRef = useRef(searchTerm);
+  if (searchTermRef.current !== searchTerm) {
+    if (!searchTerm.trim()) {
+      setExpandedMiners([]);
+    } else {
+      setExpandedMiners(filtered.map((miner) => miner.uid));
+    }
+    searchTermRef.current = searchTerm;
+  }
 
   if (isLoading) {
     return (
       <div className="space-y-1">
         <table className="min-w-full">
-          <thead className="rounded-lg bg-mf-sally-500/15 outline outline-2 outline-mf-ash-300/25">
+          <thead className="rounded-lg bg-mf-sally-500/15 outline outline-2 outline-offset-[0px] outline-mf-ash-300/25">
             <tr className="[&>th:first-child]:rounded-l-lg [&>th:last-child]:rounded-r-lg">
               <th className="font-poppins cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
                 <div className="flex items-center gap-1">UUID</div>
@@ -166,7 +174,7 @@ export default function MinerTable({
             </tr>
           </thead>
           <tbody className="bg-mf-ash-500/15">
-            <tr className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
+            <tr className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300/25 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
               <td
                 colSpan={5}
                 className="font-poppins whitespace-nowrap px-6 py-4 text-center text-sm text-mf-edge-700"
@@ -212,7 +220,7 @@ export default function MinerTable({
             </tr>
           </thead>
           <tbody className="bg-mf-ash-500/15">
-            <tr className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
+            <tr className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300/25 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
               <td
                 colSpan={5}
                 className="font-poppins whitespace-nowrap px-6 py-4 text-center text-sm text-red-400"
@@ -258,7 +266,7 @@ export default function MinerTable({
             </tr>
           </thead>
           <tbody className="bg-mf-ash-500/15">
-            <tr className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
+            <tr className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300/25 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
               <td
                 colSpan={5}
                 className="font-poppins whitespace-nowrap px-6 py-4 text-center text-sm text-mf-edge-700"
@@ -326,14 +334,11 @@ export default function MinerTable({
         </thead>
         <tbody className="bg-mf-ash-500/15">
           {sorted.map((miner) => (
-            <Fragment key={miner.uid}>
+            <>
               <tr
-                className={`cursor-pointer rounded-lg outline outline-2 outline-offset-[-1px] outline-mf-ash-300/25 hover:bg-mf-ash-500/30 ${
-                  selectedMinerUids.has(miner.uid)
-                    ? "bg-mf-ash-500/30"
-                    : "bg-mf-ash-500/15"
-                } [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg`}
-                onClick={() => handleRowClick(miner.uid)}
+                key={miner.uid}
+                className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300/25 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg"
+                onClick={() => handleMinerClick(miner.uid)}
               >
                 <td
                   className={`font-poppins flex items-center gap-2 whitespace-nowrap px-6 py-4 text-sm ${
@@ -369,17 +374,14 @@ export default function MinerTable({
                   </span>
                 </td>
               </tr>
-
-              {selectedMinerUids.has(miner.uid) && (
+              {expandedMiners?.includes(miner.uid) && (
                 <MinerDetails
-                  nodes={nodes.filter(
-                    (node: MinerNode) => node.uid === miner.uid,
-                  )}
+                  nodes={getNodesForMiner(miner.uid)}
                   isLoading={false}
                   error={null}
                 />
               )}
-            </Fragment>
+            </>
           ))}
         </tbody>
       </table>

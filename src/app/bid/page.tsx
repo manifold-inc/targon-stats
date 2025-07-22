@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useCallback, useRef, useState } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import BackgroundSVG from "@/app/_components/BackgroundSVG";
 import BidTable from "@/app/_components/BidTable";
@@ -14,14 +14,45 @@ import Navigation from "@/app/_components/Navigation";
 import Search from "@/app/_components/Search";
 import TaoPrice from "@/app/_components/TaoPrice";
 import { reactClient } from "@/trpc/react";
-import { getNodes } from "@/utils/utils";
+import {
+  getNodes,
+  handleBlockChange,
+  handleSearchNavigation,
+} from "@/utils/utils";
 
-export default function BidPage() {
+function Content() {
   const router = useRouter();
   const [selectedBlock, setSelectedBlock] = useState<number | undefined>(
     undefined,
   );
   const [searchTerm, setSearchTerm] = useState("");
+
+  const searchParams = useSearchParams();
+  const previousSearchParamRef = useRef<string | null>(null);
+
+  const searchParam = searchParams.get("search");
+  if (searchParam !== previousSearchParamRef.current) {
+    previousSearchParamRef.current = searchParam;
+    setSearchTerm(searchParam || "");
+  }
+
+  const handleSearchChange = useCallback(
+    (term: string) =>
+      handleSearchNavigation(term, "/bid", setSearchTerm, router),
+    [setSearchTerm, router],
+  );
+
+  const handleClickTab = useCallback(
+    (term: string) =>
+      handleSearchNavigation(term, "/miner", setSearchTerm, router),
+    [setSearchTerm, router],
+  );
+
+  const onBlockChange = useCallback(
+    (block: number) =>
+      handleBlockChange(block, setSelectedBlock, handleSearchChange),
+    [handleSearchChange],
+  );
 
   const {
     data: auction,
@@ -31,10 +62,6 @@ export default function BidPage() {
 
   const { data: auctionLatest } =
     reactClient.chain.getAuctionState.useQuery(undefined);
-
-  const handleNavigateToMiner = (uid: string) => {
-    router.push(`/miner?search=${encodeURIComponent(uid)}`);
-  };
 
   return (
     <div className="w-full">
@@ -72,11 +99,16 @@ export default function BidPage() {
               <BlockSelector
                 block={selectedBlock ?? auction.block}
                 latestBlock={auctionLatest?.block ?? 0}
-                onBlockChange={setSelectedBlock}
+                onBlockChange={onBlockChange}
                 isLoading={isLoading}
+                searchTerm={searchTerm}
               />
             )}
-            <Search value={searchTerm} onChange={setSearchTerm} />
+            <Search
+              value={searchTerm}
+              onChange={handleSearchChange}
+              onClear={() => handleSearchChange("")}
+            />
           </div>
         </div>
 
@@ -88,7 +120,7 @@ export default function BidPage() {
             <BidTable
               nodes={getNodes(auction?.auction_results ?? {})}
               searchTerm={searchTerm}
-              onNavigateToMiner={handleNavigateToMiner}
+              onNavigateToMiner={handleClickTab}
               isLoading={isLoading}
               error={error as Error | null}
             />
@@ -96,5 +128,13 @@ export default function BidPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function BidPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <Content />
+    </Suspense>
   );
 }

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 
 import { type MinerNode } from "@/app/api/bids/route";
+import { filterByUidSearch } from "@/utils/utils";
 
 enum SortField {
   UID = "uid",
@@ -75,9 +76,7 @@ const WeightTable = ({
     uids?.map((uid, index) => [String(uid), incentive?.[index]]),
   );
 
-  const filteredNodes = nodes.filter((node: MinerNode) =>
-    node.uid.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
+  const filteredNodes = filterByUidSearch(nodes, searchTerm);
 
   const sortedNodes = [...filteredNodes].sort((a, b) => {
     return a.price - b.price;
@@ -252,7 +251,7 @@ const WeightTable = ({
             >
               <td
                 style={{ width: "60%" }}
-                className="font-poppins whitespace-nowrap px-6 py-4 text-sm text-mf-sally-300"
+                className="font-poppins whitespace-nowrap px-6 py-4 text-sm text-mf-edge-700"
               >
                 {node.uid}
               </td>

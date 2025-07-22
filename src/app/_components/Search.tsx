@@ -5,12 +5,14 @@ import { Search as SearchIcon, X } from "lucide-react";
 interface SearchProps {
   value: string;
   onChange: (value: string) => void;
+  onClear: () => void;
   placeholder?: string;
 }
 
 export default function Search({
   value,
   onChange,
+  onClear,
   placeholder = "Search by UUID...",
 }: SearchProps) {
   return (
@@ -27,7 +29,10 @@ export default function Search({
       />
       {value && (
         <button
-          onClick={() => onChange("")}
+          onClick={() => {
+            onChange("");
+            onClear();
+          }}
           className="absolute bottom-0 right-0 top-0 px-4 py-2 text-gray-500 hover:opacity-80 dark:text-gray-400 dark:hover:text-gray-200"
         >
           <X className="h-4 w-4" />

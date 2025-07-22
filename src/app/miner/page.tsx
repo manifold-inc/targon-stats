@@ -1,8 +1,8 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useCallback, useRef, useState } from "react";
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import BackgroundSVG from "@/app/_components/BackgroundSVG";
 import BlockSelector from "@/app/_components/BlockSelector";
@@ -14,24 +14,41 @@ import Navigation from "@/app/_components/Navigation";
 import Search from "@/app/_components/Search";
 import TaoPrice from "@/app/_components/TaoPrice";
 import { reactClient } from "@/trpc/react";
-import { getNodes, getNodesByMiner } from "@/utils/utils";
+import {
+  getNodes,
+  getNodesByMiner,
+  handleBlockChange,
+  handleSearchNavigation,
+} from "@/utils/utils";
 
 function Content() {
-  const [selectedMinerUid, setSelectedMinerUid] = useState<string | null>(null);
   const [selectedBlock, setSelectedBlock] = useState<number | undefined>(
     undefined,
   );
   const [searchTerm, setSearchTerm] = useState("");
 
+  const router = useRouter();
   const searchParams = useSearchParams();
 
-  useEffect(() => {
-    const searchParam = searchParams.get("search");
-    if (searchParam) {
-      setSearchTerm(searchParam);
-      setSelectedMinerUid(searchParam);
-    }
-  }, [searchParams]);
+  const handleSearchChange = useCallback(
+    (term: string) =>
+      handleSearchNavigation(term, "/miner", setSearchTerm, router),
+    [setSearchTerm, router],
+  );
+
+  const onBlockChange = useCallback(
+    (block: number) =>
+      handleBlockChange(block, setSelectedBlock, handleSearchChange),
+    [handleSearchChange],
+  );
+
+  const previousSearchParamRef = useRef<string | null>(null);
+
+  const searchParam = searchParams.get("search");
+  if (searchParam !== previousSearchParamRef.current) {
+    previousSearchParamRef.current = searchParam;
+    setSearchTerm(searchParam || "");
+  }
 
   const {
     data: auction,
@@ -78,11 +95,16 @@ function Content() {
               <BlockSelector
                 block={selectedBlock ?? auction.block}
                 latestBlock={auctionLatest?.block ?? 0}
-                onBlockChange={setSelectedBlock}
+                onBlockChange={onBlockChange}
                 isLoading={isLoading}
+                searchTerm={searchTerm}
               />
             )}
-            <Search value={searchTerm} onChange={setSearchTerm} />
+            <Search
+              value={searchTerm}
+              onChange={handleSearchChange}
+              onClear={() => handleSearchChange("")}
+            />
           </div>
         </div>
 
@@ -95,8 +117,6 @@ function Content() {
               miners={getNodesByMiner(auction?.auction_results ?? {})}
               nodes={getNodes(auction?.auction_results ?? {})}
               searchTerm={searchTerm}
-              selectedMinerUid={selectedMinerUid}
-              onSelectedMinerChange={setSelectedMinerUid}
               isLoading={isLoading}
               error={error ? new Error(error.message) : null}
             />

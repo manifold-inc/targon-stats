@@ -1,3 +1,4 @@
+import { type AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { z } from "zod";
 
 import { type MinerNode } from "@/app/api/bids/route";
@@ -83,6 +84,56 @@ export function removeIPAddress(node: MinerNode): MinerNode {
     diluted: node.diluted,
   } as MinerNode;
   return parsedNode;
+}
+
+export function handleSearchNavigation(
+  term: string,
+  route: string,
+  setSearchTerm: (term: string) => void,
+  router: AppRouterInstance,
+) {
+  setSearchTerm(term);
+  if (term.trim()) {
+    router.push(`${route}?search=${encodeURIComponent(term)}`);
+  } else {
+    router.push(route);
+  }
+}
+
+export function filterByUidSearch<T extends { uid: string }>(
+  items: T[],
+  searchTerm: string,
+): T[] {
+  if (!searchTerm.trim()) {
+    return items;
+  }
+
+  const cleanedSearchTerm = searchTerm.replaceAll(" ", "");
+  const searchArray = cleanedSearchTerm.split(",");
+
+  if (searchArray.length > 1) {
+    return items.filter((item) => {
+      for (const uid of searchArray) {
+        if (item.uid.toLowerCase() === uid.toLowerCase()) {
+          return true;
+        }
+      }
+      return false;
+    });
+  } else {
+    return items.filter((item) => {
+      return item.uid.toLowerCase().includes(searchTerm.toLowerCase());
+    });
+  }
+}
+
+export function handleBlockChange(
+  block: number,
+  setSelectedBlock: (block: number | undefined) => void,
+  handleSearchChange: (term: string) => void,
+) {
+  setSelectedBlock(block);
+  handleSearchChange("");
 }
 
 export function CalculateInterval(block: number): number {

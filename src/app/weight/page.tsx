@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useCallback, useRef, useState } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import BackgroundSVG from "@/app/_components/BackgroundSVG";
 import BlockSelector from "@/app/_components/BlockSelector";
@@ -14,14 +14,45 @@ import Search from "@/app/_components/Search";
 import TaoPrice from "@/app/_components/TaoPrice";
 import WeightTable from "@/app/_components/WeightTable";
 import { reactClient } from "@/trpc/react";
-import { getNodes } from "@/utils/utils";
+import {
+  getNodes,
+  handleBlockChange,
+  handleSearchNavigation,
+} from "@/utils/utils";
 
-export default function WeightPage() {
+function Content() {
   const router = useRouter();
   const [selectedBlock, setSelectedBlock] = useState<number | undefined>(
     undefined,
   );
   const [searchTerm, setSearchTerm] = useState("");
+  const searchParams = useSearchParams();
+
+  const previousSearchParamRef = useRef<string | null>(null);
+
+  const searchParam = searchParams.get("search");
+  if (searchParam !== previousSearchParamRef.current) {
+    previousSearchParamRef.current = searchParam;
+    setSearchTerm(searchParam || "");
+  }
+
+  const handleSearchChange = useCallback(
+    (term: string) =>
+      handleSearchNavigation(term, "/weight", setSearchTerm, router),
+    [setSearchTerm, router],
+  );
+
+  const handleClickTab = useCallback(
+    (term: string) =>
+      handleSearchNavigation(term, "/miner", setSearchTerm, router),
+    [setSearchTerm, router],
+  );
+
+  const onBlockChange = useCallback(
+    (block: number) =>
+      handleBlockChange(block, setSelectedBlock, handleSearchChange),
+    [handleSearchChange],
+  );
 
   const {
     data: auction,
@@ -31,11 +62,6 @@ export default function WeightPage() {
 
   const { data: auctionLatest } =
     reactClient.chain.getAuctionState.useQuery(undefined);
-
-  const handleNavigateToMiner = (uid: string) => {
-    // Navigate to miner page with search term
-    router.push(`/miner?search=${encodeURIComponent(uid)}`);
-  };
 
   return (
     <div className="w-full">
@@ -73,11 +99,16 @@ export default function WeightPage() {
               <BlockSelector
                 block={selectedBlock ?? auction.block}
                 latestBlock={auctionLatest?.block ?? 0}
-                onBlockChange={setSelectedBlock}
+                onBlockChange={onBlockChange}
                 isLoading={isLoading}
+                searchTerm={searchTerm}
               />
             )}
-            <Search value={searchTerm} onChange={setSearchTerm} />
+            <Search
+              value={searchTerm}
+              onChange={handleSearchChange}
+              onClear={() => handleSearchChange("")}
+            />
           </div>
         </div>
 
@@ -90,7 +121,7 @@ export default function WeightPage() {
               weights={auction?.weights ?? {}}
               nodes={getNodes(auction?.auction_results ?? {})}
               searchTerm={searchTerm}
-              onNavigateToMiner={handleNavigateToMiner}
+              onNavigateToMiner={handleClickTab}
               isLoading={isLoading}
               error={error as Error | null}
             />
@@ -98,5 +129,13 @@ export default function WeightPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function WeightPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <Content />
+    </Suspense>
   );
 }

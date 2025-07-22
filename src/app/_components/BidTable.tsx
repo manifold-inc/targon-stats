@@ -5,6 +5,7 @@ import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 
 import NodePaymentStatusIcon from "@/app/_components/NodePaymentStatusIcon";
 import { type MinerNode } from "@/app/api/bids/route";
+import { filterByUidSearch } from "@/utils/utils";
 
 enum SortField {
   UID = "uid",
@@ -107,9 +108,7 @@ const BidTable = ({
     });
   };
 
-  const filteredNodes = nodes.filter((node: MinerNode) =>
-    node.uid.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
+  const filteredNodes = filterByUidSearch(nodes, searchTerm);
   const sorted = sortNodes(filteredNodes);
 
   if (isLoading) {

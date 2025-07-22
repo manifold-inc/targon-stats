@@ -25,10 +25,6 @@ function Content() {
   const { data: auctionLatest } =
     reactClient.chain.getAuctionState.useQuery(undefined);
 
-  const handleBlockChange = (block: number) => {
-    router.push(`/miner`);
-  };
-
   const handleSearchChange = (searchTerm: string) => {
     if (searchTerm.trim()) {
       router.push(`/miner?search=${encodeURIComponent(searchTerm)}`);
