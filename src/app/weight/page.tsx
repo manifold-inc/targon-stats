@@ -36,6 +36,18 @@ function Content() {
     (term: string) => {
       setSearchTerm(term);
       if (term.trim()) {
+        router.push(`/weight?search=${encodeURIComponent(term)}`);
+      } else {
+        router.push("/weight");
+      }
+    },
+    [router],
+  );
+
+  const handleClickTab = useCallback(
+    (term: string) => {
+      setSearchTerm(term);
+      if (term.trim()) {
         router.push(`/miner?search=${encodeURIComponent(term)}`);
       } else {
         router.push("/miner");
@@ -89,7 +101,7 @@ function Content() {
             weights={auction?.weights ?? {}}
             nodes={getNodes(auction?.auction_results ?? {})}
             searchTerm={searchTerm}
-            onNavigateToMiner={handleSearchChange}
+            onNavigateToMiner={handleClickTab}
             isLoading={isLoading}
             error={error as Error | null}
           />
