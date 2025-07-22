@@ -1,7 +1,7 @@
 "use client";
 
-import { Suspense, useCallback, useState, useRef } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useCallback, useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import BidTable from "@/app/_components/BidTable";
 import BlockSelector from "@/app/_components/BlockSelector";

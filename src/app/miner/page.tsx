@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense, useCallback, useRef, useState } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import BlockSelector from "@/app/_components/BlockSelector";
 import CurrentBlock from "@/app/_components/CurrentBlock";
