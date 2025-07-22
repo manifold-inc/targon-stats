@@ -12,7 +12,7 @@ import Search from "@/app/_components/Search";
 import TaoPrice from "@/app/_components/TaoPrice";
 import WeightTable from "@/app/_components/WeightTable";
 import { reactClient } from "@/trpc/react";
-import { getNodes } from "@/utils/utils";
+import { getNodes, handleSearchNavigation } from "@/utils/utils";
 
 function Content() {
   const router = useRouter();
@@ -33,27 +33,15 @@ function Content() {
   }, [searchParams, pathname]);
 
   const handleSearchChange = useCallback(
-    (term: string) => {
-      setSearchTerm(term);
-      if (term.trim()) {
-        router.push(`/weight?search=${encodeURIComponent(term)}`);
-      } else {
-        router.push("/weight");
-      }
-    },
-    [router],
+    (term: string) =>
+      handleSearchNavigation(term, "/weight", setSearchTerm, router),
+    [setSearchTerm, router],
   );
 
   const handleClickTab = useCallback(
-    (term: string) => {
-      setSearchTerm(term);
-      if (term.trim()) {
-        router.push(`/miner?search=${encodeURIComponent(term)}`);
-      } else {
-        router.push("/miner");
-      }
-    },
-    [router],
+    (term: string) =>
+      handleSearchNavigation(term, "/miner", setSearchTerm, router),
+    [setSearchTerm, router],
   );
 
   const {

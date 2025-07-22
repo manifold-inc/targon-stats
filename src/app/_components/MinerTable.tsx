@@ -7,6 +7,7 @@ import MinerDetails from "@/app/_components/MinerDetails";
 import PaymentStatusIcon from "@/app/_components/PaymentStatusIcon";
 import { type MinerNode } from "@/app/api/bids/route";
 import { type Miner } from "@/app/api/miners/route";
+import { filterByUidSearch } from "@/utils/utils";
 
 enum SortField {
   UID = "uid",
@@ -118,19 +119,7 @@ export default function MinerTable({
     });
   };
 
-  searchTerm = searchTerm.replaceAll(" ", "");
-
-  const searchArray = searchTerm.split(",");
-
-  const filtered =
-    miners?.filter((miner) => {
-      for (const uid of searchArray) {
-        if (miner.uid.toLowerCase().includes(uid.toLowerCase())) {
-          return true;
-        }
-      }
-      return false;
-    }) || [];
+  const filtered = filterByUidSearch(miners, searchTerm);
   const sorted = sortMiners(filtered);
 
   const handleMinerClick = (uid: string) => {

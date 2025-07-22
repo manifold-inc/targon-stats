@@ -12,7 +12,11 @@ import Navigation from "@/app/_components/Navigation";
 import Search from "@/app/_components/Search";
 import TaoPrice from "@/app/_components/TaoPrice";
 import { reactClient } from "@/trpc/react";
-import { getNodes, getNodesByMiner } from "@/utils/utils";
+import {
+  getNodes,
+  getNodesByMiner,
+  handleSearchNavigation,
+} from "@/utils/utils";
 
 function Content() {
   const [selectedBlock, setSelectedBlock] = useState<number | undefined>(
@@ -25,15 +29,9 @@ function Content() {
   const pathname = usePathname();
 
   const handleSearchChange = useCallback(
-    (term: string) => {
-      setSearchTerm(term);
-      if (term.trim()) {
-        router.push(`/miner?search=${encodeURIComponent(term)}`);
-      } else {
-        router.push("/miner");
-      }
-    },
-    [router],
+    (term: string) =>
+      handleSearchNavigation(term, "/miner", setSearchTerm, router),
+    [setSearchTerm, router],
   );
 
   useEffect(() => {
@@ -53,10 +51,6 @@ function Content() {
 
   const { data: auctionLatest } =
     reactClient.chain.getAuctionState.useQuery(undefined);
-
-  const handleClearSearch = () => {
-    router.push("/miner");
-  };
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
@@ -81,7 +75,7 @@ function Content() {
             <Search
               value={searchTerm}
               onChange={handleSearchChange}
-              onClear={handleClearSearch}
+              onClear={() => handleSearchChange("")}
             />
           </div>
         </div>

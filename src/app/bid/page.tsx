@@ -12,7 +12,7 @@ import Navigation from "@/app/_components/Navigation";
 import Search from "@/app/_components/Search";
 import TaoPrice from "@/app/_components/TaoPrice";
 import { reactClient } from "@/trpc/react";
-import { getNodes } from "@/utils/utils";
+import { getNodes, handleSearchNavigation } from "@/utils/utils";
 
 function Content() {
   const router = useRouter();
@@ -38,29 +38,17 @@ function Content() {
   }, [searchParams, pathname]);
 
   const handleSearchChange = useCallback(
-    (term: string) => {
-      setSearchTerm(term);
-      if (term.trim()) {
-        router.push(`/bid?search=${encodeURIComponent(term)}`);
-      } else {
-        router.push("/bid");
-      }
-    },
-    [router],
+    (term: string) =>
+      handleSearchNavigation(term, "/bid", setSearchTerm, router),
+    [setSearchTerm, router],
   );
 
   const handleClickTab = useCallback(
-      (term: string) => {
-        setSearchTerm(term);
-        if (term.trim()) {
-          router.push(`/miner?search=${encodeURIComponent(term)}`);
-        } else {
-          router.push("/miner");
-        }
-      },
-      [router],
-    );
-    
+    (term: string) =>
+      handleSearchNavigation(term, "/miner", setSearchTerm, router),
+    [setSearchTerm, router],
+  );
+
   const {
     data: auction,
     isLoading,
