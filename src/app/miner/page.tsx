@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useCallback, useEffect, useState } from "react";
+import { Suspense, useCallback, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import BlockSelector from "@/app/_components/BlockSelector";
@@ -26,7 +26,6 @@ function Content() {
 
   const router = useRouter();
   const searchParams = useSearchParams();
-  const pathname = usePathname();
 
   const handleSearchChange = useCallback(
     (term: string) =>
@@ -34,14 +33,13 @@ function Content() {
     [setSearchTerm, router],
   );
 
-  useEffect(() => {
-    const searchParam = searchParams.get("search");
-    if (searchParam) {
-      setSearchTerm(searchParam);
-    } else {
-      setSearchTerm("");
-    }
-  }, [searchParams, pathname]);
+  const previousSearchParamRef = useRef<string | null>(null);
+
+  const searchParam = searchParams.get("search");
+  if (searchParam !== previousSearchParamRef.current) {
+    previousSearchParamRef.current = searchParam;
+    setSearchTerm(searchParam || "");
+  }
 
   const {
     data: auction,

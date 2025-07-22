@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useCallback, useEffect, useState } from "react";
+import { Suspense, useCallback, useState, useRef } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import BidTable from "@/app/_components/BidTable";
@@ -16,26 +16,19 @@ import { getNodes, handleSearchNavigation } from "@/utils/utils";
 
 function Content() {
   const router = useRouter();
-  const pathname = usePathname();
   const [selectedBlock, setSelectedBlock] = useState<number | undefined>(
     undefined,
   );
   const [searchTerm, setSearchTerm] = useState("");
 
-  useEffect(() => {
-    setSearchTerm("");
-  }, [pathname]);
-
   const searchParams = useSearchParams();
+  const previousSearchParamRef = useRef<string | null>(null);
 
-  useEffect(() => {
-    const searchParam = searchParams.get("search");
-    if (searchParam) {
-      setSearchTerm(searchParam);
-    } else {
-      setSearchTerm("");
-    }
-  }, [searchParams, pathname]);
+  const searchParam = searchParams.get("search");
+  if (searchParam !== previousSearchParamRef.current) {
+    previousSearchParamRef.current = searchParam;
+    setSearchTerm(searchParam || "");
+  }
 
   const handleSearchChange = useCallback(
     (term: string) =>
@@ -78,7 +71,11 @@ function Content() {
                 isLoading={isLoading}
               />
             )}
-            <Search value={searchTerm} onChange={handleSearchChange} />
+            <Search
+              value={searchTerm}
+              onChange={handleSearchChange}
+              onClear={() => handleSearchChange("")}
+            />
           </div>
         </div>
 

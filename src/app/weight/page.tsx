@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useCallback, useEffect, useState } from "react";
+import { Suspense, useCallback, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import BlockSelector from "@/app/_components/BlockSelector";
@@ -23,14 +23,13 @@ function Content() {
   const [searchTerm, setSearchTerm] = useState("");
   const searchParams = useSearchParams();
 
-  useEffect(() => {
-    const searchParam = searchParams.get("search");
-    if (searchParam) {
-      setSearchTerm(searchParam);
-    } else {
-      setSearchTerm("");
-    }
-  }, [searchParams, pathname]);
+  const previousSearchParamRef = useRef<string | null>(null);
+
+  const searchParam = searchParams.get("search");
+  if (searchParam !== previousSearchParamRef.current) {
+    previousSearchParamRef.current = searchParam;
+    setSearchTerm(searchParam || "");
+  }
 
   const handleSearchChange = useCallback(
     (term: string) =>
@@ -73,7 +72,11 @@ function Content() {
                 isLoading={isLoading}
               />
             )}
-            <Search value={searchTerm} onChange={handleSearchChange} />
+            <Search
+              value={searchTerm}
+              onChange={handleSearchChange}
+              onClear={() => handleSearchChange("")}
+            />
           </div>
         </div>
 
