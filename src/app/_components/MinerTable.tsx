@@ -123,15 +123,15 @@ export default function MinerTable({
   const sorted = sortMiners(filtered);
 
   const handleMinerClick = (uid: string) => {
-    if (expandedMiners?.includes(uid)) {
+    if (expandedMiners.includes(uid)) {
       setExpandedMiners(expandedMiners.filter((u) => u !== uid));
     } else {
-      setExpandedMiners([...(expandedMiners || []), uid]);
+      setExpandedMiners([...expandedMiners, uid]);
     }
   };
 
   const getNodesForMiner = (uid: string): MinerNode[] => {
-    return nodes?.filter((node) => node.uid === uid) || [];
+    return nodes.filter((node) => node.uid === uid);
   };
 
   if (isLoading) {
