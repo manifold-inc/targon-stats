@@ -45,7 +45,7 @@ export default function BlockSelector({
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         disabled={isLoading}
-        className="flex items-center gap-2 rounded-lg bg-mf-ash-500 px-4 py-2 text-sm font-medium text-white shadow-sm focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+        className="flex items-center border border-2 border-mf-ash-300 gap-2 rounded-lg bg-mf-ash-500 px-4 py-2 text-sm font-medium text-white shadow-sm focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
       >
         <Image
           src="/box.svg"
