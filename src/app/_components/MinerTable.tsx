@@ -1,12 +1,13 @@
 "use client";
 
-import { Fragment, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 
 import MinerDetails from "@/app/_components/MinerDetails";
 import PaymentStatusIcon from "@/app/_components/PaymentStatusIcon";
 import { type MinerNode } from "@/app/api/bids/route";
 import { type Miner } from "@/app/api/miners/route";
+import { filterByUidSearch } from "@/utils/utils";
 
 enum SortField {
   UID = "uid",
@@ -29,8 +30,6 @@ interface MinerTableProps {
   isLoading: boolean;
   error: Error | null;
   searchTerm: string;
-  selectedMinerUid: string | null;
-  onSelectedMinerChange: (uid: string | null) => void;
 }
 
 export default function MinerTable({
@@ -39,25 +38,10 @@ export default function MinerTable({
   isLoading,
   error,
   searchTerm,
-  selectedMinerUid,
-  onSelectedMinerChange,
 }: MinerTableProps) {
   const [field, setField] = useState<SortField>(SortField.NULL);
   const [direction, setDirection] = useState<SortDirection>(SortDirection.NULL);
-  const [selectedMinerUids, setSelectedMinerUids] = useState<Set<string>>(
-    selectedMinerUid ? new Set([selectedMinerUid]) : new Set(),
-  );
-
-  const handleRowClick = (uid: string) => {
-    const filteredMinerUids = selectedMinerUids.has(uid)
-      ? new Set([...selectedMinerUids].filter((id) => id !== uid))
-      : new Set([...selectedMinerUids, uid]);
-    setSelectedMinerUids(filteredMinerUids);
-
-    const selectedMinerUid = Array.from(filteredMinerUids)[0];
-    if (!selectedMinerUid) return;
-    onSelectedMinerChange(selectedMinerUid);
-  };
+  const [expandedMiners, setExpandedMiners] = useState<string[]>([searchTerm]);
 
   const handleSort = (selectedField: SortField) => {
     if (field === selectedField) {
@@ -127,11 +111,33 @@ export default function MinerTable({
     });
   };
 
-  const filtered =
-    miners?.filter((miner) =>
-      miner.uid.toLowerCase().includes(searchTerm.toLowerCase()),
-    ) || [];
+  const filtered = useMemo(
+    () => filterByUidSearch(miners, searchTerm),
+    [miners, searchTerm],
+  );
   const sorted = sortMiners(filtered);
+
+  const handleMinerClick = (uid: string) => {
+    if (expandedMiners.includes(uid)) {
+      setExpandedMiners(expandedMiners.filter((u) => u !== uid));
+    } else {
+      setExpandedMiners([...expandedMiners, uid]);
+    }
+  };
+
+  const getNodesForMiner = (uid: string): MinerNode[] => {
+    return nodes.filter((node) => node.uid === uid);
+  };
+
+  const searchTermRef = useRef(searchTerm);
+  if (searchTermRef.current !== searchTerm) {
+    if (!searchTerm.trim()) {
+      setExpandedMiners([]);
+    } else {
+      setExpandedMiners(filtered.map((miner) => miner.uid));
+    }
+    searchTermRef.current = searchTerm;
+  }
 
   if (isLoading) {
     return (
@@ -301,14 +307,11 @@ export default function MinerTable({
         </thead>
         <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
           {sorted.map((miner) => (
-            <Fragment key={miner.uid}>
+            <>
               <tr
-                className={`cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 ${
-                  selectedMinerUids.has(miner.uid)
-                    ? "bg-blue-50 dark:bg-blue-900/20"
-                    : ""
-                }`}
-                onClick={() => handleRowClick(miner.uid)}
+                key={miner.uid}
+                className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
+                onClick={() => handleMinerClick(miner.uid)}
               >
                 <td className="whitespace-nowrap px-6 py-4 font-mono text-sm text-gray-900 dark:text-gray-100">
                   {miner.uid}
@@ -329,17 +332,14 @@ export default function MinerTable({
                   </span>
                 </td>
               </tr>
-
-              {selectedMinerUids.has(miner.uid) && (
+              {expandedMiners?.includes(miner.uid) && (
                 <MinerDetails
-                  nodes={nodes.filter(
-                    (node: MinerNode) => node.uid === miner.uid,
-                  )}
+                  nodes={getNodesForMiner(miner.uid)}
                   isLoading={false}
                   error={null}
                 />
               )}
-            </Fragment>
+            </>
           ))}
         </tbody>
       </table>

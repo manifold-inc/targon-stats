@@ -1,5 +1,6 @@
 import NodePaymentStatusIcon from "@/app/_components/NodePaymentStatusIcon";
 import { type MinerNode } from "@/app/api/bids/route";
+import { filterByUidSearch } from "@/utils/utils";
 
 interface BidTableProps {
   searchTerm: string;
@@ -16,9 +17,7 @@ const BidTable = ({
   isLoading,
   error,
 }: BidTableProps) => {
-  const filteredNodes = nodes.filter((node: MinerNode) =>
-    node.uid.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
+  const filteredNodes = filterByUidSearch(nodes, searchTerm);
 
   // Sort by lowest to highest price
   const sortedNodes = [...filteredNodes].sort((a, b) => {
