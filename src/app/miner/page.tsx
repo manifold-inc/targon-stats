@@ -15,6 +15,7 @@ import { reactClient } from "@/trpc/react";
 import {
   getNodes,
   getNodesByMiner,
+  handleBlockChange,
   handleSearchNavigation,
 } from "@/utils/utils";
 
@@ -31,6 +32,12 @@ function Content() {
     (term: string) =>
       handleSearchNavigation(term, "/miner", setSearchTerm, router),
     [setSearchTerm, router],
+  );
+
+  const onBlockChange = useCallback(
+    (block: number) =>
+      handleBlockChange(block, setSelectedBlock, handleSearchChange),
+    [handleSearchChange],
   );
 
   const previousSearchParamRef = useRef<string | null>(null);
@@ -66,8 +73,9 @@ function Content() {
               <BlockSelector
                 block={selectedBlock ?? auction.block}
                 latestBlock={auctionLatest?.block ?? 0}
-                onBlockChange={setSelectedBlock}
+                onBlockChange={onBlockChange}
                 isLoading={isLoading}
+                searchTerm={searchTerm}
               />
             )}
             <Search

@@ -127,6 +127,15 @@ export function filterByUidSearch<T extends { uid: string }>(
   }
 }
 
+export function handleBlockChange(
+  block: number,
+  setSelectedBlock: (block: number | undefined) => void,
+  handleSearchChange: (term: string) => void,
+) {
+  setSelectedBlock(block);
+  handleSearchChange("");
+}
+
 export function CalculateInterval(block: number): number {
   return Math.floor(block / 360);
 }

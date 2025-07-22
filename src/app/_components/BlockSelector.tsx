@@ -10,6 +10,7 @@ interface BlockSelectorProps {
   latestBlock: number;
   isLoading: boolean;
   onBlockChange: (block: number) => void;
+  searchTerm: string;
 }
 
 export default function BlockSelector({

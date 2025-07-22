@@ -12,7 +12,11 @@ import Navigation from "@/app/_components/Navigation";
 import Search from "@/app/_components/Search";
 import TaoPrice from "@/app/_components/TaoPrice";
 import { reactClient } from "@/trpc/react";
-import { getNodes, handleSearchNavigation } from "@/utils/utils";
+import {
+  getNodes,
+  handleBlockChange,
+  handleSearchNavigation,
+} from "@/utils/utils";
 
 function Content() {
   const router = useRouter();
@@ -42,6 +46,12 @@ function Content() {
     [setSearchTerm, router],
   );
 
+  const onBlockChange = useCallback(
+    (block: number) =>
+      handleBlockChange(block, setSelectedBlock, handleSearchChange),
+    [handleSearchChange],
+  );
+
   const {
     data: auction,
     isLoading,
@@ -67,8 +77,9 @@ function Content() {
               <BlockSelector
                 block={selectedBlock ?? auction.block}
                 latestBlock={auctionLatest?.block ?? 0}
-                onBlockChange={setSelectedBlock}
+                onBlockChange={onBlockChange}
                 isLoading={isLoading}
+                searchTerm={searchTerm}
               />
             )}
             <Search
