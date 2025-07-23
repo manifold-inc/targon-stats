@@ -4,12 +4,8 @@ import { Suspense, useCallback, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import BlockSelector from "@/app/_components/BlockSelector";
-import CurrentBlock from "@/app/_components/CurrentBlock";
-import EmissionPool from "@/app/_components/EmissionPool";
-import MaxBid from "@/app/_components/MaxBid";
 import Navigation from "@/app/_components/Navigation";
 import Search from "@/app/_components/Search";
-import TaoPrice from "@/app/_components/TaoPrice";
 import WeightTable from "@/app/_components/WeightTable";
 import { reactClient } from "@/trpc/react";
 import {
@@ -62,15 +58,9 @@ function Content() {
     reactClient.chain.getAuctionState.useQuery(undefined);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-4xl">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-50 sm:text-4xl">
-            Targon Miner Stats
-          </h1>
-        </div>
-
-        <div className="mt-8 flex justify-between">
+    <div className="w-full">
+      <div className="mx-auto max-w-5xl px-8 py-2">
+        <div className="mt-4 flex justify-between">
           <Navigation />
           <div className="flex items-center gap-4">
             {auction && (
@@ -90,22 +80,20 @@ function Content() {
           </div>
         </div>
 
-        <div className="mt-4 flex justify-between">
-          <CurrentBlock block={auction?.block || 0} />
-          <MaxBid maxBid={auction?.max_bid || 0} />
-          <TaoPrice price={auction?.tao_price || 0} />
-          <EmissionPool pool={auction?.emission_pool || 0} />
-        </div>
-
-        <div className="mt-8">
-          <WeightTable
-            weights={auction?.weights ?? {}}
-            nodes={getNodes(auction?.auction_results ?? {})}
-            searchTerm={searchTerm}
-            onNavigateToMiner={handleClickTab}
-            isLoading={isLoading}
-            error={error as Error | null}
-          />
+        <div className="mt-5 pb-20">
+          <div className="rounded-lg border-2 border-mf-ash-300 bg-mf-ash-700 p-8">
+            <h2 className="font-blinker mb-7 text-lg font-semibold tracking-wider text-mf-edge-500">
+              Targon Weights
+            </h2>
+            <WeightTable
+              weights={auction?.weights ?? {}}
+              nodes={getNodes(auction?.auction_results ?? {})}
+              searchTerm={searchTerm}
+              onNavigateToMiner={handleClickTab}
+              isLoading={isLoading}
+              error={error as Error | null}
+            />
+          </div>
         </div>
       </div>
     </div>

@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { ChevronDown } from "lucide-react";
-
-import { CalculateInterval } from "@/utils/utils";
 
 interface BlockSelectorProps {
   block: number;
@@ -32,37 +31,76 @@ export default function BlockSelector({
     setIsOpen(false);
   };
 
+  const getIntervalsPast = (blockNumber: number) => {
+    return Math.floor((latestBlock - blockNumber) / 360);
+  };
+
+  const getIntervalText = (blockNumber: number) => {
+    const intervalsPast = getIntervalsPast(blockNumber);
+    return intervalsPast === 0 ? "Current" : `${intervalsPast} Int Past`;
+  };
+
   return (
     <div className="relative">
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         disabled={isLoading}
-        className="flex items-center justify-between rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+        className="flex items-center gap-2 rounded-lg border border-2 border-mf-ash-300 bg-mf-ash-500 px-4 py-2 text-sm font-medium text-white shadow-sm focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
       >
-        <span>
-          {isLoading
-            ? "Loading..."
-            : `Interval ${CalculateInterval(selectedBlock)} (Block ${selectedBlock})`}
+        <Image
+          src="/box.svg"
+          alt="Block"
+          width={16}
+          height={16}
+          className="h-4 w-4"
+        />
+        <span className="whitespace-nowrap">
+          {isLoading ? (
+            "Loading..."
+          ) : (
+            <>
+              <span className="text-mf-sally-500">{selectedBlock}</span>
+              <span className="text-gray-400">
+                {" "}
+                <span className="pl-1"> {getIntervalText(selectedBlock)}</span>
+              </span>
+            </>
+          )}
         </span>
         <ChevronDown className="ml-2 h-4 w-4" />
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 z-10 mt-1 rounded-md border border-gray-200 bg-white shadow-lg dark:border-gray-600 dark:bg-gray-800">
-          <ul className="max-h-60 overflow-auto py-1">
+        <div className="absolute right-0 z-10 mt-1 w-full rounded-lg border-2 border-mf-ash-300 bg-mf-night-500 shadow-lg">
+          <ul className="max-h-60 overflow-auto rounded-lg [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {blocks.map((blockNumber) => (
               <li key={blockNumber}>
                 <button
                   type="button"
                   onClick={() => handleBlockSelect(blockNumber)}
-                  className={`block w-full text-nowrap px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700 ${
+                  className={`flex w-full items-center gap-2 px-4 py-2 text-left text-sm ${
                     selectedBlock === blockNumber
-                      ? "bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300"
-                      : "text-gray-700 dark:text-gray-200"
+                      ? "bg-mf-ash-500"
+                      : "bg-mf-night-500 hover:bg-mf-ash-500"
                   }`}
                 >
-                  {`Interval ${CalculateInterval(blockNumber)} (Block ${blockNumber})`}
+                  <Image
+                    src="/box.svg"
+                    alt="Block"
+                    width={16}
+                    height={16}
+                    className="h-4 w-4"
+                  />
+                  <span>
+                    <span className="text-mf-sally-500">{blockNumber}</span>
+                    <span className="text-gray-400">
+                      {" "}
+                      <span className="pl-1">
+                        {getIntervalText(blockNumber)}
+                      </span>
+                    </span>
+                  </span>
                 </button>
               </li>
             ))}

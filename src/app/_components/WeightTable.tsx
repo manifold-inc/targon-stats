@@ -1,5 +1,22 @@
+"use client";
+
+import { useState } from "react";
+import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
+
 import { type MinerNode } from "@/app/api/bids/route";
 import { filterByUidSearch } from "@/utils/utils";
+
+enum SortField {
+  UID = "uid",
+  WEIGHT = "weight",
+  NULL = 0,
+}
+
+enum SortDirection {
+  ASC = "asc",
+  DESC = "desc",
+  NULL = 0,
+}
 
 interface WeightTableProps {
   weights: Record<string, number[]>;
@@ -18,6 +35,41 @@ const WeightTable = ({
   isLoading,
   error,
 }: WeightTableProps) => {
+  const [field, setField] = useState<SortField>(SortField.NULL);
+  const [direction, setDirection] = useState<SortDirection>(SortDirection.NULL);
+
+  const handleSort = (selectedField: SortField) => {
+    if (field === selectedField) {
+      switch (direction) {
+        case SortDirection.ASC:
+          setDirection(SortDirection.DESC);
+          break;
+        case SortDirection.DESC:
+          setField(SortField.NULL);
+          setDirection(SortDirection.NULL);
+          break;
+        default:
+          break;
+      }
+    } else {
+      setField(selectedField);
+      setDirection(SortDirection.ASC);
+    }
+  };
+
+  const getIcon = (selectedField: SortField) => {
+    if (field !== selectedField) return <ArrowUpDown className="h-4 w-4" />;
+
+    switch (direction) {
+      case SortDirection.ASC:
+        return <ArrowUp className="h-4 w-4" />;
+      case SortDirection.DESC:
+        return <ArrowDown className="h-4 w-4" />;
+      default:
+        return <ArrowUpDown className="h-4 w-4" />;
+    }
+  };
+
   const uids = weights.uids;
   const incentive = weights.incentives;
   const weightMap = new Map(
@@ -26,35 +78,71 @@ const WeightTable = ({
 
   const filteredNodes = filterByUidSearch(nodes, searchTerm);
 
-  // Sort by lowest to highest price
   const sortedNodes = [...filteredNodes].sort((a, b) => {
     return a.price - b.price;
   });
 
-  // Deduplicate nodes by uid
   const uniqueNodes = Array.from(
     new Map(sortedNodes.map((node) => [node.uid, node])).values(),
   );
 
+  // Create nodes with ranks based on weight (highest weight = rank 1)
+  const nodesWithRanks = uniqueNodes
+    .sort((a, b) => {
+      const weightA = weightMap.get(a.uid) ?? 0;
+      const weightB = weightMap.get(b.uid) ?? 0;
+      return weightB - weightA; // Descending order for ranking
+    })
+    .map((node, index) => ({
+      ...node,
+      rank: index + 1,
+    }));
+
+  const sortNodes = (nodes: typeof nodesWithRanks) => {
+    if (field === SortField.NULL || direction === SortDirection.NULL)
+      return nodes;
+
+    return [...nodes].sort((a, b) => {
+      switch (field) {
+        case SortField.UID:
+          return direction === SortDirection.ASC
+            ? Number(a.uid) - Number(b.uid)
+            : Number(b.uid) - Number(a.uid);
+        case SortField.WEIGHT:
+          const weightA = weightMap.get(a.uid) ?? 0;
+          const weightB = weightMap.get(b.uid) ?? 0;
+          return direction === SortDirection.ASC
+            ? weightA - weightB
+            : weightB - weightA;
+        default:
+          return 0;
+      }
+    });
+  };
+
+  const sorted = sortNodes(nodesWithRanks);
+
   if (isLoading) {
     return (
-      <div className="rounded-lg border border-gray-200 dark:border-gray-700">
-        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead className="bg-gray-50 dark:bg-gray-800">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                UUID
+      <div className="space-y-1">
+        <table className="min-w-full">
+          <thead className="rounded-lg bg-mf-sally-500/15 outline outline-2 outline-mf-ash-300/25">
+            <tr className="[&>th:first-child]:rounded-l-lg [&>th:last-child]:rounded-r-lg">
+              <th className="font-poppins cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
+                <div className="flex items-center gap-1">UUID</div>
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                Weight
+              <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
+                <div className="flex items-center justify-end gap-1">
+                  Weight
+                </div>
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
-            <tr>
+          <tbody className="bg-mf-ash-500/15">
+            <tr className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300/25 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
               <td
-                colSpan={5}
-                className="text-center text-gray-600 dark:text-gray-400"
+                colSpan={2}
+                className="font-poppins whitespace-nowrap px-6 py-4 text-center text-sm text-mf-edge-700"
               >
                 Loading nodes...
               </td>
@@ -67,23 +155,25 @@ const WeightTable = ({
 
   if (error) {
     return (
-      <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
-        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead className="bg-gray-50 dark:bg-gray-800">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                UUID
+      <div className="space-y-1">
+        <table className="min-w-full">
+          <thead className="rounded-lg bg-mf-sally-500/15 outline outline-2 outline-offset-[0px] outline-mf-ash-300/25">
+            <tr className="[&>th:first-child]:rounded-l-lg [&>th:last-child]:rounded-r-lg">
+              <th className="font-poppins cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
+                <div className="flex items-center gap-1">UUID</div>
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                Weight
+              <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
+                <div className="flex items-center justify-end gap-1">
+                  Weight
+                </div>
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
-            <tr>
+          <tbody className="bg-mf-ash-500/15">
+            <tr className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300/25 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
               <td
-                colSpan={5}
-                className="text-center text-red-600 dark:text-red-400"
+                colSpan={2}
+                className="font-poppins whitespace-nowrap px-6 py-4 text-center text-sm text-red-400"
               >
                 Error loading nodes: {error.message}
               </td>
@@ -96,23 +186,25 @@ const WeightTable = ({
 
   if (searchTerm && filteredNodes.length === 0) {
     return (
-      <div className="rounded-lg border border-gray-200 dark:border-gray-700">
-        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead className="bg-gray-50 dark:bg-gray-800">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                UUID
+      <div className="space-y-1">
+        <table className="min-w-full">
+          <thead className="rounded-lg bg-mf-sally-500/15 outline outline-2 outline-offset-[0px] outline-mf-ash-300/25">
+            <tr className="[&>th:first-child]:rounded-l-lg [&>th:last-child]:rounded-r-lg">
+              <th className="font-poppins cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
+                <div className="flex items-center gap-1">UUID</div>
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                Weight
+              <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
+                <div className="flex items-center justify-end gap-1">
+                  Weight
+                </div>
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
-            <tr>
+          <tbody className="bg-mf-ash-500/15">
+            <tr className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300/25 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
               <td
-                colSpan={5}
-                className="text-center text-gray-600 dark:text-gray-400"
+                colSpan={2}
+                className="font-poppins whitespace-nowrap px-6 py-4 text-center text-sm text-mf-edge-700"
               >
                 No nodes found matching {searchTerm}
               </td>
@@ -124,29 +216,49 @@ const WeightTable = ({
   }
 
   return (
-    <div className="rounded-lg border border-gray-200 dark:border-gray-700">
-      <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-        <thead className="bg-gray-50 dark:bg-gray-800">
-          <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
-              UUID
+    <div className="space-y-1">
+      <table className="min-w-full">
+        <thead className="rounded-lg bg-mf-sally-500/15 outline outline-2 outline-offset-[0px] outline-mf-ash-300/25">
+          <tr className="[&>th:first-child]:rounded-l-lg [&>th:last-child]:rounded-r-lg">
+            <th
+              style={{ width: "60%" }}
+              className="font-poppins cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700"
+              onClick={() => handleSort(SortField.UID)}
+            >
+              <div className="flex items-center gap-1">
+                UUID
+                {getIcon(SortField.UID)}
+              </div>
             </th>
-            <th className="px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
-              Weight
+            <th
+              style={{ width: "40%" }}
+              className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700"
+              onClick={() => handleSort(SortField.WEIGHT)}
+            >
+              <div className="flex items-center justify-end gap-1">
+                Weight
+                {getIcon(SortField.WEIGHT)}
+              </div>
             </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
-          {uniqueNodes.map((node: MinerNode, idx: number) => (
+        <tbody className="bg-mf-ash-500/15">
+          {sorted.map((node, idx: number) => (
             <tr
               key={idx}
               onClick={() => onNavigateToMiner(node.uid)}
-              className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800"
+              className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300/25 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg"
             >
-              <td className="whitespace-nowrap px-6 py-4 font-mono text-sm text-gray-900 dark:text-gray-100">
+              <td
+                style={{ width: "60%" }}
+                className="font-poppins whitespace-nowrap px-6 py-4 text-sm text-mf-edge-700"
+              >
                 {node.uid}
               </td>
-              <td className="whitespace-nowrap px-6 py-4 text-end text-sm text-gray-900 dark:text-gray-100">
+              <td
+                style={{ width: "40%" }}
+                className="font-poppins whitespace-nowrap px-6 py-4 text-end text-sm text-mf-sybil-500"
+              >
                 {((weightMap.get(node.uid) ?? 0) * 100).toFixed(2)}%
               </td>
             </tr>

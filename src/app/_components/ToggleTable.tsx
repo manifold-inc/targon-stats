@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 
 interface ToggleTableProps {
   selectedTable: "miner" | "bid" | "weight";
@@ -17,27 +18,62 @@ const ToggleTable = ({
   };
 
   return (
-    <div className="flex justify-center gap-2">
+    <div className="flex items-center gap-2 p-1">
       <button
         type="button"
-        className={`rounded-md px-6 py-2 text-sm font-medium focus:z-10 focus:outline-none ${selectedTable === "miner" ? "bg-blue-600 text-white" : "bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100"}`}
+        className={`flex items-center gap-2 rounded-lg px-4 py-2 text-lg font-semibold ${
+          selectedTable === "miner"
+            ? "bg-[#272D38] text-mf-edge-500"
+            : "bg-transparent text-mf-edge-300 hover:bg-[#272D38]/50"
+        }`}
         onClick={() => handleTableChange("miner")}
       >
-        Miners
+        <Image
+          src="/miners.svg"
+          alt="Miner"
+          width={24}
+          height={24}
+          className="h-5 w-5 text-current"
+        />
+        <span className="font-blinker">Miners</span>
       </button>
+
       <button
         type="button"
-        className={`rounded-md px-6 py-2 text-sm font-medium focus:z-10 focus:outline-none ${selectedTable === "bid" ? "bg-blue-600 text-white" : "bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100"}`}
+        className={`flex items-center gap-2 rounded-lg px-4 py-2 text-lg font-semibold ${
+          selectedTable === "bid"
+            ? "bg-[#272D38] text-mf-edge-500"
+            : "bg-transparent text-mf-edge-300 hover:bg-[#272D38]/50"
+        }`}
         onClick={() => handleTableChange("bid")}
       >
-        Bids
+        <Image
+          src="/buyouts.svg"
+          alt="Buyouts"
+          width={24}
+          height={24}
+          className="h-5 w-5 text-current"
+        />
+        <span className="font-blinker">Buyouts</span>
       </button>
+
       <button
         type="button"
-        className={`rounded-md px-6 py-2 text-sm font-medium focus:z-10 focus:outline-none ${selectedTable === "weight" ? "bg-blue-600 text-white" : "bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100"}`}
+        className={`flex items-center gap-2 rounded-lg px-4 py-2 text-lg font-semibold  ${
+          selectedTable === "weight"
+            ? "bg-[#272D38] text-mf-edge-500"
+            : "bg-transparent text-mf-edge-300 hover:bg-[#272D38]/50"
+        }`}
         onClick={() => handleTableChange("weight")}
       >
-        Weights
+        <Image
+          src="/weights.svg"
+          alt="Weights"
+          width={24}
+          height={24}
+          className="h-5 w-5 text-current"
+        />
+        <span className="font-blinker">Weights</span>
       </button>
     </div>
   );

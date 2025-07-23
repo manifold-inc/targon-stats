@@ -1,24 +1,28 @@
 import type { Metadata } from "next";
-import dynamic from "next/dynamic";
-import { ThemeProvider } from "next-themes";
 
 import "@/styles/globals.css";
 
-import { Inter } from "next/font/google";
+import { Blinker, Poppins } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import clsx from "clsx";
 import { Toaster } from "sonner";
 
-import Header from "./_components/header";
-import { WithGlobalProvider } from "./_components/providers";
+import BackgroundSVG from "@/app/_components/BackgroundSVG";
+import ChainStats from "@/app/_components/ChainStats";
+import Header from "@/app/_components/header";
+import { WithGlobalProvider } from "@/app/_components/providers";
 
-const ToggleTheme = dynamic(() => import("./_components/ToggleTheme"), {
-  ssr: false,
+const blinker = Blinker({
+  subsets: ["latin"],
+  weight: ["100", "200", "300", "400", "600", "700", "800", "900"],
+  variable: "--font-blinker",
+  display: "swap",
 });
 
-const inter = Inter({
+const poppins = Poppins({
   subsets: ["latin"],
-  variable: "--font-inter",
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  variable: "--font-poppins",
   display: "swap",
 });
 
@@ -35,23 +39,20 @@ export default function RootLayout({
     <html
       suppressHydrationWarning
       lang="en"
-      className={clsx("h-full", inter.variable)}
+      className={clsx("dark h-full", blinker.variable, poppins.variable)}
     >
       <head>
         <link rel="manifest" href="/site.webmanifest" />
-        <link rel="icon" href="/Delta.png" />
+        <link rel="icon" href="/targon-logo.svg" />
       </head>
       <body
         className={`relative bg-mf-night-500 text-gray-100 transition-colors`}
       >
         <WithGlobalProvider>
-          <ThemeProvider attribute="class">
-            <Header />
-            <main>{children}</main>
-            <div className="fixed bottom-5 right-5 z-40">
-              <ToggleTheme />
-            </div>
-          </ThemeProvider>
+          <BackgroundSVG />
+          <Header />
+          <ChainStats />
+          <main>{children}</main>
         </WithGlobalProvider>
 
         <Toaster />
