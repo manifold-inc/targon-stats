@@ -89,6 +89,7 @@ export default function WeightPage() {
             <WeightTable
               weights={auction?.weights ?? {}}
               nodes={getNodes(auction?.auction_results ?? {})}
+              hotkeyToUid={auction?.hotkey_to_uid ?? {}}
               searchTerm={searchTerm}
               onNavigateToMiner={handleNavigateToMiner}
               isLoading={isLoading}

@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import Image from "next/image";
 
 import BackgroundSVG from "@/app/_components/BackgroundSVG";
@@ -16,6 +16,17 @@ import { API_ENDPOINT } from "@/utils/constant";
 
 function Content() {
   const url = API_ENDPOINT;
+  const [copiedEndpoint, setCopiedEndpoint] = useState<string | null>(null);
+
+  const copyToClipboard = async (text: string, endpointId: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedEndpoint(endpointId);
+      setTimeout(() => setCopiedEndpoint(null), 2000); // Reset after 2 seconds
+    } catch (err) {
+      console.error('Failed to copy: ', err);
+    }
+  };
 
   const { data: auction, isLoading } =
     reactClient.chain.getAuctionState.useQuery(undefined);
@@ -74,11 +85,14 @@ function Content() {
 
           <div className="rounded-lg border-2 border-mf-ash-300 bg-mf-ash-700">
             <div className="flex items-center justify-between border-b border-mf-ash-300 px-6 py-4">
-              <h3 className="text-lg font-semibold text-mf-edge-500">
+              <h3 className="text-lg font-blinker font-semibold text-mf-edge-500">
                 Get Specific Endpoints
               </h3>
-              <button className="font-poppins rounded-lg bg-mf-sally-500 px-8 py-1 text-xs font-semibold text-mf-ash-500">
-                Copy
+              <button 
+                onClick={() => copyToClipboard(`${url}/api/miners/{miner_id}`, 'specific-miner')}
+                className="font-poppins rounded-lg bg-mf-sally-500 py-1 text-xs font-semibold text-mf-ash-500 hover:opacity-80 transition-opacity w-24 text-center"
+              >
+                {copiedEndpoint === 'specific-miner' ? 'Copied' : 'Copy'}
               </button>
             </div>
             <div className="p-6">
@@ -99,11 +113,14 @@ true,
 
           <div className="rounded-lg border-2 border-mf-ash-300 bg-mf-ash-700">
             <div className="flex items-center justify-between border-b border-mf-ash-300 px-6 py-4">
-              <h3 className="text-lg font-semibold text-mf-edge-500">
+              <h3 className="text-lg font-blinker font-semibold text-mf-edge-500">
                 Get All Miners
               </h3>
-              <button className="font-poppins rounded-lg bg-mf-sally-500 px-8 py-1 text-xs font-semibold text-mf-ash-500">
-                Copy
+              <button 
+                onClick={() => copyToClipboard(`${url}/api/miners`, 'all-miners')}
+                className="font-poppins rounded-lg bg-mf-sally-500 py-1 text-xs font-semibold text-mf-ash-500 hover:opacity-80 transition-opacity w-24 text-center"
+              >
+                {copiedEndpoint === 'all-miners' ? 'Copied' : 'Copy'}
               </button>
             </div>
             <div className="p-6">
@@ -123,11 +140,14 @@ true,
 
           <div className="rounded-lg border-2 border-mf-ash-300 bg-mf-ash-700">
             <div className="flex items-center justify-between border-b border-mf-ash-300 px-6 py-4">
-              <h3 className="text-lg font-semibold text-mf-edge-500">
+              <h3 className="text-lg font-blinker font-semibold text-mf-edge-500">
                 Get All Bids
               </h3>
-              <button className="font-poppins rounded-lg bg-mf-sally-500 px-8 py-1 text-xs font-semibold text-mf-ash-500">
-                Copy
+              <button 
+                onClick={() => copyToClipboard(`${url}/api/bids`, 'all-bids')}
+                className="font-poppins rounded-lg bg-mf-sally-500 py-1 text-xs font-semibold text-mf-ash-500 hover:opacity-80 transition-opacity w-24 text-center"
+              >
+                {copiedEndpoint === 'all-bids' ? 'Copied' : 'Copy'}
               </button>
             </div>
             <div className="p-6">
@@ -148,11 +168,14 @@ true,
 
           <div className="rounded-lg border-2 border-mf-ash-300 bg-mf-ash-700">
             <div className="flex items-center justify-between border-b border-mf-ash-300 px-6 py-4">
-              <h3 className="text-lg font-semibold text-mf-edge-500">
+              <h3 className="text-lg font-blinker font-semibold text-mf-edge-500">
                 Get Max Bid
               </h3>
-              <button className="font-poppins rounded-lg bg-mf-sally-500 px-8 py-1 text-xs font-semibold text-mf-ash-500">
-                Copy
+              <button 
+                onClick={() => copyToClipboard(`${url}/api/bids/max`, 'max-bid')}
+                className="font-poppins rounded-lg bg-mf-sally-500 py-1 text-xs font-semibold text-mf-ash-500 hover:opacity-80 transition-opacity w-24 text-center"
+              >
+                {copiedEndpoint === 'max-bid' ? 'Copied' : 'Copy'}
               </button>
             </div>
             <div className="p-6">

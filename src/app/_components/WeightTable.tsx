@@ -1,12 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown, Copy, Check } from "lucide-react";
 
 import { type MinerNode } from "@/app/api/bids/route";
+import { filterByUidSearch } from "@/utils/utils";
 
 enum SortField {
   UID = "uid",
+  HOTKEY = "hotkey",
   WEIGHT = "weight",
   NULL = 0,
 }
@@ -19,6 +21,7 @@ enum SortDirection {
 
 interface WeightTableProps {
   weights: Record<string, number[]>;
+  hotkeyToUid: Record<string, string>;
   searchTerm: string;
   onNavigateToMiner: (uid: string) => void;
   nodes: MinerNode[];
@@ -28,6 +31,7 @@ interface WeightTableProps {
 
 const WeightTable = ({
   weights,
+  hotkeyToUid,
   searchTerm,
   onNavigateToMiner,
   nodes,
@@ -36,6 +40,17 @@ const WeightTable = ({
 }: WeightTableProps) => {
   const [field, setField] = useState<SortField>(SortField.NULL);
   const [direction, setDirection] = useState<SortDirection>(SortDirection.NULL);
+  const [copiedHotkey, setCopiedHotkey] = useState<string | null>(null);
+
+  const copyToClipboard = async (hotkey: string, uid: string) => {
+    try {
+      await navigator.clipboard.writeText(hotkey);
+      setCopiedHotkey(uid);
+      setTimeout(() => setCopiedHotkey(null), 2000); // Reset after 2 seconds
+    } catch (err) {
+      console.error('Failed to copy: ', err);
+    }
+  };
 
   const handleSort = (selectedField: SortField) => {
     if (field === selectedField) {
@@ -109,6 +124,12 @@ const WeightTable = ({
           return direction === SortDirection.ASC
             ? Number(a.uid) - Number(b.uid)
             : Number(b.uid) - Number(a.uid);
+        case SortField.HOTKEY:
+          const hotkeyA = hotkeyToUid[a.uid] ?? "";
+          const hotkeyB = hotkeyToUid[b.uid] ?? "";
+          return direction === SortDirection.ASC
+            ? hotkeyA.localeCompare(hotkeyB)
+            : hotkeyB.localeCompare(hotkeyA);
         case SortField.WEIGHT:
           const weightA = weightMap.get(a.uid) ?? 0;
           const weightB = weightMap.get(b.uid) ?? 0;
@@ -132,6 +153,9 @@ const WeightTable = ({
               <th className="font-poppins cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
                 <div className="flex items-center gap-1">UUID</div>
               </th>
+              <th className="font-poppins cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
+                <div className="flex items-center gap-1">Hotkey</div>
+              </th>
               <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
                 <div className="flex items-center justify-end gap-1">
                   Weight
@@ -142,7 +166,7 @@ const WeightTable = ({
           <tbody className="bg-mf-ash-500/15">
             <tr className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300/25 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
               <td
-                colSpan={2}
+                colSpan={3}
                 className="font-poppins whitespace-nowrap px-6 py-4 text-center text-sm text-mf-edge-700"
               >
                 Loading nodes...
@@ -163,6 +187,9 @@ const WeightTable = ({
               <th className="font-poppins cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
                 <div className="flex items-center gap-1">UUID</div>
               </th>
+              <th className="font-poppins cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
+                <div className="flex items-center gap-1">Hotkey</div>
+              </th>
               <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
                 <div className="flex items-center justify-end gap-1">
                   Weight
@@ -173,7 +200,7 @@ const WeightTable = ({
           <tbody className="bg-mf-ash-500/15">
             <tr className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300/25 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
               <td
-                colSpan={2}
+                colSpan={3}
                 className="font-poppins whitespace-nowrap px-6 py-4 text-center text-sm text-red-400"
               >
                 Error loading nodes: {error.message}
@@ -194,6 +221,9 @@ const WeightTable = ({
               <th className="font-poppins cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
                 <div className="flex items-center gap-1">UUID</div>
               </th>
+              <th className="font-poppins cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
+                <div className="flex items-center gap-1">Hotkey</div>
+              </th>
               <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
                 <div className="flex items-center justify-end gap-1">
                   Weight
@@ -204,7 +234,7 @@ const WeightTable = ({
           <tbody className="bg-mf-ash-500/15">
             <tr className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300/25 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
               <td
-                colSpan={2}
+                colSpan={3}
                 className="font-poppins whitespace-nowrap px-6 py-4 text-center text-sm text-mf-edge-700"
               >
                 No nodes found matching {searchTerm}
@@ -222,7 +252,7 @@ const WeightTable = ({
         <thead className="rounded-lg bg-mf-sally-500/15 outline outline-2 outline-offset-[0px] outline-mf-ash-300/25">
           <tr className="[&>th:first-child]:rounded-l-lg [&>th:last-child]:rounded-r-lg">
             <th
-              style={{ width: "60%" }}
+              style={{ width: "30%" }}
               className="font-poppins cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700"
               onClick={() => handleSort(SortField.UID)}
             >
@@ -233,6 +263,16 @@ const WeightTable = ({
             </th>
             <th
               style={{ width: "40%" }}
+              className="font-poppins cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700"
+              onClick={() => handleSort(SortField.HOTKEY)}
+            >
+              <div className="flex items-center gap-1">
+                Hotkey
+                {getIcon(SortField.HOTKEY)}
+              </div>
+            </th>
+            <th
+              style={{ width: "30%" }}
               className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700"
               onClick={() => handleSort(SortField.WEIGHT)}
             >
@@ -251,13 +291,37 @@ const WeightTable = ({
               className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300/25 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg"
             >
               <td
-                style={{ width: "60%" }}
-                className="font-poppins whitespace-nowrap px-6 py-4 text-sm text-mf-sally-300"
+                style={{ width: "30%" }}
+                className="font-poppins whitespace-nowrap px-6 py-4 text-sm text-mf-edge-700"
               >
                 {node.uid}
               </td>
               <td
                 style={{ width: "40%" }}
+                className="font-poppins whitespace-nowrap px-6 py-4 text-sm text-mf-sally-300"
+              >
+                <div className="flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer">
+                  <span className="font-mono">{hotkeyToUid[node.uid] || "N/A"}</span>
+                  {hotkeyToUid[node.uid] && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        copyToClipboard(hotkeyToUid[node.uid] ?? "", node.uid);
+                      }}
+                      className="text-mf-sally-300 transition-colors"
+                      title="Copy hotkey"
+                    >
+                      {copiedHotkey === node.uid ? (
+                        <Check className="h-4 w-4 text-mf-sally-300" />
+                      ) : (
+                        <Copy className="h-4 w-4" />
+                      )}
+                    </button>
+                  )}
+                </div>
+              </td>
+              <td
+                style={{ width: "30%" }}
                 className="font-poppins whitespace-nowrap px-6 py-4 text-end text-sm text-mf-sybil-500"
               >
                 {((weightMap.get(node.uid) ?? 0) * 100).toFixed(2)}%
