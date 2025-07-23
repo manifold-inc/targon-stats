@@ -24,7 +24,6 @@ export async function GET(
           error: {
             message: "Miner ID is required",
             code: "MISSING_ID",
-            statusCode: 400,
           },
         },
         { status: 400 },
@@ -38,7 +37,6 @@ export async function GET(
           error: {
             message: "Miner not found",
             code: "MINER_NOT_FOUND",
-            statusCode: 404,
           },
         },
         { status: 404 },
@@ -56,7 +54,6 @@ export async function GET(
         error: {
           message,
           code: "INTERNAL_ERROR",
-          statusCode: 500,
         },
       },
       { status: 500 },

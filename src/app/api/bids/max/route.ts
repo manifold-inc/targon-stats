@@ -20,7 +20,6 @@ export async function GET() {
         error: {
           message,
           code: "INTERNAL_ERROR",
-          statusCode: 500,
         },
       },
       { status: 500 },
