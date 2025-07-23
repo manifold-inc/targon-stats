@@ -33,11 +33,11 @@ export async function verify(
   const message = `${bodyHash}.${uuid}.${timestamp}.${signedFor}`;
   await waitReady();
 
-    const keyring = new Keyring({ type: "sr25519" });
-    const keypair = keyring.addFromAddress(ss58);
-    const hex = Uint8Array.from(Buffer.from(signature.slice(2), "hex"));
-    const isValid = keypair.verify(message, hex, keypair.publicKey);
-    if (!isValid) return { verified: false, error: "Invalid signature" };
+  const keyring = new Keyring({ type: "sr25519" });
+  const keypair = keyring.addFromAddress(ss58);
+  const hex = Uint8Array.from(Buffer.from(signature.slice(2), "hex"));
+  const isValid = keypair.verify(message, hex, keypair.publicKey);
+  if (!isValid) return { verified: false, error: "Invalid signature" };
 
   return { verified: true };
 }

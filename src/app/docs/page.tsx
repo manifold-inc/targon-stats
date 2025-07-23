@@ -78,7 +78,11 @@ function Content() {
                 searchTerm=""
               />
             )}
-            <Search value="" onChange={handleSearchChange} onClear={() => router.push('/miner')} />
+            <Search
+              value=""
+              onChange={handleSearchChange}
+              onClear={() => router.push("/miner")}
+            />
           </div>
         </div>
 
