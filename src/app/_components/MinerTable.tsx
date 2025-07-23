@@ -350,7 +350,7 @@ export default function MinerTable({
                   {miner.uid}
                   {selectedMinerUids.has(miner.uid) && (
                     <Image
-                      src="/downArrow.svg"
+                      src="/down-arrow.svg"
                       alt="Down Arrow"
                       width={16}
                       height={16}
