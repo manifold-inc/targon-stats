@@ -47,11 +47,23 @@ export default function Search({
 
   // Filter UIDs based on input value
   useEffect(() => {
-    if (!value.trim()) {
-      setFilteredUids(availableUids);
+    const currentInput = value.toLowerCase().trim();
+    
+    // Parse already selected UIDs (everything before the last comma)
+    const parts = value.split(',');
+    const alreadySelected = parts.slice(0, -1).map(uid => uid.trim()).filter(Boolean);
+    const currentTyping = parts[parts.length - 1]?.trim() || '';
+    
+    // Filter out already selected UIDs
+    const availableForSelection = availableUids.filter(uid => 
+      !alreadySelected.includes(uid)
+    );
+    
+    if (!currentTyping) {
+      setFilteredUids(availableForSelection);
     } else {
-      const filtered = availableUids.filter(uid => 
-        uid.toLowerCase().includes(value.toLowerCase())
+      const filtered = availableForSelection.filter(uid => 
+        uid.toLowerCase().includes(currentTyping.toLowerCase())
       );
       setFilteredUids(filtered);
     }
@@ -71,11 +83,23 @@ export default function Search({
 
   const handleInputChange = (inputValue: string) => {
     onChange(inputValue);
+    
+    // Always show dropdown when typing, especially when comma is added
     setIsDropdownOpen(true);
   };
 
   const handleUidSelect = (uid: string) => {
-    onChange(uid);
+    const parts = value.split(',');
+    const alreadySelected = parts.slice(0, -1).map(u => u.trim()).filter(Boolean);
+    
+    // If there are already selected UIDs, append the new one
+    if (alreadySelected.length > 0) {
+      const newValue = alreadySelected.join(', ') + ', ' + uid;
+      onChange(newValue);
+    } else {
+      onChange(uid);
+    }
+    
     setIsDropdownOpen(false);
     inputRef.current?.blur();
   };
@@ -88,6 +112,18 @@ export default function Search({
     onChange("");
     onClear();
     setIsDropdownOpen(false);
+  };
+
+  // Get the current typing part (after the last comma)
+  const getCurrentTypingPart = () => {
+    const parts = value.split(',');
+    return parts[parts.length - 1]?.trim() || '';
+  };
+
+  // Get already selected UIDs count for display
+  const getSelectedCount = () => {
+    const parts = value.split(',');
+    return parts.slice(0, -1).map(uid => uid.trim()).filter(Boolean).length;
   };
 
   return (
@@ -125,7 +161,7 @@ export default function Search({
 
              {/* Dropdown */}
        {isDropdownOpen && (
-         <div 
+                  <div 
            className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-lg border border-gray-600 bg-mf-night-500 shadow-lg [&::-webkit-scrollbar]:hidden"
            style={{ 
              scrollbarWidth: 'none', 
