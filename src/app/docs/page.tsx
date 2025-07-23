@@ -25,6 +25,10 @@ function Content() {
   const { data: auctionLatest } =
     reactClient.chain.getAuctionState.useQuery(undefined);
 
+  const handleBlockChange = (_block: number) => {
+    router.push(`/miner`);
+  };
+
   const handleSearchChange = (searchTerm: string) => {
     if (searchTerm.trim()) {
       router.push(`/miner?search=${encodeURIComponent(searchTerm)}`);
@@ -71,9 +75,10 @@ function Content() {
                 latestBlock={auctionLatest?.block ?? 0}
                 onBlockChange={handleBlockChange}
                 isLoading={isLoading}
+                searchTerm=""
               />
             )}
-            <Search value="" onChange={handleSearchChange} />
+            <Search value="" onChange={handleSearchChange} onClear={() => router.push('/miner')} />
           </div>
         </div>
 
