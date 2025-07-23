@@ -90,9 +90,7 @@ const WeightTable = ({
     uids?.map((uid, index) => [String(uid), incentive?.[index]]),
   );
 
-  const filteredNodes = nodes.filter((node: MinerNode) =>
-    node.uid.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
+  const filteredNodes = filterByUidSearch(nodes, searchTerm);
 
   const sortedNodes = [...filteredNodes].sort((a, b) => {
     return a.price - b.price;

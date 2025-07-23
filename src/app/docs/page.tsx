@@ -2,6 +2,7 @@
 
 import { Suspense, useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 import BackgroundSVG from "@/app/_components/BackgroundSVG";
 import BlockSelector from "@/app/_components/BlockSelector";
@@ -27,12 +28,25 @@ function Content() {
       console.error('Failed to copy: ', err);
     }
   };
+  const router = useRouter();
 
   const { data: auction, isLoading } =
     reactClient.chain.getAuctionState.useQuery(undefined);
 
   const { data: auctionLatest } =
     reactClient.chain.getAuctionState.useQuery(undefined);
+
+  const handleBlockChange = (_block: number) => {
+    router.push(`/miner`);
+  };
+
+  const handleSearchChange = (searchTerm: string) => {
+    if (searchTerm.trim()) {
+      router.push(`/miner?search=${encodeURIComponent(searchTerm)}`);
+    } else {
+      router.push("/miner");
+    }
+  };
 
   return (
     <div className="w-full">
@@ -70,11 +84,16 @@ function Content() {
               <BlockSelector
                 block={auction.block}
                 latestBlock={auctionLatest?.block ?? 0}
-                onBlockChange={() => {}}
+                onBlockChange={handleBlockChange}
                 isLoading={isLoading}
+                searchTerm=""
               />
             )}
-            <Search value="" onChange={() => {}} />
+            <Search
+              value=""
+              onChange={handleSearchChange}
+              onClear={() => router.push("/miner")}
+            />
           </div>
         </div>
 
