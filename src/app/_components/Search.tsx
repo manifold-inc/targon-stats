@@ -40,19 +40,9 @@ export default function Search({
       .slice(0, -1)
       .map((uid) => uid.trim())
       .filter(Boolean);
-    const currentTyping = parts[parts.length - 1]?.trim() || "";
 
-    const availableForSelection = availableUids.filter(
-      (uid) => !alreadySelected.includes(uid),
-    );
-
-    if (!currentTyping) {
-      return availableForSelection;
-    } else {
-      return availableForSelection.filter((uid) =>
-        uid.toLowerCase().includes(currentTyping.toLowerCase()),
-      );
-    }
+    // Always return all available UIDs minus already selected ones
+    return availableUids.filter((uid) => !alreadySelected.includes(uid));
   }, [value, availableUids]);
 
   const handleBlur = (e: React.FocusEvent) => {
