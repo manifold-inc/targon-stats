@@ -24,7 +24,7 @@ export default function PaymentStatusIcon({ miner }: { miner: Miner }) {
       return {
         icon: (
           <Image
-            src="/diluteIcon.svg"
+            src="/dilute-icon.svg"
             alt="Diluted Payment"
             width={16}
             height={16}

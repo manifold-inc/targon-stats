@@ -17,7 +17,7 @@ const Header = () => {
       >
         <div className="flex items-center lg:flex-1">
           <Image
-            src="/targonLogo.svg"
+            src="/targon-logo.svg"
             alt="Targon-logo"
             width={24}
             height={24}
