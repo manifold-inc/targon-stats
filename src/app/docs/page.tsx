@@ -121,16 +121,20 @@ function Content() {
             </div>
             <div className="p-6">
               <pre className="overflow-x-auto text-sm text-mf-edge-700">
-                {`GET ${url}/api/miners/miner_id
+                {`GET ${url}/api/miners/{miner_id}
 Response:
-"success": 
-true,
-"data": [
-"uid": "miner_id",
-"price": 100,
-"payout": 1,
-"gpus": 1,
-"diluted": false`}
+{
+  "data": {
+    "uid": "miner_id",
+    "average_price": 10000,
+    "total_price": 10000,
+    "average_payout": 800,
+    "total_payout": 800,
+    "gpus": 8,
+    "nodes": 1,
+    "diluted": false
+  }
+}`}
               </pre>
             </div>
           </div>
@@ -151,15 +155,32 @@ true,
             </div>
             <div className="p-6">
               <pre className="overflow-x-auto text-sm text-mf-edge-700">
-                {`GET ${url}/api/miners/miner_id
+                {`GET ${url}/api/miners
 Response:
-"success":
-true,
-"data": [
-"uid": "miner_id",
-"price": 100,
-"payout": 1,
-"gpus": 1,`}
+{
+  "data": [
+    {
+      "uid": "1",
+      "average_price": 10000,
+      "average_payout": 800,
+      "total_price": 10000,
+      "total_payout": 800,
+      "gpus": 8,
+      "nodes": 1,
+      "diluted": false
+    },
+    {
+      "uid": "2",
+      "average_price": 12000,
+      "average_payout": 950,
+      "total_price": 24000,
+      "total_payout": 1900,
+      "gpus": 16,
+      "nodes": 2,
+      "diluted": true
+    }
+  ],
+}`}
               </pre>
             </div>
           </div>
@@ -180,14 +201,24 @@ true,
               <pre className="overflow-x-auto text-sm text-mf-edge-700">
                 {`GET ${url}/api/bids
 Response:
-"success":
-true,
-"data": [
-"uid": "bid_id",
-"price": 100,
-"payout": 1,
-"gpus": 1,
-"diluted": false`}
+{
+  "data": [
+    {
+      "uid": "1",
+      "gpus": 8,
+      "price": 10000,
+      "payout": 800,
+      "diluted": false
+    },
+    {
+      "uid": "2", 
+      "gpus": 16,
+      "price": 12000,
+      "payout": 950,
+      "diluted": true
+    }
+  ],
+}`}
               </pre>
             </div>
           </div>
@@ -210,12 +241,41 @@ true,
               <pre className="overflow-x-auto text-sm text-mf-edge-700">
                 {`GET ${url}/api/bids/max
 Response:
-"success":
-true,
-"data": {
-"max_bid": 100
-},
-"timestamp": "2024-01-01T00:00:00.000Z"`}
+{
+  "data": 300
+}`}
+              </pre>
+            </div>
+          </div>
+          <div className="rounded-lg border-2 border-mf-ash-300 bg-mf-ash-700">
+            <div className="flex items-center justify-between border-b border-mf-ash-300 px-6 py-4">
+              <h3 className="font-blinker text-lg font-semibold text-mf-edge-500">
+                Get Attestation Errors
+              </h3>
+              <button
+                onClick={() =>
+                  copyToClipboard(
+                    `${url}/api/miners/attest/error/{miner_id}`,
+                    "attestation-errors",
+                  )
+                }
+                className="font-poppins w-24 rounded-lg bg-mf-sally-500 py-1 text-center text-xs font-semibold text-mf-ash-500 transition-opacity hover:opacity-80"
+              >
+                {copiedEndpoint === "attestation-errors" ? "Copied" : "Copy"}
+              </button>
+            </div>
+            <div className="p-6">
+              <pre className="overflow-x-auto text-sm text-mf-edge-700">
+                {`GET ${url}/api/miners/attest/error/{miner_id}
+Response:
+{
+  "data": {
+    "miner_id": {
+      "ip_address_1": "error_message_1",
+      "ip_address_2": "error_message_2"
+    }
+  }
+}`}
               </pre>
             </div>
           </div>
