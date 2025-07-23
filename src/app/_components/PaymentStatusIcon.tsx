@@ -17,7 +17,7 @@ export default function PaymentStatusIcon({ miner }: { miner: Miner }) {
             height={16}
             className="h-4 w-4"
           />
-      ),
+        ),
         tooltip: "Miner received full payment",
       };
     } else {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowDown, ArrowUp, ArrowUpDown, Copy, Check } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown, Check, Copy } from "lucide-react";
 
 import { type MinerNode } from "@/app/api/bids/route";
 import { filterByUidSearch } from "@/utils/utils";
@@ -48,7 +48,7 @@ const WeightTable = ({
       setCopiedHotkey(uid);
       setTimeout(() => setCopiedHotkey(null), 2000); // Reset after 2 seconds
     } catch (err) {
-      console.error('Failed to copy: ', err);
+      console.error("Failed to copy: ", err);
     }
   };
 
@@ -298,13 +298,18 @@ const WeightTable = ({
                 style={{ width: "40%" }}
                 className="font-poppins whitespace-nowrap px-6 py-4 text-sm text-mf-sally-300"
               >
-                <div className="flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer">
-                  <span className="font-mono">{hotkeyToUid[node.uid] || "N/A"}</span>
+                <div className="flex cursor-pointer items-center gap-2 transition-opacity hover:opacity-80">
+                  <span className="font-mono">
+                    {hotkeyToUid[node.uid] || "N/A"}
+                  </span>
                   {hotkeyToUid[node.uid] && (
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        copyToClipboard(hotkeyToUid[node.uid] ?? "", node.uid);
+                        void copyToClipboard(
+                          hotkeyToUid[node.uid] ?? "",
+                          node.uid,
+                        );
                       }}
                       className="text-mf-sally-300 transition-colors"
                       title="Copy hotkey"
