@@ -41,7 +41,7 @@ export default function RootLayout({
     >
       <head>
         <link rel="manifest" href="/site.webmanifest" />
-        <link rel="icon" href="/Delta.png" />
+        <link rel="icon" href="/targon-logo.svg" />
       </head>
       <body
         className={`relative bg-mf-night-500 text-gray-100 transition-colors`}
