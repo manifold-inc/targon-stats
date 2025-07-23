@@ -1,7 +1,7 @@
 export default function BackgroundSVG() {
   return (
     <div
-      className="absolute inset-0 -z-10 h-full opacity-50"
+      className="fixed inset-0 -z-10 h-screen w-screen opacity-50"
       style={{
         backgroundImage: "url(/arrow-bg-filled.svg)",
         backgroundSize: "cover",
