@@ -126,6 +126,11 @@ export default function Search({
 
       {/* Dropdown */}
       {isDropdownOpen && (
+        <>
+          <div
+            className="fixed inset-0 z-10"
+            onClick={() => setIsDropdownOpen(false)}
+          />
         <div
           className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-lg border border-gray-600 bg-mf-night-500 shadow-lg [&::-webkit-scrollbar]:hidden"
           style={{
@@ -154,8 +159,9 @@ export default function Search({
                 ? "No UIDs available"
                 : "No matching UIDs found"}
             </div>
-          )}
-        </div>
+            )}
+          </div>
+        </>
       )}
     </div>
   );

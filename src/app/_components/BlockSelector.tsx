@@ -68,11 +68,18 @@ export default function BlockSelector({
             </>
           )}
         </span>
-        <ChevronDown className="ml-2 h-4 w-4" />
+        <ChevronDown
+          className={`ml-2 h-4 w-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
+        />
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 z-10 mt-1 w-full rounded-lg border-2 border-mf-ash-300 bg-mf-night-500 shadow-lg">
+        <>
+          <div 
+            className="fixed inset-0 z-10" 
+            onClick={() => setIsOpen(false)}
+          />
+          <div className="absolute right-0 z-20 mt-1 w-full rounded-lg border-2 border-mf-ash-300 bg-mf-night-500 shadow-lg">
           <ul className="max-h-60 overflow-auto rounded-lg [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {blocks.map((blockNumber) => (
               <li key={blockNumber}>
@@ -105,7 +112,8 @@ export default function BlockSelector({
               </li>
             ))}
           </ul>
-        </div>
+          </div>
+        </>
       )}
     </div>
   );
