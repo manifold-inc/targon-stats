@@ -53,27 +53,27 @@ export default function MinerDetails({
                 <tr>
                   <td
                     style={{ width: "22.5%" }}
-                    className="font-poppins whitespace-nowrap px-9 py-3 text-end text-sm text-mf-edge-500"
+                    className="font-poppins whitespace-nowrap px-3 py-3 text-end text-xs text-mf-edge-500 md:px-9 md:text-sm"
                   >
                     ${(node.price / 100).toFixed(2)}
                   </td>
                   <td
                     style={{ width: "25%" }}
-                    className="font-poppins whitespace-nowrap px-9 py-3 text-end text-sm text-mf-edge-500"
+                    className="font-poppins whitespace-nowrap py-3 text-end text-xs text-mf-edge-500 md:px-9 md:text-sm"
                   >
                     ${(node.payout / 8).toFixed(2)}
                   </td>
                   <td
                     style={{ width: "25%" }}
-                    className="font-poppins whitespace-nowrap px-6 py-3 text-end text-sm text-mf-edge-500"
+                    className="font-poppins whitespace-nowrap px-0 py-3 text-end text-xs text-mf-edge-500 md:px-6 md:text-sm"
                   >
                     {node.gpus}
                   </td>
                   <td
                     style={{ width: "25%" }}
-                    className="whitespace-nowrap px-6 py-3 text-end text-sm"
+                    className="whitespace-nowrap px-0 py-3 text-end text-xs md:px-6 md:text-sm"
                   >
-                    <span className="px-1.5">
+                    <span className="px-3.5 md:px-1.5">
                       <NodePaymentStatusIcon node={node} />
                     </span>
                   </td>

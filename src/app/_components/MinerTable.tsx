@@ -145,45 +145,50 @@ export default function MinerTable({
   if (isLoading) {
     return (
       <div className="space-y-1">
-        <table className="min-w-full">
-          <thead className="rounded-lg bg-mf-sally-500/15 outline outline-2 outline-offset-[0px] outline-mf-ash-300/25">
-            <tr className="[&>th:first-child]:rounded-l-lg [&>th:last-child]:rounded-r-lg">
-              <th className="font-poppins cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
-                <div className="flex items-center gap-1">UUID</div>
-              </th>
-              <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
-                <div className="flex items-center justify-end gap-1">
-                  Average Bid
-                </div>
-              </th>
-              <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
-                <div className="flex items-center justify-end gap-1">
-                  Average Payout
-                </div>
-              </th>
-              <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
-                <div className="flex items-center justify-end gap-1">
-                  Number of Nodes
-                </div>
-              </th>
-              <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
-                <div className="flex items-center justify-end gap-1">
-                  Payment Status
-                </div>
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-mf-ash-500/15">
-            <tr className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300/25 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
-              <td
-                colSpan={5}
-                className="font-poppins whitespace-nowrap px-6 py-4 text-center text-sm text-mf-edge-700"
-              >
-                Loading miners...
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div className="overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <table className="min-w-full md:w-full">
+            <thead className="rounded-lg bg-mf-sally-500/15 outline outline-2 outline-offset-[0px] outline-mf-ash-300/25">
+              <tr className="[&>th:first-child]:rounded-l-lg [&>th:last-child]:rounded-r-lg">
+                <th className="font-poppins cursor-pointer px-2 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 md:px-6">
+                  <div className="flex items-center gap-1">UUID</div>
+                </th>
+                <th className="font-poppins cursor-pointer px-2 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 md:px-6">
+                  <div className="flex items-center justify-end gap-1 whitespace-nowrap">
+                    <span className="md:hidden">Avg Bid</span>
+                    <span className="hidden md:inline">Average Bid</span>
+                  </div>
+                </th>
+                <th className="font-poppins cursor-pointer px-2 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 md:px-6">
+                  <div className="flex items-center justify-end gap-1 whitespace-nowrap">
+                    <span className="md:hidden">Avg Payout</span>
+                    <span className="hidden md:inline">Average Payout</span>
+                  </div>
+                </th>
+                <th className="font-poppins cursor-pointer px-2 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 md:px-6">
+                  <div className="flex items-center justify-end gap-1">
+                    <span className="hidden md:inline">Number of </span>
+                    <span className="md:hidden">#</span> Nodes
+                  </div>
+                </th>
+                <th className="font-poppins cursor-pointer px-2 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 md:px-6">
+                  <div className="flex items-center justify-end gap-1">
+                    Payment <span className="hidden md:inline">Status</span>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-mf-ash-500/15">
+              <tr className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300/25 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
+                <td
+                  colSpan={5}
+                  className="font-poppins whitespace-nowrap px-2 py-4 text-center text-sm text-mf-edge-700 md:px-6"
+                >
+                  Loading miners...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     );
   }
@@ -191,45 +196,50 @@ export default function MinerTable({
   if (error) {
     return (
       <div className="space-y-1">
-        <table className="min-w-full">
-          <thead className="rounded-lg bg-mf-sally-500/15 outline outline-2 outline-offset-[0px] outline-mf-ash-300/25">
-            <tr className="[&>th:first-child]:rounded-l-lg [&>th:last-child]:rounded-r-lg">
-              <th className="font-poppins cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
-                <div className="flex items-center gap-1">UUID</div>
-              </th>
-              <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
-                <div className="flex items-center justify-end gap-1">
-                  Average Bid
-                </div>
-              </th>
-              <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
-                <div className="flex items-center justify-end gap-1">
-                  Average Payout
-                </div>
-              </th>
-              <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
-                <div className="flex items-center justify-end gap-1">
-                  Number of Nodes
-                </div>
-              </th>
-              <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
-                <div className="flex items-center justify-end gap-1">
-                  Payment Status
-                </div>
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-mf-ash-500/15">
-            <tr className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300/25 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
-              <td
-                colSpan={5}
-                className="font-poppins whitespace-nowrap px-6 py-4 text-center text-sm text-red-400"
-              >
-                Error loading miners: {error.message}
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div className="overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <table className="min-w-full md:w-full">
+            <thead className="rounded-lg bg-mf-sally-500/15 outline outline-2 outline-offset-[0px] outline-mf-ash-300/25">
+              <tr className="[&>th:first-child]:rounded-l-lg [&>th:last-child]:rounded-r-lg">
+                <th className="font-poppins cursor-pointer px-2 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 md:px-6">
+                  <div className="flex items-center gap-1">UUID</div>
+                </th>
+                <th className="font-poppins cursor-pointer px-2 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 md:px-6">
+                  <div className="flex items-center justify-end gap-1 whitespace-nowrap">
+                    <span className="md:hidden">Avg Bid</span>
+                    <span className="hidden md:inline">Average Bid</span>
+                  </div>
+                </th>
+                <th className="font-poppins cursor-pointer px-2 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 md:px-6">
+                  <div className="flex items-center justify-end gap-1 whitespace-nowrap">
+                    <span className="md:hidden">Avg Payout</span>
+                    <span className="hidden md:inline">Average Payout</span>
+                  </div>
+                </th>
+                <th className="font-poppins cursor-pointer px-2 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 md:px-6">
+                  <div className="flex items-center justify-end gap-1">
+                    <span className="hidden md:inline">Number of </span>
+                    <span className="md:hidden">#</span> Nodes
+                  </div>
+                </th>
+                <th className="font-poppins cursor-pointer px-2 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 md:px-6">
+                  <div className="flex items-center justify-end gap-1">
+                    Payment <span className="hidden md:inline">Status</span>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-mf-ash-500/15">
+              <tr className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300/25 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
+                <td
+                  colSpan={5}
+                  className="font-poppins whitespace-nowrap px-2 py-4 text-center text-sm text-red-400 md:px-6"
+                >
+                  Error loading miners: {error.message}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     );
   }
@@ -237,154 +247,164 @@ export default function MinerTable({
   if (searchTerm && filtered.length === 0) {
     return (
       <div className="space-y-1">
-        <table className="min-w-full">
-          <thead className="rounded-lg bg-mf-sally-500/15 outline outline-2 outline-offset-[0px] outline-mf-ash-300/25">
-            <tr className="[&>th:first-child]:rounded-l-lg [&>th:last-child]:rounded-r-lg">
-              <th className="font-poppins cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
-                <div className="flex items-center gap-1">UUID</div>
-              </th>
-              <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
-                <div className="flex items-center justify-end gap-1">
-                  Average Bid
-                </div>
-              </th>
-              <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
-                <div className="flex items-center justify-end gap-1">
-                  Average Payout
-                </div>
-              </th>
-              <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
-                <div className="flex items-center justify-end gap-1">
-                  Number of Nodes
-                </div>
-              </th>
-              <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
-                <div className="flex items-center justify-end gap-1">
-                  Payment Status
-                </div>
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-mf-ash-500/15">
-            <tr className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300/25 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
-              <td
-                colSpan={5}
-                className="font-poppins whitespace-nowrap px-6 py-4 text-center text-sm text-mf-edge-700"
-              >
-                No miners found matching {searchTerm}
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div className="overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <table className="min-w-full md:w-full">
+            <thead className="rounded-lg bg-mf-sally-500/15 outline outline-2 outline-offset-[0px] outline-mf-ash-300/25">
+              <tr className="[&>th:first-child]:rounded-l-lg [&>th:last-child]:rounded-r-lg">
+                <th className="font-poppins cursor-pointer px-2 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 md:px-6">
+                  <div className="flex items-center gap-1">UUID</div>
+                </th>
+                <th className="font-poppins cursor-pointer px-2 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 md:px-6">
+                  <div className="flex items-center justify-end gap-1 whitespace-nowrap">
+                    <span className="md:hidden">Avg Bid</span>
+                    <span className="hidden md:inline">Average Bid</span>
+                  </div>
+                </th>
+                <th className="font-poppins cursor-pointer px-2 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 md:px-6">
+                  <div className="flex items-center justify-end gap-1 whitespace-nowrap">
+                    <span className="md:hidden">Avg Payout</span>
+                    <span className="hidden md:inline">Average Payout</span>
+                  </div>
+                </th>
+                <th className="font-poppins cursor-pointer px-2 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 md:px-6">
+                  <div className="flex items-center justify-end gap-1">
+                    <span className="hidden md:inline">Number of </span>
+                    <span className="md:hidden">#</span> Nodes
+                  </div>
+                </th>
+                <th className="font-poppins cursor-pointer px-2 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 md:px-6">
+                  <div className="flex items-center justify-end gap-1">
+                    Payment <span className="hidden md:inline">Status</span>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-mf-ash-500/15">
+              <tr className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300/25 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
+                <td
+                  colSpan={5}
+                  className="font-poppins whitespace-nowrap px-2 py-4 text-center text-sm text-mf-edge-700 md:px-6"
+                >
+                  No miners found matching {searchTerm}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="space-y-1">
-      <table className="min-w-full">
-        <thead className="rounded-lg bg-mf-sally-500/15 outline outline-2 outline-offset-[0px] outline-mf-ash-300/25">
-          <tr className="[&>th:first-child]:rounded-l-lg [&>th:last-child]:rounded-r-lg">
-            <th
-              className="font-poppins cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700"
-              onClick={() => handleSort(SortField.UID)}
-            >
-              <div className="flex items-center gap-1">
-                UUID
-                {getIcon(SortField.UID)}
-              </div>
-            </th>
-            <th
-              className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700"
-              onClick={() => handleSort(SortField.AVERAGE_PRICE)}
-            >
-              <div className="flex items-center justify-end gap-1">
-                Average Bid
-                {getIcon(SortField.AVERAGE_PRICE)}
-              </div>
-            </th>
-            <th
-              className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700"
-              onClick={() => handleSort(SortField.AVERAGE_PAYOUT)}
-            >
-              <div className="flex items-center justify-end gap-1">
-                Average Payout
-                {getIcon(SortField.AVERAGE_PAYOUT)}
-              </div>
-            </th>
-            <th
-              className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700"
-              onClick={() => handleSort(SortField.NODES)}
-            >
-              <div className="flex items-center justify-end gap-1">
-                Number of Nodes
-                {getIcon(SortField.NODES)}
-              </div>
-            </th>
-            <th
-              className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700"
-              onClick={() => handleSort(SortField.PAYMENT_STATUS)}
-            >
-              <div className="flex items-center justify-end gap-1">
-                Payment Status
-                {getIcon(SortField.PAYMENT_STATUS)}
-              </div>
-            </th>
-          </tr>
-        </thead>
-        <tbody className="bg-mf-ash-500/15">
-          {sorted.map((miner) => (
-            <>
-              <tr
-                key={miner.uid}
-                className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300/25 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg"
-                onClick={() => handleMinerClick(miner.uid)}
+      <div className="overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <table className="min-w-full md:w-full">
+          <thead className="rounded-lg bg-mf-sally-500/15 outline outline-2 outline-offset-[0px] outline-mf-ash-300/25">
+            <tr className="[&>th:first-child]:rounded-l-lg [&>th:last-child]:rounded-r-lg">
+              <th
+                className="font-poppins cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700"
+                onClick={() => handleSort(SortField.UID)}
               >
-                <td
-                  className={`font-poppins flex items-center gap-2 whitespace-nowrap px-6 py-4 text-sm ${
-                    selectedMinerUids.has(miner.uid)
-                      ? "text-mf-edge-300"
-                      : "text-mf-edge-700"
-                  }`}
+                <div className="flex items-center gap-1">
+                  UUID
+                  {getIcon(SortField.UID)}
+                </div>
+              </th>
+              <th
+                className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700"
+                onClick={() => handleSort(SortField.AVERAGE_PRICE)}
+              >
+                <div className="flex items-center justify-end gap-1 whitespace-nowrap">
+                  <span className="md:hidden">Avg Bid</span>
+                  <span className="hidden md:inline">Average Bid</span>
+                  {getIcon(SortField.AVERAGE_PRICE)}
+                </div>
+              </th>
+              <th
+                className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700"
+                onClick={() => handleSort(SortField.AVERAGE_PAYOUT)}
+              >
+                <div className="flex items-center justify-end gap-1 whitespace-nowrap">
+                  <span className="md:hidden">Avg Payout</span>
+                  <span className="hidden md:inline">Average Payout</span>
+                  {getIcon(SortField.AVERAGE_PAYOUT)}
+                </div>
+              </th>
+              <th
+                className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700"
+                onClick={() => handleSort(SortField.NODES)}
+              >
+                <div className="flex items-center justify-end gap-1">
+                  <span className="hidden md:inline">Number of </span>
+                  <span className="md:hidden">#</span> Nodes
+                  {getIcon(SortField.NODES)}
+                </div>
+              </th>
+              <th
+                className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700"
+                onClick={() => handleSort(SortField.PAYMENT_STATUS)}
+              >
+                <div className="flex items-center justify-end gap-1">
+                  Payment <span className="hidden md:inline">Status</span>
+                  {getIcon(SortField.PAYMENT_STATUS)}
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody className="bg-mf-ash-500/15">
+            {sorted.map((miner) => (
+              <>
+                <tr
+                  key={miner.uid}
+                  className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300/25 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg"
+                  onClick={() => handleMinerClick(miner.uid)}
                 >
-                  {miner.uid}
-                  {selectedMinerUids.has(miner.uid) && (
-                    <Image
-                      src="/down-arrow.svg"
-                      alt="Down Arrow"
-                      width={16}
-                      height={16}
-                      className="h-4 w-4"
-                    />
-                  )}
-                </td>
-                <td className="font-poppins whitespace-nowrap px-6 py-4 text-end text-sm text-mf-sybil-500">
-                  ${(miner.average_price / 100).toFixed(2)}/h
-                </td>
-                {/* TODO: Remove division once payout is calculated correctly */}
-                <td className="font-poppins whitespace-nowrap px-6 py-4 text-end text-sm text-mf-sybil-500">
-                  ${(miner.average_payout / 8).toFixed(2)}/h
-                </td>
-                <td className="font-poppins whitespace-nowrap px-6 py-4 text-end text-sm text-mf-edge-700">
-                  {miner.nodes}
-                </td>
-                <td className="whitespace-nowrap px-6 py-4 text-end text-sm last:rounded-r-lg">
-                  <span className="px-2">
-                    <PaymentStatusIcon miner={miner} />
-                  </span>
-                </td>
-              </tr>
-              {expandedMiners?.includes(miner.uid) && (
-                <MinerDetails
-                  nodes={getNodesForMiner(miner.uid)}
-                  isLoading={false}
-                  error={null}
-                />
-              )}
-            </>
-          ))}
-        </tbody>
-      </table>
+                  <td
+                    className={`font-poppins flex items-center gap-2 whitespace-nowrap px-2 py-4 text-sm md:px-6 ${
+                      selectedMinerUids.has(miner.uid)
+                        ? "text-mf-edge-300"
+                        : "text-mf-edge-700"
+                    }`}
+                  >
+                    {miner.uid}
+                    {selectedMinerUids.has(miner.uid) && (
+                      <Image
+                        src="/down-arrow.svg"
+                        alt="Down Arrow"
+                        width={16}
+                        height={16}
+                        className="h-4 w-4"
+                      />
+                    )}
+                  </td>
+                  <td className="font-poppins whitespace-nowrap px-2 py-4 text-end text-xs text-mf-sybil-500 md:px-6 md:text-sm">
+                    ${(miner.average_price / 100).toFixed(2)}/h
+                  </td>
+                  {/* TODO: Remove division once payout is calculated correctly */}
+                  <td className="font-poppins whitespace-nowrap px-2 py-4 text-end text-xs text-mf-sybil-500 md:px-6 md:text-sm">
+                    ${(miner.average_payout / 8).toFixed(2)}/h
+                  </td>
+                  <td className="font-poppins whitespace-nowrap px-2 py-4 text-end text-sm text-mf-edge-700 md:px-6">
+                    {miner.nodes}
+                  </td>
+                  <td className="whitespace-nowrap px-2 py-4 text-end text-sm last:rounded-r-lg md:px-6">
+                    <span className="px-2">
+                      <PaymentStatusIcon miner={miner} />
+                    </span>
+                  </td>
+                </tr>
+                {expandedMiners?.includes(miner.uid) && (
+                  <MinerDetails
+                    nodes={getNodesForMiner(miner.uid)}
+                    isLoading={false}
+                    error={null}
+                  />
+                )}
+              </>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

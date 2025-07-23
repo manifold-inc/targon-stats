@@ -21,7 +21,7 @@ const ToggleTable = ({
     <div className="flex items-center gap-2 p-1">
       <button
         type="button"
-        className={`flex items-center gap-2 rounded-lg px-4 py-2 text-lg font-semibold ${
+        className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold md:text-lg ${
           selectedTable === "miner"
             ? "bg-[#272D38] text-mf-edge-500"
             : "bg-transparent text-mf-edge-300 hover:bg-[#272D38]/50"
