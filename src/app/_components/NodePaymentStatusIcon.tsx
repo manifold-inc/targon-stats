@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { CircleCheck } from "lucide-react";
 
 import Tooltip from "@/app/_components/Tooltip";
 import { type MinerNode } from "@/app/api/bids/route";
@@ -16,7 +15,15 @@ export default function NodePaymentStatusIcon({
   const getStatusInfo = () => {
     if (!node.diluted) {
       return {
-        icon: <CircleCheck className="h-4 w-4 text-green-500" />,
+        icon: (
+          <Image
+            src="/checkmark.svg"
+            alt="Full Payment"
+            width={16}
+            height={16}
+            className="h-4 w-4"
+          />
+        ),
         tooltip: "Individual node received full payment",
       };
     } else {
