@@ -21,13 +21,10 @@ export async function GET(
     if (!id) {
       return NextResponse.json(
         {
-          success: false,
           error: {
             message: "Miner ID is required",
             code: "MISSING_ID",
-            statusCode: 400,
           },
-          timestamp: new Date().toISOString(),
         },
         { status: 400 },
       );
@@ -37,35 +34,27 @@ export async function GET(
     if (!miner) {
       return NextResponse.json(
         {
-          success: false,
           error: {
             message: "Miner not found",
             code: "MINER_NOT_FOUND",
-            statusCode: 404,
           },
-          timestamp: new Date().toISOString(),
         },
         { status: 404 },
       );
     }
 
     return NextResponse.json({
-      success: true,
       data: miner,
-      timestamp: new Date().toISOString(),
     });
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "Internal server error";
     return NextResponse.json(
       {
-        success: false,
         error: {
           message,
           code: "INTERNAL_ERROR",
-          statusCode: 500,
         },
-        timestamp: new Date().toISOString(),
       },
       { status: 500 },
     );

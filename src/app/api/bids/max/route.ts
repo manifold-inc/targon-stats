@@ -10,22 +10,17 @@ export async function GET() {
     if (!bid) throw new Error("Failed to get max bid");
 
     return NextResponse.json({
-      success: true,
       data: bid,
-      timestamp: new Date().toISOString(),
     });
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "Internal server error";
     return NextResponse.json(
       {
-        success: false,
         error: {
           message,
           code: "INTERNAL_ERROR",
-          statusCode: 500,
         },
-        timestamp: new Date().toISOString(),
       },
       { status: 500 },
     );

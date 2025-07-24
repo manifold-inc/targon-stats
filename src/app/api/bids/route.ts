@@ -9,6 +9,7 @@ export type MinerNode = {
   payout: number;
   gpus: number;
   diluted: boolean;
+  hotkey: string;
 };
 
 export async function GET() {
@@ -17,22 +18,17 @@ export async function GET() {
     if (!auction) throw new Error("Failed to get most recent auction");
     const bids = getNodes(auction.auction_results);
     return NextResponse.json({
-      success: true,
       data: bids,
-      timestamp: new Date().toISOString(),
     });
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "Internal server error";
     return NextResponse.json(
       {
-        success: false,
         error: {
           message,
           code: "INTERNAL_ERROR",
-          statusCode: 500,
         },
-        timestamp: new Date().toISOString(),
       },
       { status: 500 },
     );

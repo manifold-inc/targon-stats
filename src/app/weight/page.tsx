@@ -85,13 +85,14 @@ function Content() {
         </div>
 
         <div className="mt-5 pb-20">
-          <div className="rounded-lg border-2 border-mf-ash-300 bg-mf-ash-700 py-4 md:py-8 pl-4 pr-4 md:p-8">
-            <h2 className="font-blinker mb-4 md:mb-8 text-lg font-semibold tracking-wider text-mf-edge-500">
+          <div className="rounded-lg border-2 border-mf-ash-300 bg-mf-ash-700 py-4 pl-4 pr-4 md:p-8 md:py-8">
+            <h2 className="font-blinker mb-4 text-lg font-semibold tracking-wider text-mf-edge-500 md:mb-8">
               Targon Weights
             </h2>
             <WeightTable
               weights={auction?.weights ?? {}}
               nodes={getNodes(auction?.auction_results ?? {})}
+              hotkeyToUid={auction?.hotkey_to_uid ?? {}}
               searchTerm={searchTerm}
               onNavigateToMiner={handleClickTab}
               isLoading={isLoading}
