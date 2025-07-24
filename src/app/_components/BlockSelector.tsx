@@ -75,43 +75,43 @@ export default function BlockSelector({
 
       {isOpen && (
         <>
-          <div 
-            className="fixed inset-0 z-10" 
+          <div
+            className="fixed inset-0 z-10"
             onClick={() => setIsOpen(false)}
           />
           <div className="absolute right-0 z-20 mt-1 w-full rounded-lg border-2 border-mf-ash-300 bg-mf-night-500 shadow-lg">
-          <ul className="max-h-60 overflow-auto rounded-lg [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {blocks.map((blockNumber) => (
-              <li key={blockNumber}>
-                <button
-                  type="button"
-                  onClick={() => handleBlockSelect(blockNumber)}
-                  className={`flex w-full items-center gap-2 px-4 py-2 text-left text-sm ${
-                    selectedBlock === blockNumber
-                      ? "bg-mf-ash-500"
-                      : "bg-mf-night-500 hover:bg-mf-ash-500"
-                  }`}
-                >
-                  <Image
-                    src="/box.svg"
-                    alt="Block"
-                    width={16}
-                    height={16}
-                    className="h-4 w-4"
-                  />
-                  <span>
-                    <span className="text-mf-sally-500">{blockNumber}</span>
-                    <span className="text-gray-400">
-                      {" "}
-                      <span className="pl-1">
-                        {getIntervalText(blockNumber)}
+            <ul className="max-h-60 overflow-auto rounded-lg [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              {blocks.map((blockNumber) => (
+                <li key={blockNumber}>
+                  <button
+                    type="button"
+                    onClick={() => handleBlockSelect(blockNumber)}
+                    className={`flex w-full items-center gap-2 px-4 py-2 text-left text-sm ${
+                      selectedBlock === blockNumber
+                        ? "bg-mf-ash-500"
+                        : "bg-mf-night-500 hover:bg-mf-ash-500"
+                    }`}
+                  >
+                    <Image
+                      src="/box.svg"
+                      alt="Block"
+                      width={16}
+                      height={16}
+                      className="h-4 w-4"
+                    />
+                    <span>
+                      <span className="text-mf-sally-500">{blockNumber}</span>
+                      <span className="text-gray-400">
+                        {" "}
+                        <span className="pl-1">
+                          {getIntervalText(blockNumber)}
+                        </span>
                       </span>
                     </span>
-                  </span>
-                </button>
-              </li>
-            ))}
-          </ul>
+                  </button>
+                </li>
+              ))}
+            </ul>
           </div>
         </>
       )}

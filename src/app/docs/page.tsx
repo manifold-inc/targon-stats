@@ -8,20 +8,12 @@ import Navigation from "@/app/_components/Navigation";
 import Search from "@/app/_components/Search";
 import { reactClient } from "@/trpc/react";
 import { API_ENDPOINT } from "@/utils/constant";
+import { copyToClipboard } from "@/utils/utils";
 
 function Content() {
   const url = API_ENDPOINT;
   const [copiedEndpoint, setCopiedEndpoint] = useState<string | null>(null);
 
-  const copyToClipboard = async (text: string, endpointId: string) => {
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopiedEndpoint(endpointId);
-      setTimeout(() => setCopiedEndpoint(null), 2000); // Reset after 2 seconds
-    } catch (err) {
-      console.error("Failed to copy: ", err);
-    }
-  };
   const router = useRouter();
 
   const { data: auction, isLoading } =
@@ -80,6 +72,8 @@ function Content() {
                   copyToClipboard(
                     `${url}/api/miners/{miner_id}`,
                     "specific-miner",
+                    setCopiedEndpoint,
+                    2000,
                   )
                 }
                 className="font-poppins w-24 rounded-lg bg-mf-sally-500 py-1 text-center text-xs font-semibold text-mf-ash-500 transition-opacity hover:opacity-80"
@@ -114,7 +108,12 @@ Response:
               </h3>
               <button
                 onClick={() =>
-                  copyToClipboard(`${url}/api/miners`, "all-miners")
+                  copyToClipboard(
+                    `${url}/api/miners`,
+                    "all-miners",
+                    setCopiedEndpoint,
+                    2000,
+                  )
                 }
                 className="font-poppins w-24 rounded-lg bg-mf-sally-500 py-1 text-center text-xs font-semibold text-mf-ash-500 transition-opacity hover:opacity-80"
               >
@@ -159,7 +158,14 @@ Response:
                 Get All Bids
               </h3>
               <button
-                onClick={() => copyToClipboard(`${url}/api/bids`, "all-bids")}
+                onClick={() =>
+                  copyToClipboard(
+                    `${url}/api/bids`,
+                    "all-bids",
+                    setCopiedEndpoint,
+                    2000,
+                  )
+                }
                 className="font-poppins w-24 rounded-lg bg-mf-sally-500 py-1 text-center text-xs font-semibold text-mf-ash-500 transition-opacity hover:opacity-80"
               >
                 {copiedEndpoint === "all-bids" ? "Copied" : "Copy"}
@@ -198,7 +204,12 @@ Response:
               </h3>
               <button
                 onClick={() =>
-                  copyToClipboard(`${url}/api/bids/max`, "max-bid")
+                  copyToClipboard(
+                    `${url}/api/bids/max`,
+                    "max-bid",
+                    setCopiedEndpoint,
+                    2000,
+                  )
                 }
                 className="font-poppins w-24 rounded-lg bg-mf-sally-500 py-1 text-center text-xs font-semibold text-mf-ash-500 transition-opacity hover:opacity-80"
               >
@@ -225,6 +236,8 @@ Response:
                   copyToClipboard(
                     `${url}/api/miners/attest/error/{miner_id}`,
                     "attestation-errors",
+                    setCopiedEndpoint,
+                    2000,
                   )
                 }
                 className="font-poppins w-24 rounded-lg bg-mf-sally-500 py-1 text-center text-xs font-semibold text-mf-ash-500 transition-opacity hover:opacity-80"

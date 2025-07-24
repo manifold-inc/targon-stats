@@ -131,34 +131,34 @@ export default function Search({
             className="fixed inset-0 z-10"
             onClick={() => setIsDropdownOpen(false)}
           />
-        <div
-          className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-lg border border-gray-600 bg-mf-night-500 shadow-lg [&::-webkit-scrollbar]:hidden"
-          style={{
-            scrollbarWidth: "none",
-            msOverflowStyle: "none",
-          }}
-        >
-          {isLoading ? (
-            <div className="px-4 py-3 text-sm text-mf-edge-700">
-              Loading UIDs...
-            </div>
-          ) : filteredUids.length > 0 ? (
-            filteredUids.map((uid) => (
-              <button
-                key={uid}
-                onClick={() => handleUidSelect(uid)}
-                onMouseDown={(e) => e.preventDefault()}
-                className="block w-full px-4 py-2 text-left text-sm text-mf-edge-700 hover:bg-mf-ash-500/30 focus:bg-mf-ash-500/30 focus:outline-none"
-              >
-                <span className="font-mono">{uid}</span>
-              </button>
-            ))
-          ) : (
-            <div className="px-4 py-3 text-sm text-mf-edge-700">
-              {availableUids.length === 0
-                ? "No UIDs available"
-                : "No matching UIDs found"}
-            </div>
+          <div
+            className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-lg border border-gray-600 bg-mf-night-500 shadow-lg [&::-webkit-scrollbar]:hidden"
+            style={{
+              scrollbarWidth: "none",
+              msOverflowStyle: "none",
+            }}
+          >
+            {isLoading ? (
+              <div className="px-4 py-3 text-sm text-mf-edge-700">
+                Loading UIDs...
+              </div>
+            ) : filteredUids.length > 0 ? (
+              filteredUids.map((uid) => (
+                <button
+                  key={uid}
+                  onClick={() => handleUidSelect(uid)}
+                  onMouseDown={(e) => e.preventDefault()}
+                  className="block w-full px-4 py-2 text-left text-sm text-mf-edge-700 hover:bg-mf-ash-500/30 focus:bg-mf-ash-500/30 focus:outline-none"
+                >
+                  <span className="font-mono">{uid}</span>
+                </button>
+              ))
+            ) : (
+              <div className="px-4 py-3 text-sm text-mf-edge-700">
+                {availableUids.length === 0
+                  ? "No UIDs available"
+                  : "No matching UIDs found"}
+              </div>
             )}
           </div>
         </>

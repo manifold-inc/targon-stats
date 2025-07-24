@@ -4,7 +4,7 @@ import { useState } from "react";
 import { ArrowDown, ArrowUp, ArrowUpDown, Check, Copy } from "lucide-react";
 
 import { type MinerNode } from "@/app/api/bids/route";
-import { filterByUidSearch } from "@/utils/utils";
+import { copyToClipboard, filterByUidSearch } from "@/utils/utils";
 
 enum SortField {
   UID = "uid",
@@ -41,16 +41,6 @@ const WeightTable = ({
   const [field, setField] = useState<SortField>(SortField.NULL);
   const [direction, setDirection] = useState<SortDirection>(SortDirection.NULL);
   const [copiedHotkey, setCopiedHotkey] = useState<string | null>(null);
-
-  const copyToClipboard = async (hotkey: string, uid: string) => {
-    try {
-      await navigator.clipboard.writeText(hotkey);
-      setCopiedHotkey(uid);
-      setTimeout(() => setCopiedHotkey(null), 2000); // Reset after 2 seconds
-    } catch (err) {
-      console.error("Failed to copy: ", err);
-    }
-  };
 
   const handleSort = (selectedField: SortField) => {
     if (field === selectedField) {
@@ -309,6 +299,8 @@ const WeightTable = ({
                         void copyToClipboard(
                           hotkeyToUid[node.uid] ?? "",
                           node.uid,
+                          setCopiedHotkey,
+                          2000,
                         );
                       }}
                       className="text-mf-sally-300 transition-colors"
