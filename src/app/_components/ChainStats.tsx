@@ -28,14 +28,20 @@ export default function ChainStats() {
             </h1>
           </div>
           <div className="grid grid-cols-2 justify-items-center gap-2 sm:flex sm:flex-wrap sm:items-center sm:justify-end sm:gap-2">
-            <div className="flex min-h-[1.5rem] items-center">
+            <div className="flex min-h-[1.5rem] items-center hidden md:block">
               <MaxBid maxBid={auction?.max_bid || 0} />
             </div>
-            <div className="flex min-h-[1.5rem] items-center">
+            <div className="flex min-h-[1.5rem] items-center hidden md:pt-1 md:block ">
               <TaoPrice price={auction?.tao_price || 0} />
             </div>
             <div className="flex min-h-[1.5rem] items-center">
               <EmissionPool pool={auction?.emission_pool || 0} />
+            </div>
+            <div className="flex min-h-[1.5rem] items-center block md:hidden">
+              <TaoPrice price={auction?.tao_price || 0} />
+            </div>
+            <div className="flex min-h-[1.5rem] items-center block sm:hidden">
+              <MaxBid maxBid={auction?.max_bid || 0} />
             </div>
             <div className="flex min-h-[1.5rem] items-center">
               <CurrentBlock block={auction?.block || 0} />

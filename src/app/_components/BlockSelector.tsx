@@ -46,14 +46,14 @@ export default function BlockSelector({
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         disabled={isLoading}
-        className="flex items-center gap-2 rounded-lg border border-2 border-mf-ash-300 bg-mf-ash-500 px-4 py-2 text-sm font-medium text-white shadow-sm focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+        className="flex items-center gap-2 rounded-lg border border-2 border-mf-ash-300 bg-mf-ash-500 px-2 sm:px-4 py-2 text-sm font-medium text-white shadow-sm focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
       >
         <Image
           src="/box.svg"
           alt="Block"
           width={16}
           height={16}
-          className="h-4 w-4"
+          className="h-4 w-4 hidden md:block"
         />
         <span className="whitespace-nowrap">
           {isLoading ? (
@@ -79,7 +79,7 @@ export default function BlockSelector({
                 <button
                   type="button"
                   onClick={() => handleBlockSelect(blockNumber)}
-                  className={`flex w-full items-center gap-2 px-4 py-2 text-left text-sm ${
+                  className={`flex w-full items-center gap-2 px-2 md:px-4 py-2 text-left text-sm ${
                     selectedBlock === blockNumber
                       ? "bg-mf-ash-500"
                       : "bg-mf-night-500 hover:bg-mf-ash-500"
@@ -90,7 +90,7 @@ export default function BlockSelector({
                     alt="Block"
                     width={16}
                     height={16}
-                    className="h-4 w-4"
+                    className="h-4 w-4 hidden md:block"
                   />
                   <span>
                     <span className="text-mf-sally-500">{blockNumber}</span>
