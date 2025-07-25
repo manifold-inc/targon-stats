@@ -251,13 +251,30 @@ Response:
             </div>
             <div className="p-6">
               <pre className="overflow-x-auto text-sm text-mf-edge-700">
+                This protected route requires to user to pass in Epistula
+                headers.
+                <br />
+                <br />
                 {`GET ${url}/api/miners/attest/error/{miner_id}
+
+Headers:
+{
+  "Epistula-Request-Signature": "signature",
+  "Epistula-Uuid": "uuid",
+  "Epistula-Timestamp": "timestamp",
+  "Epistula-Signed-For": "",
+  "Epistula-Signed-By": "hotkey"
+}
+
 Response:
 {
   "data": {
     "miner_id": {
       "ip_address_1": "error_message_1",
       "ip_address_2": "error_message_2"
+    },
+    "hotkey_to_uid": {
+      "hotkey": "miner_id"
     }
   }
 }`}

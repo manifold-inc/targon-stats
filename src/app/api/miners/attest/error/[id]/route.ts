@@ -51,8 +51,7 @@ export async function GET(
     let headers;
     try {
       headers = getEpistulaHeaders(request.headers);
-    } catch (e) {
-      console.log(e);
+    } catch {
       return NextResponse.json(
         {
           error: "unauthorized",
@@ -60,6 +59,7 @@ export async function GET(
         { status: 401 },
       );
     }
+
     const { verified, error } = await verify(
       headers.signedBy,
       headers.signature,
@@ -68,8 +68,7 @@ export async function GET(
       headers.timestamp,
       headers.signedFor,
     );
-    if (!verified) {
-      console.log(error);
+    if (!verified || error) {
       return NextResponse.json(
         {
           error: "unauthorized",
@@ -80,7 +79,6 @@ export async function GET(
 
     const [report, err] = await getAttestationErrors(id);
     if (err || report === null) {
-      console.log(error);
       return NextResponse.json(
         {
           error: "unauthorized",
@@ -88,11 +86,11 @@ export async function GET(
         { status: 401 },
       );
     }
+
     if (
       report.hotkey_to_uid[headers.signedBy] !== id &&
       report.hotkey_to_uid[headers.signedBy] !== "28"
     ) {
-      console.log(error);
       return NextResponse.json(
         {
           error: "unauthorized",
@@ -100,16 +98,15 @@ export async function GET(
         { status: 401 },
       );
     }
+
     return NextResponse.json(
       {
         data: report.failed,
       },
       { status: 200 },
     );
-  } catch (error) {
-    const message =
-      error instanceof Error ? error.message : "Internal server error";
-    console.log(error);
+  } catch (e) {
+    const message = e instanceof Error ? e.message : "Internal server error";
     return NextResponse.json(
       {
         error: { message, code: "INTERNAL_ERROR" },
