@@ -274,8 +274,7 @@ Response:
       "ip_address_2": "error_message_2"
     },
     "hotkey_to_uid": {
-      "hotkey_1": "miner_id_1",
-      "hotkey_2": "miner_id_2"
+      "hotkey": "miner_id"
     }
   }
 }`}
