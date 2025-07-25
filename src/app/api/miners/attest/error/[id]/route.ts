@@ -112,7 +112,7 @@ export async function GET(
     console.log(error);
     return NextResponse.json(
       {
-        error: { message, code: "INTERNAL_ERROR", statusCode: 500 },
+        error: { message, code: "INTERNAL_ERROR" },
       },
       { status: 500 },
     );

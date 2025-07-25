@@ -88,6 +88,7 @@ function Content() {
             <WeightTable
               weights={auction?.weights ?? {}}
               nodes={getNodes(auction?.auction_results ?? {})}
+              hotkeyToUid={auction?.hotkey_to_uid ?? {}}
               searchTerm={searchTerm}
               onNavigateToMiner={handleClickTab}
               isLoading={isLoading}

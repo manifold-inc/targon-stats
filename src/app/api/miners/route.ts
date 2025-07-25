@@ -20,22 +20,17 @@ export async function GET() {
     if (!auction) throw new Error("Failed to get most recent auction");
     const miners = getNodesByMiner(auction.auction_results);
     return NextResponse.json({
-      success: true,
       data: miners,
-      timestamp: new Date().toISOString(),
     });
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "Internal server error";
     return NextResponse.json(
       {
-        success: false,
         error: {
           message,
           code: "INTERNAL_ERROR",
-          statusCode: 500,
         },
-        timestamp: new Date().toISOString(),
       },
       { status: 500 },
     );

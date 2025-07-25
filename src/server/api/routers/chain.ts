@@ -14,6 +14,7 @@ export interface AuctionState {
   tao_price: number;
   timestamp: Date;
   weights: Record<string, number[]>;
+  hotkey_to_uid: Record<string, string>;
 }
 
 export async function getAuctionState(block?: number): Promise<AuctionState> {
@@ -40,6 +41,12 @@ export async function getAuctionState(block?: number): Promise<AuctionState> {
     );
   }
 
+  const hotkeyToUid = data[0].hotkey_to_uid as Record<string, string>;
+  const uidToHotkey: Record<string, string> = {};
+  for (const [hotkey, uid] of Object.entries(hotkeyToUid)) {
+    uidToHotkey[uid] = hotkey;
+  }
+
   const state: AuctionState = {
     auction_results: parsedNodes,
     emission_pool: data[0].emission_pool as number,
@@ -48,6 +55,7 @@ export async function getAuctionState(block?: number): Promise<AuctionState> {
     tao_price: data[0].tao_price as number,
     timestamp: data[0].timestamp as Date,
     weights: data[0].weights as Record<string, number[]>,
+    hotkey_to_uid: uidToHotkey,
   };
 
   return state;

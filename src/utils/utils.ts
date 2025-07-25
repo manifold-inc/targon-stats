@@ -12,17 +12,41 @@ export const StatsSchema = z.object({
   average_tokens_per_second: z.number(),
 });
 
-export async function copyToClipboard(text: string) {
+export async function copyToClipboard<T = string>(
+  text: string,
+  id: T,
+  setCopiedId: (id: T | null) => void,
+  resetTimeoutMs: 2000,
+): Promise<boolean> {
   try {
     await navigator.clipboard.writeText(text);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), resetTimeoutMs);
+    return true;
   } catch (error) {
-    const textArea = document.createElement("textarea");
-    textArea.value = text;
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-    document.execCommand("copy"); // @TODO
-    document.body.removeChild(textArea);
+    try {
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      textArea.style.position = "fixed";
+      textArea.style.opacity = "0";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      const success = document.execCommand("copy");
+      document.body.removeChild(textArea);
+
+      if (success) {
+        setCopiedId(id);
+        setTimeout(() => setCopiedId(null), resetTimeoutMs);
+        return true;
+      } else {
+        console.error("Fallback copy method failed");
+        return false;
+      }
+    } catch (fallbackError) {
+      console.error("Both clipboard methods failed:", fallbackError);
+      return false;
+    }
   }
 }
 
