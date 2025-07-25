@@ -77,24 +77,22 @@ const Header = () => {
               <X className="size-6" />
             </button>
           </div>
-          <div className="mt-6 flow-root">
-            <div className="-my-6 divide-y divide-gray-500/20">
-              <div className="space-y-2 py-6">
-                <Link
-                  href="/"
-                  className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-100 hover:bg-neutral-800"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Home
-                </Link>
-                <Link
-                  href="/docs"
-                  className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-100 hover:bg-neutral-800"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  API Docs
-                </Link>
-              </div>
+          <div className="-mt-20 flex h-full flex-col items-center justify-center">
+            <div className="flex flex-col items-center gap-4">
+              <Link
+                href="/"
+                className="font-poppins w-36 rounded-lg bg-[#272D38] px-7 py-2 text-center text-lg font-medium text-[#8DC7FE]"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Home
+              </Link>
+              <Link
+                href="/docs"
+                className="font-poppins w-36 rounded-lg bg-mf-sally-500 px-7 py-2 text-center text-lg font-semibold text-mf-ash-500"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                API Docs
+              </Link>
             </div>
           </div>
         </DialogPanel>

@@ -1,8 +1,11 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+
+import BuyoutsSVG from "./BuyoutsIcon";
+import MinersSVG from "./MinersIcon";
+import WeightsSVG from "./WeightsIcon";
 
 const Navigation = () => {
   const pathname = usePathname();
@@ -20,33 +23,15 @@ const Navigation = () => {
   return (
     <div className="flex items-center gap-2 p-1">
       <Link href="/miner" className={getLinkClassName("/miner")}>
-        <Image
-          src="/miners.svg"
-          alt="Miner"
-          width={24}
-          height={24}
-          className="h-4 w-4 text-current"
-        />
+        <MinersSVG isSelected={pathname === "/miner"} />
         <span className="font-blinker">Miners</span>
       </Link>
       <Link href="/bid" className={getLinkClassName("/bid")}>
-        <Image
-          src="/buyouts.svg"
-          alt="Buyouts"
-          width={24}
-          height={24}
-          className="h-4 w-4 text-current"
-        />
+        <BuyoutsSVG isSelected={pathname === "/bid"} />
         <span className="font-blinker">Buyouts</span>
       </Link>
       <Link href="/weight" className={getLinkClassName("/weight")}>
-        <Image
-          src="/weights.svg"
-          alt="Weights"
-          width={24}
-          height={24}
-          className="h-4 w-4 text-current"
-        />
+        <WeightsSVG isSelected={pathname === "/weight"} />
         <span className="font-blinker">Weights</span>
       </Link>
     </div>

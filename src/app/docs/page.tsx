@@ -37,23 +37,27 @@ function Content() {
   return (
     <div className="w-full">
       <div className="mx-auto max-w-5xl px-8 py-2">
-        <div className="mt-4 flex justify-between">
+        <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:justify-between">
           <Navigation />
-          <div className="flex items-center gap-4">
-            {auction && (
-              <BlockSelector
-                block={auction.block}
-                latestBlock={auctionLatest?.block ?? 0}
-                onBlockChange={handleBlockChange}
-                isLoading={isLoading}
-                searchTerm=""
+          <div className="flex items-center justify-center gap-2 sm:justify-end sm:gap-4">
+            <div className="max-w-xs flex-1 sm:max-w-none sm:flex-initial">
+              {auction && (
+                <BlockSelector
+                  block={auction.block}
+                  latestBlock={auctionLatest?.block ?? 0}
+                  onBlockChange={handleBlockChange}
+                  isLoading={isLoading}
+                  searchTerm=""
+                />
+              )}
+            </div>
+            <div className="max-w-xs flex-1 sm:max-w-none sm:flex-initial">
+              <Search
+                value=""
+                onChange={handleSearchChange}
+                onClear={() => router.push("/miner")}
               />
-            )}
-            <Search
-              value=""
-              onChange={handleSearchChange}
-              onClear={() => router.push("/miner")}
-            />
+            </div>
           </div>
         </div>
 

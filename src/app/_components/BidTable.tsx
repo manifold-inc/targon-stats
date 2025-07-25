@@ -114,43 +114,45 @@ const BidTable = ({
   if (isLoading) {
     return (
       <div className="space-y-1">
-        <table className="min-w-full">
-          <thead className="rounded-lg bg-mf-sally-500/15 outline outline-2 outline-offset-[0px] outline-mf-ash-300/25">
-            <tr className="[&>th:first-child]:rounded-l-lg [&>th:last-child]:rounded-r-lg">
-              <th className="font-poppins cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
-                <div className="flex items-center gap-1">UUID</div>
-              </th>
-              <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
-                <div className="flex items-center justify-end gap-1">Bid</div>
-              </th>
-              <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
-                <div className="flex items-center justify-end gap-1">
-                  Payout
-                </div>
-              </th>
-              <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
-                <div className="flex items-center justify-end gap-1">
-                  Number of GPUs
-                </div>
-              </th>
-              <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
-                <div className="flex items-center justify-end gap-1">
-                  Payment Status
-                </div>
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-mf-ash-500/15">
-            <tr className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300/25 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
-              <td
-                colSpan={5}
-                className="font-poppins whitespace-nowrap px-6 py-4 text-center text-sm text-mf-edge-700"
-              >
-                Loading nodes...
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div className="overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <table className="min-w-full md:w-full">
+            <thead className="rounded-lg bg-mf-sally-500/15 outline outline-2 outline-offset-[0px] outline-mf-ash-300/25">
+              <tr className="[&>th:first-child]:rounded-l-lg [&>th:last-child]:rounded-r-lg">
+                <th className="font-poppins cursor-pointer px-2 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 md:px-6">
+                  <div className="flex items-center gap-1">UUID</div>
+                </th>
+                <th className="font-poppins cursor-pointer px-2 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 md:px-6">
+                  <div className="flex items-center justify-end gap-1">Bid</div>
+                </th>
+                <th className="font-poppins cursor-pointer px-2 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 md:px-6">
+                  <div className="flex items-center justify-end gap-1">
+                    Payout
+                  </div>
+                </th>
+                <th className="font-poppins cursor-pointer px-2 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 md:px-6">
+                  <div className="flex items-center justify-end gap-1">
+                    <span className="hidden md:inline">Number of </span>GPUs
+                  </div>
+                </th>
+                <th className="font-poppins cursor-pointer px-2 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 md:px-6">
+                  <div className="flex items-center justify-end gap-1">
+                    Payment <span className="hidden md:inline">Status</span>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-mf-ash-500/15">
+              <tr className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300/25 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
+                <td
+                  colSpan={5}
+                  className="font-poppins whitespace-nowrap px-2 py-4 text-center text-sm text-mf-edge-700 md:px-6"
+                >
+                  Loading nodes...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     );
   }
@@ -158,43 +160,45 @@ const BidTable = ({
   if (error) {
     return (
       <div className="space-y-1">
-        <table className="min-w-full">
-          <thead className="rounded-lg bg-mf-sally-500/15 outline outline-2 outline-offset-[0px] outline-mf-ash-300/25">
-            <tr className="[&>th:first-child]:rounded-l-lg [&>th:last-child]:rounded-r-lg">
-              <th className="font-poppins cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
-                <div className="flex items-center gap-1">UUID</div>
-              </th>
-              <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
-                <div className="flex items-center justify-end gap-1">Bid</div>
-              </th>
-              <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
-                <div className="flex items-center justify-end gap-1">
-                  Payout
-                </div>
-              </th>
-              <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
-                <div className="flex items-center justify-end gap-1">
-                  Number of GPUs
-                </div>
-              </th>
-              <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
-                <div className="flex items-center justify-end gap-1">
-                  Payment Status
-                </div>
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-mf-ash-500/15">
-            <tr className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300/25 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
-              <td
-                colSpan={5}
-                className="font-poppins whitespace-nowrap px-6 py-4 text-center text-sm text-red-400"
-              >
-                Error loading nodes: {error.message}
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div className="overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <table className="min-w-full md:w-full">
+            <thead className="rounded-lg bg-mf-sally-500/15 outline outline-2 outline-offset-[0px] outline-mf-ash-300/25">
+              <tr className="[&>th:first-child]:rounded-l-lg [&>th:last-child]:rounded-r-lg">
+                <th className="font-poppins cursor-pointer px-2 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 md:px-6">
+                  <div className="flex items-center gap-1">UUID</div>
+                </th>
+                <th className="font-poppins cursor-pointer px-2 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 md:px-6">
+                  <div className="flex items-center justify-end gap-1">Bid</div>
+                </th>
+                <th className="font-poppins cursor-pointer px-2 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 md:px-6">
+                  <div className="flex items-center justify-end gap-1">
+                    Payout
+                  </div>
+                </th>
+                <th className="font-poppins cursor-pointer px-2 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 md:px-6">
+                  <div className="flex items-center justify-end gap-1">
+                    <span className="hidden md:inline">Number of </span>GPUs
+                  </div>
+                </th>
+                <th className="font-poppins cursor-pointer px-2 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 md:px-6">
+                  <div className="flex items-center justify-end gap-1">
+                    Payment <span className="hidden md:inline">Status</span>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-mf-ash-500/15">
+              <tr className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300/25 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
+                <td
+                  colSpan={5}
+                  className="font-poppins whitespace-nowrap px-2 py-4 text-center text-sm text-red-400 md:px-6"
+                >
+                  Error loading nodes: {error.message}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     );
   }
@@ -202,127 +206,131 @@ const BidTable = ({
   if (searchTerm && filteredNodes.length === 0) {
     return (
       <div className="space-y-1">
-        <table className="min-w-full">
-          <thead className="rounded-lg bg-mf-sally-500/15 outline outline-2 outline-offset-[0px] outline-mf-ash-300/25">
-            <tr className="[&>th:first-child]:rounded-l-lg [&>th:last-child]:rounded-r-lg">
-              <th className="font-poppins cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
-                <div className="flex items-center gap-1">UUID</div>
-              </th>
-              <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
-                <div className="flex items-center justify-end gap-1">Bid</div>
-              </th>
-              <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
-                <div className="flex items-center justify-end gap-1">
-                  Payout
-                </div>
-              </th>
-              <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
-                <div className="flex items-center justify-end gap-1">
-                  Number of GPUs
-                </div>
-              </th>
-              <th className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
-                <div className="flex items-center justify-end gap-1">
-                  Payment Status
-                </div>
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-mf-ash-500/15">
-            <tr className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300/25 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
-              <td
-                colSpan={5}
-                className="font-poppins whitespace-nowrap px-6 py-4 text-center text-sm text-mf-edge-700"
-              >
-                No nodes found matching {searchTerm}
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div className="overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <table className="min-w-full md:w-full">
+            <thead className="rounded-lg bg-mf-sally-500/15 outline outline-2 outline-offset-[0px] outline-mf-ash-300/25">
+              <tr className="[&>th:first-child]:rounded-l-lg [&>th:last-child]:rounded-r-lg">
+                <th className="font-poppins cursor-pointer px-2 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 md:px-6">
+                  <div className="flex items-center gap-1">UUID</div>
+                </th>
+                <th className="font-poppins cursor-pointer px-2 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 md:px-6">
+                  <div className="flex items-center justify-end gap-1">Bid</div>
+                </th>
+                <th className="font-poppins cursor-pointer px-2 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 md:px-6">
+                  <div className="flex items-center justify-end gap-1">
+                    Payout
+                  </div>
+                </th>
+                <th className="font-poppins cursor-pointer px-2 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 md:px-6">
+                  <div className="flex items-center justify-end gap-1">
+                    <span className="hidden md:inline">Number of </span>GPUs
+                  </div>
+                </th>
+                <th className="font-poppins cursor-pointer px-2 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 md:px-6">
+                  <div className="flex items-center justify-end gap-1">
+                    Payment <span className="hidden md:inline">Status</span>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-mf-ash-500/15">
+              <tr className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300/25 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
+                <td
+                  colSpan={5}
+                  className="font-poppins whitespace-nowrap px-2 py-4 text-center text-sm text-mf-edge-700 md:px-6"
+                >
+                  No nodes found matching {searchTerm}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="space-y-1">
-      <table className="min-w-full">
-        <thead className="rounded-lg bg-mf-sally-500/15 outline outline-2 outline-offset-[0px] outline-mf-ash-300/25">
-          <tr className="[&>th:first-child]:rounded-l-lg [&>th:last-child]:rounded-r-lg">
-            <th
-              className="font-poppins cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700"
-              onClick={() => handleSort(SortField.UID)}
-            >
-              <div className="flex items-center gap-1">
-                UUID
-                {getIcon(SortField.UID)}
-              </div>
-            </th>
-            <th
-              className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700"
-              onClick={() => handleSort(SortField.PRICE)}
-            >
-              <div className="flex items-center justify-end gap-1">
-                Bid
-                {getIcon(SortField.PRICE)}
-              </div>
-            </th>
-            <th
-              className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700"
-              onClick={() => handleSort(SortField.PAYOUT)}
-            >
-              <div className="flex items-center justify-end gap-1">
-                Payout
-                {getIcon(SortField.PAYOUT)}
-              </div>
-            </th>
-            <th
-              className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700"
-              onClick={() => handleSort(SortField.GPUS)}
-            >
-              <div className="flex items-center justify-end gap-1">
-                Number of GPUs
-                {getIcon(SortField.GPUS)}
-              </div>
-            </th>
-            <th
-              className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700"
-              onClick={() => handleSort(SortField.PAYMENT_STATUS)}
-            >
-              <div className="flex items-center justify-end gap-1">
-                Payment Status
-                {getIcon(SortField.PAYMENT_STATUS)}
-              </div>
-            </th>
-          </tr>
-        </thead>
-        <tbody className="bg-mf-ash-500/15">
-          {sorted.map((node: MinerNode, idx: number) => (
-            <tr
-              key={idx}
-              onClick={() => onNavigateToMiner(node.uid)}
-              className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300/25 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg"
-            >
-              <td className="font-poppins whitespace-nowrap px-6 py-4 text-sm text-mf-edge-700">
-                {node.uid}
-              </td>
-              <td className="font-poppins whitespace-nowrap px-6 py-4 text-end text-sm text-mf-sybil-500">
-                ${(node.price / 100).toFixed(2)}/h
-              </td>
-              <td className="font-poppins whitespace-nowrap px-6 py-4 text-end text-sm text-mf-sybil-500">
-                ${(node.payout / node.gpus).toFixed(2)}/h
-              </td>
-              <td className="font-poppins whitespace-nowrap px-6 py-4 text-end text-sm text-mf-edge-700">
-                {node.gpus}
-              </td>
-              <td className="whitespace-nowrap px-6 py-4 text-end text-sm">
-                <span className="px-2">
-                  <NodePaymentStatusIcon node={node} />
-                </span>
-              </td>
+      <div className="overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <table className="min-w-full md:w-full">
+          <thead className="rounded-lg bg-mf-sally-500/15 outline outline-2 outline-offset-[0px] outline-mf-ash-300/25">
+            <tr className="[&>th:first-child]:rounded-l-lg [&>th:last-child]:rounded-r-lg">
+              <th
+                className="font-poppins cursor-pointer px-2 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 md:px-6"
+                onClick={() => handleSort(SortField.UID)}
+              >
+                <div className="flex items-center gap-1">
+                  UUID
+                  {getIcon(SortField.UID)}
+                </div>
+              </th>
+              <th
+                className="font-poppins cursor-pointer px-2 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 md:px-6"
+                onClick={() => handleSort(SortField.PRICE)}
+              >
+                <div className="flex items-center justify-end gap-1">
+                  Bid
+                  {getIcon(SortField.PRICE)}
+                </div>
+              </th>
+              <th
+                className="font-poppins cursor-pointer px-2 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 md:px-6"
+                onClick={() => handleSort(SortField.PAYOUT)}
+              >
+                <div className="flex items-center justify-end gap-1">
+                  Payout
+                  {getIcon(SortField.PAYOUT)}
+                </div>
+              </th>
+              <th
+                className="font-poppins cursor-pointer px-2 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 md:px-6"
+                onClick={() => handleSort(SortField.GPUS)}
+              >
+                <div className="flex items-center justify-end gap-1">
+                  <span className="hidden md:inline">Number of </span>GPUs
+                  {getIcon(SortField.GPUS)}
+                </div>
+              </th>
+              <th
+                className="font-poppins cursor-pointer px-2 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 md:px-6"
+                onClick={() => handleSort(SortField.PAYMENT_STATUS)}
+              >
+                <div className="flex items-center justify-end gap-1">
+                  Payment <span className="hidden md:inline">Status</span>
+                  {getIcon(SortField.PAYMENT_STATUS)}
+                </div>
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="bg-mf-ash-500/15">
+            {sorted.map((node: MinerNode, idx: number) => (
+              <tr
+                key={idx}
+                onClick={() => onNavigateToMiner(node.uid)}
+                className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300/25 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg"
+              >
+                <td className="font-poppins whitespace-nowrap px-2 py-4 text-xs text-mf-edge-700 md:px-6 md:text-sm">
+                  {node.uid}
+                </td>
+                <td className="font-poppins whitespace-nowrap px-2 py-4 text-end text-xs text-mf-sybil-500 md:px-6 md:text-sm">
+                  ${(node.price / 100).toFixed(2)}/h
+                </td>
+                <td className="font-poppins whitespace-nowrap px-2 py-4 text-end text-xs text-mf-sybil-500 md:px-6 md:text-sm">
+                  ${(node.payout / node.gpus).toFixed(2)}/h
+                </td>
+                <td className="font-poppins whitespace-nowrap px-2 py-4 text-end text-xs text-mf-edge-700 md:px-6 md:text-sm">
+                  {node.gpus}
+                </td>
+                <td className="whitespace-nowrap px-2 py-4 text-end text-xs md:px-6 md:text-sm">
+                  <span className="px-1 md:px-2">
+                    <NodePaymentStatusIcon node={node} />
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
