@@ -9,6 +9,7 @@ export type MinerNode = {
   payout: number;
   count: number;
   diluted: boolean;
+  hotkey: string;
 };
 
 export async function GET() {
