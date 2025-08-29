@@ -18,7 +18,7 @@ async function getAttestationErrors(
 
   const data = await mongoDb
     .collection("miner_info")
-    .find({}, { projection: { attest_errors: 1, _id: 0, hotkey_to_uid: 1 } })
+    .find({}, { projection: { miner_errors: 1, _id: 0, hotkey_to_uid: 1 } })
     .sort({ block: -1 })
     .limit(1)
     .toArray();
@@ -26,11 +26,7 @@ async function getAttestationErrors(
     return [null, "Failed to get attestation report"];
   }
 
-  const failed = data[0].attest_errors as Record<
-    string,
-    Record<string, string>
-  >;
-
+  const failed = data[0].miner_errors as Record<string, Record<string, string>>;
   const hotkeytouid = data[0].hotkey_to_uid as Record<string, string>;
 
   const report: AttestationReport = {
