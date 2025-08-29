@@ -57,7 +57,6 @@ export async function getAuctionState(block?: number): Promise<AuctionState> {
     weights: data[0].weights as Record<string, number[]>,
     hotkey_to_uid: uidToHotkey,
   };
-
   return state;
 }
 

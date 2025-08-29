@@ -39,7 +39,6 @@ const BidTable = ({
 }: BidTableProps) => {
   const [field, setField] = useState<SortField>(SortField.NULL);
   const [direction, setDirection] = useState<SortDirection>(SortDirection.NULL);
-
   const handleSort = (selectedField: SortField) => {
     if (field === selectedField) {
       switch (direction) {
@@ -92,8 +91,8 @@ const BidTable = ({
             : b.payout - a.payout;
         case SortField.GPUS:
           return direction === SortDirection.ASC
-            ? a.gpus - b.gpus
-            : b.gpus - a.gpus;
+            ? a.count - b.count
+            : b.count - a.count;
         case SortField.PAYMENT_STATUS:
           return direction === SortDirection.ASC
             ? a.diluted
@@ -316,10 +315,10 @@ const BidTable = ({
                   ${(node.price / 100).toFixed(2)}/h
                 </td>
                 <td className="font-poppins whitespace-nowrap px-2 py-4 text-end text-xs text-mf-sybil-500 md:px-6 md:text-sm">
-                  ${(node.payout / node.gpus).toFixed(2)}/h
+                  ${(node.payout / node.count).toFixed(2)}/h
                 </td>
                 <td className="font-poppins whitespace-nowrap px-2 py-4 text-end text-xs text-mf-edge-700 md:px-6 md:text-sm">
-                  {node.gpus}
+                  {node.count}
                 </td>
                 <td className="whitespace-nowrap px-2 py-4 text-end text-xs md:px-6 md:text-sm">
                   <span className="px-1 md:px-2">
