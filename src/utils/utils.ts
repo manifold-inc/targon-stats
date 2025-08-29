@@ -63,7 +63,7 @@ export function getNodesByMiner(auction_results: Auction): Miner[] {
           total_price: miner.price,
           average_payout: miner.payout,
           total_payout: miner.payout,
-          gpus: miner.gpus,
+          gpus: miner.count,
           nodes: 1,
           diluted: miner.diluted,
         };
@@ -88,7 +88,7 @@ export function getNodes(auction_results: Auction): MinerNode[] {
     for (const miner of auction_results[gpu]!) {
       const node = {
         uid: miner.uid,
-        gpus: miner.gpus,
+        count: miner.count,
         price: miner.price,
         payout: miner.payout,
         diluted: miner.diluted,
@@ -102,7 +102,7 @@ export function getNodes(auction_results: Auction): MinerNode[] {
 export function removeIPAddress(node: MinerNode): MinerNode {
   const parsedNode = {
     uid: node.uid,
-    gpus: node.gpus,
+    count: node.count,
     price: node.price,
     payout: node.payout,
     diluted: node.diluted,

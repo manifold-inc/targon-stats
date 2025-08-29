@@ -7,7 +7,7 @@ export type MinerNode = {
   uid: string;
   price: number;
   payout: number;
-  gpus: number;
+  count: number;
   diluted: boolean;
   hotkey: string;
 };

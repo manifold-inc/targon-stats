@@ -67,7 +67,7 @@ export default function MinerDetails({
                     style={{ width: "25%" }}
                     className="font-poppins whitespace-nowrap px-0 py-3 text-end text-xs text-mf-edge-500 md:px-6 md:text-sm"
                   >
-                    {node.gpus}
+                    {node.count}
                   </td>
                   <td
                     style={{ width: "25%" }}
