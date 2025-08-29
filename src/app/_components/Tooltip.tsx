@@ -18,8 +18,10 @@ export default function Tooltip({ children, content }: TooltipProps) {
     >
       {children}
       {isVisible && (
-        <div className="absolute left-full top-1/2 z-[50] ml-2 -translate-y-1/2">
-          <div className="rounded bg-gray-900 p-3 text-white">{content}</div>
+        <div className="absolute right-full top-1/2 z-[50] mr-2 -translate-y-1/2">
+          <div className="whitespace-nowrap rounded bg-gray-900 p-3 text-white">
+            {content}
+          </div>
         </div>
       )}
     </div>
