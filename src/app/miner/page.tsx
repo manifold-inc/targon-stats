@@ -10,7 +10,6 @@ import Search from "@/app/_components/Search";
 import { reactClient } from "@/trpc/react";
 import {
   getNodes,
-  getNodesByMiner,
   handleBlockChange,
   handleSearchNavigation,
 } from "@/utils/utils";
@@ -83,10 +82,9 @@ function Content() {
         <div className="mt-5 pb-20">
           <div className="rounded-lg border-2 border-mf-ash-300 bg-mf-ash-700 p-4 py-4 md:p-8">
             <h2 className="font-blinker mb-4 text-lg font-semibold tracking-wider text-mf-edge-500 md:mb-8">
-              Targon Miners
+              Targon Nodes
             </h2>
             <MinerTable
-              miners={getNodesByMiner(auction?.auction_results ?? {})}
               nodes={getNodes(auction?.auction_results ?? {})}
               searchTerm={searchTerm}
               isLoading={isLoading}

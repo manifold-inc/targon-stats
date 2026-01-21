@@ -4,7 +4,7 @@ import { useMemo, useRef, useState } from "react";
 import { ChevronDown, Search as SearchIcon, X } from "lucide-react";
 
 import { reactClient } from "@/trpc/react";
-import { getNodesByMiner } from "@/utils/utils";
+import { getNodes } from "@/utils/utils";
 
 interface SearchProps {
   value: string;
@@ -17,7 +17,7 @@ export default function Search({
   value,
   onChange,
   onClear,
-  placeholder = "Search by UUID...",
+  placeholder = "Search by UID...",
 }: SearchProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -28,7 +28,7 @@ export default function Search({
 
   const availableUids = useMemo(() => {
     if (!auction?.auction_results) return [];
-    const miners = getNodesByMiner(auction.auction_results);
+    const miners = getNodes(auction.auction_results);
     return miners
       .map((miner) => miner.uid)
       .sort((a, b) => parseInt(a) - parseInt(b));
@@ -42,7 +42,8 @@ export default function Search({
       .filter(Boolean);
 
     // Always return all available UIDs minus already selected ones
-    return availableUids.filter((uid) => !alreadySelected.includes(uid));
+    const ret = availableUids.filter((uid) => !alreadySelected.includes(uid));
+    return [...new Set(ret)]; // fuck you, it works.
   }, [value, availableUids]);
 
   const handleBlur = (e: React.FocusEvent) => {

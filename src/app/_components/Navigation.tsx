@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import BuyoutsSVG from "./BuyoutsIcon";
 import MinersSVG from "./MinersIcon";
 import WeightsSVG from "./WeightsIcon";
 
@@ -25,10 +24,6 @@ const Navigation = () => {
       <Link href="/miner" className={getLinkClassName("/miner")}>
         <MinersSVG isSelected={pathname === "/miner"} />
         <span className="font-blinker">Miners</span>
-      </Link>
-      <Link href="/bid" className={getLinkClassName("/bid")}>
-        <BuyoutsSVG isSelected={pathname === "/bid"} />
-        <span className="font-blinker">Buyouts</span>
       </Link>
       <Link href="/weight" className={getLinkClassName("/weight")}>
         <WeightsSVG isSelected={pathname === "/weight"} />

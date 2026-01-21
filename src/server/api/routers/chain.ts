@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { type MinerNode } from "@/app/api/bids/route";
+import { type MinerNode } from "@/app/_components/MinerTable";
 import { connectToMongoDb } from "@/schema/mongoDB";
 import { createTRPCRouter, publicAuthlessProcedure } from "@/server/api/trpc";
 import { removeIPAddress } from "@/utils/utils";
@@ -10,10 +10,9 @@ export interface AuctionState {
   auction_results: Auction;
   emission_pool: number;
   block: number;
-  max_bid: number;
   tao_price: number;
   timestamp: Date;
-  weights: Record<string, number[]>;
+  weights: { uids: number[]; incentives: number[] };
   hotkey_to_uid: Record<string, string>;
 }
 
@@ -21,18 +20,18 @@ export async function getAuctionState(block?: number): Promise<AuctionState> {
   const mongoDb = await connectToMongoDb();
   if (!mongoDb) throw new Error("Failed to connect to MongoDB");
 
-  const data = await mongoDb
+  const [data] = await mongoDb
     .collection("miner_info")
     .find(block === undefined ? {} : { block })
     .sort({ block: -1 })
     .limit(1)
     .toArray();
 
-  if (!data[0]) {
+  if (!data) {
     throw new Error("Failed to get auction for block " + (block ?? "latest"));
   }
 
-  const auction_results = data[0].auction_results as Auction;
+  const auction_results = data.auction_results as Auction;
   const parsedNodes: Auction = {};
 
   for (const gpu in auction_results) {
@@ -41,7 +40,7 @@ export async function getAuctionState(block?: number): Promise<AuctionState> {
     );
   }
 
-  const hotkeyToUid = data[0].hotkey_to_uid as Record<string, string>;
+  const hotkeyToUid = data.hotkey_to_uid as Record<string, string>;
   const uidToHotkey: Record<string, string> = {};
   for (const [hotkey, uid] of Object.entries(hotkeyToUid)) {
     uidToHotkey[uid] = hotkey;
@@ -49,12 +48,11 @@ export async function getAuctionState(block?: number): Promise<AuctionState> {
 
   const state: AuctionState = {
     auction_results: parsedNodes,
-    emission_pool: data[0].emission_pool as number,
-    block: data[0].block as number,
-    max_bid: data[0].max_bid as number,
-    tao_price: data[0].tao_price as number,
-    timestamp: data[0].timestamp as Date,
-    weights: data[0].weights as Record<string, number[]>,
+    emission_pool: data.emission_pool as number,
+    block: data.block as number,
+    tao_price: data.tao_price as number,
+    timestamp: data.timestamp as Date,
+    weights: data.weights as { uids: number[]; incentives: number[] },
     hotkey_to_uid: uidToHotkey,
   };
   return state;

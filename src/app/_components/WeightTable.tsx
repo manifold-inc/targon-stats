@@ -3,8 +3,7 @@
 import { useState } from "react";
 import { ArrowDown, ArrowUp, ArrowUpDown, Check, Copy } from "lucide-react";
 
-import { type MinerNode } from "@/app/api/bids/route";
-import { copyToClipboard, filterByUidSearch } from "@/utils/utils";
+import { copyToClipboard } from "@/utils/utils";
 
 enum SortField {
   UID = "uid",
@@ -20,11 +19,10 @@ enum SortDirection {
 }
 
 interface WeightTableProps {
-  weights: Record<string, number[]>;
+  weights?: { uids: number[]; incentives: number[] };
   hotkeyToUid: Record<string, string>;
   searchTerm: string;
   onNavigateToMiner: (uid: string) => void;
-  nodes: MinerNode[];
   isLoading: boolean;
   error: Error | null;
 }
@@ -32,9 +30,7 @@ interface WeightTableProps {
 const WeightTable = ({
   weights,
   hotkeyToUid,
-  searchTerm,
   onNavigateToMiner,
-  nodes,
   isLoading,
   error,
 }: WeightTableProps) => {
@@ -74,63 +70,8 @@ const WeightTable = ({
     }
   };
 
-  const uids = weights.uids;
-  const incentive = weights.incentives;
-  const weightMap = new Map(
-    uids?.map((uid, index) => [String(uid), incentive?.[index]]),
-  );
-
-  const filteredNodes = filterByUidSearch(nodes, searchTerm);
-
-  const sortedNodes = [...filteredNodes].sort((a, b) => {
-    return a.price - b.price;
-  });
-
-  const uniqueNodes = Array.from(
-    new Map(sortedNodes.map((node) => [node.uid, node])).values(),
-  );
-
-  // Create nodes with ranks based on weight (highest weight = rank 1)
-  const nodesWithRanks = uniqueNodes
-    .sort((a, b) => {
-      const weightA = weightMap.get(a.uid) ?? 0;
-      const weightB = weightMap.get(b.uid) ?? 0;
-      return weightB - weightA; // Descending order for ranking
-    })
-    .map((node, index) => ({
-      ...node,
-      rank: index + 1,
-    }));
-
-  const sortNodes = (nodes: typeof nodesWithRanks) => {
-    if (field === SortField.NULL || direction === SortDirection.NULL)
-      return nodes;
-
-    return [...nodes].sort((a, b) => {
-      switch (field) {
-        case SortField.UID:
-          return direction === SortDirection.ASC
-            ? Number(a.uid) - Number(b.uid)
-            : Number(b.uid) - Number(a.uid);
-        case SortField.HOTKEY:
-          const hotkeyA = hotkeyToUid[a.uid] ?? "";
-          const hotkeyB = hotkeyToUid[b.uid] ?? "";
-          return direction === SortDirection.ASC
-            ? hotkeyA.localeCompare(hotkeyB)
-            : hotkeyB.localeCompare(hotkeyA);
-        case SortField.WEIGHT:
-          const weightA = weightMap.get(a.uid) ?? 0;
-          const weightB = weightMap.get(b.uid) ?? 0;
-          return direction === SortDirection.ASC
-            ? weightA - weightB
-            : weightB - weightA;
-        default:
-          return 0;
-      }
-    });
-  };
-
-  const sorted = sortNodes(nodesWithRanks);
+  const uids = weights?.uids ?? [];
+  const incentive = weights?.incentives ?? [];
 
   if (isLoading) {
     return (
@@ -204,42 +145,6 @@ const WeightTable = ({
     );
   }
 
-  if (searchTerm && filteredNodes.length === 0) {
-    return (
-      <div className="space-y-1">
-        <div className="overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          <table className="min-w-full md:w-full">
-            <thead className="rounded-lg bg-mf-sally-500/15 outline outline-2 outline-offset-[0px] outline-mf-ash-300/25">
-              <tr className="[&>th:first-child]:rounded-l-lg [&>th:last-child]:rounded-r-lg">
-                <th className="font-poppins cursor-pointer px-2 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 md:px-6">
-                  <div className="flex items-center gap-1">UUID</div>
-                </th>
-                <th className="font-poppins cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
-                  <div className="flex items-center gap-1">Hotkey</div>
-                </th>
-                <th className="font-poppins cursor-pointer px-2 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 md:px-6">
-                  <div className="flex items-center justify-end gap-1">
-                    Weight
-                  </div>
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-mf-ash-500/15">
-              <tr className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300/25 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
-                <td
-                  colSpan={3}
-                  className="font-poppins whitespace-nowrap px-2 py-4 text-center text-sm text-mf-edge-700 md:px-6"
-                >
-                  No nodes found matching {searchTerm}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-1">
       <div className="overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
@@ -279,17 +184,17 @@ const WeightTable = ({
             </tr>
           </thead>
           <tbody className="bg-mf-ash-500/15">
-            {sorted.map((node, idx: number) => (
+            {uids.map((uid, idx: number) => (
               <tr
-                key={idx}
-                onClick={() => onNavigateToMiner(node.uid)}
+                key={uid}
+                onClick={() => onNavigateToMiner(String(uid))}
                 className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300/25 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg"
               >
                 <td
                   style={{ width: "30%" }}
                   className="font-poppins whitespace-nowrap px-2 py-4 text-xs text-mf-edge-700 md:px-6 md:text-sm"
                 >
-                  {node.uid}
+                  {uid}
                 </td>
                 <td
                   style={{ width: "40%" }}
@@ -297,15 +202,15 @@ const WeightTable = ({
                 >
                   <div className="flex cursor-pointer items-center gap-2 transition-opacity hover:opacity-80">
                     <span className="font-mono">
-                      {hotkeyToUid[node.uid] || "N/A"}
+                      {hotkeyToUid[String(uid)] || "N/A"}
                     </span>
-                    {hotkeyToUid[node.uid] && (
+                    {hotkeyToUid[String(uid)] && (
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           void copyToClipboard(
-                            hotkeyToUid[node.uid] ?? "",
-                            node.uid,
+                            hotkeyToUid[String(uid)] ?? "",
+                            String(uid),
                             setCopiedHotkey,
                             2000,
                           );
@@ -313,7 +218,7 @@ const WeightTable = ({
                         className="text-mf-sally-300 transition-colors"
                         title="Copy hotkey"
                       >
-                        {copiedHotkey === node.uid ? (
+                        {copiedHotkey === String(uid) ? (
                           <Check className="h-4 w-4 text-mf-sally-300" />
                         ) : (
                           <Copy className="h-4 w-4" />
@@ -326,7 +231,7 @@ const WeightTable = ({
                   style={{ width: "30%" }}
                   className="font-poppins whitespace-nowrap px-2 py-4 text-end text-xs text-mf-sybil-500 md:px-6 md:text-sm"
                 >
-                  {((weightMap.get(node.uid) ?? 0) * 100).toFixed(2)}%
+                  {((incentive[idx] ?? 0) * 100).toFixed(2)}%
                 </td>
               </tr>
             ))}

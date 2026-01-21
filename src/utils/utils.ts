@@ -1,8 +1,11 @@
 import { type AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { z } from "zod";
 
-import { type MinerNode } from "@/app/api/bids/route";
-import { type Miner } from "@/app/api/miners/route";
+import {
+  type MinerNode,
+  type MinerNodes,
+  type MinerNodesWithIP,
+} from "@/app/_components/MinerTable";
 import { type Auction } from "@/server/api/routers/chain";
 
 export const StatsSchema = z.object({
@@ -50,62 +53,28 @@ export async function copyToClipboard<T = string>(
   }
 }
 
-// TODO: Calculate average payout based on total gpu count
-export function getNodesByMiner(auction_results: Auction): Miner[] {
-  const miners: Record<string, Miner> = {};
-
-  for (const gpu in auction_results) {
-    for (const miner of auction_results[gpu]!) {
-      if (!miners[miner.uid]) {
-        miners[miner.uid] = {
-          uid: miner.uid,
-          average_price: miner.price,
-          total_price: miner.price,
-          average_payout: miner.payout,
-          total_payout: miner.payout,
-          gpus: miner.count,
-          nodes: 1,
-          diluted: miner.diluted,
-        };
-        continue;
-      }
-      miners[miner.uid]!.total_price += miner.price;
-      miners[miner.uid]!.total_payout += miner.payout;
-      miners[miner.uid]!.nodes += 1;
-    }
-  }
-
-  return Object.values(miners).map((miner) => ({
-    ...miner,
-    average_price: miner.total_price / miner.nodes,
-    average_payout: miner.total_payout / miner.nodes,
-  }));
-}
-
-export function getNodes(auction_results: Auction): MinerNode[] {
-  const miners: MinerNode[] = [];
+export function getNodes(auction_results: Auction): MinerNodes[] {
+  const miners: MinerNodes[] = [];
   for (const gpu in auction_results) {
     for (const miner of auction_results[gpu]!) {
       const node = {
         uid: miner.uid,
         count: miner.count,
-        price: miner.price,
         payout: miner.payout,
-        diluted: miner.diluted,
-      } as MinerNode;
+        cards: miner.count,
+        compute_type: gpu,
+      } as MinerNodes;
       miners.push(node);
     }
   }
   return miners;
 }
 
-export function removeIPAddress(node: MinerNode): MinerNode {
+export function removeIPAddress(node: MinerNodesWithIP): MinerNode {
   const parsedNode = {
     uid: node.uid,
-    count: node.count,
-    price: node.price,
     payout: node.payout,
-    diluted: node.diluted,
+    count: node.count,
   } as MinerNode;
   return parsedNode;
 }

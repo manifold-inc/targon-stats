@@ -69,45 +69,6 @@ function Content() {
           <div className="rounded-lg border-2 border-mf-ash-300 bg-mf-ash-700">
             <div className="flex items-center justify-between border-b border-mf-ash-300 px-6 py-4">
               <h3 className="font-blinker text-lg font-semibold text-mf-edge-500">
-                Get Specific Endpoints
-              </h3>
-              <button
-                onClick={() =>
-                  copyToClipboard(
-                    `${url}/api/miners/{miner_id}`,
-                    "specific-miner",
-                    setCopiedEndpoint,
-                    2000,
-                  )
-                }
-                className="font-poppins w-24 rounded-lg bg-mf-sally-500 py-1 text-center text-xs font-semibold text-mf-ash-500 transition-opacity hover:opacity-80"
-              >
-                {copiedEndpoint === "specific-miner" ? "Copied" : "Copy"}
-              </button>
-            </div>
-            <div className="p-6">
-              <pre className="overflow-x-auto text-sm text-mf-edge-700">
-                {`GET ${url}/api/miners/{miner_id}
-Response:
-{
-  "data": {
-    "uid": "miner_id",
-    "average_price": 10000,
-    "total_price": 10000,
-    "average_payout": 800,
-    "total_payout": 800,
-    "gpus": 8,
-    "nodes": 1,
-    "diluted": false
-  }
-}`}
-              </pre>
-            </div>
-          </div>
-
-          <div className="rounded-lg border-2 border-mf-ash-300 bg-mf-ash-700">
-            <div className="flex items-center justify-between border-b border-mf-ash-300 px-6 py-4">
-              <h3 className="font-blinker text-lg font-semibold text-mf-edge-500">
                 Get All Miners
               </h3>
               <button
@@ -132,23 +93,15 @@ Response:
   "data": [
     {
       "uid": "1",
-      "average_price": 10000,
-      "average_payout": 800,
-      "total_price": 10000,
-      "total_payout": 800,
-      "gpus": 8,
-      "nodes": 1,
-      "diluted": false
+      "payout": 100,
+      "compute_type": "H200",
+      "cards": 8
     },
     {
       "uid": "2",
-      "average_price": 12000,
-      "average_payout": 950,
-      "total_price": 24000,
-      "total_payout": 1900,
-      "gpus": 16,
-      "nodes": 2,
-      "diluted": true
+      "payout": 100,
+      "compute_type": "H200",
+      "cards": 8
     }
   ],
 }`}
@@ -156,80 +109,6 @@ Response:
             </div>
           </div>
 
-          <div className="rounded-lg border-2 border-mf-ash-300 bg-mf-ash-700">
-            <div className="flex items-center justify-between border-b border-mf-ash-300 px-6 py-4">
-              <h3 className="font-blinker text-lg font-semibold text-mf-edge-500">
-                Get All Bids
-              </h3>
-              <button
-                onClick={() =>
-                  copyToClipboard(
-                    `${url}/api/bids`,
-                    "all-bids",
-                    setCopiedEndpoint,
-                    2000,
-                  )
-                }
-                className="font-poppins w-24 rounded-lg bg-mf-sally-500 py-1 text-center text-xs font-semibold text-mf-ash-500 transition-opacity hover:opacity-80"
-              >
-                {copiedEndpoint === "all-bids" ? "Copied" : "Copy"}
-              </button>
-            </div>
-            <div className="p-6">
-              <pre className="overflow-x-auto text-sm text-mf-edge-700">
-                {`GET ${url}/api/bids
-Response:
-{
-  "data": [
-    {
-      "uid": "1",
-      "gpus": 8,
-      "price": 10000,
-      "payout": 800,
-      "diluted": false
-    },
-    {
-      "uid": "2", 
-      "gpus": 16,
-      "price": 12000,
-      "payout": 950,
-      "diluted": true
-    }
-  ],
-}`}
-              </pre>
-            </div>
-          </div>
-
-          <div className="rounded-lg border-2 border-mf-ash-300 bg-mf-ash-700">
-            <div className="flex items-center justify-between border-b border-mf-ash-300 px-6 py-4">
-              <h3 className="font-blinker text-lg font-semibold text-mf-edge-500">
-                Get Max Bid
-              </h3>
-              <button
-                onClick={() =>
-                  copyToClipboard(
-                    `${url}/api/bids/max`,
-                    "max-bid",
-                    setCopiedEndpoint,
-                    2000,
-                  )
-                }
-                className="font-poppins w-24 rounded-lg bg-mf-sally-500 py-1 text-center text-xs font-semibold text-mf-ash-500 transition-opacity hover:opacity-80"
-              >
-                {copiedEndpoint === "max-bid" ? "Copied" : "Copy"}
-              </button>
-            </div>
-            <div className="p-6">
-              <pre className="overflow-x-auto text-sm text-mf-edge-700">
-                {`GET ${url}/api/bids/max
-Response:
-{
-  "data": 300
-}`}
-              </pre>
-            </div>
-          </div>
           <div className="rounded-lg border-2 border-mf-ash-300 bg-mf-ash-700">
             <div className="flex items-center justify-between border-b border-mf-ash-300 px-6 py-4">
               <h3 className="font-blinker text-lg font-semibold text-mf-edge-500">

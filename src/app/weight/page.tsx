@@ -9,7 +9,6 @@ import Search from "@/app/_components/Search";
 import WeightTable from "@/app/_components/WeightTable";
 import { reactClient } from "@/trpc/react";
 import {
-  getNodes,
   handleBlockChange,
   handleSearchNavigation,
 } from "@/utils/utils";
@@ -90,8 +89,7 @@ function Content() {
               Targon Weights
             </h2>
             <WeightTable
-              weights={auction?.weights ?? {}}
-              nodes={getNodes(auction?.auction_results ?? {})}
+              weights={auction?.weights}
               hotkeyToUid={auction?.hotkey_to_uid ?? {}}
               searchTerm={searchTerm}
               onNavigateToMiner={handleClickTab}

@@ -4,7 +4,6 @@ import Image from "next/image";
 
 import CurrentBlock from "@/app/_components/CurrentBlock";
 import EmissionPool from "@/app/_components/EmissionPool";
-import MaxBid from "@/app/_components/MaxBid";
 import TaoPrice from "@/app/_components/TaoPrice";
 import { reactClient } from "@/trpc/react";
 
@@ -28,20 +27,14 @@ export default function ChainStats() {
             </h1>
           </div>
           <div className="grid grid-cols-2 justify-items-center gap-3 sm:flex sm:flex-wrap sm:items-center sm:justify-end sm:gap-2">
-            <div className="flex hidden min-h-[1.5rem] items-center md:block md:pt-1">
-              <MaxBid maxBid={auction?.max_bid || 0} />
-            </div>
-            <div className="flex hidden min-h-[1.5rem] items-center md:block md:pt-1 ">
+            <div className="hidden min-h-[1.5rem] items-center md:block md:pt-1 ">
               <TaoPrice price={auction?.tao_price || 0} />
             </div>
             <div className="flex min-h-[1.5rem] items-center">
               <EmissionPool pool={auction?.emission_pool || 0} />
             </div>
-            <div className="block flex min-h-[1.5rem] items-center md:hidden">
+            <div className="flex min-h-[1.5rem] items-center md:hidden">
               <TaoPrice price={auction?.tao_price || 0} />
-            </div>
-            <div className="block flex min-h-[1.5rem] items-center sm:hidden">
-              <MaxBid maxBid={auction?.max_bid || 0} />
             </div>
             <div className="flex min-h-[1.5rem] items-center">
               <CurrentBlock block={auction?.block || 0} />
