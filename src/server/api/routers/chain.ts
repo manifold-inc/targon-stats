@@ -5,9 +5,19 @@ import { connectToMongoDb } from "@/schema/mongoDB";
 import { createTRPCRouter, publicAuthlessProcedure } from "@/server/api/trpc";
 import { removeIPAddress } from "@/utils/utils";
 
-export type Auction = Record<string, MinerNode[]>;
+export type AuctionResults = Record<string, MinerNode[]>;
+
+export type Auction = {
+  target_cards: number;
+  target_nodes: number;
+  target_price: number;
+  max_price: number;
+  min_cluster_size: number;
+};
+
 export interface AuctionState {
-  auction_results: Auction;
+  auction_results: AuctionResults;
+  auctions: Record<string, Auction>;
   emission_pool: number;
   block: number;
   tao_price: number;
@@ -31,8 +41,8 @@ export async function getAuctionState(block?: number): Promise<AuctionState> {
     throw new Error("Failed to get auction for block " + (block ?? "latest"));
   }
 
-  const auction_results = data.auction_results as Auction;
-  const parsedNodes: Auction = {};
+  const auction_results = data.auction_results as AuctionResults;
+  const parsedNodes: AuctionResults = {};
 
   for (const gpu in auction_results) {
     parsedNodes[gpu] = auction_results[gpu]!.map((node: MinerNode) =>
@@ -48,6 +58,7 @@ export async function getAuctionState(block?: number): Promise<AuctionState> {
 
   const state: AuctionState = {
     auction_results: parsedNodes,
+    auctions: data.auctions as Record<string, Auction>,
     emission_pool: data.emission_pool as number,
     block: data.block as number,
     tao_price: data.tao_price as number,

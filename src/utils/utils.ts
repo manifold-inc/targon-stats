@@ -6,7 +6,7 @@ import {
   type MinerNodes,
   type MinerNodesWithIP,
 } from "@/app/_components/MinerTable";
-import { type Auction } from "@/server/api/routers/chain";
+import { type AuctionResults } from "@/server/api/routers/chain";
 
 export const StatsSchema = z.object({
   max_tokens_per_second: z.number(),
@@ -53,7 +53,7 @@ export async function copyToClipboard<T = string>(
   }
 }
 
-export function getNodes(auction_results: Auction): MinerNodes[] {
+export function getNodes(auction_results: AuctionResults): MinerNodes[] {
   const miners: MinerNodes[] = [];
   for (const gpu in auction_results) {
     for (const miner of auction_results[gpu]!) {
