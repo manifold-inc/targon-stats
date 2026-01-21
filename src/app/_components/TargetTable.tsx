@@ -21,7 +21,7 @@ const TargetTable = ({
     block += auc + "\n";
     block +=
       "\t" +
-      "TargetNodes " +
+      "TargetCards " +
       (auction[auc]?.target_cards ?? auction[auc]?.target_nodes);
     block += "\n\t" + "TargetPrice " + auction[auc]?.target_price;
     block += "\n\t" + "MaxPrice " + auction[auc]?.max_price;
