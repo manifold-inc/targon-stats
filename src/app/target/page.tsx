@@ -7,10 +7,7 @@ import BlockSelector from "@/app/_components/BlockSelector";
 import Navigation from "@/app/_components/Navigation";
 import Search from "@/app/_components/Search";
 import { reactClient } from "@/trpc/react";
-import {
-  handleBlockChange,
-  handleSearchNavigation,
-} from "@/utils/utils";
+import { handleBlockChange, handleSearchNavigation } from "@/utils/utils";
 import TargetTable from "../_components/TargetTable";
 
 function Content() {

@@ -8,10 +8,7 @@ import Navigation from "@/app/_components/Navigation";
 import Search from "@/app/_components/Search";
 import WeightTable from "@/app/_components/WeightTable";
 import { reactClient } from "@/trpc/react";
-import {
-  handleBlockChange,
-  handleSearchNavigation,
-} from "@/utils/utils";
+import { handleBlockChange, handleSearchNavigation } from "@/utils/utils";
 
 function Content() {
   const router = useRouter();

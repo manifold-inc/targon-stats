@@ -12,10 +12,11 @@ const Navigation = () => {
   const getLinkClassName = (path: string) => {
     const isActive =
       pathname === path || (pathname === "/" && path === "/miner");
-    return `flex items-center gap-2 rounded-lg px-4 py-2 text-lg font-semibold transition-colors ${isActive
+    return `flex items-center gap-2 rounded-lg px-4 py-2 text-lg font-semibold transition-colors ${
+      isActive
         ? "bg-[#272D38] text-mf-edge-500"
         : "bg-transparent text-mf-edge-300 hover:bg-[#272D38]/50"
-      }`;
+    }`;
   };
 
   return (

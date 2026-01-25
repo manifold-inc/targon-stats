@@ -8,13 +8,11 @@ export const env = createEnv({
   server: {
     NODE_ENV: z.enum(["development", "test", "production"]).optional(),
     MONGO_URI: z.string(),
-    VERCEL_URL: z.string(),
   },
 
   runtimeEnv: {
     NODE_ENV: process.env.NODE_ENV,
     MONGO_URI: process.env.MONGO_URI,
-    VERCEL_URL: process.env.VERCEL_ENV ?? "http://localhost:3000",
   },
 
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
