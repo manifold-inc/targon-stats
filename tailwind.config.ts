@@ -7,6 +7,10 @@ export default {
   theme: {
     transparent: "transparent",
     current: "currentColor",
+    fontFamily: {
+      sans: ["var(--font-inter)", "sans-serif"],
+      saira: ["var(--font-saira)", "sans-serif"],
+    },
     extend: {
       colors: {
         mf: {

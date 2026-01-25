@@ -4,8 +4,8 @@
 
 :root {
   /* Font Families */
-  --font-family-sans: var(--font-blinker);
-  --font-family-poppins: var(--font-poppins);
+  --font-family-sans: var(--font-inter);
+  --font-family-saira: var(--font-saira);
 
   /* Sky Colors */
   --color-mf-sky-300: #8dc7fe;
@@ -197,12 +197,12 @@
 }
 
 /* Custom Fonts */
-.font-blinker {
-  font-family: var(--font-family-sans);
+body {
+  font-family: var(--font-family-sans), sans-serif;
 }
 
-.font-poppins {
-  font-family: var(--font-family-poppins);
+.font-saira {
+  font-family: var(--font-family-saira), sans-serif;
 }
 
 html {

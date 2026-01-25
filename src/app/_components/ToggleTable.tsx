@@ -32,7 +32,7 @@ const ToggleTable = ({
         onClick={() => handleTableChange("miner")}
       >
         <MinersSVG isSelected={selectedTable === "miner"} />
-        <span className="font-blinker">Miners</span>
+        <span>Miners</span>
       </button>
 
       <button
@@ -45,7 +45,7 @@ const ToggleTable = ({
         onClick={() => handleTableChange("bid")}
       >
         <BuyoutsSVG isSelected={selectedTable === "bid"} />
-        <span className="font-blinker">Buyouts</span>
+        <span>Buyouts</span>
       </button>
 
       <button
@@ -58,7 +58,7 @@ const ToggleTable = ({
         onClick={() => handleTableChange("weight")}
       >
         <WeightsSVG isSelected={selectedTable === "weight"} />
-        <span className="font-blinker">Weights</span>
+        <span>Weights</span>
       </button>
     </div>
   );

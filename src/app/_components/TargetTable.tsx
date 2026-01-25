@@ -41,7 +41,7 @@ const TargetTable = ({
         </pre>
       </div>
       <div className="prose pt-12">
-        <h2 className="font-blinker text-lg font-semibold tracking-wider text-mf-edge-500">
+        <h2 className="text-lg font-semibold tracking-wider text-mf-edge-500">
           Current Compute Online
         </h2>
         <pre>

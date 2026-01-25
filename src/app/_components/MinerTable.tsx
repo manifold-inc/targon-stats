@@ -141,7 +141,7 @@ export default function MinerTable({
       <thead className="rounded-lg bg-mf-sally-500/15 outline outline-2 outline-offset-[0px] outline-mf-ash-300/25">
         <tr className="[&>th:first-child]:rounded-l-lg [&>th:last-child]:rounded-r-lg">
           <th
-            className="font-poppins cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700"
+            className="cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700"
             onClick={() => handleSort(SortField.UID)}
           >
             <div className="flex items-center gap-1">
@@ -150,7 +150,7 @@ export default function MinerTable({
             </div>
           </th>
           <th
-            className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700"
+            className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700"
             onClick={() => handleSort(SortField.PRICE)}
           >
             <div className="flex items-center justify-end gap-1 whitespace-nowrap">
@@ -160,7 +160,7 @@ export default function MinerTable({
             </div>
           </th>
           <th
-            className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700"
+            className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700"
             onClick={() => handleSort(SortField.CARDS)}
           >
             <div className="flex items-center justify-end gap-1">
@@ -170,7 +170,7 @@ export default function MinerTable({
             </div>
           </th>
           <th
-            className="font-poppins cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700"
+            className="cursor-pointer px-6 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700"
             onClick={() => handleSort(SortField.TYPE)}
           >
             <div className="flex items-center justify-end gap-1 whitespace-nowrap">
@@ -194,7 +194,7 @@ export default function MinerTable({
               <tr className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300/25 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
                 <td
                   colSpan={5}
-                  className="font-poppins whitespace-nowrap px-2 py-4 text-center text-sm text-mf-edge-700 md:px-6"
+                  className="whitespace-nowrap px-2 py-4 text-center text-sm text-mf-edge-700 md:px-6"
                 >
                   Loading miners...
                 </td>
@@ -216,7 +216,7 @@ export default function MinerTable({
               <tr className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300/25 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
                 <td
                   colSpan={5}
-                  className="font-poppins whitespace-nowrap px-2 py-4 text-center text-sm text-red-400 md:px-6"
+                  className="whitespace-nowrap px-2 py-4 text-center text-sm text-red-400 md:px-6"
                 >
                   Error loading miners: {error.message}
                 </td>
@@ -238,7 +238,7 @@ export default function MinerTable({
               <tr className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300/25 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
                 <td
                   colSpan={5}
-                  className="font-poppins whitespace-nowrap px-2 py-4 text-center text-sm text-mf-edge-700 md:px-6"
+                  className="whitespace-nowrap px-2 py-4 text-center text-sm text-mf-edge-700 md:px-6"
                 >
                   No miners found matching {searchTerm}
                 </td>
@@ -262,17 +262,17 @@ export default function MinerTable({
                 className="rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300/25 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg"
               >
                 <td
-                  className={`font-poppins flex items-center gap-2 whitespace-nowrap px-2 py-4 text-sm text-mf-edge-300 md:px-6`}
+                  className={`flex items-center gap-2 whitespace-nowrap px-2 py-4 text-sm text-mf-edge-300 md:px-6`}
                 >
                   {node.uid}
                 </td>
-                <td className="font-poppins whitespace-nowrap px-2 py-4 text-end text-xs text-mf-sybil-500 md:px-6 md:text-sm">
+                <td className="whitespace-nowrap px-2 py-4 text-end text-xs text-mf-sybil-500 md:px-6 md:text-sm">
                   ${(node.payout / node.cards).toFixed(2)}/h
                 </td>
-                <td className="font-poppins whitespace-nowrap px-2 py-4 text-end text-sm text-mf-edge-700 md:px-6">
+                <td className="whitespace-nowrap px-2 py-4 text-end text-sm text-mf-edge-700 md:px-6">
                   {node.cards}
                 </td>
-                <td className="font-poppins whitespace-nowrap px-2 py-4 text-end text-xs md:px-6 md:text-sm">
+                <td className="whitespace-nowrap px-2 py-4 text-end text-xs md:px-6 md:text-sm">
                   {node.compute_type}
                 </td>
               </tr>

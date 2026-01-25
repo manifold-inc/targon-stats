@@ -62,13 +62,13 @@ function Content() {
         </div>
 
         <div className="mt-5 space-y-6 pb-20">
-          <h2 className="font-blinker mb-3 text-2xl font-semibold tracking-wider text-mf-edge-500">
+          <h2 className="mb-3 text-2xl font-semibold tracking-wider text-mf-edge-500">
             HTTP API Endpoints
           </h2>
 
           <div className="rounded-lg border-2 border-mf-ash-300 bg-mf-ash-700">
             <div className="flex items-center justify-between border-b border-mf-ash-300 px-6 py-4">
-              <h3 className="font-blinker text-lg font-semibold text-mf-edge-500">
+              <h3 className="text-lg font-semibold text-mf-edge-500">
                 Get All Miners
               </h3>
               <button
@@ -80,7 +80,7 @@ function Content() {
                     2000,
                   )
                 }
-                className="font-poppins w-24 rounded-lg bg-mf-sally-500 py-1 text-center text-xs font-semibold text-mf-ash-500 transition-opacity hover:opacity-80"
+                className="w-24 rounded-lg bg-mf-sally-500 py-1 text-center text-xs font-semibold text-mf-ash-500 transition-opacity hover:opacity-80"
               >
                 {copiedEndpoint === "all-miners" ? "Copied" : "Copy"}
               </button>
@@ -111,7 +111,7 @@ Response:
 
           <div className="rounded-lg border-2 border-mf-ash-300 bg-mf-ash-700">
             <div className="flex items-center justify-between border-b border-mf-ash-300 px-6 py-4">
-              <h3 className="font-blinker text-lg font-semibold text-mf-edge-500">
+              <h3 className="text-lg font-semibold text-mf-edge-500">
                 Get Attestation Errors
               </h3>
               <button
@@ -123,7 +123,7 @@ Response:
                     2000,
                   )
                 }
-                className="font-poppins w-24 rounded-lg bg-mf-sally-500 py-1 text-center text-xs font-semibold text-mf-ash-500 transition-opacity hover:opacity-80"
+                className="w-24 rounded-lg bg-mf-sally-500 py-1 text-center text-xs font-semibold text-mf-ash-500 transition-opacity hover:opacity-80"
               >
                 {copiedEndpoint === "attestation-errors" ? "Copied" : "Copy"}
               </button>

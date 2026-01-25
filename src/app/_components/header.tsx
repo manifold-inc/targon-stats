@@ -25,7 +25,7 @@ const Header = () => {
           />
           <Link href="/" className="-m-1.5 p-1.5">
             <span className="sr-only">Targon </span>
-            <span className="font-blinker text-xl font-bold tracking-wider text-mf-edge-500 ">
+            <span className="text-xl font-bold tracking-wider text-mf-edge-500 ">
               TARGON{" "}
             </span>
           </Link>
@@ -43,13 +43,13 @@ const Header = () => {
         <div className="hidden lg:flex lg:gap-x-3">
           <Link
             href="/"
-            className="font-poppins rounded-lg bg-[#272D38] px-7 py-0.5 text-sm/6 font-medium text-[#8DC7FE]"
+            className="rounded-lg bg-[#272D38] px-7 py-0.5 text-sm/6 font-medium text-[#8DC7FE]"
           >
             Home
           </Link>
           <Link
             href="/docs"
-            className="font-poppins rounded-lg bg-mf-sally-500 px-7 py-0.5 text-sm/6 font-semibold text-mf-ash-500"
+            className="rounded-lg bg-mf-sally-500 px-7 py-0.5 text-sm/6 font-semibold text-mf-ash-500"
           >
             API Docs
           </Link>
@@ -81,14 +81,14 @@ const Header = () => {
             <div className="flex flex-col items-center gap-4">
               <Link
                 href="/"
-                className="font-poppins w-36 rounded-lg bg-[#272D38] px-7 py-2 text-center text-lg font-medium text-[#8DC7FE]"
+                className="w-36 rounded-lg bg-[#272D38] px-7 py-2 text-center text-lg font-medium text-[#8DC7FE]"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Home
               </Link>
               <Link
                 href="/docs"
-                className="font-poppins w-36 rounded-lg bg-mf-sally-500 px-7 py-2 text-center text-lg font-semibold text-mf-ash-500"
+                className="w-36 rounded-lg bg-mf-sally-500 px-7 py-2 text-center text-lg font-semibold text-mf-ash-500"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 API Docs

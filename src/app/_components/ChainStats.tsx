@@ -22,7 +22,7 @@ export default function ChainStats() {
               height={30}
               className="h-7 w-7"
             />
-            <h1 className="font-blinker flex items-center text-xl font-semibold text-mf-edge-500">
+            <h1 className="flex items-center text-xl font-semibold text-mf-edge-500">
               Targon Stats
             </h1>
           </div>

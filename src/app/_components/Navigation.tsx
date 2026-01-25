@@ -23,15 +23,15 @@ const Navigation = () => {
     <div className="flex items-center gap-2 p-1">
       <Link href="/miner" className={getLinkClassName("/miner")}>
         <MinersSVG isSelected={pathname === "/miner"} />
-        <span className="font-blinker">Miners</span>
+        <span>Miners</span>
       </Link>
       <Link href="/weight" className={getLinkClassName("/weight")}>
         <WeightsSVG isSelected={pathname === "/weight"} />
-        <span className="font-blinker">Weights</span>
+        <span>Weights</span>
       </Link>
       <Link href="/target" className={getLinkClassName("/target")}>
         <MinersSVG isSelected={pathname === "/target"} />
-        <span className="font-blinker">Targets</span>
+        <span>Targets</span>
       </Link>
     </div>
   );

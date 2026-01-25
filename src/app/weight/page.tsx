@@ -82,7 +82,7 @@ function Content() {
 
         <div className="mt-5 pb-20">
           <div className="rounded-lg border-2 border-mf-ash-300 bg-mf-ash-700 py-4 pl-4 pr-4 md:p-8 md:py-8">
-            <h2 className="font-blinker mb-4 text-lg font-semibold tracking-wider text-mf-edge-500 md:mb-8">
+            <h2 className="mb-4 text-lg font-semibold tracking-wider text-mf-edge-500 md:mb-8">
               Targon Weights
             </h2>
             <WeightTable
