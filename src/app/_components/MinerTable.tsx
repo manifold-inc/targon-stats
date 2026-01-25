@@ -1,7 +1,11 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
-import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
+import {
+  RiArrowDownLine,
+  RiArrowUpDownLine,
+  RiArrowUpLine,
+} from "@remixicon/react";
 
 import { filterByUidSearch } from "@/utils/utils";
 
@@ -76,15 +80,16 @@ export default function MinerTable({
   };
 
   const getIcon = (selectedField: SortField) => {
-    if (field !== selectedField) return <ArrowUpDown className="h-4 w-4" />;
+    if (field !== selectedField)
+      return <RiArrowUpDownLine className="h-4 w-4" />;
 
     switch (direction) {
       case SortDirection.ASC:
-        return <ArrowUp className="h-4 w-4" />;
+        return <RiArrowUpLine className="h-4 w-4" />;
       case SortDirection.DESC:
-        return <ArrowDown className="h-4 w-4" />;
+        return <RiArrowDownLine className="h-4 w-4" />;
       default:
-        return <ArrowUpDown className="h-4 w-4" />;
+        return <RiArrowUpDownLine className="h-4 w-4" />;
     }
   };
 

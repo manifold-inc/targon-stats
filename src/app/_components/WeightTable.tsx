@@ -1,7 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowDown, ArrowUp, ArrowUpDown, Check, Copy } from "lucide-react";
+import {
+  RiArrowDownLine,
+  RiArrowUpDownLine,
+  RiArrowUpLine,
+  RiCheckLine,
+  RiFileCopyLine,
+} from "@remixicon/react";
 
 import { copyToClipboard } from "@/utils/utils";
 
@@ -58,15 +64,16 @@ const WeightTable = ({
   };
 
   const getIcon = (selectedField: SortField) => {
-    if (field !== selectedField) return <ArrowUpDown className="h-4 w-4" />;
+    if (field !== selectedField)
+      return <RiArrowUpDownLine className="h-4 w-4" />;
 
     switch (direction) {
       case SortDirection.ASC:
-        return <ArrowUp className="h-4 w-4" />;
+        return <RiArrowUpLine className="h-4 w-4" />;
       case SortDirection.DESC:
-        return <ArrowDown className="h-4 w-4" />;
+        return <RiArrowDownLine className="h-4 w-4" />;
       default:
-        return <ArrowUpDown className="h-4 w-4" />;
+        return <RiArrowUpDownLine className="h-4 w-4" />;
     }
   };
 
@@ -219,9 +226,9 @@ const WeightTable = ({
                         title="Copy hotkey"
                       >
                         {copiedHotkey === String(uid) ? (
-                          <Check className="h-4 w-4 text-mf-sally-300" />
+                          <RiCheckLine className="h-4 w-4 text-mf-sally-300" />
                         ) : (
-                          <Copy className="h-4 w-4" />
+                          <RiFileCopyLine className="h-4 w-4" />
                         )}
                       </button>
                     )}

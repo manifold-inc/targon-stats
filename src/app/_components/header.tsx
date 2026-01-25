@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Dialog, DialogPanel } from "@headlessui/react";
-import { Menu, X } from "lucide-react";
+import { RiCloseLine, RiMenuLine } from "@remixicon/react";
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -37,7 +37,7 @@ const Header = () => {
             className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-300"
           >
             <span className="sr-only">Open main menu</span>
-            <Menu className="size-6" />
+            <RiMenuLine className="size-6" />
           </button>
         </div>
         <div className="hidden lg:flex lg:gap-x-3">
@@ -74,7 +74,7 @@ const Header = () => {
               className="-m-2.5 rounded-md p-2.5 text-gray-300"
             >
               <span className="sr-only">Close menu</span>
-              <X className="size-6" />
+              <RiCloseLine className="size-6" />
             </button>
           </div>
           <div className="-mt-20 flex h-full flex-col items-center justify-center">

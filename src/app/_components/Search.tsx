@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
-import { ChevronDown, Search as SearchIcon, X } from "lucide-react";
+import { RiArrowDownSLine, RiCloseLine, RiSearchLine } from "@remixicon/react";
 
 import { reactClient } from "@/trpc/react";
 import { getNodes } from "@/utils/utils";
@@ -91,7 +91,7 @@ export default function Search({
     <div className="relative" ref={dropdownRef}>
       <div className="relative">
         <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-          <SearchIcon className="h-5 w-5 text-mf-edge-700" />
+          <RiSearchLine className="h-5 w-5 text-mf-edge-700" />
         </div>
         <input
           ref={inputRef}
@@ -110,7 +110,7 @@ export default function Search({
               onMouseDown={(e) => e.preventDefault()} // Prevent blur when clicking
               className="px-2 py-2 text-gray-500 hover:opacity-80 dark:text-gray-400 dark:hover:text-gray-200"
             >
-              <X className="h-4 w-4" />
+              <RiCloseLine className="h-4 w-4" />
             </button>
           )}
           <button
@@ -118,7 +118,7 @@ export default function Search({
             onMouseDown={(e) => e.preventDefault()} // Prevent blur when clicking
             className="px-2 py-2 text-mf-edge-700 hover:opacity-80"
           >
-            <ChevronDown
+            <RiArrowDownSLine
               className={`h-4 w-4 transition-transform ${isDropdownOpen ? "rotate-180" : ""}`}
             />
           </button>

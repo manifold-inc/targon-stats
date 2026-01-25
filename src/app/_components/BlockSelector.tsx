@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { ChevronDown } from "lucide-react";
+import { RiArrowDownSLine } from "@remixicon/react";
 
 interface BlockSelectorProps {
   block: number;
@@ -46,7 +46,7 @@ export default function BlockSelector({
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         disabled={isLoading}
-        className="flex items-center gap-2 rounded-lg border border-2 border-mf-ash-300 bg-mf-ash-500 px-2 py-2 text-sm font-medium text-white shadow-sm focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 sm:px-4"
+        className="flex items-center gap-2 rounded-lg border-2 border-mf-ash-300 bg-mf-ash-500 px-2 py-2 text-sm font-medium text-white shadow-sm focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 sm:px-4"
       >
         <Image
           src="/box.svg"
@@ -68,7 +68,7 @@ export default function BlockSelector({
             </>
           )}
         </span>
-        <ChevronDown
+        <RiArrowDownSLine
           className={`ml-2 h-4 w-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
         />
       </button>
