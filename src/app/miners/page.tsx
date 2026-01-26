@@ -8,8 +8,8 @@ import {
   handleSearchNavigation,
 } from "@/utils/utils";
 import { RiToolsFill } from "@remixicon/react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useCallback, useState } from "react";
 
 import PageHeader from "../_components/PageHeader";
 
@@ -20,7 +20,6 @@ export default function MinersPage() {
   const [searchTerm, setSearchTerm] = useState("");
 
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   const handleSearchChange = useCallback(
     (term: string) =>
@@ -33,14 +32,6 @@ export default function MinersPage() {
       handleBlockChange(block, setSelectedBlock, handleSearchChange),
     [handleSearchChange]
   );
-
-  const previousSearchParamRef = useRef<string | null>(null);
-
-  const searchParam = searchParams.get("search");
-  if (searchParam !== previousSearchParamRef.current) {
-    previousSearchParamRef.current = searchParam;
-    setSearchTerm(searchParam || "");
-  }
 
   const {
     data: auction,
