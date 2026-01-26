@@ -28,7 +28,7 @@ const Header = () => {
             <button
               type="button"
               onClick={() => setMobileMenuOpen(true)}
-              className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-300"
+              className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5"
             >
               <RiMenuLine className="size-5 hover:opacity-80" />
             </button>

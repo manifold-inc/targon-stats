@@ -45,9 +45,9 @@ export const Navigation = () => {
     <div
       onMouseLeave={() => setHoveredItem(null)}
       data-nav-header
-      className="border-b border-mf-border-600 hidden lg:flex px-14"
+      className="border-b border-mf-border-600 hidden lg:flex px-18"
     >
-      <div className="items-center pb-1 px-2 flex flex-row">
+      <div className="items-center px-2 flex flex-row">
         {navigation.map((route, index) => {
           const Icon = route.icon;
           const isActive = pathname === route.pathname;
@@ -97,7 +97,7 @@ export const Navigation = () => {
                 {isActive && (
                   <motion.div
                     layoutId="nav-active-line"
-                    className="absolute -bottom-2 -left-2 -right-2 h-0.5 bg-mf-sally-500"
+                    className="absolute -bottom-1 -left-2 -right-2 h-0.25 bg-mf-sally-500"
                     initial={false}
                     transition={{
                       type: "spring",

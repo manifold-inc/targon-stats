@@ -15,14 +15,14 @@ export default function TopButtons({
       <Link href="/docs">
         <Button
           value="Docs"
-          valueClassName="text-mf-milk-600 animate-flip-up"
+          valueClassName="animate-flip-up"
           icon={<RiFileFill className="h-3.5 w-3.5 text-mf-sally-300" />}
         />
       </Link>
       <Link href="https://targon.com" target="_blank">
         <Button
           value="Launch"
-          valueClassName="text-mf-milk-600 animate-flip-up"
+          valueClassName="animate-flip-up"
           icon={
             <Image
               src="/targon-wings.svg"

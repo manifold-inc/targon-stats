@@ -7,7 +7,7 @@ export default function Button({
   label,
   value,
   mobileLabel,
-  valueClassName = "text-mf-sybil-300",
+  valueClassName = "text-mf-milk-600",
 }: {
   icon?: ReactNode;
   label?: string;
@@ -25,7 +25,9 @@ export default function Button({
             {icon}
           </div>
         )}
-        <span className={`flex items-center gap-0.5 px-4 ${valueClassName}`}>
+        <span
+          className={`flex items-center gap-0.5 px-4 whitespace-nowrap ${valueClassName}`}
+        >
           {value}
         </span>
       </div>
