@@ -42,7 +42,7 @@ export const Navigation = () => {
     <div
       onMouseLeave={() => setHoveredItem(null)}
       data-nav-header
-      className="border-b border-mf-border-600 hidden lg:flex px-18"
+      className="border-b border-mf-border-600 hidden lg:flex px-12"
     >
       <div className="items-center px-2 flex flex-row">
         {navigation.map((route, index) => {
@@ -64,9 +64,9 @@ export const Navigation = () => {
                 data-nav-item
                 data-pathname={route.pathname}
               >
-                <Icon className="h-3.5 w-3.5 -translate-y-[1px] relative z-10 transition-colors duration-200 ease-in-out text-mf-sally-500" />
+                <Icon className="h-4.5 w-4.5 -translate-y-px relative z-10 transition-colors duration-200 ease-in-out text-mf-sally-500" />
                 <p
-                  className={`text-xs relative z-10 transition-colors duration-200 ease-in-out ${
+                  className={`text-sm relative z-10 transition-colors duration-200 ease-in-out ${
                     isActive || hoveredItem === route.pathname
                       ? "text-mf-milk-500"
                       : "text-mf-milk-700"
