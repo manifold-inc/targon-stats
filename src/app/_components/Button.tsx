@@ -17,8 +17,6 @@ export default function Button({
   hideOnDesktop?: boolean;
   valueClassName?: string;
 }) {
-  const displayLabel = mobileLabel || label;
-  
   return (
     <div
       className="group relative flex flex-col items-center"

@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { Dialog, DialogPanel } from "@headlessui/react";
 import { RiCloseLine } from "@remixicon/react";
 import TopStats from "@/app/_components/header/TopStats";
