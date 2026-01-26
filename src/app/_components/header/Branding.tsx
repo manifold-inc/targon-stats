@@ -1,8 +1,8 @@
 "use client";
 
+import { RiBarChartFill } from "@remixicon/react";
 import Image from "next/image";
 import Link from "next/link";
-import { RiBarChartFill } from "@remixicon/react";
 
 const Branding = () => {
   return (
@@ -16,7 +16,7 @@ const Branding = () => {
           className="h-5 w-5"
           priority
         />
-        <Image 
+        <Image
           src="/targon-text.svg"
           alt="Targon-text"
           width={120}
@@ -25,8 +25,10 @@ const Branding = () => {
           priority
         />
         <span className="bg-mf-sally-800 group-hover:bg-mf-sally-700 transition-colors rounded-full w-15 h-3.75 flex items-center justify-center gap-0.5">
-          <RiBarChartFill className="size-2 text-mf-sally-500"/>
-          <span className="text-[0.45rem] font-light text-mf-milk-600">Stats</span>
+          <RiBarChartFill className="size-2 text-mf-sally-500" />
+          <span className="text-[0.45rem] font-light text-mf-milk-600">
+            Stats
+          </span>
         </span>
       </Link>
     </div>

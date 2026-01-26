@@ -1,8 +1,7 @@
-import { type inferReactQueryProcedureOptions } from "@trpc/react-query";
-import { type inferRouterInputs, type inferRouterOutputs } from "@trpc/server";
-
 import { chainRouter } from "@/server/api/routers/chain";
 import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
+import { type inferReactQueryProcedureOptions } from "@trpc/react-query";
+import { type inferRouterInputs, type inferRouterOutputs } from "@trpc/server";
 
 /**
  * This is the primary router for your server.

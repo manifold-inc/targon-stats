@@ -1,15 +1,12 @@
-import type { Metadata } from "next";
-
+import Footer from "@/app/_components/Footer";
+import Header from "@/app/_components/header/Header";
+import { WithGlobalProvider } from "@/app/_components/providers";
 import "@/styles/globals.css";
-
-import { Inter, Saira } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import clsx from "clsx";
+import type { Metadata } from "next";
+import { Inter, Saira } from "next/font/google";
 import { Toaster } from "sonner";
-
-import Header from "@/app/_components/header/Header";
-import Footer from "@/app/_components/Footer";
-import { WithGlobalProvider } from "@/app/_components/providers";
 
 const inter = Inter({
   subsets: ["latin"],

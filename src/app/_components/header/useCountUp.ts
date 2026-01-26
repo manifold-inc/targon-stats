@@ -37,7 +37,7 @@ function getFormatString(end: number, decimals: number): string {
 function formatValue(
   value: number,
   formatStr: string,
-  decimals: number,
+  decimals: number
 ): string {
   if (decimals === 0) {
     const rounded = Math.round(value);
@@ -65,7 +65,7 @@ export function useCountUp({
   const [count, setCount] = useState(0);
   const formatStr = useMemo(
     () => getFormatString(end, decimals),
-    [end, decimals],
+    [end, decimals]
   );
   const animationRef = useRef<number | null>(null);
   const countRef = useRef(0);

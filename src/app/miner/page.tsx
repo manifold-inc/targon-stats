@@ -1,8 +1,5 @@
 "use client";
 
-import { Suspense, useCallback, useRef, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-
 import BlockSelector from "@/app/_components/BlockSelector";
 import MinerTable from "@/app/_components/MinerTable";
 import Search from "@/app/_components/Search";
@@ -12,10 +9,12 @@ import {
   handleBlockChange,
   handleSearchNavigation,
 } from "@/utils/utils";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useCallback, useRef, useState } from "react";
 
 function Content() {
   const [selectedBlock, setSelectedBlock] = useState<number | undefined>(
-    undefined,
+    undefined
   );
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -25,13 +24,13 @@ function Content() {
   const handleSearchChange = useCallback(
     (term: string) =>
       handleSearchNavigation(term, "/miner", setSearchTerm, router),
-    [setSearchTerm, router],
+    [setSearchTerm, router]
   );
 
   const onBlockChange = useCallback(
     (block: number) =>
       handleBlockChange(block, setSelectedBlock, handleSearchChange),
-    [handleSearchChange],
+    [handleSearchChange]
   );
 
   const previousSearchParamRef = useRef<string | null>(null);

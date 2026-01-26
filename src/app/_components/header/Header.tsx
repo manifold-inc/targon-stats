@@ -1,21 +1,19 @@
 "use client";
 
-import { useState } from "react";
-import { RiMenuLine } from "@remixicon/react";
 import Branding from "@/app/_components/header/Branding";
-import TopStats from "@/app/_components/header/TopStats";
-import TopButtons from "@/app/_components/header/TopButtons";
 import MobileMenu from "@/app/_components/header/MobileMenu";
 import Navigation from "@/app/_components/header/Navigation";
+import TopButtons from "@/app/_components/header/TopButtons";
+import TopStats from "@/app/_components/header/TopStats";
+import { RiMenuLine } from "@remixicon/react";
+import { useState } from "react";
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-30 bg-mf-night-500/90 backdrop-blur-sm">
-      <nav
-        aria-label="Global"
-      >
+      <nav aria-label="Global">
         <div
           aria-label="Global"
           className="w-full items-center flex pt-6 lg:pb-3 pb-6 px-10 relative lg:border-b-0 border-b border-mf-border-600"
@@ -35,7 +33,7 @@ const Header = () => {
               <RiMenuLine className="size-5 hover:opacity-80" />
             </button>
           </div>
-          
+
           <div className="ml-auto hidden lg:block">
             <TopButtons />
           </div>
@@ -43,7 +41,10 @@ const Header = () => {
 
         <Navigation />
 
-        <MobileMenu open={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
+        <MobileMenu
+          open={mobileMenuOpen}
+          onClose={() => setMobileMenuOpen(false)}
+        />
       </nav>
     </header>
   );

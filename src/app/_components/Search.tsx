@@ -1,10 +1,9 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
-import { RiArrowDownSLine, RiCloseLine, RiSearchLine } from "@remixicon/react";
-
 import { reactClient } from "@/trpc/react";
 import { getNodes } from "@/utils/utils";
+import { RiArrowDownSLine, RiCloseLine, RiSearchLine } from "@remixicon/react";
+import { useMemo, useRef, useState } from "react";
 
 interface SearchProps {
   value: string;

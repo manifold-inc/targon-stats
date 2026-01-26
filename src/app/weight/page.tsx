@@ -1,18 +1,17 @@
 "use client";
 
-import { Suspense, useCallback, useRef, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-
 import BlockSelector from "@/app/_components/BlockSelector";
 import Search from "@/app/_components/Search";
 import WeightTable from "@/app/_components/WeightTable";
 import { reactClient } from "@/trpc/react";
 import { handleBlockChange, handleSearchNavigation } from "@/utils/utils";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useCallback, useRef, useState } from "react";
 
 function Content() {
   const router = useRouter();
   const [selectedBlock, setSelectedBlock] = useState<number | undefined>(
-    undefined,
+    undefined
   );
   const [searchTerm, setSearchTerm] = useState("");
   const searchParams = useSearchParams();
@@ -28,19 +27,19 @@ function Content() {
   const handleSearchChange = useCallback(
     (term: string) =>
       handleSearchNavigation(term, "/weight", setSearchTerm, router),
-    [setSearchTerm, router],
+    [setSearchTerm, router]
   );
 
   const handleClickTab = useCallback(
     (term: string) =>
       handleSearchNavigation(term, "/miner", setSearchTerm, router),
-    [setSearchTerm, router],
+    [setSearchTerm, router]
   );
 
   const onBlockChange = useCallback(
     (block: number) =>
       handleBlockChange(block, setSelectedBlock, handleSearchChange),
-    [handleSearchChange],
+    [handleSearchChange]
   );
 
   const {

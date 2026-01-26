@@ -1,15 +1,15 @@
 "use client";
 
+import {
+  RiArrowUpBoxFill,
+  RiBarChartFill,
+  RiRecordCircleFill,
+  RiToolsFill,
+} from "@remixicon/react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRef, useState } from "react";
-import {
-  RiBarChartFill,
-  RiToolsFill,
-  RiArrowUpBoxFill,
-  RiRecordCircleFill,
-} from "@remixicon/react";
 
 export const Navigation = () => {
   const pathname = usePathname();
@@ -45,13 +45,13 @@ export const Navigation = () => {
     <div
       onMouseLeave={() => setHoveredItem(null)}
       data-nav-header
-      className="border-b border-mf-border-600 hidden lg:flex px-14" 
+      className="border-b border-mf-border-600 hidden lg:flex px-14"
     >
       <div className="items-center pb-1 px-2 flex flex-row">
         {navigation.map((route, index) => {
           const Icon = route.icon;
           const isActive = pathname === route.pathname;
-          
+
           return (
             <Link
               href={route.pathname}
@@ -67,9 +67,7 @@ export const Navigation = () => {
                 data-nav-item
                 data-pathname={route.pathname}
               >
-                <Icon
-                  className="h-3.5 w-3.5 -translate-y-[1px] relative z-10 transition-colors duration-200 ease-in-out text-mf-sally-500"
-                />
+                <Icon className="h-3.5 w-3.5 -translate-y-[1px] relative z-10 transition-colors duration-200 ease-in-out text-mf-sally-500" />
                 <p
                   className={`text-xs relative z-10 transition-colors duration-200 ease-in-out ${
                     isActive || hoveredItem === route.pathname

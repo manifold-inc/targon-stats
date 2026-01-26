@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { copyToClipboard } from "@/utils/utils";
 import {
   RiArrowDownLine,
   RiArrowUpDownLine,
@@ -8,8 +8,7 @@ import {
   RiCheckLine,
   RiFileCopyLine,
 } from "@remixicon/react";
-
-import { copyToClipboard } from "@/utils/utils";
+import { useState } from "react";
 
 enum SortField {
   UID = "uid",
@@ -219,7 +218,7 @@ const WeightTable = ({
                             hotkeyToUid[String(uid)] ?? "",
                             String(uid),
                             setCopiedHotkey,
-                            2000,
+                            2000
                           );
                         }}
                         className="text-mf-sally-300 transition-colors"

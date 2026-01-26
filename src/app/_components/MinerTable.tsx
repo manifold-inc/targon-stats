@@ -1,13 +1,12 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { filterByUidSearch } from "@/utils/utils";
 import {
   RiArrowDownLine,
   RiArrowUpDownLine,
   RiArrowUpLine,
 } from "@remixicon/react";
-
-import { filterByUidSearch } from "@/utils/utils";
+import { useMemo, useRef, useState } from "react";
 
 export type MinerNodes = {
   uid: string;
@@ -127,7 +126,7 @@ export default function MinerTable({
 
   const filtered = useMemo(
     () => filterByUidSearch(nodes, searchTerm),
-    [nodes, searchTerm],
+    [nodes, searchTerm]
   );
   const sorted = sortMiners(filtered);
 

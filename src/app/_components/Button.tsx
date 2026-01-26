@@ -18,9 +18,7 @@ export default function Button({
   valueClassName?: string;
 }) {
   return (
-    <div
-      className="group relative flex flex-col items-center"
-    >
+    <div className="group relative flex flex-col items-center">
       <div className="inline-flex items-center rounded-lg p-0.5 text-[0.8rem] border border-mf-border-600 hover:bg-mf-night-400">
         {icon && (
           <div className="rounded-sm p-1.5 border border-mf-border-600 animate-fade-in">

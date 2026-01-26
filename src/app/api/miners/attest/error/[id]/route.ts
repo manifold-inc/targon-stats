@@ -1,7 +1,6 @@
-import { NextResponse } from "next/server";
-
 import { connectToMongoDb } from "@/schema/mongoDB";
 import { getEpistulaHeaders, verify } from "@/utils/signature";
+import { NextResponse } from "next/server";
 
 interface AttestationReport {
   failed: Record<string, string>;
@@ -9,7 +8,7 @@ interface AttestationReport {
 }
 
 async function getAttestationErrors(
-  uid: string,
+  uid: string
 ): Promise<[AttestationReport, null] | [null, string]> {
   const mongoDb = await connectToMongoDb();
   if (!mongoDb) {
@@ -39,7 +38,7 @@ async function getAttestationErrors(
 
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse> {
   const { id } = await params;
   try {
@@ -52,7 +51,7 @@ export async function GET(
         {
           error: "unauthorized",
         },
-        { status: 401 },
+        { status: 401 }
       );
     }
 
@@ -62,14 +61,14 @@ export async function GET(
       headers.uuid,
       "",
       headers.timestamp,
-      headers.signedFor,
+      headers.signedFor
     );
     if (!verified || error) {
       return NextResponse.json(
         {
           error: "unauthorized",
         },
-        { status: 401 },
+        { status: 401 }
       );
     }
 
@@ -79,7 +78,7 @@ export async function GET(
         {
           error: "unauthorized",
         },
-        { status: 401 },
+        { status: 401 }
       );
     }
 
@@ -91,7 +90,7 @@ export async function GET(
         {
           error: "unauthorized",
         },
-        { status: 401 },
+        { status: 401 }
       );
     }
 
@@ -99,7 +98,7 @@ export async function GET(
       {
         data: report.failed,
       },
-      { status: 200 },
+      { status: 200 }
     );
   } catch (e) {
     const message = e instanceof Error ? e.message : "Internal server error";
@@ -107,7 +106,7 @@ export async function GET(
       {
         error: { message, code: "INTERNAL_ERROR" },
       },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

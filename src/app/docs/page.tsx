@@ -1,13 +1,12 @@
 "use client";
 
-import { Suspense, useState } from "react";
-import { useRouter } from "next/navigation";
-
 import BlockSelector from "@/app/_components/BlockSelector";
 import Search from "@/app/_components/Search";
 import { reactClient } from "@/trpc/react";
 import { API_ENDPOINT } from "@/utils/constant";
 import { copyToClipboard } from "@/utils/utils";
+import { useRouter } from "next/navigation";
+import { Suspense, useState } from "react";
 
 function Content() {
   const url = API_ENDPOINT;
@@ -75,7 +74,7 @@ function Content() {
                     `${url}/api/miners`,
                     "all-miners",
                     setCopiedEndpoint,
-                    2000,
+                    2000
                   )
                 }
                 className="w-24 rounded-lg bg-mf-sally-500 py-1 text-center text-xs font-semibold text-mf-ash-500 transition-opacity hover:opacity-80"
@@ -118,7 +117,7 @@ Response:
                     `${url}/api/miners/attest/error/{miner_id}`,
                     "attestation-errors",
                     setCopiedEndpoint,
-                    2000,
+                    2000
                   )
                 }
                 className="w-24 rounded-lg bg-mf-sally-500 py-1 text-center text-xs font-semibold text-mf-ash-500 transition-opacity hover:opacity-80"

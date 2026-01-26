@@ -1,11 +1,11 @@
-import Link from "next/link";
+import Branding from "@/app/_components/header/Branding";
 import {
   RiDiscordFill,
-  RiTwitterXFill,
   RiGithubFill,
   RiLinkedinFill,
+  RiTwitterXFill,
 } from "@remixicon/react";
-import Branding from "@/app/_components/header/Branding";
+import Link from "next/link";
 
 const socialLinks = [
   {
@@ -37,7 +37,7 @@ export default function Footer() {
         <div className="scale-125">
           <Branding />
         </div>
-        
+
         <div className="flex items-center gap-3">
           {socialLinks.map((social) => {
             const Icon = social.icon;

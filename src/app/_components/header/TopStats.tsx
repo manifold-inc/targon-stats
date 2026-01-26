@@ -1,12 +1,15 @@
 "use client";
 
-import Image from "next/image";
+import Button from "@/app/_components/Button";
 import { reactClient } from "@/trpc/react";
 import { RiDropFill } from "@remixicon/react";
-import Button from "@/app/_components/Button";
+import Image from "next/image";
+
 import { useCountUp } from "./useCountUp";
 
-export default function TopStats({ columnLayout = false }: {
+export default function TopStats({
+  columnLayout = false,
+}: {
   columnLayout?: boolean;
 }) {
   const { data: auction, isLoading } =
@@ -34,7 +37,13 @@ export default function TopStats({ columnLayout = false }: {
   });
 
   return (
-    <div className={columnLayout ? "flex flex-col items-center gap-8" : "gap-3 flex flex-wrap items-center justify-center"}>
+    <div
+      className={
+        columnLayout
+          ? "flex flex-col items-center gap-8"
+          : "gap-3 flex flex-wrap items-center justify-center"
+      }
+    >
       <Button
         label="Tao Price"
         value={
@@ -63,11 +72,7 @@ export default function TopStats({ columnLayout = false }: {
             {emissionPool}
           </>
         }
-        icon={
-          <RiDropFill
-            className="h-3.5 w-3.5 text-mf-sally-300"
-          />
-        }
+        icon={<RiDropFill className="h-3.5 w-3.5 text-mf-sally-300" />}
       />
       <Button
         label="Current"
