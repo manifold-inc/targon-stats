@@ -156,19 +156,12 @@ export default function PayoutGraph({
   const chartHeight = 200;
   const barGap = aggregateByUid ? 285 : 18;
 
-  const calculateBarWidth = (containerWidth: number, dataLength: number) => {
-    if (dataLength === 0) return 0;
-    const totalGap = (dataLength - 1) * barGap;
-    const padding = 20;
-    return Math.max(20, (containerWidth - totalGap - padding) / dataLength);
-  };
-
-  const showSkeleton: boolean =
+  const showSkeleton =
     fixedComputeType !== undefined
       ? isLoading || !auction || !selectedComputeType || payoutData.length === 0
       : isLoading || !selectedComputeType || payoutData.length === 0;
 
-  const showNoData: boolean = Boolean(
+  const showNoData = Boolean(
     fixedComputeType === undefined &&
       !isLoading &&
       !!selectedComputeType &&
