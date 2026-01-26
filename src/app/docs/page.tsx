@@ -1,90 +1,60 @@
 "use client";
 
-import BlockSelector from "@/app/_components/BlockSelector";
-import Search from "@/app/_components/Search";
+import Button from "@/app/_components/Button";
+import CodeBlock from "@/app/_components/CodeBlock";
 import { reactClient } from "@/trpc/react";
 import { API_ENDPOINT } from "@/utils/constant";
 import { copyToClipboard } from "@/utils/utils";
-import { useRouter } from "next/navigation";
-import { Suspense, useState } from "react";
+import { RiCheckLine, RiFileCopyLine, RiFileFill } from "@remixicon/react";
+import Link from "next/link";
+import { useState } from "react";
 
-function Content() {
+import PageHeader from "../_components/PageHeader";
+
+export default function DocsPage() {
   const url = API_ENDPOINT;
   const [copiedEndpoint, setCopiedEndpoint] = useState<string | null>(null);
 
-  const router = useRouter();
-
-  const { data: auction, isLoading } =
-    reactClient.chain.getAuctionState.useQuery(undefined);
-
-  const { data: auctionLatest } =
-    reactClient.chain.getAuctionState.useQuery(undefined);
-
-  const handleBlockChange = (_block: number) => {
-    router.push(`/miner`);
-  };
-
-  const handleSearchChange = (searchTerm: string) => {
-    if (searchTerm.trim()) {
-      router.push(`/miner?search=${encodeURIComponent(searchTerm)}`);
-    } else {
-      router.push("/miner");
-    }
-  };
-
   return (
     <div className="w-full">
-      <div className="mx-auto max-w-5xl px-8 py-2">
-        <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:justify-end">
-          <div className="flex items-center justify-center gap-2 sm:justify-end sm:gap-4">
-            <div className="max-w-xs flex-1 sm:max-w-none sm:flex-initial">
-              {auction && (
-                <BlockSelector
-                  block={auction.block}
-                  latestBlock={auctionLatest?.block ?? 0}
-                  onBlockChange={handleBlockChange}
-                  isLoading={isLoading}
-                  searchTerm=""
-                />
-              )}
-            </div>
-            <div className="max-w-xs flex-1 sm:max-w-none sm:flex-initial">
-              <Search
-                value=""
-                onChange={handleSearchChange}
-                onClear={() => router.push("/miner")}
+      <div className="space-y-6 pb-20">
+        <PageHeader
+          title="HTTP API Endpoints"
+          icon={<RiFileFill className="h-7 w-7 text-mf-sally-500" />}
+        />
+
+        <div className="rounded-lg border-2 border-mf-border-600 bg-mf-night-450">
+          <div className="flex items-center justify-between border-b border-mf-border-600 px-6 py-4">
+            <h3 className="text-lg font-semibold text-mf-milk-500">
+              Get All Miners
+            </h3>
+            <div
+              onClick={() =>
+                copyToClipboard(
+                  `${url}/api/miners`,
+                  "all-miners",
+                  setCopiedEndpoint,
+                  2000
+                )
+              }
+              className="cursor-pointer"
+            >
+              <Button
+                icon={
+                  copiedEndpoint === "all-miners" ? (
+                    <RiCheckLine className="h-3.5 w-3.5 text-mf-sally-300" />
+                  ) : (
+                    <RiFileCopyLine className="h-3.5 w-3.5 text-mf-sally-300" />
+                  )
+                }
+                value={copiedEndpoint === "all-miners" ? "Copied" : "Copy"}
+                valueClassName="text-mf-milk-500"
               />
             </div>
           </div>
-        </div>
-
-        <div className="mt-5 space-y-6 pb-20">
-          <h2 className="mb-3 text-2xl font-semibold tracking-wider text-mf-edge-500">
-            HTTP API Endpoints
-          </h2>
-
-          <div className="rounded-lg border-2 border-mf-ash-300 bg-mf-ash-700">
-            <div className="flex items-center justify-between border-b border-mf-ash-300 px-6 py-4">
-              <h3 className="text-lg font-semibold text-mf-edge-500">
-                Get All Miners
-              </h3>
-              <button
-                onClick={() =>
-                  copyToClipboard(
-                    `${url}/api/miners`,
-                    "all-miners",
-                    setCopiedEndpoint,
-                    2000
-                  )
-                }
-                className="w-24 rounded-lg bg-mf-sally-500 py-1 text-center text-xs font-semibold text-mf-ash-500 transition-opacity hover:opacity-80"
-              >
-                {copiedEndpoint === "all-miners" ? "Copied" : "Copy"}
-              </button>
-            </div>
-            <div className="p-6">
-              <pre className="overflow-x-auto text-sm text-mf-edge-700">
-                {`GET ${url}/api/miners
+          <div className="p-6">
+            <CodeBlock
+              code={`GET ${url}/api/miners
 Response:
 {
   "data": [
@@ -102,36 +72,48 @@ Response:
     }
   ],
 }`}
-              </pre>
-            </div>
+              language="http"
+            />
           </div>
+        </div>
 
-          <div className="rounded-lg border-2 border-mf-ash-300 bg-mf-ash-700">
-            <div className="flex items-center justify-between border-b border-mf-ash-300 px-6 py-4">
-              <h3 className="text-lg font-semibold text-mf-edge-500">
-                Get Attestation Errors
-              </h3>
-              <button
-                onClick={() =>
-                  copyToClipboard(
-                    `${url}/api/miners/attest/error/{miner_id}`,
-                    "attestation-errors",
-                    setCopiedEndpoint,
-                    2000
+        <div className="rounded-lg border-2 border-mf-border-600 bg-mf-night-450">
+          <div className="flex items-center justify-between border-b border-mf-border-600 px-6 py-4">
+            <h3 className="text-lg font-semibold text-mf-milk-500">
+              Get Attestation Errors
+            </h3>
+            <div
+              onClick={() =>
+                copyToClipboard(
+                  `${url}/api/miners/attest/error/{miner_id}`,
+                  "attestation-errors",
+                  setCopiedEndpoint,
+                  2000
+                )
+              }
+              className="cursor-pointer"
+            >
+              <Button
+                icon={
+                  copiedEndpoint === "attestation-errors" ? (
+                    <RiCheckLine className="h-3.5 w-3.5 text-mf-sally-300" />
+                  ) : (
+                    <RiFileCopyLine className="h-3.5 w-3.5 text-mf-sally-300" />
                   )
                 }
-                className="w-24 rounded-lg bg-mf-sally-500 py-1 text-center text-xs font-semibold text-mf-ash-500 transition-opacity hover:opacity-80"
-              >
-                {copiedEndpoint === "attestation-errors" ? "Copied" : "Copy"}
-              </button>
+                value={
+                  copiedEndpoint === "attestation-errors" ? "Copied" : "Copy"
+                }
+                valueClassName="text-mf-milk-500"
+              />
             </div>
-            <div className="p-6">
-              <pre className="overflow-x-auto text-sm text-mf-edge-700">
-                This protected route requires to user to pass in Epistula
-                headers.
-                <br />
-                <br />
-                {`GET ${url}/api/miners/attest/error/{miner_id}
+          </div>
+          <div className="p-6">
+            <div className="mb-4 text-sm text-mf-milk-500">
+              This protected route requires to user to pass in Epistula headers.
+            </div>
+            <CodeBlock
+              code={`GET ${url}/api/miners/attest/error/{miner_id}
 
 Headers:
 {
@@ -154,19 +136,21 @@ Response:
     }
   }
 }`}
-              </pre>
-            </div>
+              language="http"
+            />
           </div>
         </div>
       </div>
+      <div className="flex flex-col justify-center items-center gap-2">
+        <p className="text-sm text-mf-milk-700">Looking for Targon Docs?</p>
+        <Link href="https://docs.targon.com" target="_blank">
+          <Button
+            value="Targon Docs"
+            valueClassName="text-mf-milk-500"
+            icon={<RiFileFill className="h-3.5 w-3.5 text-mf-sally-300" />}
+          />
+        </Link>
+      </div>
     </div>
-  );
-}
-
-export default function DocsPage() {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <Content />
-    </Suspense>
   );
 }

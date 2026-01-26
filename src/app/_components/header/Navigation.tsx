@@ -38,9 +38,6 @@ export const Navigation = () => {
       icon: RiRecordCircleFill,
     },
   ];
-
-  if (pathname === "/docs") return null;
-
   return (
     <div
       onMouseLeave={() => setHoveredItem(null)}
