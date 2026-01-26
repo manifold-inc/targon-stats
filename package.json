@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "format": "prettier -w .",
-    "check-format": "prettier . --check",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,mdx}\" --cache",
+    "format:write": "prettier --write \"**/*.{ts,tsx,js,jsx,mdx}\" --cache",
     "dev": "next dev",
     "lint": "next lint && tsc --noEmit",
     "start": "next start",
