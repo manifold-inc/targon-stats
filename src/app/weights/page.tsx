@@ -5,8 +5,8 @@ import WeightTable from "@/app/_components/WeightTable";
 import { reactClient } from "@/trpc/react";
 import { handleBlockChange, handleSearchNavigation } from "@/utils/utils";
 import { RiArrowUpBoxFill } from "@remixicon/react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useCallback, useState } from "react";
 
 export default function WeightPage() {
   const router = useRouter();
@@ -14,15 +14,6 @@ export default function WeightPage() {
     undefined
   );
   const [searchTerm, setSearchTerm] = useState("");
-  const searchParams = useSearchParams();
-
-  const previousSearchParamRef = useRef<string | null>(null);
-
-  const searchParam = searchParams.get("search");
-  if (searchParam !== previousSearchParamRef.current) {
-    previousSearchParamRef.current = searchParam;
-    setSearchTerm(searchParam || "");
-  }
 
   const handleSearchChange = useCallback(
     (term: string) =>
