@@ -286,46 +286,46 @@ export default function PayoutGraph({
 
             return (
               <g key={`${data.uid}-${data.index}`}>
-                <rect
-                  x={x}
-                  y={y}
-                  width={barWidth}
-                  height={barHeight}
-                  fill="url(#bar-gradient)"
-                  rx={2}
-                  className="animate-grow-up"
-                  style={{ cursor: "pointer" }}
-                  onMouseEnter={() =>
-                    setHoveredData({
-                      uid: data.uid,
-                      payout: data.payoutPerCard,
-                    })
-                  }
-                  onMouseMove={(e) => {
-                    const svg = e.currentTarget.ownerSVGElement;
-                    if (svg) {
-                      const svgRect = svg.getBoundingClientRect();
-                      setHoverPosition({
-                        x: e.clientX - svgRect.left,
-                        y: e.clientY - svgRect.top,
-                      });
+                <g className="animate-grow-up">
+                  <rect
+                    x={x}
+                    y={y}
+                    width={barWidth}
+                    height={barHeight}
+                    fill="url(#bar-gradient)"
+                    rx={2}
+                    style={{ cursor: "pointer" }}
+                    onMouseEnter={() =>
+                      setHoveredData({
+                        uid: data.uid,
+                        payout: data.payoutPerCard,
+                      })
                     }
-                  }}
-                  onMouseLeave={() => {
-                    setHoveredData(null);
-                    setHoverPosition(null);
-                  }}
-                />
+                    onMouseMove={(e) => {
+                      const svg = e.currentTarget.ownerSVGElement;
+                      if (svg) {
+                        const svgRect = svg.getBoundingClientRect();
+                        setHoverPosition({
+                          x: e.clientX - svgRect.left,
+                          y: e.clientY - svgRect.top,
+                        });
+                      }
+                    }}
+                    onMouseLeave={() => {
+                      setHoveredData(null);
+                      setHoverPosition(null);
+                    }}
+                  />
 
-                <rect
-                  x={x}
-                  y={y}
-                  width={barWidth}
-                  height={3}
-                  fill="#52abff"
-                  opacity={0.9}
-                  className="animate-grow-up"
-                />
+                  <rect
+                    x={x}
+                    y={y}
+                    width={barWidth}
+                    height={3}
+                    fill="#52abff"
+                    opacity={0.9}
+                  />
+                </g>
 
                 {isLgOrLarger && (
                   <g>
