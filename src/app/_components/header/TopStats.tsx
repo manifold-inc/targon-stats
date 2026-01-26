@@ -25,7 +25,7 @@ export default function TopStats({
   const emissionPool = useCountUp({
     end: auction?.emission_pool || 0,
     duration: 1000,
-    decimals: 4,
+    decimals: 2,
     isReady: !isLoading && auction !== undefined,
   });
 
