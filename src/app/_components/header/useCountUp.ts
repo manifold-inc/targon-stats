@@ -52,7 +52,7 @@ function formatValue(
   return `${paddedInteger}.${decimalPart}`;
 }
 
-export function useCountUp({
+export default function useCountUp({
   end,
   duration = 1000,
   decimals = 0,

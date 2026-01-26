@@ -1,13 +1,12 @@
 "use client";
 
+import BarChart, { type BarData } from "@/app/_components/BarChart";
+import useCountUp from "@/app/_components/header/useCountUp";
 import { reactClient } from "@/trpc/react";
 import { getNodes } from "@/utils/utils";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { RiArrowDownSFill } from "@remixicon/react";
 import { useEffect, useMemo, useState } from "react";
-
-import BarChart, { type BarData } from "./BarChart";
-import { useCountUp } from "./header/useCountUp";
 
 function useIsLgOrLarger() {
   const [isLgOrLarger, setIsLgOrLarger] = useState(false);

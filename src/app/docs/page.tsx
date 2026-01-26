@@ -2,13 +2,12 @@
 
 import Button from "@/app/_components/Button";
 import CodeBlock from "@/app/_components/CodeBlock";
+import PageHeader from "@/app/_components/PageHeader";
 import { API_ENDPOINT } from "@/utils/constant";
 import { copyToClipboard } from "@/utils/utils";
 import { RiCheckLine, RiFileCopyLine, RiFileFill } from "@remixicon/react";
 import Link from "next/link";
 import { useState } from "react";
-
-import PageHeader from "../_components/PageHeader";
 
 export default function DocsPage() {
   const url = API_ENDPOINT;

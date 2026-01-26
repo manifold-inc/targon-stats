@@ -1,6 +1,7 @@
 "use client";
 
 import MinerTable from "@/app/_components/MinerTable";
+import PageHeader from "@/app/_components/PageHeader";
 import { reactClient } from "@/trpc/react";
 import {
   getNodes,
@@ -10,8 +11,6 @@ import {
 import { RiToolsFill } from "@remixicon/react";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
-
-import PageHeader from "../_components/PageHeader";
 
 export default function MinersPage() {
   const [selectedBlock, setSelectedBlock] = useState<number | undefined>(

@@ -1,12 +1,11 @@
 "use client";
 
 import Button from "@/app/_components/Button";
+import useCountUp from "@/app/_components/header/useCountUp";
 import { reactClient } from "@/trpc/react";
 import { getNodes } from "@/utils/utils";
 import { RiCpuLine, RiHardDrive3Fill } from "@remixicon/react";
 import { type ReactNode, useMemo } from "react";
-
-import { useCountUp } from "./header/useCountUp";
 
 export default function PageHeader({
   title,

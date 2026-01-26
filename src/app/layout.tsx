@@ -2,7 +2,6 @@ import Footer from "@/app/_components/Footer";
 import Header from "@/app/_components/header/Header";
 import { WithGlobalProvider } from "@/app/_components/providers";
 import "@/styles/globals.css";
-import { Analytics } from "@vercel/analytics/react";
 import clsx from "clsx";
 import type { Metadata } from "next";
 import { Inter, Saira } from "next/font/google";
@@ -78,7 +77,6 @@ export default function RootLayout({
         </WithGlobalProvider>
 
         <Toaster />
-        <Analytics />
       </body>
     </html>
   );
