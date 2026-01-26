@@ -80,9 +80,9 @@ export function removeIPAddress(node: MinerNodesWithIP): MinerNode {
 
 export function handleSearchNavigation(
   term: string,
-  route: string,
+  _route: string,
   setSearchTerm: (term: string) => void,
-  router: AppRouterInstance
+  _router: AppRouterInstance
 ) {
   setSearchTerm(term);
 }

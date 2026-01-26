@@ -9,6 +9,7 @@ import { getNodes } from "@/utils/utils";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { RiArrowDownSFill } from "@remixicon/react";
 import { useEffect, useMemo, useState } from "react";
+import { Toaster } from "sonner";
 
 function getDisplayName(computeType: string, shortName?: boolean): string {
   if (computeType.includes("H200")) return shortName ? "H200" : "NVIDIA H200";
