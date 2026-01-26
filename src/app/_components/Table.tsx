@@ -74,7 +74,7 @@ export default function Table<T>({
           {Array.from({ length: 8 }).map((_, idx) => (
             <div
               key={idx}
-              className="h-10 w-full bg-mf-night-300 rounded-lg animate-pulse"
+              className="h-10 w-full bg-mf-night-300 rounded-lg animate-skeleton-pulse"
             />
           ))}
         </div>

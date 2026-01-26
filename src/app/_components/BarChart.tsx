@@ -117,7 +117,7 @@ export default function BarChart({
                   fill="#374151"
                   opacity={0.3}
                   rx={2}
-                  className={isLoading ? "animate-pulse" : ""}
+                  className={isLoading ? "animate-skeleton-pulse-opacity" : ""}
                 />
               </g>
             );

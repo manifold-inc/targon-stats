@@ -102,7 +102,7 @@ export default function WeightsGraph({
               onClick={handleRefetch}
               className="flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer"
             >
-              <RiRefreshLine className="h-3 w-3 text-mf-sybil-300 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <RiRefreshLine className="h-3 w-3 text-mf-milk-700 opacity-0 group-hover:opacity-100 transition-opacity" />
               <span className="text-[0.8rem] text-mf-milk-500 transition-colors">
                 Top
               </span>

@@ -187,8 +187,8 @@ const TargetCards = ({
                 key={index}
                 className="rounded-lg border border-mf-border-600 bg-mf-night-450 p-6"
               >
-                <div className="h-6 w-32 mb-4 rounded bg-mf-night-400 animate-pulse" />
-                <div className="h-16 w-full rounded bg-mf-night-400 animate-pulse" />
+                <div className="h-6 w-32 mb-4 rounded bg-mf-night-400 animate-skeleton-pulse" />
+                <div className="h-16 w-full rounded bg-mf-night-400 animate-skeleton-pulse" />
               </div>
             ))}
           </div>
@@ -199,8 +199,8 @@ const TargetCards = ({
                 key={index}
                 className="rounded-lg border border-mf-border-600 bg-mf-night-450 p-6"
               >
-                <div className="h-6 w-40 mb-4 rounded bg-mf-night-400 animate-pulse" />
-                <div className="h-26 w-full rounded bg-mf-night-400 animate-pulse" />
+                <div className="h-6 w-40 mb-4 rounded bg-mf-night-400 animate-skeleton-pulse" />
+                <div className="h-26 w-full rounded bg-mf-night-400 animate-skeleton-pulse" />
               </div>
             ))}
           </div>

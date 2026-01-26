@@ -28,12 +28,14 @@ export default function TopStats({
     isReady: !isLoading && auction !== undefined,
   });
 
-  const currentBlock = useCountUp({
+  const currentBlockRaw = useCountUp({
     end: auction?.block || 0,
     duration: 1000,
     decimals: 0,
     isReady: !isLoading && auction !== undefined,
   });
+
+  const currentBlock = currentBlockRaw.padStart(7, "0");
 
   return (
     <div

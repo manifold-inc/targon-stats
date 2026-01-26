@@ -227,6 +227,24 @@ html {
   }
 }
 
+@keyframes skeleton-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes skeleton-pulse-opacity {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.15;
+  }
+}
+
 .animate-fade-in {
   animation: fade-in 0.5s ease-out forwards;
 }
@@ -241,4 +259,16 @@ html {
 
 .animate-fade-in-row {
   animation: fade-in-row 0.4s ease-out forwards;
+}
+
+.animate-skeleton-pulse {
+  animation: skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-skeleton-pulse-opacity {
+  animation: skeleton-pulse-opacity 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+svg .animate-skeleton-pulse-opacity {
+  animation: skeleton-pulse-opacity 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
