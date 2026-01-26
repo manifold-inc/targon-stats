@@ -8,6 +8,7 @@ import clsx from "clsx";
 import { Toaster } from "sonner";
 
 import Header from "@/app/_components/header/Header";
+import Footer from "@/app/_components/Footer";
 import { WithGlobalProvider } from "@/app/_components/providers";
 
 const inter = Inter({
@@ -66,11 +67,14 @@ export default function RootLayout({
         <link rel="icon" href="/targon-logo.svg" />
       </head>
       <body
-        className={`relative bg-mf-night-500 text-mf-milk-500 transition-colors`}
+        className={`relative bg-mf-night-500 text-mf-milk-500 transition-colors h-full flex flex-col`}
       >
         <WithGlobalProvider>
-          <Header />
-          <main>{children}</main>
+          <div className="flex flex-col min-h-screen">
+            <Header />
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </div>
         </WithGlobalProvider>
 
         <Toaster />

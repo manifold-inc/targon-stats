@@ -5,11 +5,9 @@ import Button from "@/app/_components/Button";
 import { RiFileFill } from "@remixicon/react";
 import Image from "next/image";
 
-interface TopButtonsProps {
+export default function TopButtons({ columnLayout = false }: {
   columnLayout?: boolean;
-}
-
-const TopButtons = ({ columnLayout = false }: TopButtonsProps) => {
+}) {
   return (
     <div className={columnLayout ? "flex flex-col gap-8" : "flex gap-3"}>
       <Link
@@ -47,5 +45,3 @@ const TopButtons = ({ columnLayout = false }: TopButtonsProps) => {
     </div>
   );
 };
-
-export default TopButtons;

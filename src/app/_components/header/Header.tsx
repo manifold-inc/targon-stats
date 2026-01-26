@@ -18,7 +18,7 @@ const Header = () => {
       >
         <div
           aria-label="Global"
-          className="w-full items-center mx-auto flex pt-6 lg:pb-3 pb-6 px-10 relative lg:border-b-0 border-b border-mf-border-600"
+          className="w-full items-center flex pt-6 lg:pb-3 pb-6 px-10 relative lg:border-b-0 border-b border-mf-border-600"
         >
           <Branding />
 
