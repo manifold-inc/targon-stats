@@ -381,7 +381,7 @@ export default function PayoutGraph({
     <div className="rounded-lg border border-mf-border-600 bg-mf-night-450 p-4 md:p-6 md:pb-4 pb-2">
       <div className="mb-6 flex items-center justify-between">
         {fixedComputeType ? (
-          <h2>
+          <h2 className="whitespace-nowrap sm:text-base text-xs">
             {getDisplayName(selectedComputeType)} Payouts{" "}
             {aggregateByUid ? "by UUID" : ""}
           </h2>
@@ -390,7 +390,9 @@ export default function PayoutGraph({
             {({ open }) => (
               <>
                 <MenuButton className="flex items-center gap-2 focus:outline-none hover:opacity-80">
-                  <h2>{getDisplayName(selectedComputeType)} Payouts</h2>
+                  <h2 className="whitespace-nowrap sm:text-base text-xs">
+                    {getDisplayName(selectedComputeType)} Payouts
+                  </h2>
                   <RiArrowDownSFill
                     className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`}
                   />
@@ -429,7 +431,9 @@ export default function PayoutGraph({
           <div className="text-sm text-mf-edge-300">No Data</div>
         ) : !showSkeleton ? (
           <div className="flex items-center gap-2">
-            <span className="text-[0.8rem] text-mf-milk-500">Average</span>
+            <span className="text-[0.8rem] text-mf-milk-500 sm:block hidden">
+              Average
+            </span>
             <div className="rounded-sm border border-mf-border-600 px-3 ">
               <span className="text-xs text-mf-sally-500">
                 ${latestPayoutCountUp}

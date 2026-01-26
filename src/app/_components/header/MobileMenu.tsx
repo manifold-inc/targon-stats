@@ -1,10 +1,19 @@
 "use client";
 
+import Button from "@/app/_components/Button";
 import Branding from "@/app/_components/header/Branding";
 import TopButtons from "@/app/_components/header/TopButtons";
 import TopStats from "@/app/_components/header/TopStats";
 import { Dialog, DialogPanel } from "@headlessui/react";
-import { RiCloseLine } from "@remixicon/react";
+import {
+  RiArrowUpBoxFill,
+  RiBarChartFill,
+  RiCloseLine,
+  RiRecordCircleFill,
+  RiToolsFill,
+} from "@remixicon/react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 interface MobileMenuProps {
   open: boolean;
@@ -17,6 +26,31 @@ const MobileMenu = ({
   onClose,
   columnLayout = true,
 }: MobileMenuProps) => {
+  const pathname = usePathname();
+
+  const navigation = [
+    {
+      pathname: "/",
+      title: "Stats",
+      icon: RiBarChartFill,
+    },
+    {
+      pathname: "/miners",
+      title: "Miners",
+      icon: RiToolsFill,
+    },
+    {
+      pathname: "/weights",
+      title: "Weights",
+      icon: RiArrowUpBoxFill,
+    },
+    {
+      pathname: "/targets",
+      title: "Targets",
+      icon: RiRecordCircleFill,
+    },
+  ];
+
   return (
     <Dialog open={open} onClose={onClose} className="lg:hidden">
       <div className="fixed inset-0 z-10" />
@@ -33,7 +67,33 @@ const MobileMenu = ({
             <RiCloseLine className="size-5 hover:opacity-80" />
           </button>
         </div>
-        <div className="-mt-20 flex h-full flex-col items-center justify-center">
+        <div className="my-10 sm:mb-0 sm:-mt-20 flex h-full flex-col items-center justify-center gap-8">
+          {/* Navigation Items */}
+          <div className="flex flex-col items-center gap-8">
+            {navigation.map((route, index) => {
+              const Icon = route.icon;
+              const isActive = pathname === route.pathname;
+
+              return (
+                <Link
+                  key={index}
+                  href={route.pathname}
+                  onClick={onClose}
+                  className="cursor-pointer"
+                >
+                  <Button
+                    icon={<Icon className="h-3.5 w-3.5 text-mf-sally-500" />}
+                    value={route.title}
+                    valueClassName={
+                      isActive ? "text-mf-milk-500" : "text-mf-milk-700"
+                    }
+                  />
+                </Link>
+              );
+            })}
+          </div>
+
+          {/* TopStats and TopButtons */}
           <div
             className={`flex ${columnLayout ? "flex-col" : "flex-row"} items-center gap-8`}
           >

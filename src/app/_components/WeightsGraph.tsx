@@ -285,7 +285,9 @@ export default function WeightsGraph({
   const content = (
     <div className="rounded-lg border border-mf-border-600 bg-mf-night-450 p-4 md:p-6 md:pb-4 pb-2">
       <div className="mb-6 flex items-center justify-between">
-        <h2>Miner Weights</h2>
+        <h2 className="whitespace-nowrap sm:text-base text-xs">
+          Miner Weights
+        </h2>
 
         {showNoData ? (
           <div className="text-sm text-mf-edge-300">No Data</div>
