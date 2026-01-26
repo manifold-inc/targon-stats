@@ -110,7 +110,7 @@ export default function WeightsGraph({
                 className={`w-1 h-1 rounded-full ${showPulse ? "animate-pulse bg-mf-sally-500" : "bg-mf-milk-700"}`}
               />
             </button>
-            <div className="rounded-sm border border-mf-border-600 px-3 w-26 text-xs text-mf-sally-500 py-0.5 text-center">
+            <div className="rounded-sm border border-mf-border-600 px-3 w-28 text-xs text-mf-sally-500 py-0.5 text-center">
               {highestData.uid} - {highestPercentCountUp}%
             </div>
           </div>
