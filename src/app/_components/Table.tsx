@@ -7,7 +7,7 @@ import {
   RiArrowUpSFill,
   RiExpandUpDownFill,
 } from "@remixicon/react";
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 export type SortDirection = "asc" | "desc" | null;
 
@@ -84,7 +84,6 @@ export default function Table<T>({
   const SortIcon = ({ field }: { field: string }) => {
     const isSorted = sortField === field;
     const isAsc = sortDirection === "asc";
-    const isDesc = sortDirection === "desc";
 
     if (!isSorted) {
       return (

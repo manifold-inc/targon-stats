@@ -5,13 +5,7 @@ import Table, {
   type TableColumn,
 } from "@/app/_components/Table";
 import { copyToClipboard } from "@/utils/utils";
-import {
-  RiArrowDownSFill,
-  RiArrowUpSFill,
-  RiExpandUpDownFill,
-  RiFileCopyFill,
-  RiFileCopyLine,
-} from "@remixicon/react";
+import { RiFileCopyFill, RiFileCopyLine } from "@remixicon/react";
 import { useMemo, useState } from "react";
 
 enum SortField {
@@ -49,8 +43,11 @@ const WeightsTable = ({
   const [sortDirection, setSortDirection] = useState<SortDirection>(null);
   const [copiedHotkey, setCopiedHotkey] = useState<string | null>(null);
 
-  const uids = weights?.uids ?? [];
-  const incentive = weights?.incentives ?? [];
+  const uids = useMemo(() => weights?.uids ?? [], [weights?.uids]);
+  const incentive = useMemo(
+    () => weights?.incentives ?? [],
+    [weights?.incentives]
+  );
 
   const filteredUids = useMemo(() => {
     return searchTerm
@@ -58,10 +55,13 @@ const WeightsTable = ({
       : uids;
   }, [uids, searchTerm]);
 
-  const getIncentiveForUid = (uid: number) => {
-    const originalIdx = uids.indexOf(uid);
-    return incentive[originalIdx] ?? 0;
-  };
+  const getIncentiveForUid = useMemo(
+    () => (uid: number) => {
+      const originalIdx = uids.indexOf(uid);
+      return incentive[originalIdx] ?? 0;
+    },
+    [uids, incentive]
+  );
 
   const handleSort = (field: string) => {
     const sortFieldEnum = field as SortField;
@@ -102,27 +102,7 @@ const WeightsTable = ({
 
       return sortDirection === "asc" ? comparison : -comparison;
     });
-  }, [filteredUids, sortField, sortDirection, hotkeyToUid]);
-
-  const SortIcon = ({
-    isSorted,
-    sortDirection,
-  }: {
-    isSorted: boolean;
-    sortDirection: SortDirection;
-  }) => {
-    if (!isSorted) {
-      return (
-        <RiExpandUpDownFill className="h-4 w-4 opacity-0 group-hover:opacity-50 transition-opacity" />
-      );
-    }
-
-    return sortDirection === "asc" ? (
-      <RiArrowUpSFill className="h-4 w-4 text-mf-sybil-500" />
-    ) : (
-      <RiArrowDownSFill className="h-4 w-4 text-mf-sybil-500" />
-    );
-  };
+  }, [filteredUids, sortField, sortDirection, hotkeyToUid, getIncentiveForUid]);
 
   const columns: TableColumn<number>[] = [
     {
