@@ -1,12 +1,7 @@
 "use client";
 
+import { type BarData } from "@/types";
 import { useEffect, useMemo, useRef, useState } from "react";
-
-export interface BarData {
-  uid: string;
-  value: number;
-  index: number;
-}
 
 interface BarChartProps {
   data: BarData[];

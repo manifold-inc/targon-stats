@@ -1,6 +1,6 @@
 "use client";
 
-import Button from "@/app/_components/Button";
+import Box from "@/app/_components/Box";
 import { reactClient } from "@/trpc/react";
 import useCountUp from "@/utils/useCountUp";
 import { getNodes } from "@/utils/utils";
@@ -87,7 +87,7 @@ export default function PageHeader({
 
       <div className="lg:flex hidden items-center gap-3">
         {badges.map((badge, index) => (
-          <Button
+          <Box
             key={index}
             icon={badge.icon}
             value={

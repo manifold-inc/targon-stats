@@ -1,29 +1,13 @@
-import { type MinerNode } from "@/app/_components/MinerTable";
 import { connectToMongoDb } from "@/schema/mongoDB";
 import { createTRPCRouter, publicAuthlessProcedure } from "@/server/api/trpc";
+import {
+  type Auction,
+  type AuctionResults,
+  type AuctionState,
+  type MinerNode,
+} from "@/types";
 import { removeIPAddress } from "@/utils/utils";
 import { z } from "zod";
-
-export type AuctionResults = Record<string, MinerNode[]>;
-
-export type Auction = {
-  target_cards: number;
-  target_nodes: number;
-  target_price: number;
-  max_price: number;
-  min_cluster_size: number;
-};
-
-export interface AuctionState {
-  auction_results: AuctionResults;
-  auctions: Record<string, Auction>;
-  emission_pool: number;
-  block: number;
-  tao_price: number;
-  timestamp: Date;
-  weights: { uids: number[]; incentives: number[] };
-  hotkey_to_uid: Record<string, string>;
-}
 
 export async function getAuctionState(block?: number): Promise<AuctionState> {
   const mongoDb = await connectToMongoDb();

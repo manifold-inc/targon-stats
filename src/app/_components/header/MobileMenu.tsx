@@ -1,6 +1,6 @@
 "use client";
 
-import Button from "@/app/_components/Button";
+import Box from "@/app/_components/Box";
 import Branding from "@/app/_components/header/Branding";
 import TopButtons from "@/app/_components/header/TopButtons";
 import TopStats from "@/app/_components/header/TopStats";
@@ -81,7 +81,7 @@ const MobileMenu = ({
                   onClick={onClose}
                   className="cursor-pointer"
                 >
-                  <Button
+                  <Box
                     icon={<Icon className="h-3.5 w-3.5 text-mf-sally-500" />}
                     value={route.title}
                     valueClassName={

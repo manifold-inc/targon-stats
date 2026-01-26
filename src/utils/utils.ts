@@ -1,9 +1,9 @@
 import {
+  type AuctionResults,
   type MinerNode,
   type MinerNodes,
   type MinerNodesWithIP,
-} from "@/app/_components/MinerTable";
-import { type AuctionResults } from "@/server/api/routers/chain";
+} from "@/types";
 import { type AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { z } from "zod";
 

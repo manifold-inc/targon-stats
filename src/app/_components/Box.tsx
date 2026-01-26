@@ -2,7 +2,7 @@
 
 import { type ReactNode } from "react";
 
-export default function Button({
+export default function Box({
   icon,
   label,
   value,

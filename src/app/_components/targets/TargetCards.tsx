@@ -1,4 +1,4 @@
-import { type Auction, type AuctionResults } from "@/server/api/routers/chain";
+import { type Auction, type AuctionResults } from "@/types";
 import useCountUp from "@/utils/useCountUp";
 import { RiCpuLine, RiHardDrive3Fill, RiLockLine } from "@remixicon/react";
 import { useMemo } from "react";

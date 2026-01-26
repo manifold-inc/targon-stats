@@ -1,6 +1,6 @@
 "use client";
 
-import Button from "@/app/_components/Button";
+import Box from "@/app/_components/Box";
 import { reactClient } from "@/trpc/react";
 import useCountUp from "@/utils/useCountUp";
 import { RiDropFill } from "@remixicon/react";
@@ -43,7 +43,7 @@ export default function TopStats({
           : "gap-3 flex flex-wrap items-center justify-center"
       }
     >
-      <Button
+      <Box
         label="Tao Price"
         value={
           <div className="flex items-center w-16 justify-center">
@@ -63,7 +63,7 @@ export default function TopStats({
           />
         }
       />
-      <Button
+      <Box
         label="Emission Pool"
         mobileLabel="E. Pool"
         value={
@@ -75,7 +75,7 @@ export default function TopStats({
         valueClassName="text-mf-sybil-300"
         icon={<RiDropFill className="h-3.5 w-3.5 text-mf-sally-300" />}
       />
-      <Button
+      <Box
         label="Current"
         value={
           <div className="flex items-center w-16 justify-center">

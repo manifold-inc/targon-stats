@@ -1,6 +1,6 @@
 "use client";
 
-import Button from "@/app/_components/Button";
+import Box from "@/app/_components/Box";
 import CodeBlock from "@/app/_components/CodeBlock";
 import PageHeader from "@/app/_components/PageHeader";
 import { API_ENDPOINT } from "@/utils/constant";
@@ -37,7 +37,7 @@ export default function DocsPage() {
               }
               className="cursor-pointer"
             >
-              <Button
+              <Box
                 icon={
                   copiedEndpoint === "all-miners" ? (
                     <RiCheckLine className="h-3.5 w-3.5 text-mf-sally-300" />
@@ -91,7 +91,7 @@ Response:
               }
               className="cursor-pointer"
             >
-              <Button
+              <Box
                 icon={
                   copiedEndpoint === "attestation-errors" ? (
                     <RiCheckLine className="h-3.5 w-3.5 text-mf-sally-300" />
@@ -142,7 +142,7 @@ Response:
       <div className="flex flex-col justify-center items-center gap-2">
         <p className="text-sm text-mf-milk-700">Looking for Targon Docs?</p>
         <Link href="https://docs.targon.com" target="_blank">
-          <Button
+          <Box
             value="Targon Docs"
             valueClassName="text-mf-milk-500"
             icon={<RiFileFill className="h-3.5 w-3.5 text-mf-sally-300" />}

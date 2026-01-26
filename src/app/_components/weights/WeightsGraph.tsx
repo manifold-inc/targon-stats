@@ -1,7 +1,8 @@
 "use client";
 
-import BarChart, { type BarData } from "@/app/_components/BarChart";
+import BarChart from "@/app/_components/BarChart";
 import { reactClient } from "@/trpc/react";
+import { type BarData } from "@/types";
 import useCountUp from "@/utils/useCountUp";
 import { useIsLgOrLarger } from "@/utils/useIsLgOrLarger";
 import { useMemo } from "react";

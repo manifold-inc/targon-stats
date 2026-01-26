@@ -1,7 +1,8 @@
 "use client";
 
-import BarChart, { type BarData } from "@/app/_components/BarChart";
+import BarChart from "@/app/_components/BarChart";
 import { reactClient } from "@/trpc/react";
+import { type BarData } from "@/types";
 import useCountUp from "@/utils/useCountUp";
 import { useIsLgOrLarger } from "@/utils/useIsLgOrLarger";
 import { getNodes } from "@/utils/utils";
@@ -181,7 +182,7 @@ export default function PayoutGraph({
                     {getDisplayName(selectedComputeType)} Payouts
                   </h2>
                   <RiArrowDownSFill
-                    className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`}
+                    className={`h-4 w-4 transition-transform text-mf-sally-500 ${open ? "rotate-180" : ""}`}
                   />
                 </MenuButton>
 

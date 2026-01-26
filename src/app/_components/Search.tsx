@@ -2,7 +2,7 @@
 
 import { reactClient } from "@/trpc/react";
 import { getNodes } from "@/utils/utils";
-import { RiArrowDownSLine, RiCloseLine, RiSearchLine } from "@remixicon/react";
+import { RiArrowDownSFill, RiCloseLine, RiSearchLine } from "@remixicon/react";
 import { useMemo, useRef, useState } from "react";
 
 export default function Search({
@@ -115,8 +115,8 @@ export default function Search({
             onMouseDown={(e) => e.preventDefault()} // Prevent blur when clicking
             className="px-2 py-2 text-mf-edge-700 hover:opacity-80"
           >
-            <RiArrowDownSLine
-              className={`h-4 w-4 transition-transform ${isDropdownOpen ? "rotate-180" : ""}`}
+            <RiArrowDownSFill
+              className={`h-4 w-4 transition-transform text-mf-sally-500 ${isDropdownOpen ? "rotate-180" : ""}`}
             />
           </button>
         </div>
