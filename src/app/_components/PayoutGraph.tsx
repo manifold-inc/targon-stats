@@ -1,34 +1,13 @@
 "use client";
 
 import BarChart, { type BarData } from "@/app/_components/BarChart";
-import useCountUp from "@/app/_components/header/useCountUp";
 import { reactClient } from "@/trpc/react";
+import useCountUp from "@/utils/useCountUp";
+import { useIsLgOrLarger } from "@/utils/useIsLgOrLarger";
 import { getNodes } from "@/utils/utils";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { RiArrowDownSFill } from "@remixicon/react";
 import { useEffect, useMemo, useState } from "react";
-
-function useIsLgOrLarger() {
-  const [isLgOrLarger, setIsLgOrLarger] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    const checkSize = () => {
-      setIsLgOrLarger(window.innerWidth >= 1024);
-    };
-
-    checkSize();
-    window.addEventListener("resize", checkSize);
-    return () => window.removeEventListener("resize", checkSize);
-  }, []);
-
-  if (!mounted) {
-    return false;
-  }
-
-  return isLgOrLarger;
-}
 
 function getDisplayName(computeType: string): string {
   if (computeType.includes("H200")) return "NVIDIA H200";
@@ -70,23 +49,28 @@ export default function PayoutGraph({
     return h200 || h100 || nonV4 || availableComputeTypes[0] || "";
   }, [availableComputeTypes, fixedComputeType]);
 
-  const [selectedComputeType, setSelectedComputeType] = useState<string>("");
+  const [selectedComputeType, setSelectedComputeType] = useState<string>(
+    fixedComputeType || ""
+  );
 
   useEffect(() => {
-    if (fixedComputeType) {
-      if (selectedComputeType !== fixedComputeType) {
-        setSelectedComputeType(fixedComputeType);
-      }
-    } else if (defaultComputeType && !selectedComputeType) {
+    if (fixedComputeType && selectedComputeType !== fixedComputeType) {
+      setSelectedComputeType(fixedComputeType);
+    }
+  }, [fixedComputeType, selectedComputeType]);
+
+  useEffect(() => {
+    if (!fixedComputeType && defaultComputeType && !selectedComputeType) {
       setSelectedComputeType(defaultComputeType);
     }
-  }, [defaultComputeType, selectedComputeType, fixedComputeType]);
+  }, [defaultComputeType, fixedComputeType, selectedComputeType]);
 
-  useEffect(() => {
-    if (!fixedComputeType && selectedComputeType && onComputeTypeChange) {
-      onComputeTypeChange(selectedComputeType);
+  const handleComputeTypeChange = (computeType: string) => {
+    setSelectedComputeType(computeType);
+    if (!fixedComputeType && onComputeTypeChange) {
+      onComputeTypeChange(computeType);
     }
-  }, [selectedComputeType, fixedComputeType, onComputeTypeChange]);
+  };
 
   const payoutData = useMemo(() => {
     if (!auction?.auction_results || !selectedComputeType) return [];
@@ -207,7 +191,7 @@ export default function PayoutGraph({
                       <MenuItem key={computeType}>
                         {({ focus }) => (
                           <button
-                            onClick={() => setSelectedComputeType(computeType)}
+                            onClick={() => handleComputeTypeChange(computeType)}
                             className={`${
                               focus
                                 ? "bg-mf-night-500 text-mf-milk-500"

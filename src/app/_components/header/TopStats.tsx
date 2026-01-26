@@ -1,8 +1,8 @@
 "use client";
 
 import Button from "@/app/_components/Button";
-import useCountUp from "@/app/_components/header/useCountUp";
 import { reactClient } from "@/trpc/react";
+import useCountUp from "@/utils/useCountUp";
 import { RiDropFill } from "@remixicon/react";
 import Image from "next/image";
 

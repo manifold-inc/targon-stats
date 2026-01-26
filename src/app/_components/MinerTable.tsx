@@ -2,6 +2,7 @@
 
 import BlockSelector from "@/app/_components/BlockSelector";
 import Search from "@/app/_components/Search";
+import { useClickOutside } from "@/utils/useClickOutside";
 import { filterByUidSearch } from "@/utils/utils";
 import {
   RiArrowDownLine,
@@ -9,7 +10,7 @@ import {
   RiArrowUpLine,
   RiFilterLine,
 } from "@remixicon/react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 export type MinerNodes = {
   uid: string;
@@ -70,25 +71,10 @@ export default function MinerTable({
   const computeTypeFilterRef = useRef<HTMLDivElement>(null);
   const uidFilterRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        computeTypeFilterRef.current &&
-        !computeTypeFilterRef.current.contains(event.target as Node)
-      ) {
-        setShowComputeTypeFilter(false);
-      }
-      if (
-        uidFilterRef.current &&
-        !uidFilterRef.current.contains(event.target as Node)
-      ) {
-        setShowUidFilter(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  useClickOutside([computeTypeFilterRef, uidFilterRef], () => {
+    setShowComputeTypeFilter(false);
+    setShowUidFilter(false);
+  });
 
   const availableComputeTypes = useMemo(() => {
     const types = new Set(nodes.map((node) => node.compute_type));

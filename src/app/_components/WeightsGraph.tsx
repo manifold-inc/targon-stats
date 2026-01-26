@@ -1,31 +1,10 @@
 "use client";
 
 import BarChart, { type BarData } from "@/app/_components/BarChart";
-import useCountUp from "@/app/_components/header/useCountUp";
 import { reactClient } from "@/trpc/react";
-import { useEffect, useMemo, useState } from "react";
-
-function useIsLgOrLarger() {
-  const [isLgOrLarger, setIsLgOrLarger] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    const checkSize = () => {
-      setIsLgOrLarger(window.innerWidth >= 1024);
-    };
-
-    checkSize();
-    window.addEventListener("resize", checkSize);
-    return () => window.removeEventListener("resize", checkSize);
-  }, []);
-
-  if (!mounted) {
-    return false;
-  }
-
-  return isLgOrLarger;
-}
+import useCountUp from "@/utils/useCountUp";
+import { useIsLgOrLarger } from "@/utils/useIsLgOrLarger";
+import { useMemo } from "react";
 
 export default function WeightsGraph({
   isHalfSize = true,

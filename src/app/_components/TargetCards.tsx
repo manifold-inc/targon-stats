@@ -1,5 +1,5 @@
-import useCountUp from "@/app/_components/header/useCountUp";
 import { type Auction, type AuctionResults } from "@/server/api/routers/chain";
+import useCountUp from "@/utils/useCountUp";
 import { RiCpuLine, RiHardDrive3Fill, RiLockLine } from "@remixicon/react";
 import { useMemo } from "react";
 
