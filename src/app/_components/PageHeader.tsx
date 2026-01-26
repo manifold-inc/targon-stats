@@ -19,8 +19,8 @@ export default function PageHeader({
   badges?: BadgeItem[];
 }) {
   return (
-    <div className="w-full px-10">
-      <div className="mx-auto max-w-[1325px] py-9">
+    <div className="w-full">
+      <div className="mx-auto max-w-[1325px] pt-9 pb-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5">
             <div className="text-mf-sally-500">{icon}</div>
