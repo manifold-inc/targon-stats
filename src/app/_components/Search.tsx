@@ -5,19 +5,17 @@ import { getNodes } from "@/utils/utils";
 import { RiArrowDownSLine, RiCloseLine, RiSearchLine } from "@remixicon/react";
 import { useMemo, useRef, useState } from "react";
 
-interface SearchProps {
-  value: string;
-  onChange: (value: string) => void;
-  onClear: () => void;
-  placeholder?: string;
-}
-
 export default function Search({
   value,
   onChange,
   onClear,
   placeholder = "Search by UID...",
-}: SearchProps) {
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  onClear: () => void;
+  placeholder?: string;
+}) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -90,7 +88,7 @@ export default function Search({
     <div className="relative" ref={dropdownRef}>
       <div className="relative">
         <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-          <RiSearchLine className="h-5 w-5 text-mf-edge-700" />
+          <RiSearchLine className="h-5 w-5 text-mf-sally-500" />
         </div>
         <input
           ref={inputRef}

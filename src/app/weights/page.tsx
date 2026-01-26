@@ -30,12 +30,6 @@ export default function WeightPage() {
     [setSearchTerm, router]
   );
 
-  const handleClickTab = useCallback(
-    (term: string) =>
-      handleSearchNavigation(term, "/miner", setSearchTerm, router),
-    [setSearchTerm, router]
-  );
-
   const onBlockChange = useCallback(
     (block: number) =>
       handleBlockChange(block, setSelectedBlock, handleSearchChange),
@@ -62,7 +56,6 @@ export default function WeightPage() {
           weights={auction?.weights}
           hotkeyToUid={auction?.hotkey_to_uid ?? {}}
           searchTerm={searchTerm}
-          onNavigateToMiner={handleClickTab}
           isLoading={isLoading}
           error={error as Error | null}
           title="Targon Weights"

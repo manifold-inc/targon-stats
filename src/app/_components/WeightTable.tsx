@@ -7,7 +7,7 @@ import {
   RiArrowDownLine,
   RiArrowUpDownLine,
   RiArrowUpLine,
-  RiCheckLine,
+  RiFileCopyFill,
   RiFileCopyLine,
 } from "@remixicon/react";
 import { useState } from "react";
@@ -25,25 +25,9 @@ enum SortDirection {
   NULL = 0,
 }
 
-interface WeightTableProps {
-  weights?: { uids: number[]; incentives: number[] };
-  hotkeyToUid: Record<string, string>;
-  searchTerm: string;
-  onNavigateToMiner: (uid: string) => void;
-  isLoading: boolean;
-  error: Error | null;
-  title?: string;
-  block?: number;
-  latestBlock?: number;
-  onBlockChange?: (block: number) => void;
-  onSearchChange?: (term: string) => void;
-  onSearchClear?: () => void;
-}
-
 const WeightTable = ({
   weights,
   hotkeyToUid,
-  onNavigateToMiner,
   isLoading,
   error,
   title = "Miner Weights",
@@ -53,7 +37,19 @@ const WeightTable = ({
   onSearchChange,
   onSearchClear,
   searchTerm,
-}: WeightTableProps) => {
+}: {
+  weights?: { uids: number[]; incentives: number[] };
+  hotkeyToUid: Record<string, string>;
+  searchTerm: string;
+  isLoading: boolean;
+  error: Error | null;
+  title?: string;
+  block?: number;
+  latestBlock?: number;
+  onBlockChange?: (block: number) => void;
+  onSearchChange?: (term: string) => void;
+  onSearchClear?: () => void;
+}) => {
   const [field, setField] = useState<SortField>(SortField.NULL);
   const [direction, setDirection] = useState<SortDirection>(SortDirection.NULL);
   const [copiedHotkey, setCopiedHotkey] = useState<string | null>(null);
@@ -241,16 +237,15 @@ const WeightTable = ({
               sortedUids.map((uid, _idx: number) => (
                 <tr
                   key={uid}
-                  onClick={() => onNavigateToMiner(String(uid))}
-                  className="border-b border-mf-border-600 hover:bg-mf-ash-500/30 transition-colors cursor-pointer animate-fade-in-row"
+                  className="border-b border-mf-border-600 transition-colors animate-fade-in-row"
                   style={{
                     animationDelay: `${_idx * 0.05}s`,
                     opacity: 0,
                   }}
                 >
                   <td className="py-3 px-4 text-sm text-mf-milk-500">{uid}</td>
-                  <td className="py-3 px-4 text-sm text-mf-sybil-300">
-                    <div className="flex cursor-pointer items-center gap-2 transition-opacity hover:opacity-80">
+                  <td className="py-3 px-4 text-sm text-mf-milk-500">
+                    <div className="flex items-center gap-2 transition-opacity hover:opacity-80">
                       <span className="font-mono">
                         {hotkeyToUid[String(uid)] || "N/A"}
                       </span>
@@ -265,11 +260,11 @@ const WeightTable = ({
                               2000
                             );
                           }}
-                          className="text-mf-sybil-300 transition-colors"
+                          className="transition-colors"
                           title="Copy hotkey"
                         >
                           {copiedHotkey === String(uid) ? (
-                            <RiCheckLine className="h-4 w-4 text-mf-sybil-300" />
+                            <RiFileCopyFill className="h-4 w-4 text-mf-sally-500" />
                           ) : (
                             <RiFileCopyLine className="h-4 w-4" />
                           )}
