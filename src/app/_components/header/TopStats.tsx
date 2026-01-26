@@ -51,6 +51,7 @@ export default function TopStats({
             {taoPrice}
           </div>
         }
+        valueClassName="text-mf-sybil-300"
         icon={
           <Image
             src="/tao.svg"
@@ -71,6 +72,7 @@ export default function TopStats({
             {emissionPool}
           </div>
         }
+        valueClassName="text-mf-sybil-300"
         icon={<RiDropFill className="h-3.5 w-3.5 text-mf-sally-300" />}
       />
       <Box
