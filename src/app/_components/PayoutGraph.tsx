@@ -495,12 +495,7 @@ export default function PayoutGraph({
 
           if (isNaN(year) || isNaN(month) || isNaN(day)) return uid;
 
-          const date = new Date(Date.UTC(year, month - 1, day));
-          const monthName = date.toLocaleDateString("en-US", {
-            month: "short",
-            timeZone: "UTC",
-          });
-          return `${monthName} ${day}`;
+          return `${month}.${day}`;
         }}
         chartHeight={chartHeight}
       />
