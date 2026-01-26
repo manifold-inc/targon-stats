@@ -275,11 +275,13 @@ const TargetCards = ({
                   <div className="flex items-center gap-3">
                     <div className="rounded-lg border border-mf-border-600 bg-mf-night-400 px-3 py-2">
                       <div className="text-sm text-mf-sally-500">
-                        {computeType.minClusterSize.toString().padStart(2, "0")}
+                        {(computeType.minClusterSize || 1)
+                          .toString()
+                          .padStart(2, "0")}
                       </div>
                     </div>
                     <div className="text-xs text-mf-milk-600 whitespace-nowrap">
-                      Min Clusters
+                      Min Cards Per Cluster
                     </div>
                   </div>
                 </div>
@@ -288,7 +290,7 @@ const TargetCards = ({
                   <div className="flex items-center gap-3">
                     <div className="rounded-lg border border-mf-border-600 bg-mf-night-400 px-3 py-2">
                       <div className="text-sm text-mf-sybil-300">
-                        ${computeType.targetPrice.toFixed(2)}
+                        ${(computeType.targetPrice / 100).toFixed(2)}
                       </div>
                     </div>
                     <div className="text-xs text-mf-milk-600 whitespace-nowrap">
@@ -298,7 +300,7 @@ const TargetCards = ({
                   <div className="flex items-center gap-3">
                     <div className="rounded-lg border border-mf-border-600 bg-mf-night-400 px-3 py-2">
                       <div className="text-sm text-mf-sybil-300">
-                        ${computeType.maxPrice.toFixed(2)}
+                        ${(computeType.maxPrice / 100).toFixed(2)}
                       </div>
                     </div>
                     <div className="text-xs text-mf-milk-600 whitespace-nowrap">
