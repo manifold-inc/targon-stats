@@ -2,7 +2,7 @@
 
 import { type ReactNode } from "react";
 
-export default function Button({
+export default function Box({
   icon,
   label,
   value,
@@ -32,7 +32,7 @@ export default function Button({
         </span>
       </div>
       {label && (
-        <div className="absolute top-full mt-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none text-[0.45rem] text-mf-milk-700 rounded-full border border-mf-border-400 px-3 py-0.5 whitespace-nowrap">
+        <div className="absolute top-full mt-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none text-xs text-mf-milk-700 rounded-full border border-mf-border-400 px-3 py-0.5 whitespace-nowrap">
           <span className="hidden sm:inline">{label}</span>
           {mobileLabel && <span className="sm:hidden">{mobileLabel}</span>}
         </div>

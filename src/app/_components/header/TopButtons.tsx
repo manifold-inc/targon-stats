@@ -1,6 +1,6 @@
 "use client";
 
-import Button from "@/app/_components/Button";
+import Box from "@/app/_components/Box";
 import { RiFileFill } from "@remixicon/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -13,14 +13,14 @@ export default function TopButtons({
   return (
     <div className={columnLayout ? "flex flex-col gap-8" : "flex gap-3"}>
       <Link href="/docs">
-        <Button
+        <Box
           value="Docs"
           valueClassName="animate-flip-up"
           icon={<RiFileFill className="h-3.5 w-3.5 text-mf-sally-300" />}
         />
       </Link>
       <Link href="https://targon.com" target="_blank">
-        <Button
+        <Box
           value="Launch"
           valueClassName="animate-flip-up"
           icon={

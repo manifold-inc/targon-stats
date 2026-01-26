@@ -1,6 +1,6 @@
 "use client";
 
-import Button from "@/app/_components/Button";
+import Box from "@/app/_components/Box";
 import Branding from "@/app/_components/header/Branding";
 import TopButtons from "@/app/_components/header/TopButtons";
 import TopStats from "@/app/_components/header/TopStats";
@@ -56,7 +56,7 @@ const MobileMenu = ({
       <div className="fixed inset-0 z-10" />
       <DialogPanel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-mf-night-500 px-6 py-6 sm:max-w-sm border-l border-mf-border-600">
         <div className="flex items-center justify-between sm:justify-end">
-          <div className="sm:hidden -translate-x-[1px]">
+          <div className="sm:hidden -translate-x-px">
             <Branding />
           </div>
           <button
@@ -81,7 +81,7 @@ const MobileMenu = ({
                   onClick={onClose}
                   className="cursor-pointer"
                 >
-                  <Button
+                  <Box
                     icon={<Icon className="h-3.5 w-3.5 text-mf-sally-500" />}
                     value={route.title}
                     valueClassName={

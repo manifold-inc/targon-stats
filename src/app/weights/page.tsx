@@ -1,7 +1,7 @@
 "use client";
 
 import PageHeader from "@/app/_components/PageHeader";
-import WeightTable from "@/app/_components/WeightTable";
+import WeightsTable from "@/app/_components/weights/WeightsTable";
 import { reactClient } from "@/trpc/react";
 import { handleBlockChange, handleSearchNavigation } from "@/utils/utils";
 import { RiArrowUpBoxFill } from "@remixicon/react";
@@ -43,7 +43,7 @@ export default function WeightPage() {
         icon={<RiArrowUpBoxFill className="h-7 w-7 text-mf-sally-500" />}
       />
       <div className="mt-5 pb-20">
-        <WeightTable
+        <WeightsTable
           weights={auction?.weights}
           hotkeyToUid={auction?.hotkey_to_uid ?? {}}
           searchTerm={searchTerm}

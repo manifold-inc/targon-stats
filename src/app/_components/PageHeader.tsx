@@ -1,12 +1,11 @@
 "use client";
 
-import Button from "@/app/_components/Button";
+import Box from "@/app/_components/Box";
 import { reactClient } from "@/trpc/react";
+import useCountUp from "@/utils/useCountUp";
 import { getNodes } from "@/utils/utils";
 import { RiCpuLine, RiHardDrive3Fill } from "@remixicon/react";
 import { type ReactNode, useMemo } from "react";
-
-import { useCountUp } from "./header/useCountUp";
 
 export default function PageHeader({
   title,
@@ -88,7 +87,7 @@ export default function PageHeader({
 
       <div className="lg:flex hidden items-center gap-3">
         {badges.map((badge, index) => (
-          <Button
+          <Box
             key={index}
             icon={badge.icon}
             value={
@@ -97,7 +96,7 @@ export default function PageHeader({
                 <span className="text-mf-milk-600">{badge.text}</span>
               </>
             }
-            valueClassName="animate-flip-up"
+            valueClassName="animate-flip-up w-30"
           />
         ))}
       </div>

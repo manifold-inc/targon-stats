@@ -24,9 +24,9 @@ const Branding = () => {
           className="h-7 w-22 mt-0.5"
           priority
         />
-        <span className="bg-mf-sally-800 group-hover:bg-mf-sally-700 transition-colors rounded-full w-15 h-3.75 flex items-center justify-center gap-0.5">
-          <RiBarChartFill className="size-2 text-mf-sally-500" />
-          <span className="text-[0.45rem] font-light text-mf-milk-600">
+        <span className="bg-mf-sally-800 group-hover:bg-mf-sally-700 transition-colors rounded-full w-18 h-5 flex items-center justify-center gap-0.5 mt-px">
+          <RiBarChartFill className="size-3 text-mf-sally-500" />
+          <span className="text-[0.65rem] font-light text-mf-milk-600 pt-px">
             Stats
           </span>
         </span>

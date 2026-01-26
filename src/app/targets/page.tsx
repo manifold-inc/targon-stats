@@ -1,7 +1,7 @@
 "use client";
 
 import BlockSelector from "@/app/_components/BlockSelector";
-import TargetCards from "@/app/_components/TargetCards";
+import TargetCards from "@/app/_components/targets/TargetCards";
 import { reactClient } from "@/trpc/react";
 import { RiRecordCircleFill } from "@remixicon/react";
 import { useCallback, useState } from "react";

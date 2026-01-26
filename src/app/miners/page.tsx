@@ -1,6 +1,7 @@
 "use client";
 
-import MinerTable from "@/app/_components/MinerTable";
+import MinersTable from "@/app/_components/miners/MinersTable";
+import PageHeader from "@/app/_components/PageHeader";
 import { reactClient } from "@/trpc/react";
 import {
   getNodes,
@@ -10,8 +11,6 @@ import {
 import { RiToolsFill } from "@remixicon/react";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
-
-import PageHeader from "../_components/PageHeader";
 
 export default function MinersPage() {
   const [selectedBlock, setSelectedBlock] = useState<number | undefined>(
@@ -49,7 +48,7 @@ export default function MinersPage() {
         icon={<RiToolsFill className="h-7 w-7 text-mf-sally-500" />}
       />
       <div className="mt-5 pb-20">
-        <MinerTable
+        <MinersTable
           nodes={getNodes(auction?.auction_results ?? {})}
           searchTerm={searchTerm}
           isLoading={isLoading}

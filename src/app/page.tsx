@@ -2,7 +2,7 @@
 
 import PageHeader from "@/app/_components/PageHeader";
 import PayoutGraph from "@/app/_components/PayoutGraph";
-import WeightsGraph from "@/app/_components/WeightsGraph";
+import WeightsGraph from "@/app/_components/weights/WeightsGraph";
 import { reactClient } from "@/trpc/react";
 import { RiBarChartFill } from "@remixicon/react";
 import { useMemo, useState } from "react";

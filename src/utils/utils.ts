@@ -1,9 +1,9 @@
 import {
+  type AuctionResults,
   type MinerNode,
   type MinerNodes,
   type MinerNodesWithIP,
-} from "@/app/_components/MinerTable";
-import { type AuctionResults } from "@/server/api/routers/chain";
+} from "@/types";
 import { type AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { z } from "zod";
 
@@ -80,16 +80,11 @@ export function removeIPAddress(node: MinerNodesWithIP): MinerNode {
 
 export function handleSearchNavigation(
   term: string,
-  route: string,
+  _route: string,
   setSearchTerm: (term: string) => void,
-  router: AppRouterInstance
+  _router: AppRouterInstance
 ) {
   setSearchTerm(term);
-  if (term.trim()) {
-    router.push(`${route}?search=${encodeURIComponent(term)}`);
-  } else {
-    router.push(route);
-  }
 }
 
 export function filterByUidSearch<T extends { uid: string }>(

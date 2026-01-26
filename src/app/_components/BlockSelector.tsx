@@ -1,6 +1,6 @@
 "use client";
 
-import { RiArrowDownSLine } from "@remixicon/react";
+import { RiArrowDownSFill } from "@remixicon/react";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -68,8 +68,8 @@ export default function BlockSelector({
             </>
           )}
         </span>
-        <RiArrowDownSLine
-          className={`ml-2 h-4 w-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
+        <RiArrowDownSFill
+          className={`ml-2 h-4 w-4 transition-transform text-mf-sally-500 ${isOpen ? "rotate-180" : ""}`}
         />
       </button>
 
