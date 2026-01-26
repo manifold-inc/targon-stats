@@ -2,7 +2,6 @@
 
 import Button from "@/app/_components/Button";
 import CodeBlock from "@/app/_components/CodeBlock";
-import { reactClient } from "@/trpc/react";
 import { API_ENDPOINT } from "@/utils/constant";
 import { copyToClipboard } from "@/utils/utils";
 import { RiCheckLine, RiFileCopyLine, RiFileFill } from "@remixicon/react";
