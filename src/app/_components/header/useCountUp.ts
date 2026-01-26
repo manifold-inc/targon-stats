@@ -1,12 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
-interface UseCountUpOptions {
-  end: number;
-  duration?: number;
-  decimals?: number;
-  isReady?: boolean;
-}
-
 function getFormatString(end: number, decimals: number): string {
   if (decimals === 0) {
     if (end === 0) {
@@ -64,7 +57,12 @@ export function useCountUp({
   duration = 1000,
   decimals = 0,
   isReady = true,
-}: UseCountUpOptions): string {
+}: {
+  end: number;
+  duration?: number;
+  decimals?: number;
+  isReady?: boolean;
+}): string {
   const [count, setCount] = useState(0);
   const formatStr = useMemo(
     () => getFormatString(end, decimals),

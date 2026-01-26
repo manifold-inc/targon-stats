@@ -150,9 +150,10 @@ export default function PayoutGraph({
   }, [auction, selectedComputeType, aggregateByUid]);
 
   const maxPayout = Math.max(...payoutData.map((d) => d.payoutPerCard), 0);
-  const latestPayout =
+  const averagePayout =
     payoutData.length > 0
-      ? (payoutData[payoutData.length - 1]?.payoutPerCard ?? 0)
+      ? payoutData.reduce((sum, d) => sum + d.payoutPerCard, 0) /
+        payoutData.length
       : 0;
 
   const chartHeight = 200;
@@ -163,11 +164,11 @@ export default function PayoutGraph({
       ? isLoading || !auction || !selectedComputeType || payoutData.length === 0
       : isLoading || !selectedComputeType || payoutData.length === 0;
 
-  const latestPayoutCountUp = useCountUp({
-    end: latestPayout,
+  const averagePayoutCountUp = useCountUp({
+    end: averagePayout,
     duration: 1000,
     decimals: 2,
-    isReady: !showSkeleton && latestPayout > 0,
+    isReady: !showSkeleton && averagePayout > 0,
   });
 
   const showNoData = Boolean(
@@ -203,7 +204,7 @@ export default function PayoutGraph({
         <svg
           viewBox={`0 0 1000 ${chartHeight + 40}`}
           preserveAspectRatio="none"
-          className="w-full h-[240px] [&_text]:!text-[8px]"
+          className="w-full h-[240px]"
         >
           {Array.from({ length: skeletonBars }).map((_, index) => {
             const barHeight = getDeterministicHeight(index);
@@ -237,7 +238,7 @@ export default function PayoutGraph({
         <svg
           viewBox={`0 0 1000 ${chartHeight + 40}`}
           preserveAspectRatio="none"
-          className="w-full h-[240px] [&_text]:!text-[8px]"
+          className="w-full h-[240px]"
           onMouseMove={(e) => {
             if (hoveredData) {
               const rect = e.currentTarget.getBoundingClientRect();
@@ -434,10 +435,8 @@ export default function PayoutGraph({
             <span className="text-[0.8rem] text-mf-milk-500 sm:block hidden">
               Average
             </span>
-            <div className="rounded-sm border border-mf-border-600 px-3 ">
-              <span className="text-xs text-mf-sally-500">
-                ${latestPayoutCountUp}
-              </span>
+            <div className="rounded-sm border border-mf-border-600 w-16 text-xs text-mf-sally-500 py-0.5 text-center">
+              ${averagePayoutCountUp}
             </div>
           </div>
         ) : null}

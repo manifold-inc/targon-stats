@@ -47,10 +47,10 @@ export default function TopStats({
       <Button
         label="Tao Price"
         value={
-          <>
+          <div className="flex items-center w-16 justify-center">
             <span className="text-[0.7rem]">$</span>
             {taoPrice}
-          </>
+          </div>
         }
         valueClassName="text-mf-sybil-300"
         icon={
@@ -68,17 +68,21 @@ export default function TopStats({
         label="Emission Pool"
         mobileLabel="E. Pool"
         value={
-          <>
+          <div className="flex items-center w-16 justify-center">
             <span className="text-[0.7rem]">$</span>
             {emissionPool}
-          </>
+          </div>
         }
         valueClassName="text-mf-sybil-300"
         icon={<RiDropFill className="h-3.5 w-3.5 text-mf-sally-300" />}
       />
       <Button
         label="Current"
-        value={currentBlock}
+        value={
+          <div className="flex items-center w-16 justify-center">
+            {currentBlock}
+          </div>
+        }
         icon={
           <Image
             src="/box.svg"

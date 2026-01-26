@@ -107,7 +107,7 @@ export default function WeightsGraph({
         <svg
           viewBox={`0 0 1000 ${chartHeight + 40}`}
           preserveAspectRatio="none"
-          className="w-full h-[240px] [&_text]:!text-[8px]"
+          className="w-full h-[240px]"
         >
           {Array.from({ length: skeletonBars }).map((_, index) => {
             const barHeight = getDeterministicHeight(index);
@@ -141,7 +141,7 @@ export default function WeightsGraph({
         <svg
           viewBox={`0 0 1000 ${chartHeight + 40}`}
           preserveAspectRatio="none"
-          className="w-full h-[240px] [&_text]:!text-[8px]"
+          className="w-full h-[240px]"
           onMouseMove={(e) => {
             if (hoveredData) {
               const rect = e.currentTarget.getBoundingClientRect();
@@ -294,10 +294,8 @@ export default function WeightsGraph({
         ) : !showSkeleton && highestData ? (
           <div className="flex items-center gap-2">
             <span className="text-[0.8rem] text-mf-milk-500">Highest</span>
-            <div className="rounded-sm border border-mf-border-600 px-3 ">
-              <span className="text-xs text-mf-sally-500">
-                {highestData.uid} - {highestPercentCountUp}%
-              </span>
+            <div className="rounded-sm border border-mf-border-600 px-3 w-26 text-xs text-mf-sally-500 py-0.5 text-center">
+              {highestData.uid} - {highestPercentCountUp}%
             </div>
           </div>
         ) : null}

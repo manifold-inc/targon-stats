@@ -224,7 +224,7 @@ const TargetCards = ({
               <h3 className="text-xs">{card.title}</h3>
             </div>
             <div
-              className={`text-5xl font-saira font-[500] mb-1 ${
+              className={`text-5xl font-saira font-medium mb-1 ${
                 card.totalCards === 0
                   ? "text-mf-night-200"
                   : "text-mf-sally-500"

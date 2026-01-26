@@ -97,7 +97,7 @@ export default function PageHeader({
                 <span className="text-mf-milk-600">{badge.text}</span>
               </>
             }
-            valueClassName="animate-flip-up"
+            valueClassName="animate-flip-up w-30"
           />
         ))}
       </div>
