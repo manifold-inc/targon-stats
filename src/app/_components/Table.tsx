@@ -22,6 +22,7 @@ export type TableColumn<T> = {
   }) => ReactNode;
   renderCell: (row: T, index: number) => ReactNode;
   className?: string;
+  width?: string;
 };
 
 type TableProps<T> = {
@@ -148,6 +149,11 @@ export default function Table<T>({
                         ? "group cursor-pointer hover:text-mf-edge-300 transition-colors"
                         : ""
                     } ${column.className || ""}`}
+                    style={
+                      column.width
+                        ? { width: column.width, whiteSpace: "nowrap" }
+                        : { whiteSpace: "nowrap" }
+                    }
                     onClick={
                       column.sortable !== false && onSort
                         ? () => handleSort(column.key)
@@ -215,6 +221,11 @@ export default function Table<T>({
                     <td
                       key={column.key}
                       className={`py-3 px-4 text-sm ${column.className || ""}`}
+                      style={
+                        column.width
+                          ? { width: column.width, whiteSpace: "nowrap" }
+                          : { whiteSpace: "nowrap" }
+                      }
                     >
                       {column.renderCell(row, idx)}
                     </td>

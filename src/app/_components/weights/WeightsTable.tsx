@@ -108,11 +108,13 @@ const WeightsTable = ({
     {
       key: SortField.UID,
       label: "UUID",
+      width: "30%",
       renderCell: (uid) => <span className="text-mf-milk-500">{uid}</span>,
     },
     {
       key: SortField.HOTKEY,
       label: "Hotkey",
+      width: "60%",
       renderCell: (uid) => (
         <div className="flex items-center gap-2 transition-opacity hover:opacity-80">
           <span className="font-mono text-mf-milk-500">
@@ -145,6 +147,7 @@ const WeightsTable = ({
     {
       key: SortField.WEIGHT,
       label: "Weight",
+      width: "10%",
       renderCell: (uid) => (
         <span className="text-mf-sally-500">
           {(getIncentiveForUid(uid) * 100).toFixed(2)}%

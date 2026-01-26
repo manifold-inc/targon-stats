@@ -130,6 +130,7 @@ export default function MinersTable({
     {
       key: "uid",
       label: "UUID",
+      width: "25%",
       renderHeader: ({ sortDirection, onSort, isSorted }) => (
         <div className="flex items-center group">
           <button
@@ -204,6 +205,7 @@ export default function MinersTable({
     {
       key: "payout",
       label: "Payout",
+      width: "30%",
       renderCell: (node) => (
         <span className="text-mf-sybil-300">
           ${(node.payout / node.cards).toFixed(2)} per hour
@@ -218,6 +220,7 @@ export default function MinersTable({
           <span className="md:hidden">#</span> Cards
         </>
       ),
+      width: "25%",
       renderCell: (node) => (
         <span className="text-mf-sally-500">
           {node.cards} Card{node.cards > 1 ? "s" : ""}
@@ -227,6 +230,7 @@ export default function MinersTable({
     {
       key: "compute_type",
       label: "Compute Type",
+      width: "20%",
       renderHeader: ({ sortDirection, onSort, isSorted }) => (
         <div className="flex items-center group">
           <button
