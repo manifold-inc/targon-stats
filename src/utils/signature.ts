@@ -1,6 +1,6 @@
-import { createHash } from "crypto";
 import Keyring from "@polkadot/keyring";
 import { waitReady } from "@polkadot/wasm-crypto";
+import { createHash } from "crypto";
 
 interface Verification {
   verified: boolean;
@@ -13,7 +13,7 @@ export async function verify(
   uuid: string,
   body: string,
   timestamp: string,
-  signedFor: string,
+  signedFor: string
 ): Promise<Verification> {
   const timestampNumber: number = parseInt(timestamp, 10);
   if (isNaN(timestampNumber)) {

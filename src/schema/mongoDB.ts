@@ -1,6 +1,5 @@
-import { MongoClient, ServerApiVersion, type Db } from "mongodb";
-
 import { env } from "@/env.mjs";
+import { type Db, MongoClient, ServerApiVersion } from "mongodb";
 
 // Create a MongoClient with a MongoClientOptions object
 const client = new MongoClient(env.MONGO_URI, {

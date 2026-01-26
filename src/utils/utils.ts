@@ -1,12 +1,11 @@
-import { type AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
-import { z } from "zod";
-
 import {
   type MinerNode,
   type MinerNodes,
   type MinerNodesWithIP,
 } from "@/app/_components/MinerTable";
 import { type AuctionResults } from "@/server/api/routers/chain";
+import { type AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import { z } from "zod";
 
 export const StatsSchema = z.object({
   max_tokens_per_second: z.number(),
@@ -19,7 +18,7 @@ export async function copyToClipboard<T = string>(
   text: string,
   id: T,
   setCopiedId: (id: T | null) => void,
-  resetTimeoutMs: 2000,
+  resetTimeoutMs: 2000
 ): Promise<boolean> {
   try {
     await navigator.clipboard.writeText(text);
@@ -83,7 +82,7 @@ export function handleSearchNavigation(
   term: string,
   route: string,
   setSearchTerm: (term: string) => void,
-  router: AppRouterInstance,
+  router: AppRouterInstance
 ) {
   setSearchTerm(term);
   if (term.trim()) {
@@ -95,7 +94,7 @@ export function handleSearchNavigation(
 
 export function filterByUidSearch<T extends { uid: string }>(
   items: T[],
-  searchTerm: string,
+  searchTerm: string
 ): T[] {
   if (!searchTerm.trim()) {
     return items;
@@ -123,7 +122,7 @@ export function filterByUidSearch<T extends { uid: string }>(
 export function handleBlockChange(
   block: number,
   setSelectedBlock: (block: number | undefined) => void,
-  handleSearchChange: (term: string) => void,
+  handleSearchChange: (term: string) => void
 ) {
   setSelectedBlock(block);
   handleSearchChange("");

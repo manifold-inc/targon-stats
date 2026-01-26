@@ -1,7 +1,6 @@
-import { NextResponse } from "next/server";
-
 import { getAuctionState } from "@/server/api/routers/chain";
 import { getNodes } from "@/utils/utils";
+import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
@@ -21,7 +20,7 @@ export async function GET() {
           code: "INTERNAL_ERROR",
         },
       },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

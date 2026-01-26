@@ -29,4 +29,4 @@ jobs:
         run: bun run lint
 
       - name: Check Formatting
-        run: bun run check-format
+        run: bun run format:check

@@ -1,9 +1,8 @@
-import { z } from "zod";
-
 import { type MinerNode } from "@/app/_components/MinerTable";
 import { connectToMongoDb } from "@/schema/mongoDB";
 import { createTRPCRouter, publicAuthlessProcedure } from "@/server/api/trpc";
 import { removeIPAddress } from "@/utils/utils";
+import { z } from "zod";
 
 export type AuctionResults = Record<string, MinerNode[]>;
 
@@ -46,7 +45,7 @@ export async function getAuctionState(block?: number): Promise<AuctionState> {
 
   for (const gpu in auction_results) {
     parsedNodes[gpu] = auction_results[gpu]!.map((node: MinerNode) =>
-      removeIPAddress(node),
+      removeIPAddress(node)
     );
   }
 

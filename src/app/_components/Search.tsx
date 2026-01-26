@@ -1,24 +1,21 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
-import { ChevronDown, Search as SearchIcon, X } from "lucide-react";
-
 import { reactClient } from "@/trpc/react";
 import { getNodes } from "@/utils/utils";
-
-interface SearchProps {
-  value: string;
-  onChange: (value: string) => void;
-  onClear: () => void;
-  placeholder?: string;
-}
+import { RiArrowDownSLine, RiCloseLine, RiSearchLine } from "@remixicon/react";
+import { useMemo, useRef, useState } from "react";
 
 export default function Search({
   value,
   onChange,
   onClear,
   placeholder = "Search by UID...",
-}: SearchProps) {
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  onClear: () => void;
+  placeholder?: string;
+}) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -91,7 +88,7 @@ export default function Search({
     <div className="relative" ref={dropdownRef}>
       <div className="relative">
         <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-          <SearchIcon className="h-5 w-5 text-mf-edge-700" />
+          <RiSearchLine className="h-5 w-5 text-mf-sally-500" />
         </div>
         <input
           ref={inputRef}
@@ -100,7 +97,7 @@ export default function Search({
           onChange={(e) => handleInputChange(e.target.value)}
           onFocus={handleInputFocus}
           onBlur={handleBlur}
-          className="placeholder-font-poppins block w-full rounded-lg border border-gray-600 bg-mf-night-500 py-2 pl-10 pr-10 text-sm text-mf-edge-700 placeholder-mf-edge-700 focus:border-mf-sally-500 focus:outline-none focus:ring-2 focus:ring-mf-sally-500"
+          className="block w-full rounded-lg border border-mf-border-600 bg-mf-night-500 py-2 pl-10 pr-10 text-sm text-mf-milk-700 placeholder-mf-milk-700 focus:outline-none"
           placeholder={placeholder}
         />
         <div className="absolute inset-y-0 right-0 flex items-center">
@@ -110,7 +107,7 @@ export default function Search({
               onMouseDown={(e) => e.preventDefault()} // Prevent blur when clicking
               className="px-2 py-2 text-gray-500 hover:opacity-80 dark:text-gray-400 dark:hover:text-gray-200"
             >
-              <X className="h-4 w-4" />
+              <RiCloseLine className="h-4 w-4" />
             </button>
           )}
           <button
@@ -118,7 +115,7 @@ export default function Search({
             onMouseDown={(e) => e.preventDefault()} // Prevent blur when clicking
             className="px-2 py-2 text-mf-edge-700 hover:opacity-80"
           >
-            <ChevronDown
+            <RiArrowDownSLine
               className={`h-4 w-4 transition-transform ${isDropdownOpen ? "rotate-180" : ""}`}
             />
           </button>
@@ -133,7 +130,7 @@ export default function Search({
             onClick={() => setIsDropdownOpen(false)}
           />
           <div
-            className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-lg border border-gray-600 bg-mf-night-500 shadow-lg [&::-webkit-scrollbar]:hidden"
+            className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-lg border border-mf-border-600 bg-mf-night-500 shadow-lg [&::-webkit-scrollbar]:hidden"
             style={{
               scrollbarWidth: "none",
               msOverflowStyle: "none",

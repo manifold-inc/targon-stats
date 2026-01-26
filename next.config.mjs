@@ -6,22 +6,7 @@ await import("./src/env.mjs");
 
 /** @type {import("next").NextConfig} */
 const config = {
-  images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "serpapi.com",
-      },
-      {
-        protocol: "https",
-        hostname: "www.micreate.eu",
-      },
-      {
-        protocol: "https",
-        hostname: "www.google.com",
-      },
-    ],
-  },
+  devIndicators: false,
 };
 
 export default config;
