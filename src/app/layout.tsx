@@ -7,9 +7,7 @@ import { Analytics } from "@vercel/analytics/react";
 import clsx from "clsx";
 import { Toaster } from "sonner";
 
-import BackgroundSVG from "@/app/_components/BackgroundSVG";
-import ChainStats from "@/app/_components/ChainStats";
-import Header from "@/app/_components/header";
+import Header from "@/app/_components/header/Header";
 import { WithGlobalProvider } from "@/app/_components/providers";
 
 const inter = Inter({
@@ -68,12 +66,10 @@ export default function RootLayout({
         <link rel="icon" href="/targon-logo.svg" />
       </head>
       <body
-        className={`relative bg-mf-night-500 text-gray-100 transition-colors`}
+        className={`relative bg-mf-night-500 text-mf-milk-500 transition-colors`}
       >
         <WithGlobalProvider>
-          <BackgroundSVG />
           <Header />
-          <ChainStats />
           <main>{children}</main>
         </WithGlobalProvider>
 

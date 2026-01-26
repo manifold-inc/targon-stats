@@ -1,85 +1,34 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  /* Font Families */
+  --font-family-sans: var(--font-inter);
+  --font-family-saira: var(--font-saira);
+
+  /* Stats Colors */
+  --color-mf-milk-500: #c5dcff;
+  --color-mf-milk-600: #aad6ff;
+  --color-mf-milk-700: #a2b6d6;
+
+  --color-mf-sally-300: #6ac3ff;
+  --color-mf-sally-500: #52abff;
+  --color-mf-sally-700: #0f2334;
+  --color-mf-sally-800: #0b1c2a;
+
+  --color-mf-sybil-300: #56e8b5;
+
+  --color-mf-border-400: #101619;
+  --color-mf-border-500: #0a1014;
+  --color-mf-border-600: #0b1018;
+
+  --color-mf-night-400: #080d11;
+  --color-mf-night-500: #02080f;
+}
 
 :root {
   /* Font Families */
   --font-family-sans: var(--font-inter);
   --font-family-saira: var(--font-saira);
-
-  /* Sky Colors */
-  --color-mf-sky-300: #8dc7fe;
-  --color-mf-sky-500: #53abfd;
-  --color-mf-sky-700: #51abff;
-
-  /* Shelby colors */
-  --color-mf-shelby-300: #aebafe;
-  --color-mf-shelby-500: #8fa0fe;
-  --color-mf-shelby-700: #6f85ff;
-  --color-mf-shelby-800: #282a38;
-
-  /* Sally colors */
-  --color-mf-sally-300: #aad6ff;
-  --color-mf-sally-400: #94ccff;
-  --color-mf-sally-500: #7cc0ff;
-  --color-mf-sally-600: #5fb1ff;
-  --color-mf-sally-700: #52abff;
-  --color-mf-sally-800: #282a38;
-  --color-mf-sally-900: #2b435f;
-
-  /* Safety colors */
-  --color-mf-safety-300: #ff9b7a;
-  --color-mf-safety-500: #ff8156;
-  --color-mf-safety-700: #f36a40;
-  --color-mf-safety-800: #2f272c;
-
-  /* Sybil colors */
-  --color-mf-sybil-300: #84f5cc;
-  --color-mf-sybil-500: #58e8b4;
-  --color-mf-sybil-550: #44d7ad;
-  --color-mf-sybil-600: #56e8b4;
-  --color-mf-sybil-700: #19d692;
-  --color-mf-sybil-800: #233033;
-
-  /* Night colors */
-  --color-mf-night-300: #2a2c33;
-  --color-mf-night-400: #20222d;
-  --color-mf-night-500: #191b20;
-  --color-mf-night-600: #1a1c24;
-  --color-mf-night-650: #1c1e27;
-  --color-mf-night-690: #191c22;
-  --color-mf-night-700: #101114;
-
-  /* Ash */
-  --color-mf-ash-300: #3a3c46;
-  --color-mf-ash-400: #1d2029;
-  --color-mf-ash-500: #22242e;
-  --color-mf-ash-700: #17181f;
-
-  /* Edge colors */
-  --color-mf-edge-300: #d7e5ff;
-  --color-mf-edge-500: #c5dbff;
-  --color-mf-edge-700: #a3b5d6;
-
-  /* Milk */
-  --color-mf-milk-300: #e0ebff;
-  --color-mf-milk-500: #d2e3ff;
-  --color-mf-milk-600: #b4c8e9;
-  --color-mf-milk-700: #aec0d6;
-
-  /* Blue */
-  --color-mf-light-blue: #7cc0ff;
-
-  /* Gray */
-  --color-mf-dark-gray: #272d38;
-  --color-mf-gray: #606371;
-  --color-mf-gray-700: #242a34;
-  --color-mf-light-gray: #2e3342;
-  --color-mf-another-gray: #333333;
-  --color-mf-google-white: #f7f7f7;
-  --color-mf-settings-gray: #343640;
-  --color-mf-footer-gray: #616371;
-  --color-mf-plan-gray: #282c39;
 }
 
 .hljs {
@@ -187,15 +136,6 @@
   background-color: #78191b;
 }
 
-.hljs-char.escape_,
-.hljs-link,
-.hljs-params,
-.hljs-property,
-.hljs-punctuation,
-.hljs-tag {
-  /* purposely ignored */
-}
-
 /* Custom Fonts */
 body {
   font-family: var(--font-family-sans), sans-serif;
@@ -238,4 +178,33 @@ html {
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--color-mf-ash-300) var(--color-mf-ash-700);
+}
+
+/* Animations */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes flip-up {
+  from {
+    opacity: 0;
+    transform: rotateX(-90deg) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: rotateX(0deg) translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out forwards;
+}
+
+.animate-flip-up {
+  animation: flip-up 0.4s ease-out forwards;
 }
