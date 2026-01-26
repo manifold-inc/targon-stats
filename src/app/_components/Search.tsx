@@ -97,7 +97,7 @@ export default function Search({
           onChange={(e) => handleInputChange(e.target.value)}
           onFocus={handleInputFocus}
           onBlur={handleBlur}
-          className="block w-full rounded-lg border border-mf-border-600 bg-mf-night-500 py-2 pl-10 pr-10 text-sm text-mf-milk-700 placeholder-mf-milk-700 focus:outline-none"
+          className="block w-full rounded-lg border border-mf-border-600 bg-mf-night-500 py-2 pl-10 pr-10 text-sm text-mf-milk-700 placeholder-mf-milk-800 focus:outline-none"
           placeholder={placeholder}
         />
         <div className="absolute inset-y-0 right-0 flex items-center">

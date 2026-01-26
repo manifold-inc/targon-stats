@@ -85,11 +85,6 @@ export function handleSearchNavigation(
   router: AppRouterInstance
 ) {
   setSearchTerm(term);
-  if (term.trim()) {
-    router.push(`${route}?search=${encodeURIComponent(term)}`);
-  } else {
-    router.push(route);
-  }
 }
 
 export function filterByUidSearch<T extends { uid: string }>(

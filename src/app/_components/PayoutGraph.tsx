@@ -10,10 +10,10 @@ import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { RiArrowDownSFill } from "@remixicon/react";
 import { useEffect, useMemo, useState } from "react";
 
-function getDisplayName(computeType: string): string {
-  if (computeType.includes("H200")) return "NVIDIA H200";
-  if (computeType.includes("H100")) return "NVIDIA H100";
-  if (computeType.includes("V4")) return "AMD V4 CPU";
+function getDisplayName(computeType: string, shortName?: boolean): string {
+  if (computeType.includes("H200")) return shortName ? "H200" : "NVIDIA H200";
+  if (computeType.includes("H100")) return shortName ? "H100" : "NVIDIA H100";
+  if (computeType.includes("V4")) return shortName ? "CPU" : "AMD V4 CPU";
   return computeType;
 }
 
@@ -170,7 +170,7 @@ export default function PayoutGraph({
       <div className="mb-6 flex items-center justify-between">
         {fixedComputeType ? (
           <h2 className="whitespace-nowrap sm:text-base text-xs">
-            {getDisplayName(selectedComputeType)} Payouts{" "}
+            {getDisplayName(selectedComputeType, isHalfSize)} Payouts{" "}
             {aggregateByUid ? "by UUID" : ""}
           </h2>
         ) : mounted ? (

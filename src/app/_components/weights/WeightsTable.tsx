@@ -5,7 +5,10 @@ import Table, {
   type TableColumn,
 } from "@/app/_components/Table";
 import { copyToClipboard } from "@/utils/utils";
-import { RiFileCopyFill, RiFileCopyLine } from "@remixicon/react";
+import {
+  RiCheckboxMultipleBlankLine,
+  RiCheckboxMultipleLine,
+} from "@remixicon/react";
 import { useMemo, useState } from "react";
 
 enum SortField {
@@ -135,9 +138,9 @@ const WeightsTable = ({
               title="Copy hotkey"
             >
               {copiedHotkey === String(uid) ? (
-                <RiFileCopyFill className="h-4 w-4 text-mf-sally-500" />
+                <RiCheckboxMultipleLine className="h-4 w-4 text-mf-sally-500" />
               ) : (
-                <RiFileCopyLine className="h-4 w-4" />
+                <RiCheckboxMultipleBlankLine className="h-4 w-4" />
               )}
             </button>
           )}
