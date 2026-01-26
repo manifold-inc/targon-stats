@@ -32,7 +32,7 @@ const socialLinks = [
 
 export default function Footer() {
   return (
-    <footer className="bg-mf-night-500 pt-60">
+    <footer className="bg-mf-night-500 pt-60 pb-10">
       <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
         <Branding />
 
