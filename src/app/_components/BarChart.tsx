@@ -63,7 +63,7 @@ export default function BarChart({
     return data.map((item, index) => {
       const x = padding + index * (fixedBarWidth + calculatedGap);
       const centerX = (x + fixedBarWidth / 2) * scaleFactor;
-      const labelWidth = 60 * (isHalfSize ? 2 : 1);
+      const labelWidth = 30 * (isHalfSize ? 2 : 1);
 
       return {
         uid: item.uid,
@@ -243,7 +243,7 @@ export default function BarChart({
       )}
 
       {isLgOrLarger && (
-        <div className="absolute top-[210px] left-0 w-full h-[26px] pointer-events-none">
+        <div className="absolute top-[210px] left-0 w-full h-[26px] pointer-events-none overflow-hidden">
           {labelPositions.map((label, index) => (
             <div
               key={`label-${label.uid}-${index}`}
@@ -253,7 +253,7 @@ export default function BarChart({
                 width: `${label.width}px`,
               }}
             >
-              <div className="rounded border border-mf-border-600 bg-mf-night-450 px-1.5 py-0.5 text-[8px] text-mf-milk-700 leading-tight">
+              <div className="rounded border border-mf-border-600 bg-mf-night-450 px-1.5 py-0.5 text-[8px] text-mf-milk-700 leading-tight whitespace-nowrap">
                 {formatLabel ? formatLabel(label.uid) : label.uid}
               </div>
             </div>

@@ -69,7 +69,7 @@ export async function getHistoricalPayoutData(
 
   const latestData = await mongoDb
     .collection("miner_info")
-    .find({})
+    .find({}, { projection: { block: 1 } })
     .sort({ block: -1 })
     .limit(1)
     .toArray();
@@ -86,13 +86,23 @@ export async function getHistoricalPayoutData(
   const blocksToLookBack = days * blocksPerDay;
   const minBlock = Math.max(0, latestBlock - blocksToLookBack);
 
+  const sampleSize = Math.min(200, days * 15);
+
   const data = await mongoDb
     .collection("miner_info")
-    .find({
-      block: { $gte: minBlock, $lte: latestBlock },
-    })
+    .find(
+      {
+        block: { $gte: minBlock, $lte: latestBlock },
+      },
+      {
+        projection: {
+          block: 1,
+          auction_results: 1,
+        },
+      }
+    )
     .sort({ block: -1 })
-    .limit(200)
+    .limit(sampleSize)
     .toArray();
 
   if (!data || data.length === 0) {

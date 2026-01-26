@@ -236,7 +236,7 @@ export default function PayoutGraph({
 
   const { data: historicalData, isLoading: isLoadingHistorical } =
     reactClient.chain.getHistoricalPayoutData.useQuery({
-      days: isHalfSize ? 15 : 30,
+      days: isHalfSize ? 20 : 30, // Request more days to ensure we get enough data
       computeType: selectedComputeType || undefined,
     });
 
@@ -317,19 +317,21 @@ export default function PayoutGraph({
       allHistoricalData.push(...apiDataWithAdjustedIndex);
     }
 
-    let data = allHistoricalData.map((day) => ({
-      uid: day.date,
-      date: day.date,
-      dayIndex: day.dayIndex,
-      payoutPerCard: day.averagePayoutPerCard,
-      totalPayout: day.totalPayout,
-      cards: day.totalCards,
-      index: day.dayIndex,
-      isLive: false,
-    }));
+    let data = allHistoricalData
+      .sort((a, b) => a.date.localeCompare(b.date)) // Sort by date to ensure chronological order
+      .map((day) => ({
+        uid: day.date,
+        date: day.date,
+        dayIndex: day.dayIndex,
+        payoutPerCard: day.averagePayoutPerCard,
+        totalPayout: day.totalPayout,
+        cards: day.totalCards,
+        index: day.dayIndex,
+        isLive: false,
+      }));
 
     if (isHalfSize) {
-      data = data.slice(-15);
+      data = data.slice(-15); // Get the last 15 days
       data = data.map((day, idx) => ({
         ...day,
         dayIndex: idx,
