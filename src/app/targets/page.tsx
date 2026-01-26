@@ -58,4 +58,3 @@ export default function TargetsPage() {
     </div>
   );
 }
-a;

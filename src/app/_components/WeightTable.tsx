@@ -238,7 +238,7 @@ const WeightTable = ({
                 </td>
               </tr>
             ) : (
-              sortedUids.map((uid, idx: number) => (
+              sortedUids.map((uid, _idx: number) => (
                 <tr
                   key={uid}
                   onClick={() => onNavigateToMiner(String(uid))}

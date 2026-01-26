@@ -34,8 +34,8 @@ export type MinerNodesWithIP = {
 
 type SortField = "uid" | "payout" | "cards" | "compute_type";
 type SortOrder = "asc" | "desc";
-type ComputeTypeFilter = "all" | string;
-type UidFilter = "all" | string;
+type ComputeTypeFilter = string;
+type UidFilter = string;
 
 export default function MinerTable({
   nodes,
