@@ -3,6 +3,8 @@
 import { reactClient } from "@/trpc/react";
 import { useEffect, useMemo, useState } from "react";
 
+import { useCountUp } from "./header/useCountUp";
+
 function useIsLgOrLarger() {
   const [isLgOrLarger, setIsLgOrLarger] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -72,6 +74,13 @@ export default function WeightsGraph({
   const showSkeleton = isLoading || weightsData.length === 0;
   const showNoData = !isLoading && weightsData.length === 0;
 
+  const highestPercentCountUp = useCountUp({
+    end: highestData ? highestData.percent * 100 : 0,
+    duration: 1000,
+    decimals: 2,
+    isReady: !showSkeleton && highestData !== null,
+  });
+
   const renderSkeletonChart = () => {
     const skeletonBars = isHalfSize ? 15 : 30;
     const skeletonBarGap = isHalfSize ? 34 : 18;
@@ -84,8 +93,13 @@ export default function WeightsGraph({
       skeletonBars > 0 ? skeletonAvailableWidth / skeletonBars : 0;
 
     const getDeterministicHeight = (index: number) => {
-      const seed = (index * 17 + 23) % 100;
-      return (seed / 100) * chartHeight * 0.6 + chartHeight * 0.2;
+      const hash1 = ((index * 17 + 23) % 97) / 97;
+      const hash2 = ((index * 31 + 41) % 89) / 89;
+      const hash3 = ((index * 13 + 7) % 83) / 83;
+      const combined = hash1 * 0.5 + hash2 * 0.3 + hash3 * 0.2;
+      const wave = Math.sin(index * 0.7) * 0.1 + Math.cos(index * 0.3) * 0.05;
+      const normalized = Math.max(0, Math.min(1, combined + wave));
+      return normalized * chartHeight * 0.6 + chartHeight * 0.2;
     };
 
     return (
@@ -186,6 +200,8 @@ export default function WeightsGraph({
                   height={barHeight}
                   fill="url(#weights-bar-gradient)"
                   rx={2}
+                  className="animate-grow-up"
+                  style={{ cursor: "pointer" }}
                   onMouseEnter={() =>
                     setHoveredData({ uid: data.uid, percent: data.percent })
                   }
@@ -203,7 +219,6 @@ export default function WeightsGraph({
                     setHoveredData(null);
                     setHoverPosition(null);
                   }}
-                  style={{ cursor: "pointer" }}
                 />
 
                 <rect
@@ -213,6 +228,7 @@ export default function WeightsGraph({
                   height={3}
                   fill="#52abff"
                   opacity={0.9}
+                  className="animate-grow-up"
                 />
 
                 {isLgOrLarger && (
@@ -278,7 +294,7 @@ export default function WeightsGraph({
             <span className="text-[0.8rem] text-mf-milk-500">Highest</span>
             <div className="rounded-sm border border-mf-border-600 px-3 ">
               <span className="text-xs text-mf-sally-500">
-                {highestData.uid} - {(highestData.percent * 100).toFixed(2)}%
+                {highestData.uid} - {highestPercentCountUp}%
               </span>
             </div>
           </div>

@@ -242,7 +242,11 @@ const WeightTable = ({
                 <tr
                   key={uid}
                   onClick={() => onNavigateToMiner(String(uid))}
-                  className="border-b border-mf-border-600 hover:bg-mf-ash-500/30 transition-colors cursor-pointer"
+                  className="border-b border-mf-border-600 hover:bg-mf-ash-500/30 transition-colors cursor-pointer animate-fade-in-row"
+                  style={{
+                    animationDelay: `${_idx * 0.05}s`,
+                    opacity: 0,
+                  }}
                 >
                   <td className="py-3 px-4 text-sm text-mf-milk-500">{uid}</td>
                   <td className="py-3 px-4 text-sm text-mf-sybil-300">

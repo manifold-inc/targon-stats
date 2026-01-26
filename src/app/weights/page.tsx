@@ -6,9 +6,9 @@ import { reactClient } from "@/trpc/react";
 import { handleBlockChange, handleSearchNavigation } from "@/utils/utils";
 import { RiArrowUpBoxFill } from "@remixicon/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 
-function Content() {
+export default function WeightPage() {
   const router = useRouter();
   const [selectedBlock, setSelectedBlock] = useState<number | undefined>(
     undefined
@@ -74,13 +74,5 @@ function Content() {
         />
       </div>
     </div>
-  );
-}
-
-export default function WeightPage() {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <Content />
-    </Suspense>
   );
 }

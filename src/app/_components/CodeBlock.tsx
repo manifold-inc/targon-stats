@@ -5,7 +5,6 @@ import http from "highlight.js/lib/languages/http";
 import json from "highlight.js/lib/languages/json";
 import { useEffect, useRef } from "react";
 
-// Register languages
 hljs.registerLanguage("json", json);
 hljs.registerLanguage("http", http);
 

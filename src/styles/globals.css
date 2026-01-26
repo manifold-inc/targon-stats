@@ -23,6 +23,7 @@
   --color-mf-border-600: #0b1018;
 
   --color-mf-night-100: #374151;
+  --color-mf-night-200: #0C141A;
   --color-mf-night-300: #0C121A;
   --color-mf-night-400: #080d11;
   --color-mf-night-450: #03090F;
@@ -205,10 +206,38 @@ html {
   }
 }
 
+@keyframes grow-up {
+  from {
+    clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0 100%);
+  }
+  to {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  }
+}
+
+@keyframes fade-in-row {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .animate-fade-in {
-  animation: fade-in 0.3s ease-out forwards;
+  animation: fade-in 0.5s ease-out forwards;
 }
 
 .animate-flip-up {
-  animation: flip-up 0.4s ease-out forwards;
+  animation: flip-up 0.5s ease-out forwards;
+}
+
+.animate-grow-up {
+  animation: grow-up 0.8s ease-out forwards;
+}
+
+.animate-fade-in-row {
+  animation: fade-in-row 0.4s ease-out forwards;
 }

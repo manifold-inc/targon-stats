@@ -6,6 +6,8 @@ import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { RiArrowDownSFill } from "@remixicon/react";
 import { useEffect, useMemo, useState } from "react";
 
+import { useCountUp } from "./header/useCountUp";
+
 function useIsLgOrLarger() {
   const [isLgOrLarger, setIsLgOrLarger] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -161,6 +163,13 @@ export default function PayoutGraph({
       ? isLoading || !auction || !selectedComputeType || payoutData.length === 0
       : isLoading || !selectedComputeType || payoutData.length === 0;
 
+  const latestPayoutCountUp = useCountUp({
+    end: latestPayout,
+    duration: 1000,
+    decimals: 2,
+    isReady: !showSkeleton && latestPayout > 0,
+  });
+
   const showNoData = Boolean(
     fixedComputeType === undefined &&
       !isLoading &&
@@ -179,6 +188,16 @@ export default function PayoutGraph({
     const skeletonBarWidth =
       skeletonBars > 0 ? skeletonAvailableWidth / skeletonBars : 0;
 
+    const getDeterministicHeight = (index: number) => {
+      const hash1 = ((index * 17 + 23) % 97) / 97;
+      const hash2 = ((index * 31 + 41) % 89) / 89;
+      const hash3 = ((index * 13 + 7) % 83) / 83;
+      const combined = hash1 * 0.5 + hash2 * 0.3 + hash3 * 0.2;
+      const wave = Math.sin(index * 0.7) * 0.1 + Math.cos(index * 0.3) * 0.05;
+      const normalized = Math.max(0, Math.min(1, combined + wave));
+      return normalized * chartHeight * 0.6 + chartHeight * 0.2;
+    };
+
     return (
       <div className="w-full relative">
         <svg
@@ -187,8 +206,7 @@ export default function PayoutGraph({
           className="w-full h-[240px] [&_text]:!text-[8px]"
         >
           {Array.from({ length: skeletonBars }).map((_, index) => {
-            const barHeight =
-              Math.random() * chartHeight * 0.6 + chartHeight * 0.2;
+            const barHeight = getDeterministicHeight(index);
             const x =
               skeletonPadding + index * (skeletonBarWidth + skeletonBarGap);
             const y = chartHeight - barHeight;
@@ -274,6 +292,8 @@ export default function PayoutGraph({
                   height={barHeight}
                   fill="url(#bar-gradient)"
                   rx={2}
+                  className="animate-grow-up"
+                  style={{ cursor: "pointer" }}
                   onMouseEnter={() =>
                     setHoveredData({
                       uid: data.uid,
@@ -294,7 +314,6 @@ export default function PayoutGraph({
                     setHoveredData(null);
                     setHoverPosition(null);
                   }}
-                  style={{ cursor: "pointer" }}
                 />
 
                 <rect
@@ -304,6 +323,7 @@ export default function PayoutGraph({
                   height={3}
                   fill="#52abff"
                   opacity={0.9}
+                  className="animate-grow-up"
                 />
 
                 {isLgOrLarger && (
@@ -412,7 +432,7 @@ export default function PayoutGraph({
             <span className="text-[0.8rem] text-mf-milk-500">Average</span>
             <div className="rounded-sm border border-mf-border-600 px-3 ">
               <span className="text-xs text-mf-sally-500">
-                ${latestPayout.toFixed(2)}
+                ${latestPayoutCountUp}
               </span>
             </div>
           </div>

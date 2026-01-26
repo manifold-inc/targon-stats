@@ -388,7 +388,11 @@ export default function MinerTable({
               sorted.map((node, idx) => (
                 <tr
                   key={idx}
-                  className="border-b border-mf-border-600 hover:bg-mf-ash-500/30 transition-colors"
+                  className="border-b border-mf-border-600 hover:bg-mf-ash-500/30 transition-colors animate-fade-in-row"
+                  style={{
+                    animationDelay: `${idx * 0.05}s`,
+                    opacity: 0,
+                  }}
                 >
                   <td className="py-3 px-4 text-sm text-mf-milk-500">
                     {node.uid}

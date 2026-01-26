@@ -6,6 +6,8 @@ import { getNodes } from "@/utils/utils";
 import { RiCpuLine, RiHardDrive3Fill } from "@remixicon/react";
 import { type ReactNode, useMemo } from "react";
 
+import { useCountUp } from "./header/useCountUp";
+
 export default function PageHeader({
   title,
   icon,
@@ -13,7 +15,7 @@ export default function PageHeader({
   title: string;
   icon: ReactNode;
 }) {
-  const { data: auction } =
+  const { data: auction, isLoading } =
     reactClient.chain.getAuctionState.useQuery(undefined);
 
   const computeTypeCounts = useMemo(() => {
@@ -38,20 +40,41 @@ export default function PageHeader({
     return { h200: h200Count, h100: h100Count, v4: v4Count };
   }, [auction]);
 
+  const h200CountUp = useCountUp({
+    end: computeTypeCounts.h200,
+    duration: 1000,
+    decimals: 0,
+    isReady: !isLoading && auction !== undefined,
+  });
+
+  const h100CountUp = useCountUp({
+    end: computeTypeCounts.h100,
+    duration: 1000,
+    decimals: 0,
+    isReady: !isLoading && auction !== undefined,
+  });
+
+  const v4CountUp = useCountUp({
+    end: computeTypeCounts.v4,
+    duration: 1000,
+    decimals: 0,
+    isReady: !isLoading && auction !== undefined,
+  });
+
   const badges = [
     {
       icon: <RiHardDrive3Fill className="h-4 w-4 text-mf-sally-500" />,
-      value: computeTypeCounts.h200.toString(),
+      value: h200CountUp,
       text: "H200 GPUs",
     },
     {
       icon: <RiHardDrive3Fill className="h-4 w-4 text-mf-sally-500" />,
-      value: computeTypeCounts.h100.toString(),
+      value: h100CountUp,
       text: "H100 GPUs",
     },
     {
       icon: <RiCpuLine className="h-4 w-4 text-mf-sally-500" />,
-      value: computeTypeCounts.v4.toString(),
+      value: v4CountUp,
       text: "V4 CPUs",
     },
   ];

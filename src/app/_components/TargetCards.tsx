@@ -35,7 +35,6 @@ const TargetCards = ({
     const types: ComputeTypeInfo[] = [];
 
     for (const [computeTypeName, auctionData] of Object.entries(auction)) {
-      // Parse compute type name to extract information
       const isH200 = computeTypeName.includes("H200");
       const isH100 = computeTypeName.includes("H100");
       const isV4 = computeTypeName.includes("V4");
@@ -67,7 +66,6 @@ const TargetCards = ({
         badge = "AMD SEV";
       }
 
-      // Calculate total cards from auction results
       const totalCards =
         auctionResults[computeTypeName]?.reduce(
           (total, node) => total + (node.count || 0),
@@ -95,14 +93,12 @@ const TargetCards = ({
       });
     }
 
-    // Sort: H200, H100, V4, then others
     return types.sort((a, b) => {
       const order = { H200: 0, H100: 1, V4: 2, OTHER: 3 };
       return order[a.type] - order[b.type];
     });
   }, [auction, auctionResults]);
 
-  // Extract values for countUp hooks
   const h200Value = useMemo(
     () => computeTypes.find((t) => t.type === "H200")?.totalCards || 0,
     [computeTypes]
@@ -227,8 +223,14 @@ const TargetCards = ({
               {card.icon}
               <h3 className="text-xs">{card.title}</h3>
             </div>
-            <div className="text-5xl font-saira font-[500] text-mf-sally-500 mb-1">
-              {card.totalCards === 0 ? "0" : card.countUpValue}
+            <div
+              className={`text-5xl font-saira font-[500] mb-1 ${
+                card.totalCards === 0
+                  ? "text-mf-night-200"
+                  : "text-mf-sally-500"
+              }`}
+            >
+              {card.totalCards === 0 ? "00" : card.countUpValue}
             </div>
             <div className="text-xs text-mf-milk-600">Total Cards</div>
           </div>

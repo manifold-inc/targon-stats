@@ -10,7 +10,7 @@ interface UseCountUpOptions {
 function getFormatString(end: number, decimals: number): string {
   if (decimals === 0) {
     if (end === 0) {
-      return "0000000";
+      return "0";
     }
     const endStr = Math.round(end).toString();
     return "0".repeat(endStr.length);
@@ -41,6 +41,9 @@ function formatValue(
 ): string {
   if (decimals === 0) {
     const rounded = Math.round(value);
+    if (rounded === 0) {
+      return "0";
+    }
     const formatLength = formatStr.length;
     return rounded.toString().padStart(formatLength, "0");
   }

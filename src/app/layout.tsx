@@ -64,12 +64,13 @@ export default function RootLayout({
         <link rel="icon" href="/targon-logo.svg" />
       </head>
       <body
+        suppressHydrationWarning
         className={`relative bg-mf-night-500 text-mf-milk-500 transition-colors h-full flex flex-col`}
       >
         <WithGlobalProvider>
           <div className="flex flex-col min-h-screen">
             <Header />
-            <div className="mx-auto max-w-[1400px] p-10 w-full flex flex-col flex-1">
+            <div className="mx-auto max-w-[1400px] p-10 w-full flex flex-col flex-1 animate-fade-in">
               <main className="flex-1">{children}</main>
               <Footer />
             </div>
