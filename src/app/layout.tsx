@@ -69,8 +69,10 @@ export default function RootLayout({
         <WithGlobalProvider>
           <div className="flex flex-col min-h-screen">
             <Header />
-            <main className="flex-1">{children}</main>
-            <Footer />
+            <div className="mx-auto max-w-[1400px] p-10 w-full flex flex-col flex-1">
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </div>
           </div>
         </WithGlobalProvider>
 

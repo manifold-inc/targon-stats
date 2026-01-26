@@ -1,5 +1,7 @@
 "use client";
 
+import BlockSelector from "@/app/_components/BlockSelector";
+import Search from "@/app/_components/Search";
 import { copyToClipboard } from "@/utils/utils";
 import {
   RiArrowDownLine,
@@ -30,6 +32,12 @@ interface WeightTableProps {
   onNavigateToMiner: (uid: string) => void;
   isLoading: boolean;
   error: Error | null;
+  title?: string;
+  block?: number;
+  latestBlock?: number;
+  onBlockChange?: (block: number) => void;
+  onSearchChange?: (term: string) => void;
+  onSearchClear?: () => void;
 }
 
 const WeightTable = ({
@@ -38,6 +46,13 @@ const WeightTable = ({
   onNavigateToMiner,
   isLoading,
   error,
+  title = "Miner Weights",
+  block,
+  latestBlock,
+  onBlockChange,
+  onSearchChange,
+  onSearchClear,
+  searchTerm,
 }: WeightTableProps) => {
   const [field, setField] = useState<SortField>(SortField.NULL);
   const [direction, setDirection] = useState<SortDirection>(SortDirection.NULL);
@@ -79,88 +94,95 @@ const WeightTable = ({
   const uids = weights?.uids ?? [];
   const incentive = weights?.incentives ?? [];
 
+  const filteredUids = searchTerm
+    ? uids.filter((uid) => String(uid).includes(searchTerm))
+    : uids;
+
+  const getIncentiveForUid = (uid: number) => {
+    const originalIdx = uids.indexOf(uid);
+    return incentive[originalIdx] ?? 0;
+  };
+
+  const sortedUids = (() => {
+    if (field === SortField.NULL || direction === SortDirection.NULL) {
+      return filteredUids;
+    }
+
+    return [...filteredUids].sort((a, b) => {
+      let comparison = 0;
+
+      switch (field) {
+        case SortField.UID:
+          comparison = Number(a) - Number(b);
+          break;
+        case SortField.HOTKEY:
+          const hotkeyA = hotkeyToUid[String(a)] || "";
+          const hotkeyB = hotkeyToUid[String(b)] || "";
+          comparison = hotkeyA.localeCompare(hotkeyB);
+          break;
+        case SortField.WEIGHT:
+          comparison = getIncentiveForUid(a) - getIncentiveForUid(b);
+          break;
+      }
+
+      return direction === SortDirection.ASC ? comparison : -comparison;
+    });
+  })();
+
   if (isLoading) {
     return (
-      <div className="space-y-1">
-        <div className="overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          <table className="min-w-full md:w-full">
-            <thead className="rounded-lg bg-mf-sally-500/15 outline outline-2 outline-offset-[0px] outline-mf-ash-300/25">
-              <tr className="[&>th:first-child]:rounded-l-lg [&>th:last-child]:rounded-r-lg">
-                <th className="cursor-pointer px-2 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 md:px-6">
-                  <div className="flex items-center gap-1">UUID</div>
-                </th>
-                <th className="cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
-                  <div className="flex items-center gap-1">Hotkey</div>
-                </th>
-                <th className="cursor-pointer px-2 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 md:px-6">
-                  <div className="flex items-center justify-end gap-1">
-                    Weight
-                  </div>
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-mf-ash-500/15">
-              <tr className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300/25 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
-                <td
-                  colSpan={3}
-                  className="whitespace-nowrap px-2 py-4 text-center text-sm text-mf-edge-700 md:px-6"
-                >
-                  Loading nodes...
-                </td>
-              </tr>
-            </tbody>
-          </table>
+      <div className="rounded-lg border border-mf-border-600 bg-mf-night-450 p-4">
+        <div className="flex items-center px-3 mb-4">
+          {title && <h2 className="flex-1">{title}</h2>}
         </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="space-y-1">
-        <div className="overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          <table className="min-w-full md:w-full">
-            <thead className="rounded-lg bg-mf-sally-500/15 outline outline-2 outline-offset-[0px] outline-mf-ash-300/25">
-              <tr className="[&>th:first-child]:rounded-l-lg [&>th:last-child]:rounded-r-lg">
-                <th className="cursor-pointer px-2 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 md:px-6">
-                  <div className="flex items-center gap-1">UUID</div>
-                </th>
-                <th className="cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700">
-                  <div className="flex items-center gap-1">Hotkey</div>
-                </th>
-                <th className="cursor-pointer px-2 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 md:px-6">
-                  <div className="flex items-center justify-end gap-1">
-                    Weight
-                  </div>
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-mf-ash-500/15">
-              <tr className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300/25 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg">
-                <td
-                  colSpan={3}
-                  className="whitespace-nowrap px-2 py-4 text-center text-sm text-red-400 md:px-6"
-                >
-                  Error loading nodes: {error.message}
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <div className="space-y-3">
+          {Array.from({ length: 8 }).map((_, idx) => (
+            <div
+              key={idx}
+              className="h-10 w-full bg-mf-night-300 rounded-lg animate-pulse"
+            />
+          ))}
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-1">
-      <div className="overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        <table className="min-w-full md:w-full">
-          <thead className="rounded-lg bg-mf-sally-500/15 outline outline-2 outline-offset-[0px] outline-mf-ash-300/25">
-            <tr className="[&>th:first-child]:rounded-l-lg [&>th:last-child]:rounded-r-lg">
+    <div className="rounded-lg border border-mf-border-600 bg-mf-night-450 p-4">
+      <div className="flex items-center px-3">
+        {title && <h2 className="flex-1">{title}</h2>}
+        {onSearchChange && (
+          <div className="flex-1 flex justify-center">
+            <div className="max-w-xs w-full">
+              <Search
+                value={searchTerm}
+                onChange={onSearchChange}
+                onClear={onSearchClear || (() => onSearchChange(""))}
+              />
+            </div>
+          </div>
+        )}
+        {block !== undefined && latestBlock !== undefined && onBlockChange && (
+          <div className="flex-1 flex justify-end">
+            <div className="max-w-xs flex-1 sm:max-w-none sm:flex-initial">
+              <BlockSelector
+                block={block}
+                latestBlock={latestBlock}
+                isLoading={isLoading}
+                onBlockChange={onBlockChange}
+                searchTerm={searchTerm}
+              />
+            </div>
+          </div>
+        )}
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full">
+          <thead>
+            <tr className="border-b border-mf-border-600">
               <th
-                style={{ width: "30%" }}
-                className="cursor-pointer px-2 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 md:px-6"
                 onClick={() => handleSort(SortField.UID)}
+                className="group text-left py-3 px-4 text-sm font-semibold cursor-pointer hover:text-mf-edge-300 transition-colors"
               >
                 <div className="flex items-center gap-1">
                   UUID
@@ -168,9 +190,8 @@ const WeightTable = ({
                 </div>
               </th>
               <th
-                style={{ width: "40%" }}
-                className="cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700"
                 onClick={() => handleSort(SortField.HOTKEY)}
+                className="group text-left py-3 px-4 text-sm font-semibold cursor-pointer hover:text-mf-edge-300 transition-colors"
               >
                 <div className="flex items-center gap-1">
                   Hotkey
@@ -178,69 +199,86 @@ const WeightTable = ({
                 </div>
               </th>
               <th
-                style={{ width: "30%" }}
-                className="cursor-pointer px-2 py-3 text-end text-xs font-medium uppercase tracking-wider text-mf-sally-500 hover:bg-gray-700 md:px-6"
                 onClick={() => handleSort(SortField.WEIGHT)}
+                className="group text-left py-3 px-4 text-sm font-semibold cursor-pointer hover:text-mf-edge-300 transition-colors"
               >
-                <div className="flex items-center justify-end gap-1">
+                <div className="flex items-center gap-1">
                   Weight
                   {getIcon(SortField.WEIGHT)}
                 </div>
               </th>
             </tr>
           </thead>
-          <tbody className="bg-mf-ash-500/15">
-            {uids.map((uid, idx: number) => (
-              <tr
-                key={uid}
-                onClick={() => onNavigateToMiner(String(uid))}
-                className="cursor-pointer rounded-lg bg-mf-ash-500/15 outline outline-2 outline-offset-[-1px] outline-mf-ash-300/25 hover:bg-mf-ash-500/30 [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg"
-              >
+          <tbody>
+            {error ? (
+              <tr className="border-b border-mf-border-600">
                 <td
-                  style={{ width: "30%" }}
-                  className="whitespace-nowrap px-2 py-4 text-xs text-mf-edge-700 md:px-6 md:text-sm"
+                  colSpan={3}
+                  className="py-3 px-4 text-sm text-red-400 text-center"
                 >
-                  {uid}
-                </td>
-                <td
-                  style={{ width: "40%" }}
-                  className="whitespace-nowrap px-6 py-4 text-sm text-mf-sally-300"
-                >
-                  <div className="flex cursor-pointer items-center gap-2 transition-opacity hover:opacity-80">
-                    <span className="font-mono">
-                      {hotkeyToUid[String(uid)] || "N/A"}
-                    </span>
-                    {hotkeyToUid[String(uid)] && (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          void copyToClipboard(
-                            hotkeyToUid[String(uid)] ?? "",
-                            String(uid),
-                            setCopiedHotkey,
-                            2000
-                          );
-                        }}
-                        className="text-mf-sally-300 transition-colors"
-                        title="Copy hotkey"
-                      >
-                        {copiedHotkey === String(uid) ? (
-                          <RiCheckLine className="h-4 w-4 text-mf-sally-300" />
-                        ) : (
-                          <RiFileCopyLine className="h-4 w-4" />
-                        )}
-                      </button>
-                    )}
-                  </div>
-                </td>
-                <td
-                  style={{ width: "30%" }}
-                  className="whitespace-nowrap px-2 py-4 text-end text-xs text-mf-sybil-500 md:px-6 md:text-sm"
-                >
-                  {((incentive[idx] ?? 0) * 100).toFixed(2)}%
+                  Error loading nodes: {error.message}
                 </td>
               </tr>
-            ))}
+            ) : searchTerm && filteredUids.length === 0 ? (
+              <tr className="border-b border-mf-border-600">
+                <td
+                  colSpan={3}
+                  className="py-3 px-4 text-sm text-mf-edge-700 text-center"
+                >
+                  No nodes found matching {searchTerm}
+                </td>
+              </tr>
+            ) : filteredUids.length === 0 ? (
+              <tr className="border-b border-mf-border-600">
+                <td
+                  colSpan={3}
+                  className="py-3 px-4 text-sm text-mf-edge-700 text-center"
+                >
+                  No nodes found
+                </td>
+              </tr>
+            ) : (
+              sortedUids.map((uid, idx: number) => (
+                <tr
+                  key={uid}
+                  onClick={() => onNavigateToMiner(String(uid))}
+                  className="border-b border-mf-border-600 hover:bg-mf-ash-500/30 transition-colors cursor-pointer"
+                >
+                  <td className="py-3 px-4 text-sm text-mf-milk-500">{uid}</td>
+                  <td className="py-3 px-4 text-sm text-mf-sybil-300">
+                    <div className="flex cursor-pointer items-center gap-2 transition-opacity hover:opacity-80">
+                      <span className="font-mono">
+                        {hotkeyToUid[String(uid)] || "N/A"}
+                      </span>
+                      {hotkeyToUid[String(uid)] && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            void copyToClipboard(
+                              hotkeyToUid[String(uid)] ?? "",
+                              String(uid),
+                              setCopiedHotkey,
+                              2000
+                            );
+                          }}
+                          className="text-mf-sybil-300 transition-colors"
+                          title="Copy hotkey"
+                        >
+                          {copiedHotkey === String(uid) ? (
+                            <RiCheckLine className="h-4 w-4 text-mf-sybil-300" />
+                          ) : (
+                            <RiFileCopyLine className="h-4 w-4" />
+                          )}
+                        </button>
+                      )}
+                    </div>
+                  </td>
+                  <td className="py-3 px-4 text-sm text-mf-sally-500">
+                    {(getIncentiveForUid(uid) * 100).toFixed(2)}%
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

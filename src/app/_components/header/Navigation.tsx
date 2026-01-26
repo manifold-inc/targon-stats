@@ -23,17 +23,17 @@ export const Navigation = () => {
       icon: RiBarChartFill,
     },
     {
-      pathname: "/miner",
+      pathname: "/miners",
       title: "Miners",
       icon: RiToolsFill,
     },
     {
-      pathname: "/weight",
+      pathname: "/weights",
       title: "Weights",
       icon: RiArrowUpBoxFill,
     },
     {
-      pathname: "/target",
+      pathname: "/targets",
       title: "Targets",
       icon: RiRecordCircleFill,
     },
