@@ -190,7 +190,7 @@ export default function PayoutGraph({
     reactClient.chain.getAuctionState.useQuery(undefined);
   const isLgOrLarger = useIsLgOrLarger();
   const [mounted, setMounted] = useState(false);
-  const [showPulse, setShowPulse] = useState(true);
+  const [showPulse, setShowPulse] = useState(false);
   const pulseTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -453,12 +453,12 @@ export default function PayoutGraph({
               onClick={handleRefetch}
               className="flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer"
             >
-              <RiRefreshLine className="h-3 w-3 text-mf-sally-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <RiRefreshLine className="h-3 w-3 text-mf-sybil-300 opacity-0 group-hover:opacity-100 transition-opacity" />
               <span className="text-[0.8rem] text-mf-milk-500 sm:block hidden transition-colors">
                 Live
               </span>
               <div
-                className={`w-1 h-1 rounded-full ${showPulse ? "animate-pulse bg-mf-sally-500" : "bg-mf-milk-700"}`}
+                className={`w-1 h-1 rounded-full animate-pulse ${showPulse ? "bg-mf-sybil-300" : "bg-mf-sally-500"}`}
               />
             </button>
             <div className="rounded-sm border border-mf-border-600 w-16 text-xs text-mf-sally-500 py-0.5 text-center">
