@@ -3,17 +3,6 @@
 import { type BarData } from "@/types";
 import { useEffect, useMemo, useRef, useState } from "react";
 
-interface BarChartProps {
-  data: BarData[];
-  maxValue: number;
-  gradientId: string;
-  isHalfSize?: boolean;
-  isLoading?: boolean;
-  isLgOrLarger: boolean;
-  formatValue: (value: number) => string;
-  chartHeight?: number;
-}
-
 export default function BarChart({
   data,
   maxValue,
@@ -22,8 +11,19 @@ export default function BarChart({
   isLoading = false,
   isLgOrLarger,
   formatValue,
+  formatLabel,
   chartHeight = 200,
-}: BarChartProps) {
+}: {
+  data: BarData[];
+  maxValue: number;
+  gradientId: string;
+  isHalfSize?: boolean;
+  isLoading?: boolean;
+  isLgOrLarger: boolean;
+  formatValue: (value: number) => string;
+  formatLabel?: (uid: string) => string;
+  chartHeight?: number;
+}) {
   const [hoveredData, setHoveredData] = useState<{
     uid: string;
     value: number;
@@ -47,14 +47,13 @@ export default function BarChart({
     return () => window.removeEventListener("resize", updateWidth);
   }, [data.length]);
 
-  // Calculate label positions for HTML rendering
   const labelPositions = useMemo(() => {
     if (!isLgOrLarger || data.length === 0) return [];
 
     const totalBars = data.length;
     const padding = 10;
     const totalPadding = padding * 2;
-    const fixedBarWidth = 16 * (isHalfSize ? 2 : 1); // Fixed bar width in viewBox units
+    const fixedBarWidth = 16 * (isHalfSize ? 2 : 1);
     const availableWidth = 1000 - totalPadding;
     const totalBarsWidth = totalBars * fixedBarWidth;
     const calculatedGap =
@@ -64,7 +63,7 @@ export default function BarChart({
     return data.map((item, index) => {
       const x = padding + index * (fixedBarWidth + calculatedGap);
       const centerX = (x + fixedBarWidth / 2) * scaleFactor;
-      const labelWidth = 16 * (isHalfSize ? 2 : 1); // Fixed label width
+      const labelWidth = 60 * (isHalfSize ? 2 : 1);
 
       return {
         uid: item.uid,
@@ -135,7 +134,7 @@ export default function BarChart({
   const totalBars = data.length;
   const padding = 10;
   const totalPadding = padding * 2;
-  const fixedBarWidth = 16 * (isHalfSize ? 2 : 1); // Fixed bar width in viewBox units
+  const fixedBarWidth = 16 * (isHalfSize ? 2 : 1);
   const availableWidth = 1000 - totalPadding;
   const totalBarsWidth = totalBars * fixedBarWidth;
   const calculatedGap =
@@ -234,8 +233,10 @@ export default function BarChart({
             transform: "translateX(-50%)",
           }}
         >
-          <div>{hoveredData.uid}</div>
-          <div className="text-mf-sally-500">
+          <div className="whitespace-nowrap">
+            {formatLabel ? formatLabel(hoveredData.uid) : hoveredData.uid}
+          </div>
+          <div className="text-mf-sally-500 whitespace-nowrap">
             {formatValue(hoveredData.value)}
           </div>
         </div>
@@ -253,7 +254,7 @@ export default function BarChart({
               }}
             >
               <div className="rounded border border-mf-border-600 bg-mf-night-450 px-1.5 py-0.5 text-[8px] text-mf-milk-700 leading-tight">
-                {label.uid}
+                {formatLabel ? formatLabel(label.uid) : label.uid}
               </div>
             </div>
           ))}

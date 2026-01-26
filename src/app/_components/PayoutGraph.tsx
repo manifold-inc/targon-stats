@@ -7,8 +7,166 @@ import useCountUp from "@/utils/useCountUp";
 import { useIsLgOrLarger } from "@/utils/useIsLgOrLarger";
 import { getNodes } from "@/utils/utils";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
-import { RiArrowDownSFill } from "@remixicon/react";
-import { useEffect, useMemo, useState } from "react";
+import { RiArrowDownSFill, RiRefreshLine } from "@remixicon/react";
+import { useEffect, useMemo, useRef, useState } from "react";
+
+// historical data for before Jan 17 schema change in mongo db
+const hardcodedHistoricalData = [
+  {
+    date: "2025-12-27",
+    dayIndex: 0,
+    averagePayoutPerCard: 1.93952439,
+    totalPayout: 12723.28,
+    totalCards: 6560,
+  },
+  {
+    date: "2025-12-28",
+    dayIndex: 1,
+    averagePayoutPerCard: 2.04128535,
+    totalPayout: 12704.96,
+    totalCards: 6224,
+  },
+  {
+    date: "2025-12-29",
+    dayIndex: 2,
+    averagePayoutPerCard: 1.89979751,
+    totalPayout: 12196.7,
+    totalCards: 6420,
+  },
+  {
+    date: "2025-12-30",
+    dayIndex: 3,
+    averagePayoutPerCard: 1.49061527,
+    totalPayout: 8140.25,
+    totalCards: 5461,
+  },
+  {
+    date: "2025-12-31",
+    dayIndex: 4,
+    averagePayoutPerCard: 1.79688492,
+    totalPayout: 9852.32,
+    totalCards: 5483,
+  },
+  {
+    date: "2026-01-01",
+    dayIndex: 5,
+    averagePayoutPerCard: 2.27965738,
+    totalPayout: 12353.46,
+    totalCards: 5419,
+  },
+  {
+    date: "2026-01-02",
+    dayIndex: 6,
+    averagePayoutPerCard: 2.23256143,
+    totalPayout: 10903.83,
+    totalCards: 4884,
+  },
+  {
+    date: "2026-01-03",
+    dayIndex: 7,
+    averagePayoutPerCard: 2.23742603,
+    totalPayout: 10813.48,
+    totalCards: 4833,
+  },
+  {
+    date: "2026-01-04",
+    dayIndex: 8,
+    averagePayoutPerCard: 2.3123769,
+    totalPayout: 12491.46,
+    totalCards: 5402,
+  },
+  {
+    date: "2026-01-05",
+    dayIndex: 9,
+    averagePayoutPerCard: 2.3997626,
+    totalPayout: 14758.54,
+    totalCards: 6150,
+  },
+  {
+    date: "2026-01-06",
+    dayIndex: 10,
+    averagePayoutPerCard: 2.50530321,
+    totalPayout: 21788.62,
+    totalCards: 8697,
+  },
+  {
+    date: "2026-01-07",
+    dayIndex: 11,
+    averagePayoutPerCard: 2.26139581,
+    totalPayout: 22464.71,
+    totalCards: 9934,
+  },
+  {
+    date: "2026-01-08",
+    dayIndex: 12,
+    averagePayoutPerCard: 1.83913873,
+    totalPayout: 21521.6,
+    totalCards: 11702,
+  },
+  {
+    date: "2026-01-09",
+    dayIndex: 13,
+    averagePayoutPerCard: 1.81059926,
+    totalPayout: 22728.45,
+    totalCards: 12553,
+  },
+  {
+    date: "2026-01-10",
+    dayIndex: 14,
+    averagePayoutPerCard: 1.85593097,
+    totalPayout: 21666.14,
+    totalCards: 11674,
+  },
+  {
+    date: "2026-01-11",
+    dayIndex: 15,
+    averagePayoutPerCard: 1.84747779,
+    totalPayout: 22275.04,
+    totalCards: 12057,
+  },
+  {
+    date: "2026-01-12",
+    dayIndex: 16,
+    averagePayoutPerCard: 1.86884591,
+    totalPayout: 22487.82,
+    totalCards: 12033,
+  },
+  {
+    date: "2026-01-13",
+    dayIndex: 17,
+    averagePayoutPerCard: 1.73826737,
+    totalPayout: 20972.2,
+    totalCards: 12065,
+  },
+  {
+    date: "2026-01-14",
+    dayIndex: 18,
+    averagePayoutPerCard: 1.66851367,
+    totalPayout: 20325.83,
+    totalCards: 12182,
+  },
+  {
+    date: "2026-01-15",
+    dayIndex: 19,
+    averagePayoutPerCard: 1.62076415,
+    totalPayout: 19591.8,
+    totalCards: 12088,
+  },
+  {
+    date: "2026-01-16",
+    dayIndex: 20,
+    averagePayoutPerCard: 1.48291805,
+    totalPayout: 18027.83,
+    totalCards: 12157,
+  },
+  {
+    date: "2026-01-17",
+    dayIndex: 21,
+    averagePayoutPerCard: 1.45914231,
+    totalPayout: 8852.62,
+    totalCards: 6067,
+  },
+];
 
 function getDisplayName(computeType: string, shortName?: boolean): string {
   if (computeType.includes("H200")) return shortName ? "H200" : "NVIDIA H200";
@@ -20,7 +178,7 @@ function getDisplayName(computeType: string, shortName?: boolean): string {
 export default function PayoutGraph({
   fixedComputeType,
   onComputeTypeChange,
-  aggregateByUid = false,
+  aggregateByUid: _aggregateByUid = false,
   isHalfSize = false,
 }: {
   fixedComputeType?: string;
@@ -28,14 +186,36 @@ export default function PayoutGraph({
   aggregateByUid?: boolean;
   isHalfSize?: boolean;
 } = {}) {
-  const { data: auction, isLoading } =
+  const { data: auction, refetch: refetchAuction } =
     reactClient.chain.getAuctionState.useQuery(undefined);
   const isLgOrLarger = useIsLgOrLarger();
   const [mounted, setMounted] = useState(false);
+  const [showPulse, setShowPulse] = useState(true);
+  const pulseTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     setMounted(true);
+    pulseTimeoutRef.current = setTimeout(() => {
+      setShowPulse(false);
+    }, 10000);
+
+    return () => {
+      if (pulseTimeoutRef.current) {
+        clearTimeout(pulseTimeoutRef.current);
+      }
+    };
   }, []);
+
+  const handleRefetch = () => {
+    void refetchAuction();
+    setShowPulse(true);
+    if (pulseTimeoutRef.current) {
+      clearTimeout(pulseTimeoutRef.current);
+    }
+    pulseTimeoutRef.current = setTimeout(() => {
+      setShowPulse(false);
+    }, 10000);
+  };
 
   const availableComputeTypes = useMemo(() => {
     if (!auction?.auction_results) return [];
@@ -53,6 +233,12 @@ export default function PayoutGraph({
   const [selectedComputeType, setSelectedComputeType] = useState<string>(
     fixedComputeType || ""
   );
+
+  const { data: historicalData, isLoading: isLoadingHistorical } =
+    reactClient.chain.getHistoricalPayoutData.useQuery({
+      days: isHalfSize ? 15 : 30,
+      computeType: selectedComputeType || undefined,
+    });
 
   useEffect(() => {
     if (fixedComputeType && selectedComputeType !== fixedComputeType) {
@@ -73,94 +259,133 @@ export default function PayoutGraph({
     }
   };
 
-  const payoutData = useMemo(() => {
-    if (!auction?.auction_results || !selectedComputeType) return [];
+  const liveAveragePayout = useMemo(() => {
+    if (!auction?.auction_results || !selectedComputeType) return null;
 
     const nodes = getNodes(auction.auction_results);
-
     const filteredNodes = nodes.filter(
       (node) => node.compute_type === selectedComputeType
     );
 
-    if (aggregateByUid) {
-      const aggregatedByUid = new Map<
-        string,
-        { uid: string; totalPayout: number; totalCards: number }
-      >();
+    if (filteredNodes.length === 0) return null;
 
-      for (const node of filteredNodes) {
-        const existing = aggregatedByUid.get(node.uid);
-        if (existing) {
-          aggregatedByUid.set(node.uid, {
-            uid: node.uid,
-            totalPayout: existing.totalPayout + node.payout,
-            totalCards: existing.totalCards + node.cards,
-          });
-        } else {
-          aggregatedByUid.set(node.uid, {
-            uid: node.uid,
-            totalPayout: node.payout,
-            totalCards: node.cards,
-          });
-        }
-      }
+    const totalPayout = filteredNodes.reduce(
+      (sum, node) => sum + node.payout,
+      0
+    );
+    const totalCards = filteredNodes.reduce((sum, node) => sum + node.cards, 0);
 
-      const data = Array.from(aggregatedByUid.values())
-        .map((item, index) => ({
-          uid: item.uid,
-          payoutPerCard: item.totalPayout / item.totalCards,
-          totalPayout: item.totalPayout,
-          cards: item.totalCards,
-          index,
-        }))
-        .sort((a, b) => a.payoutPerCard - b.payoutPerCard);
+    return totalCards > 0 ? totalPayout / totalCards : 0;
+  }, [auction, selectedComputeType]);
 
-      return data;
-    } else {
-      const data = filteredNodes
-        .map((node, index) => ({
-          uid: node.uid,
-          payoutPerCard: node.payout / node.cards,
-          totalPayout: node.payout,
-          cards: node.cards,
-          index,
-        }))
-        .sort((a, b) => a.payoutPerCard - b.payoutPerCard);
+  const payoutData = useMemo(() => {
+    if (!selectedComputeType) return [];
 
-      return data;
+    const today = new Date();
+    const todayStr = new Date(
+      Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate())
+    )
+      .toISOString()
+      .split("T")[0]!;
+
+    const allHistoricalData: Array<{
+      date: string;
+      dayIndex: number;
+      averagePayoutPerCard: number;
+      totalPayout: number;
+      totalCards: number;
+    }> = [];
+
+    const hardcodedFiltered = hardcodedHistoricalData.filter(
+      (day) => day.date !== todayStr
+    );
+    allHistoricalData.push(...hardcodedFiltered);
+
+    if (historicalData && historicalData.length > 0) {
+      const hardcodedDates = new Set(
+        hardcodedHistoricalData.map((d) => d.date)
+      );
+      const apiDataFiltered = historicalData.filter(
+        (day) => !hardcodedDates.has(day.date) && day.date !== todayStr
+      );
+
+      const apiDataWithAdjustedIndex = apiDataFiltered.map((day, idx) => ({
+        ...day,
+        dayIndex: hardcodedFiltered.length + idx,
+      }));
+
+      allHistoricalData.push(...apiDataWithAdjustedIndex);
     }
-  }, [auction, selectedComputeType, aggregateByUid]);
 
-  const maxPayout = Math.max(...payoutData.map((d) => d.payoutPerCard), 0);
-  const averagePayout =
-    payoutData.length > 0
-      ? payoutData.reduce((sum, d) => sum + d.payoutPerCard, 0) /
-        payoutData.length
-      : 0;
+    let data = allHistoricalData.map((day) => ({
+      uid: day.date,
+      date: day.date,
+      dayIndex: day.dayIndex,
+      payoutPerCard: day.averagePayoutPerCard,
+      totalPayout: day.totalPayout,
+      cards: day.totalCards,
+      index: day.dayIndex,
+      isLive: false,
+    }));
+
+    if (isHalfSize) {
+      data = data.slice(-15);
+      data = data.map((day, idx) => ({
+        ...day,
+        dayIndex: idx,
+        index: idx,
+      }));
+    }
+
+    if (liveAveragePayout !== null) {
+      data.push({
+        uid: "live",
+        date: "live",
+        dayIndex: data.length,
+        payoutPerCard: liveAveragePayout,
+        totalPayout: 0,
+        cards: 0,
+        index: data.length,
+        isLive: true,
+      });
+    }
+
+    return data;
+  }, [historicalData, selectedComputeType, liveAveragePayout, isHalfSize]);
+
+  const maxPayout = Math.max(
+    ...payoutData.map((d) => d.payoutPerCard),
+    liveAveragePayout ?? 0,
+    0
+  );
 
   const chartHeight = 200;
 
   const showSkeleton =
     fixedComputeType !== undefined
-      ? isLoading || !auction || !selectedComputeType || payoutData.length === 0
-      : isLoading || !selectedComputeType || payoutData.length === 0;
+      ? isLoadingHistorical ||
+        !historicalData ||
+        !selectedComputeType ||
+        payoutData.length === 0
+      : isLoadingHistorical || !selectedComputeType || payoutData.length === 0;
 
   const barData: BarData[] = payoutData.map((d) => ({
-    uid: d.uid,
+    uid: d.date, // Use date as identifier
     value: d.payoutPerCard,
-    index: d.index,
+    index: d.dayIndex,
   }));
 
-  const averagePayoutCountUp = useCountUp({
-    end: averagePayout,
+  const livePayoutCountUp = useCountUp({
+    end: liveAveragePayout ?? 0,
     duration: 1000,
     decimals: 2,
-    isReady: !showSkeleton && averagePayout > 0,
+    isReady:
+      !showSkeleton && liveAveragePayout !== null && liveAveragePayout > 0,
   });
 
   const showNoData = Boolean(
     fixedComputeType === undefined &&
-      !isLoading &&
+      !isLoadingHistorical &&
       !!selectedComputeType &&
       payoutData.length === 0
   );
@@ -170,8 +395,7 @@ export default function PayoutGraph({
       <div className="mb-6 flex items-center justify-between">
         {fixedComputeType ? (
           <h2 className="whitespace-nowrap sm:text-base text-xs">
-            {getDisplayName(selectedComputeType, isHalfSize)} Payouts{" "}
-            {aggregateByUid ? "by UUID" : ""}
+            {getDisplayName(selectedComputeType)} Payout
           </h2>
         ) : mounted ? (
           <Menu as="div" className="relative">
@@ -179,7 +403,7 @@ export default function PayoutGraph({
               <>
                 <MenuButton className="flex items-center gap-2 focus:outline-none hover:opacity-80">
                   <h2 className="whitespace-nowrap sm:text-base text-xs">
-                    {getDisplayName(selectedComputeType)} Payouts
+                    {getDisplayName(selectedComputeType)} Payout
                   </h2>
                   <RiArrowDownSFill
                     className={`h-4 w-4 transition-transform text-mf-sally-500 ${open ? "rotate-180" : ""}`}
@@ -215,19 +439,28 @@ export default function PayoutGraph({
           </Menu>
         ) : (
           <h2 className="whitespace-nowrap sm:text-base text-xs">
-            {getDisplayName(selectedComputeType)} Payouts
+            {getDisplayName(selectedComputeType)} Average Payout
           </h2>
         )}
 
         {showNoData ? (
           <div className="text-sm text-mf-edge-300">No Data</div>
-        ) : !showSkeleton ? (
-          <div className="flex items-center gap-2">
-            <span className="text-[0.8rem] text-mf-milk-500 sm:block hidden">
-              Average
-            </span>
+        ) : !showSkeleton && liveAveragePayout !== null ? (
+          <div className="flex items-center gap-2 group">
+            <button
+              onClick={handleRefetch}
+              className="flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer"
+            >
+              <RiRefreshLine className="h-3 w-3 text-mf-sally-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <span className="text-[0.8rem] text-mf-milk-500 sm:block hidden transition-colors">
+                Live
+              </span>
+              <div
+                className={`w-1 h-1 rounded-full ${showPulse ? "animate-pulse bg-mf-sally-500" : "bg-mf-milk-700"}`}
+              />
+            </button>
             <div className="rounded-sm border border-mf-border-600 w-16 text-xs text-mf-sally-500 py-0.5 text-center">
-              ${averagePayoutCountUp}
+              ${livePayoutCountUp}
             </div>
           </div>
         ) : null}
@@ -241,6 +474,32 @@ export default function PayoutGraph({
         isLoading={showSkeleton}
         isLgOrLarger={isLgOrLarger}
         formatValue={(value) => `$${value.toFixed(2)}`}
+        formatLabel={(uid: string) => {
+          if (uid === "live") {
+            return "Live";
+          }
+          const parts = uid.split("-");
+          if (parts.length !== 3) return uid;
+
+          const yearStr = parts[0];
+          const monthStr = parts[1];
+          const dayStr = parts[2];
+
+          if (!yearStr || !monthStr || !dayStr) return uid;
+
+          const year = parseInt(yearStr, 10);
+          const month = parseInt(monthStr, 10);
+          const day = parseInt(dayStr, 10);
+
+          if (isNaN(year) || isNaN(month) || isNaN(day)) return uid;
+
+          const date = new Date(Date.UTC(year, month - 1, day));
+          const monthName = date.toLocaleDateString("en-US", {
+            month: "short",
+            timeZone: "UTC",
+          });
+          return `${monthName} ${day}`;
+        }}
         chartHeight={chartHeight}
       />
     </div>

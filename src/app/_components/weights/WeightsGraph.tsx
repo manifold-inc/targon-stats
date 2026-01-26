@@ -5,14 +5,43 @@ import { reactClient } from "@/trpc/react";
 import { type BarData } from "@/types";
 import useCountUp from "@/utils/useCountUp";
 import { useIsLgOrLarger } from "@/utils/useIsLgOrLarger";
-import { useMemo } from "react";
+import { RiRefreshLine } from "@remixicon/react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 export default function WeightsGraph({
   isHalfSize = true,
 }: { isHalfSize?: boolean } = {}) {
-  const { data: auction, isLoading } =
-    reactClient.chain.getAuctionState.useQuery(undefined);
+  const {
+    data: auction,
+    isLoading,
+    refetch: refetchAuction,
+  } = reactClient.chain.getAuctionState.useQuery(undefined);
   const isLgOrLarger = useIsLgOrLarger();
+  const [showPulse, setShowPulse] = useState(true);
+  const pulseTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    pulseTimeoutRef.current = setTimeout(() => {
+      setShowPulse(false);
+    }, 10000);
+
+    return () => {
+      if (pulseTimeoutRef.current) {
+        clearTimeout(pulseTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const handleRefetch = () => {
+    void refetchAuction();
+    setShowPulse(true);
+    if (pulseTimeoutRef.current) {
+      clearTimeout(pulseTimeoutRef.current);
+    }
+    pulseTimeoutRef.current = setTimeout(() => {
+      setShowPulse(false);
+    }, 10000);
+  };
 
   const weightsData = useMemo(() => {
     if (!auction?.weights) return [];
@@ -68,8 +97,19 @@ export default function WeightsGraph({
         {showNoData ? (
           <div className="text-sm text-mf-edge-300">No Data</div>
         ) : !showSkeleton && highestData ? (
-          <div className="flex items-center gap-2">
-            <span className="text-[0.8rem] text-mf-milk-500">Highest</span>
+          <div className="flex items-center gap-2 group">
+            <button
+              onClick={handleRefetch}
+              className="flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer"
+            >
+              <RiRefreshLine className="h-3 w-3 text-mf-sally-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <span className="text-[0.8rem] text-mf-milk-500 transition-colors">
+                Top
+              </span>
+              <div
+                className={`w-1 h-1 rounded-full ${showPulse ? "animate-pulse bg-mf-sally-500" : "bg-mf-milk-700"}`}
+              />
+            </button>
             <div className="rounded-sm border border-mf-border-600 px-3 w-26 text-xs text-mf-sally-500 py-0.5 text-center">
               {highestData.uid} - {highestPercentCountUp}%
             </div>
