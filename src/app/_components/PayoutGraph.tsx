@@ -282,11 +282,7 @@ export default function PayoutGraph({
     if (!selectedComputeType) return [];
 
     const today = new Date();
-    const todayStr = new Date(
-      Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate())
-    )
-      .toISOString()
-      .split("T")[0]!;
+    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
 
     const allHistoricalData: Array<{
       date: string;
@@ -305,11 +301,9 @@ export default function PayoutGraph({
       const hardcodedDates = new Set(
         hardcodedHistoricalData.map((d) => d.date)
       );
+      console.log("todayStr", todayStr);
       const apiDataFiltered = historicalData.filter(
-        (day) =>
-          !hardcodedDates.has(day.date) &&
-          day.date !== todayStr &&
-          day.date !== "2026-01-26"
+        (day) => !hardcodedDates.has(day.date) && day.date !== todayStr
       );
 
       const apiDataWithAdjustedIndex = apiDataFiltered.map((day, idx) => ({
