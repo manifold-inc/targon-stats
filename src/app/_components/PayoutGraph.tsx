@@ -281,8 +281,11 @@ export default function PayoutGraph({
   const payoutData = useMemo(() => {
     if (!selectedComputeType) return [];
 
-    const today = new Date();
-    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+    const allDates: string[] = [...hardcodedHistoricalData.map((d) => d.date)];
+    if (historicalData && historicalData.length > 0) {
+      allDates.push(...historicalData.map((d) => d.date));
+    }
+    const todayStr = allDates.length > 0 ? allDates.sort().reverse()[0]! : "";
 
     const allHistoricalData: Array<{
       date: string;
@@ -301,7 +304,6 @@ export default function PayoutGraph({
       const hardcodedDates = new Set(
         hardcodedHistoricalData.map((d) => d.date)
       );
-      console.log("todayStr", todayStr);
       const apiDataFiltered = historicalData.filter(
         (day) => !hardcodedDates.has(day.date) && day.date !== todayStr
       );
