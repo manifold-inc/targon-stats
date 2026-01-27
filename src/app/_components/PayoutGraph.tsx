@@ -10,7 +10,7 @@ import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { RiArrowDownSFill, RiRefreshLine } from "@remixicon/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
-// historical data for before Jan 17 schema change in mongo db
+// historical data for before Jan 18 schema change in mongo db
 const hardcodedHistoricalData = [
   {
     date: "2025-12-27",
@@ -306,7 +306,10 @@ export default function PayoutGraph({
         hardcodedHistoricalData.map((d) => d.date)
       );
       const apiDataFiltered = historicalData.filter(
-        (day) => !hardcodedDates.has(day.date) && day.date !== todayStr
+        (day) =>
+          !hardcodedDates.has(day.date) &&
+          day.date !== todayStr &&
+          day.date !== "2026-01-26"
       );
 
       const apiDataWithAdjustedIndex = apiDataFiltered.map((day, idx) => ({
