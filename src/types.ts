@@ -43,9 +43,3 @@ export interface AuctionState {
   weights: { uids: number[]; incentives: number[] };
   hotkey_to_uid: Record<string, string>;
 }
-
-export interface BarData {
-  uid: string;
-  value: number;
-  index: number;
-}

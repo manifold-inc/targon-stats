@@ -1,29 +1,36 @@
 "use client";
 
-import { type BarData } from "@/types";
+import { useIsLgOrLarger } from "@/utils/useIsLgOrLarger";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 export default function BarChart({
   data,
-  maxValue,
   gradientId,
   isHalfSize = false,
   isLoading = false,
-  isLgOrLarger,
   formatValue,
   formatLabel,
   chartHeight = 200,
 }: {
-  data: BarData[];
-  maxValue: number;
+  data: Array<{
+    uid?: string;
+    value?: number;
+    date?: string;
+    payout?: number;
+    percent?: number;
+    [key: string]: unknown;
+  }>;
   gradientId: string;
   isHalfSize?: boolean;
   isLoading?: boolean;
-  isLgOrLarger: boolean;
   formatValue: (value: number) => string;
   formatLabel?: (uid: string) => string;
   chartHeight?: number;
 }) {
+  const maxValue = Math.max(
+    ...data.map((d) => d.value ?? d.payout ?? d.percent ?? 0),
+    0
+  );
   const [hoveredData, setHoveredData] = useState<{
     uid: string;
     value: number;
@@ -34,6 +41,7 @@ export default function BarChart({
   } | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const [svgWidth, setSvgWidth] = useState(1000);
+  const isLgOrLarger = useIsLgOrLarger();
 
   useEffect(() => {
     const updateWidth = () => {
@@ -66,7 +74,7 @@ export default function BarChart({
       const labelWidth = 30 * (isHalfSize ? 2 : 1);
 
       return {
-        uid: item.uid,
+        uid: item.uid ?? item.date ?? String(index),
         x: centerX,
         width: labelWidth * scaleFactor,
       };
@@ -172,13 +180,14 @@ export default function BarChart({
         </defs>
 
         {data.map((item, index) => {
-          const barHeight =
-            maxValue > 0 ? (item.value / maxValue) * chartHeight : 0;
+          const value = item.value ?? item.payout ?? item.percent ?? 0;
+          const uid = item.uid ?? item.date ?? String(index);
+          const barHeight = maxValue > 0 ? (value / maxValue) * chartHeight : 0;
           const x = padding + index * (fixedBarWidth + calculatedGap);
           const y = chartHeight - barHeight;
 
           return (
-            <g key={`${item.uid}-${item.index}`}>
+            <g key={`${uid}-${index}`}>
               <g className="animate-grow-up">
                 <rect
                   x={x}
@@ -190,8 +199,8 @@ export default function BarChart({
                   style={{ cursor: "pointer" }}
                   onMouseEnter={() =>
                     setHoveredData({
-                      uid: item.uid,
-                      value: item.value,
+                      uid,
+                      value,
                     })
                   }
                   onMouseMove={(e) => {
