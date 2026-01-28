@@ -54,14 +54,11 @@ export async function getAuctionState(block?: number): Promise<AuctionState> {
 
 export type DailyAveragePayoutData = {
   date: string;
-  dayIndex: number;
-  averagePayoutPerCard: number;
-  totalPayout: number;
-  totalCards: number;
+  payout: number;
 };
 
 export async function getHistoricalPayoutData(
-  days = 7,
+  days = 30,
   computeType?: string
 ): Promise<DailyAveragePayoutData[]> {
   const mongoDb = await connectToMongoDb();
@@ -81,12 +78,14 @@ export async function getHistoricalPayoutData(
   const latestBlock = latestData[0]!.block as number;
 
   const now = new Date();
-  now.setHours(0, 0, 0, 0);
+  const nowUTC = new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())
+  );
+  const minDate = new Date(nowUTC);
+  minDate.setUTCDate(minDate.getUTCDate() - (days - 1));
   const blocksPerDay = 360 * 24;
   const blocksToLookBack = days * blocksPerDay;
   const minBlock = Math.max(0, latestBlock - blocksToLookBack);
-
-  const sampleSize = Math.min(200, days * 15);
 
   const data = await mongoDb
     .collection("miner_info")
@@ -102,7 +101,6 @@ export async function getHistoricalPayoutData(
       }
     )
     .sort({ block: -1 })
-    .limit(sampleSize)
     .toArray();
 
   if (!data || data.length === 0) {
@@ -111,27 +109,14 @@ export async function getHistoricalPayoutData(
 
   const dailyData = new Map<
     string,
-    {
-      date: string;
-      dayIndex: number;
-      totalPayout: number;
-      totalCards: number;
-      recordCount: number;
-    }
+    { totalPayout: number; totalCards: number }
   >();
 
   for (let i = 0; i < days; i++) {
-    const date = new Date(now);
-    date.setDate(date.getDate() - (days - 1 - i));
+    const date = new Date(nowUTC);
+    date.setUTCDate(date.getUTCDate() - (days - 1 - i));
     const dateStr = date.toISOString().split("T")[0]!;
-
-    dailyData.set(dateStr, {
-      date: dateStr,
-      dayIndex: i,
-      totalPayout: 0,
-      totalCards: 0,
-      recordCount: 0,
-    });
+    dailyData.set(dateStr, { totalPayout: 0, totalCards: 0 });
   }
 
   for (const record of data) {
@@ -139,9 +124,11 @@ export async function getHistoricalPayoutData(
     const blockDiff = latestBlock - recordBlock;
     const estimatedDaysAgo = blockDiff / blocksPerDay;
 
-    const recordDate = new Date(now);
-    recordDate.setDate(recordDate.getDate() - Math.round(estimatedDaysAgo));
-    recordDate.setHours(0, 0, 0, 0);
+    const recordDate = new Date(nowUTC);
+    recordDate.setUTCDate(
+      recordDate.getUTCDate() - Math.round(estimatedDaysAgo)
+    );
+    recordDate.setUTCHours(0, 0, 0, 0);
 
     const dateStr = recordDate.toISOString().split("T")[0]!;
 
@@ -157,23 +144,17 @@ export async function getHistoricalPayoutData(
       for (const node of auction_results[ct]!) {
         dayBucket.totalPayout += node.payout;
         dayBucket.totalCards += node.count;
-        dayBucket.recordCount += 1;
       }
     }
   }
 
-  const result: DailyAveragePayoutData[] = Array.from(dailyData.values())
-    .sort((a, b) => a.dayIndex - b.dayIndex)
-    .map((day) => ({
-      date: day.date,
-      dayIndex: day.dayIndex,
-      averagePayoutPerCard:
-        day.totalCards > 0 ? day.totalPayout / day.totalCards : 0,
-      totalPayout: day.totalPayout,
-      totalCards: day.totalCards,
-    }));
-
-  return result;
+  return Array.from(dailyData.entries())
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .map(([date, { totalPayout, totalCards }]) => ({
+      date,
+      payout: totalCards > 0 ? totalPayout / totalCards : 0,
+    }))
+    .filter((day) => day.payout > 0);
 }
 
 export const chainRouter = createTRPCRouter({
@@ -184,12 +165,12 @@ export const chainRouter = createTRPCRouter({
     .input(
       z
         .object({
-          days: z.number().optional().default(7),
+          days: z.number().optional().default(30),
           computeType: z.string().optional(),
         })
         .optional()
     )
     .query(async ({ input }) =>
-      getHistoricalPayoutData(input?.days ?? 7, input?.computeType)
+      getHistoricalPayoutData(input?.days ?? 30, input?.computeType)
     ),
 });
