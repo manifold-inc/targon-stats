@@ -10,11 +10,13 @@ export default function Search({
   onChange,
   onClear,
   placeholder = "Search by UID...",
+  onEnter,
 }: {
   value: string;
   onChange: (value: string) => void;
   onClear: () => void;
   placeholder?: string;
+  onEnter?: (uid: string) => void;
 }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -84,6 +86,23 @@ export default function Search({
     setIsDropdownOpen(false);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const trimmedValue = value.trim();
+
+      // Check if the value is a valid UUID (exists in availableUids)
+      // Handle comma-separated values by taking the last part
+      const parts = trimmedValue.split(",");
+      const lastPart = parts[parts.length - 1]?.trim();
+
+      if (lastPart && availableUids.includes(lastPart) && onEnter) {
+        onEnter(lastPart);
+        setIsDropdownOpen(false);
+      }
+    }
+  };
+
   return (
     <div className="relative" ref={dropdownRef}>
       <div className="relative">
@@ -97,6 +116,7 @@ export default function Search({
           onChange={(e) => handleInputChange(e.target.value)}
           onFocus={handleInputFocus}
           onBlur={handleBlur}
+          onKeyDown={handleKeyDown}
           className="block w-full rounded-lg border border-mf-border-600 bg-mf-night-500 py-2 pl-10 pr-10 text-sm text-mf-milk-700 placeholder-mf-milk-800 focus:outline-none"
           placeholder={placeholder}
         />

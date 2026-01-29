@@ -180,27 +180,27 @@ const TargetCards = ({
   if (isLoading || error || !auction || !auctionResults) {
     if (isLoading) {
       return (
-        <div className="space-y-7">
-          <div className="grid grid-cols-1 gap-7 lg:grid-cols-3">
+        <div className="space-y-8">
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
             {[1, 2, 3].map((index) => (
               <div
                 key={index}
-                className="rounded-lg border border-mf-border-600 bg-mf-night-450 p-6"
+                className="rounded-lg border border-mf-border-600 bg-mf-night-450 p-6 text-center"
               >
-                <div className="h-6 w-32 mb-4 rounded bg-mf-night-400 animate-skeleton-pulse" />
-                <div className="h-16 w-full rounded bg-mf-night-400 animate-skeleton-pulse" />
+                <div className="h-6 w-32 mb-4 mx-auto rounded bg-mf-night-100 opacity-30 animate-skeleton-pulse-opacity" />
+                <div className="h-16 w-full rounded bg-mf-night-100 opacity-30 animate-skeleton-pulse-opacity" />
               </div>
             ))}
           </div>
 
-          <div className="grid grid-cols-1 gap-7 xl:grid-cols-3">
+          <div className="grid grid-cols-1 gap-8 xl:grid-cols-3">
             {[1, 2, 3].map((index) => (
               <div
                 key={index}
                 className="rounded-lg border border-mf-border-600 bg-mf-night-450 p-6"
               >
-                <div className="h-6 w-40 mb-4 rounded bg-mf-night-400 animate-skeleton-pulse" />
-                <div className="h-26 w-full rounded bg-mf-night-400 animate-skeleton-pulse" />
+                <div className="h-6 w-32 mb-4 rounded bg-mf-night-100 opacity-30 animate-skeleton-pulse-opacity" />
+                <div className="h-16 w-full rounded bg-mf-night-100 opacity-30 animate-skeleton-pulse-opacity" />
               </div>
             ))}
           </div>
@@ -211,9 +211,9 @@ const TargetCards = ({
   }
 
   return (
-    <div className="space-y-7">
+    <div className="space-y-8">
       {/* Summary Cards Row */}
-      <div className="grid grid-cols-1 gap-7 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         {summaryCards.map((card, index) => (
           <div
             key={index}
@@ -238,7 +238,7 @@ const TargetCards = ({
       </div>
 
       {/* Detailed Target Cards Row */}
-      <div className="grid grid-cols-1 gap-7 xl:grid-cols-3">
+      <div className="grid grid-cols-1 gap-8 xl:grid-cols-3">
         {computeTypes.map((computeType, index) => (
           <div
             key={index}

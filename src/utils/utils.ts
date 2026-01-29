@@ -126,3 +126,10 @@ export function handleBlockChange(
 export function CalculateInterval(block: number): number {
   return Math.floor(block / 360);
 }
+
+export function getDisplayName(computeType: string): string {
+  if (computeType.includes("H200")) return "NVIDIA H200";
+  if (computeType.includes("H100")) return "NVIDIA H100";
+  if (computeType.includes("V4")) return "AMD V4 CPU";
+  return computeType;
+}

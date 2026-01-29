@@ -13,9 +13,10 @@ import {
   RiExpandUpDownFill,
   RiFilterFill,
 } from "@remixicon/react";
+import Link from "next/link";
 import { useMemo, useRef, useState } from "react";
 
-type SortField = "uid" | "payout" | "cards" | "compute_type";
+type SortField = "uid" | "payout" | "cards" | "compute_type" | "weight";
 type ComputeTypeFilter = string;
 type UidFilter = string;
 
@@ -30,6 +31,8 @@ export default function MinersTable({
   onBlockChange,
   onSearchChange,
   onSearchClear,
+  onSearchEnter,
+  weights,
 }: {
   nodes: MinerNodes[];
   isLoading: boolean;
@@ -41,8 +44,10 @@ export default function MinersTable({
   onBlockChange?: (block: number) => void;
   onSearchChange?: (term: string) => void;
   onSearchClear?: () => void;
+  onSearchEnter?: (uid: string) => void;
+  weights?: { uids: number[]; incentives: number[] };
 }) {
-  const [sortField, setSortField] = useState<SortField | null>(null);
+  const [sortField, setSortField] = useState<SortField | null>("weight");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
   const [computeTypeFilter, setComputeTypeFilter] =
     useState<ComputeTypeFilter>("all");
@@ -96,6 +101,17 @@ export default function MinersTable({
     return result;
   }, [nodes, searchTerm, uidFilter, computeTypeFilter]);
 
+  const getWeightForUid = useMemo(() => {
+    if (!weights?.uids || !weights?.incentives) {
+      return () => 0;
+    }
+    const weightMap = new Map<number, number>();
+    weights.uids.forEach((uid, index) => {
+      weightMap.set(uid, weights.incentives[index] ?? 0);
+    });
+    return (uid: string) => weightMap.get(Number(uid)) ?? 0;
+  }, [weights]);
+
   const sorted = useMemo(() => {
     if (!sortField) return filtered;
 
@@ -120,11 +136,14 @@ export default function MinersTable({
                 ? 1
                 : 0;
           break;
+        case "weight":
+          comparison = getWeightForUid(a.uid) - getWeightForUid(b.uid);
+          break;
       }
 
       return sortDirection === "asc" ? comparison : -comparison;
     });
-  }, [filtered, sortField, sortDirection]);
+  }, [filtered, sortField, sortDirection, getWeightForUid]);
 
   const columns: TableColumn<MinerNodes>[] = [
     {
@@ -199,7 +218,12 @@ export default function MinersTable({
         </div>
       ),
       renderCell: (node) => (
-        <span className="text-mf-milk-500">{node.uid}</span>
+        <Link
+          href={`/miners/${node.uid}`}
+          className="text-mf-milk-500 hover:text-mf-edge-300 transition-colors cursor-pointer"
+        >
+          {node.uid}
+        </Link>
       ),
     },
     {
@@ -317,6 +341,7 @@ export default function MinersTable({
       searchTerm={searchTerm}
       onSearchChange={onSearchChange}
       onSearchClear={onSearchClear}
+      onSearchEnter={onSearchEnter}
       block={block}
       latestBlock={latestBlock}
       onBlockChange={onBlockChange}

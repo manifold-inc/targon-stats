@@ -9,6 +9,7 @@ import {
   RiCheckboxMultipleBlankLine,
   RiCheckboxMultipleLine,
 } from "@remixicon/react";
+import Link from "next/link";
 import { useMemo, useState } from "react";
 
 enum SortField {
@@ -28,6 +29,7 @@ const WeightsTable = ({
   onBlockChange,
   onSearchChange,
   onSearchClear,
+  onSearchEnter,
   searchTerm,
 }: {
   weights?: { uids: number[]; incentives: number[] };
@@ -41,9 +43,12 @@ const WeightsTable = ({
   onBlockChange?: (block: number) => void;
   onSearchChange?: (term: string) => void;
   onSearchClear?: () => void;
+  onSearchEnter?: (uid: string) => void;
 }) => {
-  const [sortField, setSortField] = useState<SortField | null>(null);
-  const [sortDirection, setSortDirection] = useState<SortDirection>(null);
+  const [sortField, setSortField] = useState<SortField | null>(
+    SortField.WEIGHT
+  );
+  const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
   const [copiedHotkey, setCopiedHotkey] = useState<string | null>(null);
 
   const uids = useMemo(() => weights?.uids ?? [], [weights?.uids]);
@@ -112,7 +117,14 @@ const WeightsTable = ({
       key: SortField.UID,
       label: "UUID",
       width: "30%",
-      renderCell: (uid) => <span className="text-mf-milk-500">{uid}</span>,
+      renderCell: (uid) => (
+        <Link
+          href={`/miners/${uid}`}
+          className="text-mf-milk-500 hover:text-mf-edge-300 transition-colors cursor-pointer"
+        >
+          {uid}
+        </Link>
+      ),
     },
     {
       key: SortField.HOTKEY,
@@ -120,9 +132,12 @@ const WeightsTable = ({
       width: "60%",
       renderCell: (uid) => (
         <div className="flex items-center gap-2 transition-opacity hover:opacity-80">
-          <span className="font-mono text-mf-milk-500">
+          <Link
+            href={`/miners/${uid}`}
+            className="font-mono text-mf-milk-500 hover:text-mf-edge-300 transition-colors cursor-pointer"
+          >
             {hotkeyToUid[String(uid)] || "N/A"}
-          </span>
+          </Link>
           {hotkeyToUid[String(uid)] && (
             <button
               onClick={(e) => {
@@ -169,6 +184,7 @@ const WeightsTable = ({
       searchTerm={searchTerm}
       onSearchChange={onSearchChange}
       onSearchClear={onSearchClear}
+      onSearchEnter={onSearchEnter}
       block={block}
       latestBlock={latestBlock}
       onBlockChange={onBlockChange}

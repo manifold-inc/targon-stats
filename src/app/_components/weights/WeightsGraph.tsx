@@ -4,11 +4,13 @@ import BarChart from "@/app/_components/BarChart";
 import { reactClient } from "@/trpc/react";
 import useCountUp from "@/utils/useCountUp";
 import { RiRefreshLine } from "@remixicon/react";
+import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 
 export default function WeightsGraph({
   isHalfSize = true,
 }: { isHalfSize?: boolean } = {}) {
+  const router = useRouter();
   const {
     data: auction,
     isLoading,
@@ -16,6 +18,10 @@ export default function WeightsGraph({
   } = reactClient.chain.getAuctionState.useQuery(undefined);
   const [showPulse, setShowPulse] = useState(false);
   const pulseTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleBarClick = (uid: string) => {
+    router.push(`/miners/${uid}`);
+  };
 
   const handleRefetch = () => {
     void refetchAuction();
@@ -37,29 +43,29 @@ export default function WeightsGraph({
 
         return uids
           .map((uid, index) => ({
-            uid: uid.toString(),
-            percent: incentives[index] ?? 0,
+            key: uid.toString(),
+            value: incentives[index] ?? 0,
           }))
-          .sort((a, b) => a.percent - b.percent);
+          .sort((a, b) => a.value - b.value);
       })();
 
   const highestData =
     weightsData.length > 0
       ? weightsData.reduce(
-          (max, d) => (d.percent > max.percent ? d : max),
+          (max, d) => (d.value > max.value ? d : max),
           weightsData[0]!
         )
       : null;
 
   const highestPercentCountUp = useCountUp({
-    end: highestData ? highestData.percent * 100 : 0,
+    end: highestData ? highestData.value * 100 : 0,
     duration: 1000,
     decimals: 2,
     isReady: !isLoading && highestData !== null,
   });
 
   return (
-    <div className="rounded-lg border border-mf-border-600 bg-mf-night-450 p-4 md:p-6 md:pb-4 pb-2 my-4">
+    <div className="rounded-lg border border-mf-border-600 bg-mf-night-450 p-4 md:p-6 md:pb-4 pb-2">
       <div className="mb-6 flex items-center justify-between">
         <h2 className="whitespace-nowrap sm:text-base text-xs">
           Miner Weights
@@ -82,7 +88,7 @@ export default function WeightsGraph({
               />
             </button>
             <div className="rounded-sm border border-mf-border-600 px-3 w-28 text-xs text-mf-sally-500 py-0.5 text-center">
-              {highestData.uid} - {highestPercentCountUp}%
+              {highestData.key} - {highestPercentCountUp}%
             </div>
           </div>
         ) : null}
@@ -94,6 +100,7 @@ export default function WeightsGraph({
         isHalfSize={isHalfSize}
         isLoading={isLoading}
         formatValue={(value) => `${(value * 100).toFixed(2)}%`}
+        onBarClick={handleBarClick}
       />
     </div>
   );

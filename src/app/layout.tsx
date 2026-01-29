@@ -1,6 +1,6 @@
 import Footer from "@/app/_components/Footer";
 import Header from "@/app/_components/header/Header";
-import { WithGlobalProvider } from "@/app/_components/providers";
+import { WithGlobalProvider } from "@/app/_components/Providers";
 import "@/styles/globals.css";
 import clsx from "clsx";
 import type { Metadata } from "next";

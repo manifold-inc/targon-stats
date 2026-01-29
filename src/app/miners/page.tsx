@@ -1,5 +1,6 @@
 "use client";
 
+import MinerComputeGraph from "@/app/_components/miners/MinerComputeGraph";
 import MinersTable from "@/app/_components/miners/MinersTable";
 import PageHeader from "@/app/_components/PageHeader";
 import { reactClient } from "@/trpc/react";
@@ -26,6 +27,13 @@ export default function MinersPage() {
     [setSearchTerm, router]
   );
 
+  const handleSearchEnter = useCallback(
+    (uid: string) => {
+      router.push(`/miners/${uid}`);
+    },
+    [router]
+  );
+
   const onBlockChange = useCallback(
     (block: number) =>
       handleBlockChange(block, setSelectedBlock, handleSearchChange),
@@ -47,7 +55,11 @@ export default function MinersPage() {
         title="Miners"
         icon={<RiToolsFill className="h-7 w-7 text-mf-sally-500" />}
       />
-      <div className="mt-5 pb-20">
+      <div className="mt-5 pb-20 flex flex-col gap-8">
+        <MinerComputeGraph
+          nodes={getNodes(auction?.auction_results ?? {})}
+          isLoading={isLoading}
+        />
         <MinersTable
           nodes={getNodes(auction?.auction_results ?? {})}
           searchTerm={searchTerm}
@@ -59,6 +71,8 @@ export default function MinersPage() {
           onBlockChange={onBlockChange}
           onSearchChange={handleSearchChange}
           onSearchClear={() => handleSearchChange("")}
+          onSearchEnter={handleSearchEnter}
+          weights={auction?.weights}
         />
       </div>
     </div>
