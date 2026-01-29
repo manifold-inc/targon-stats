@@ -111,7 +111,7 @@ export default function Table<T>({
       <div className="flex items-center px-3">
         {title && <h2 className="flex-1">{title}</h2>}
         {onSearchChange && (
-          <div className="flex-1 flex justify-center">
+          <div className="hidden md:flex flex-1 justify-center">
             <div className="max-w-xs w-full">
               <Search
                 value={searchTerm}
@@ -123,7 +123,7 @@ export default function Table<T>({
           </div>
         )}
         {block !== undefined && latestBlock !== undefined && onBlockChange && (
-          <div className="flex-1 flex justify-end">
+          <div className="hidden md:flex flex-1 justify-end">
             <div className="max-w-xs flex-1 sm:max-w-none sm:flex-initial">
               <BlockSelector
                 block={block}

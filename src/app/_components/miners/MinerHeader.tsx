@@ -44,7 +44,7 @@ export default function MinerHeader({
           ) : (
             <RiCheckboxMultipleBlankLine className="h-4 w-4" />
           )}
-          <span className="text-sm text-mf-milk-500">Copy Hotkey</span>
+          <span className="text-sm text-mf-milk-500">Hotkey</span>
         </button>
       )}
     </div>
