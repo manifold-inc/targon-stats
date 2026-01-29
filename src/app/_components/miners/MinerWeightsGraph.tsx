@@ -23,15 +23,17 @@ export default function MinerWeightsGraph({ uid }: { uid: string }) {
   }, [auction?.weights, uid]);
 
   const weightsData = useMemo(() => {
-    if (!historicalWeights || historicalWeights.length === 0) return [];
-    return historicalWeights.map((item) => ({
-      key: new Date(item.date).toLocaleDateString("en-US", {
-        month: "numeric",
-        day: "numeric",
-      }),
-      value: item.weight,
-    }));
-  }, [historicalWeights]);
+    const historical = historicalWeights
+      ? historicalWeights.map((item) => ({
+          key: new Date(item.date).toLocaleDateString("en-US", {
+            month: "numeric",
+            day: "numeric",
+          }),
+          value: item.weight,
+        }))
+      : [];
+    return [...historical, { key: "live", value: currentWeight }];
+  }, [historicalWeights, currentWeight]);
 
   const latestWeightCountUp = useCountUp({
     end: currentWeight * 100,
@@ -59,6 +61,10 @@ export default function MinerWeightsGraph({ uid }: { uid: string }) {
         gradientId={`miner-weights-bar-gradient-${uid}`}
         isLoading={isLoading || isLoadingCurrent}
         formatValue={(value) => `${(value * 100).toFixed(2)}%`}
+        formatLabel={(key: string) => {
+          if (key === "live") return "Live";
+          return key;
+        }}
       />
     </div>
   );

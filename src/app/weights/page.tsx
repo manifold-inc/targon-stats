@@ -1,6 +1,7 @@
 "use client";
 
 import PageHeader from "@/app/_components/PageHeader";
+import WeightsGraphWithSelector from "@/app/_components/weights/WeightsGraphWithSelector";
 import WeightsTable from "@/app/_components/weights/WeightsTable";
 import { reactClient } from "@/trpc/react";
 import { handleBlockChange, handleSearchNavigation } from "@/utils/utils";
@@ -50,6 +51,10 @@ export default function WeightPage() {
         icon={<RiArrowUpBoxFill className="h-7 w-7 text-mf-sally-500" />}
       />
       <div className="mt-5 pb-20">
+        <WeightsGraphWithSelector
+          weights={auction?.weights}
+          isLoading={isLoading}
+        />
         <WeightsTable
           weights={auction?.weights}
           hotkeyToUid={auction?.hotkey_to_uid ?? {}}
