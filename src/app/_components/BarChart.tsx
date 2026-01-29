@@ -38,6 +38,7 @@ export default function BarChart({
   formatValue,
   formatLabel,
   chartHeight = 200,
+  onBarClick,
 }: {
   data: DataItem[];
   gradientId: string;
@@ -46,6 +47,7 @@ export default function BarChart({
   formatValue: (value: number) => string;
   formatLabel?: (label: string) => string;
   chartHeight?: number;
+  onBarClick?: (key: string) => void;
 }) {
   const maxValue = Math.max(
     ...data.map((d) => {
@@ -304,7 +306,12 @@ export default function BarChart({
                       height={segmentHeight}
                       fill={fillColor}
                       rx={2}
-                      style={{ cursor: "pointer" }}
+                      style={{ cursor: onBarClick ? "pointer" : "default" }}
+                      onClick={() => {
+                        if (onBarClick) {
+                          onBarClick(item.key);
+                        }
+                      }}
                       onMouseEnter={() =>
                         setHoveredData({
                           uid: item.key,
@@ -361,7 +368,12 @@ export default function BarChart({
                   height={barHeight}
                   fill={`url(#${gradientId})`}
                   rx={2}
-                  style={{ cursor: "pointer" }}
+                  style={{ cursor: onBarClick ? "pointer" : "default" }}
+                  onClick={() => {
+                    if (onBarClick) {
+                      onBarClick(item.key);
+                    }
+                  }}
                   onMouseEnter={() =>
                     setHoveredData({
                       uid: item.key,

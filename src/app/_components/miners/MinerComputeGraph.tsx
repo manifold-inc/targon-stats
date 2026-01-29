@@ -3,6 +3,7 @@
 import BarChart from "@/app/_components/BarChart";
 import { type MinerNodes } from "@/types";
 import { getDisplayName } from "@/utils/utils";
+import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 
 function isCPU(computeType: string): boolean {
@@ -16,6 +17,11 @@ export default function MinerComputeGraph({
   nodes: MinerNodes[];
   isLoading: boolean;
 }) {
+  const router = useRouter();
+
+  const handleBarClick = (uid: string) => {
+    router.push(`/miners/${uid}`);
+  };
   const { chartData } = useMemo<{
     chartData: Array<{
       key: string;
@@ -87,6 +93,7 @@ export default function MinerComputeGraph({
         isLoading={isLoading}
         formatValue={(value) => `${value} Card${value !== 1 ? "s" : ""}`}
         formatLabel={(key: string) => `UUID ${key}`}
+        onBarClick={handleBarClick}
       />
     </div>
   );

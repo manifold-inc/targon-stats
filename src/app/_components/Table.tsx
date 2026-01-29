@@ -34,6 +34,7 @@ type TableProps<T> = {
   searchTerm?: string;
   onSearchChange?: (term: string) => void;
   onSearchClear?: () => void;
+  onSearchEnter?: (uid: string) => void;
   block?: number;
   latestBlock?: number;
   onBlockChange?: (block: number) => void;
@@ -54,6 +55,7 @@ export default function Table<T>({
   searchTerm = "",
   onSearchChange,
   onSearchClear,
+  onSearchEnter,
   block,
   latestBlock,
   onBlockChange,
@@ -115,6 +117,7 @@ export default function Table<T>({
                 value={searchTerm}
                 onChange={onSearchChange}
                 onClear={onSearchClear || (() => onSearchChange(""))}
+                onEnter={onSearchEnter}
               />
             </div>
           </div>

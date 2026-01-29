@@ -21,6 +21,13 @@ export default function WeightPage() {
     [setSearchTerm, router]
   );
 
+  const handleSearchEnter = useCallback(
+    (uid: string) => {
+      router.push(`/miners/${uid}`);
+    },
+    [router]
+  );
+
   const onBlockChange = useCallback(
     (block: number) =>
       handleBlockChange(block, setSelectedBlock, handleSearchChange),
@@ -55,6 +62,7 @@ export default function WeightPage() {
           onBlockChange={onBlockChange}
           onSearchChange={handleSearchChange}
           onSearchClear={() => handleSearchChange("")}
+          onSearchEnter={handleSearchEnter}
         />
       </div>
     </div>

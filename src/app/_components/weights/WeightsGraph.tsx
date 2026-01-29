@@ -4,11 +4,13 @@ import BarChart from "@/app/_components/BarChart";
 import { reactClient } from "@/trpc/react";
 import useCountUp from "@/utils/useCountUp";
 import { RiRefreshLine } from "@remixicon/react";
+import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 
 export default function WeightsGraph({
   isHalfSize = true,
 }: { isHalfSize?: boolean } = {}) {
+  const router = useRouter();
   const {
     data: auction,
     isLoading,
@@ -16,6 +18,10 @@ export default function WeightsGraph({
   } = reactClient.chain.getAuctionState.useQuery(undefined);
   const [showPulse, setShowPulse] = useState(false);
   const pulseTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleBarClick = (uid: string) => {
+    router.push(`/miners/${uid}`);
+  };
 
   const handleRefetch = () => {
     void refetchAuction();
@@ -94,6 +100,7 @@ export default function WeightsGraph({
         isHalfSize={isHalfSize}
         isLoading={isLoading}
         formatValue={(value) => `${(value * 100).toFixed(2)}%`}
+        onBarClick={handleBarClick}
       />
     </div>
   );

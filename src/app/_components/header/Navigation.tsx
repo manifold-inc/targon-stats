@@ -47,7 +47,11 @@ export const Navigation = () => {
       <div className="items-center px-2 flex flex-row">
         {navigation.map((route, index) => {
           const Icon = route.icon;
-          const isActive = pathname === route.pathname;
+          const isActive =
+            route.pathname === "/"
+              ? pathname === "/"
+              : pathname === route.pathname ||
+                pathname.startsWith(route.pathname + "/");
 
           return (
             <Link
@@ -67,7 +71,7 @@ export const Navigation = () => {
                 <Icon className="h-4.5 w-4.5 -translate-y-px relative z-10 transition-colors duration-200 ease-in-out text-mf-sally-500" />
                 <p
                   className={`text-sm relative z-10 transition-colors duration-200 ease-in-out ${
-                    isActive || hoveredItem === route.pathname
+                    isActive || hoveredItem?.includes(route.pathname)
                       ? "text-mf-milk-500"
                       : "text-mf-milk-700"
                   }`}
@@ -75,7 +79,7 @@ export const Navigation = () => {
                   {route.title}
                 </p>
 
-                {hoveredItem === route.pathname && (
+                {hoveredItem?.includes(route.pathname) && (
                   <motion.div
                     layoutId="nav-hover"
                     initial={false}

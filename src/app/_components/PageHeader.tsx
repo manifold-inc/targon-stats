@@ -5,6 +5,7 @@ import { reactClient } from "@/trpc/react";
 import useCountUp from "@/utils/useCountUp";
 import { getNodes } from "@/utils/utils";
 import { RiCpuLine, RiHardDrive3Fill } from "@remixicon/react";
+import Link from "next/link";
 import { type ReactNode, useMemo } from "react";
 
 export default function PageHeader({
@@ -87,17 +88,20 @@ export default function PageHeader({
 
       <div className="lg:flex hidden items-center gap-3">
         {badges.map((badge, index) => (
-          <Box
-            key={index}
-            icon={badge.icon}
-            value={
-              <>
-                <span className="text-mf-sally-500 pr-0.5">{badge.value}</span>{" "}
-                <span className="text-mf-milk-600">{badge.text}</span>
-              </>
-            }
-            valueClassName="animate-flip-up w-30"
-          />
+          <Link key={index} href="/targets">
+            <Box
+              icon={badge.icon}
+              value={
+                <>
+                  <span className="text-mf-sally-500 pr-0.5">
+                    {badge.value}
+                  </span>{" "}
+                  <span className="text-mf-milk-600">{badge.text}</span>
+                </>
+              }
+              valueClassName="animate-flip-up w-30"
+            />
+          </Link>
         ))}
       </div>
     </div>

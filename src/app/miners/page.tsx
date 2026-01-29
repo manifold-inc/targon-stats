@@ -27,6 +27,13 @@ export default function MinersPage() {
     [setSearchTerm, router]
   );
 
+  const handleSearchEnter = useCallback(
+    (uid: string) => {
+      router.push(`/miners/${uid}`);
+    },
+    [router]
+  );
+
   const onBlockChange = useCallback(
     (block: number) =>
       handleBlockChange(block, setSelectedBlock, handleSearchChange),
@@ -64,6 +71,8 @@ export default function MinersPage() {
           onBlockChange={onBlockChange}
           onSearchChange={handleSearchChange}
           onSearchClear={() => handleSearchChange("")}
+          onSearchEnter={handleSearchEnter}
+          weights={auction?.weights}
         />
       </div>
     </div>
