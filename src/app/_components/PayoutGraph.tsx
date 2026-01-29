@@ -65,7 +65,7 @@ export default function PayoutGraph({
   });
 
   return (
-    <div className="rounded-lg border border-mf-border-600 bg-mf-night-450 p-4 md:p-6 md:pb-4 pb-2 my-4">
+    <div className="rounded-lg border border-mf-border-600 bg-mf-night-450 p-4 md:p-6 md:pb-4 pb-2">
       <div className="mb-6 flex items-center justify-between">
         <Menu as="div" className="relative">
           {({ open }) => (

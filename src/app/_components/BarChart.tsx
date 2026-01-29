@@ -39,6 +39,7 @@ export default function BarChart({
   formatLabel,
   chartHeight = 200,
   onBarClick,
+  overlapSegments = false,
 }: {
   data: DataItem[];
   gradientId: string;
@@ -48,10 +49,14 @@ export default function BarChart({
   formatLabel?: (label: string) => string;
   chartHeight?: number;
   onBarClick?: (key: string) => void;
+  overlapSegments?: boolean;
 }) {
   const maxValue = Math.max(
     ...data.map((d) => {
       if (isStackedItem(d)) {
+        if (overlapSegments) {
+          return Math.max(...d.segments.map((seg) => seg.value), 0);
+        }
         return d.segments.reduce((sum, seg) => sum + seg.value, 0);
       }
       return d.value;
@@ -59,7 +64,6 @@ export default function BarChart({
     0
   );
 
-  // Build a color map for unique segment labels
   const labelColorMap = useMemo(() => {
     const uniqueLabels: string[] = [];
     data.forEach((item) => {
@@ -231,16 +235,41 @@ export default function BarChart({
             const g = parseInt(hex.substring(2, 4), 16);
             const b = parseInt(hex.substring(4, 6), 16);
 
-            const lightR = Math.min(255, Math.round(r + (255 - r) * 0.2));
-            const lightG = Math.min(255, Math.round(g + (255 - g) * 0.2));
-            const lightB = Math.min(255, Math.round(b + (255 - b) * 0.2));
-
-            const darkR = Math.max(0, Math.round(r * 0.7));
-            const darkG = Math.max(0, Math.round(g * 0.7));
-            const darkB = Math.max(0, Math.round(b * 0.7));
-
-            // Use a safe ID by encoding the label
             const safeId = `segment-gradient-${Array.from(labelColorMap.keys()).indexOf(label)}`;
+            const opacity = "0.5";
+            const isBlue = color === "#69C3FF";
+
+            let lightColor: string;
+            let darkColor: string;
+
+            if (isBlue) {
+              lightColor = "#3E6286";
+              darkColor = "#0B1825";
+            } else {
+              const lightMultiplier = 0.2;
+              const darkMultiplier = 0.7;
+
+              const lightR = Math.min(
+                255,
+                Math.round(r + (255 - r) * lightMultiplier)
+              );
+              const lightG = Math.min(
+                255,
+                Math.round(g + (255 - g) * lightMultiplier)
+              );
+              const lightB = Math.min(
+                255,
+                Math.round(b + (255 - b) * lightMultiplier)
+              );
+
+              const darkR = Math.max(0, Math.round(r * darkMultiplier));
+              const darkG = Math.max(0, Math.round(g * darkMultiplier));
+              const darkB = Math.max(0, Math.round(b * darkMultiplier));
+
+              lightColor = `rgb(${lightR}, ${lightG}, ${lightB})`;
+              darkColor = `rgb(${darkR}, ${darkG}, ${darkB})`;
+            }
+
             return (
               <linearGradient
                 key={safeId}
@@ -252,14 +281,16 @@ export default function BarChart({
               >
                 <stop
                   offset="0%"
-                  stopColor={`rgb(${lightR}, ${lightG}, ${lightB})`}
-                  stopOpacity="0.5"
+                  stopColor={lightColor}
+                  stopOpacity={opacity}
                 />
-                <stop offset="50%" stopColor={color} stopOpacity="0.5" />
+                {!isBlue && (
+                  <stop offset="50%" stopColor={color} stopOpacity={opacity} />
+                )}
                 <stop
                   offset="100%"
-                  stopColor={`rgb(${darkR}, ${darkG}, ${darkB})`}
-                  stopOpacity="0.5"
+                  stopColor={darkColor}
+                  stopOpacity={opacity}
                 />
               </linearGradient>
             );
@@ -270,88 +301,186 @@ export default function BarChart({
           const x = padding + index * (fixedBarWidth + calculatedGap);
 
           if (isStackedItem(item)) {
-            const totalValue = item.segments.reduce(
-              (sum, seg) => sum + seg.value,
-              0
-            );
-            const totalBarHeight =
-              maxValue > 0 ? (totalValue / maxValue) * chartHeight : 0;
-            let currentY = chartHeight - totalBarHeight;
+            const sortedSegments = overlapSegments
+              ? [...item.segments].sort((a, b) => b.value - a.value)
+              : item.segments;
 
-            return (
-              <g key={`${item.key}-${index}`} className="animate-grow-up">
-                {item.segments.map((segment, segIndex) => {
-                  const segmentHeight =
-                    maxValue > 0 ? (segment.value / maxValue) * chartHeight : 0;
-                  const segmentY = currentY;
+            if (overlapSegments) {
+              const backgroundColor = "#03090F";
 
-                  // Get color index from labelColorMap
-                  const labelIndex = segment.label
-                    ? Array.from(labelColorMap.keys()).indexOf(segment.label)
-                    : -1;
-                  const segmentGradientId =
-                    labelIndex >= 0
-                      ? `segment-gradient-${labelIndex}`
-                      : gradientId;
-                  const fillColor = `url(#${segmentGradientId})`;
+              return (
+                <g key={`${item.key}-${index}`} className="animate-grow-up">
+                  {sortedSegments.map((segment, segIndex) => {
+                    const segmentHeight =
+                      maxValue > 0
+                        ? (segment.value / maxValue) * chartHeight
+                        : 0;
+                    const segmentY = chartHeight - segmentHeight;
 
-                  currentY += segmentHeight;
+                    const labelIndex = segment.label
+                      ? Array.from(labelColorMap.keys()).indexOf(segment.label)
+                      : -1;
+                    const segmentGradientId =
+                      labelIndex >= 0
+                        ? `segment-gradient-${labelIndex}`
+                        : gradientId;
+                    const fillColor = `url(#${segmentGradientId})`;
+                    const segmentColor =
+                      segment.label && labelColorMap.has(segment.label)
+                        ? labelColorMap.get(segment.label)!
+                        : "#52abff";
 
-                  return (
-                    <rect
-                      key={`${item.key}-${index}-${segIndex}`}
-                      x={x}
-                      y={segmentY}
-                      width={fixedBarWidth}
-                      height={segmentHeight}
-                      fill={fillColor}
-                      rx={2}
-                      style={{ cursor: onBarClick ? "pointer" : "default" }}
-                      onClick={() => {
-                        if (onBarClick) {
-                          onBarClick(item.key);
-                        }
-                      }}
-                      onMouseEnter={() =>
-                        setHoveredData({
-                          uid: item.key,
-                          value: segment.value,
-                          label: segment.label,
-                        })
-                      }
-                      onMouseMove={(e) => {
-                        const svg = e.currentTarget.ownerSVGElement;
-                        if (svg) {
-                          const svgRect = svg.getBoundingClientRect();
-                          setHoverPosition({
-                            x: e.clientX - svgRect.left,
-                            y: e.clientY - svgRect.top,
-                          });
-                        }
-                      }}
-                      onMouseLeave={() => {
-                        setHoveredData(null);
-                        setHoverPosition(null);
-                      }}
-                    />
-                  );
-                })}
-                {item.segments.length > 0 && (
-                  <rect
-                    x={x}
-                    y={chartHeight - totalBarHeight}
-                    width={fixedBarWidth}
-                    height={3}
-                    fill={
-                      item.segments[0]?.label
-                        ? labelColorMap.get(item.segments[0].label) || "#52abff"
-                        : "#52abff"
-                    }
-                    opacity={0.9}
-                  />
-                )}
-              </g>
-            );
+                    return (
+                      <g key={`${item.key}-${index}-${segIndex}`}>
+                        {segIndex > 0 && (
+                          <rect
+                            x={x}
+                            y={segmentY}
+                            width={fixedBarWidth}
+                            height={chartHeight - segmentY}
+                            fill={backgroundColor}
+                            rx={2}
+                          />
+                        )}
+                        <rect
+                          x={x}
+                          y={segmentY}
+                          width={fixedBarWidth}
+                          height={segmentHeight}
+                          fill={fillColor}
+                          rx={2}
+                          style={{
+                            cursor: onBarClick ? "pointer" : "default",
+                          }}
+                          onClick={() => {
+                            if (onBarClick) {
+                              onBarClick(item.key);
+                            }
+                          }}
+                          onMouseEnter={() =>
+                            setHoveredData({
+                              uid: item.key,
+                              value: segment.value,
+                              label: segment.label,
+                            })
+                          }
+                          onMouseMove={(e) => {
+                            const svg = e.currentTarget.ownerSVGElement;
+                            if (svg) {
+                              const svgRect = svg.getBoundingClientRect();
+                              setHoverPosition({
+                                x: e.clientX - svgRect.left,
+                                y: e.clientY - svgRect.top,
+                              });
+                            }
+                          }}
+                          onMouseLeave={() => {
+                            setHoveredData(null);
+                            setHoverPosition(null);
+                          }}
+                        />
+                        <rect
+                          x={x}
+                          y={segmentY}
+                          width={fixedBarWidth}
+                          height={3}
+                          fill={segmentColor}
+                          opacity={0.9}
+                        />
+                      </g>
+                    );
+                  })}
+                </g>
+              );
+            } else {
+              const totalValue = item.segments.reduce(
+                (sum, seg) => sum + seg.value,
+                0
+              );
+              const totalBarHeight =
+                maxValue > 0 ? (totalValue / maxValue) * chartHeight : 0;
+              let currentY = chartHeight - totalBarHeight;
+
+              return (
+                <g key={`${item.key}-${index}`} className="animate-grow-up">
+                  {sortedSegments.map((segment, segIndex) => {
+                    const segmentHeight =
+                      maxValue > 0
+                        ? (segment.value / maxValue) * chartHeight
+                        : 0;
+                    const segmentY = currentY;
+
+                    const labelIndex = segment.label
+                      ? Array.from(labelColorMap.keys()).indexOf(segment.label)
+                      : -1;
+                    const segmentGradientId =
+                      labelIndex >= 0
+                        ? `segment-gradient-${labelIndex}`
+                        : gradientId;
+                    const fillColor = `url(#${segmentGradientId})`;
+                    const segmentColor =
+                      segment.label && labelColorMap.has(segment.label)
+                        ? labelColorMap.get(segment.label)!
+                        : "#52abff";
+
+                    currentY += segmentHeight;
+
+                    return (
+                      <g
+                        key={`${item.key}-${index}-${segIndex}`}
+                        style={{ isolation: "isolate" }}
+                      >
+                        <rect
+                          x={x}
+                          y={segmentY}
+                          width={fixedBarWidth}
+                          height={segmentHeight}
+                          fill={fillColor}
+                          rx={2}
+                          style={{
+                            cursor: onBarClick ? "pointer" : "default",
+                          }}
+                          onClick={() => {
+                            if (onBarClick) {
+                              onBarClick(item.key);
+                            }
+                          }}
+                          onMouseEnter={() =>
+                            setHoveredData({
+                              uid: item.key,
+                              value: segment.value,
+                              label: segment.label,
+                            })
+                          }
+                          onMouseMove={(e) => {
+                            const svg = e.currentTarget.ownerSVGElement;
+                            if (svg) {
+                              const svgRect = svg.getBoundingClientRect();
+                              setHoverPosition({
+                                x: e.clientX - svgRect.left,
+                                y: e.clientY - svgRect.top,
+                              });
+                            }
+                          }}
+                          onMouseLeave={() => {
+                            setHoveredData(null);
+                            setHoverPosition(null);
+                          }}
+                        />
+                        <rect
+                          x={x}
+                          y={segmentY}
+                          width={fixedBarWidth}
+                          height={3}
+                          fill={segmentColor}
+                          opacity={0.9}
+                        />
+                      </g>
+                    );
+                  })}
+                </g>
+              );
+            }
           }
 
           const value = item.value;

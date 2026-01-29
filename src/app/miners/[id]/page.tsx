@@ -51,14 +51,16 @@ export default function MinerDetailPage() {
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full gap-8">
       <MinerHeader uid={uid} hotkey={hotkey} />
-      <MinerWeightsGraph uid={uid} />
-      <MinerHardwareCards
-        uid={uid}
-        auctionResults={auction?.auction_results}
-        isLoading={isLoading}
-      />
+      <div className="flex flex-col gap-8">
+        <MinerWeightsGraph uid={uid} />
+        <MinerHardwareCards
+          uid={uid}
+          auctionResults={auction?.auction_results}
+          isLoading={isLoading}
+        />
+      </div>
     </div>
   );
 }

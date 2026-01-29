@@ -55,7 +55,7 @@ export default function MinersPage() {
         title="Miners"
         icon={<RiToolsFill className="h-7 w-7 text-mf-sally-500" />}
       />
-      <div className="mt-5 pb-20">
+      <div className="mt-5 pb-20 flex flex-col gap-8">
         <MinerComputeGraph
           nodes={getNodes(auction?.auction_results ?? {})}
           isLoading={isLoading}

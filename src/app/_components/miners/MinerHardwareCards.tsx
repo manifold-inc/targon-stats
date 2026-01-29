@@ -49,7 +49,6 @@ export default function MinerHardwareCards({
     });
   }, [minerNodes]);
 
-  // Get card counts for each type
   const h200Cards = useMemo(() => {
     return (
       hardwareCards.find((c) => c.computeType.includes("H200"))?.cards ?? 0
@@ -110,14 +109,14 @@ export default function MinerHardwareCards({
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 gap-7 lg:grid-cols-3 mb-4">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-3 mb-4">
         {[1, 2, 3].map((index) => (
           <div
             key={index}
             className="rounded-lg border border-mf-border-600 bg-mf-night-450 p-6 text-center"
           >
-            <div className="h-6 w-32 mb-4 mx-auto rounded bg-mf-night-400 animate-skeleton-pulse" />
-            <div className="h-16 w-full rounded bg-mf-night-400 animate-skeleton-pulse" />
+            <div className="h-6 w-32 mb-4 mx-auto rounded bg-mf-night-100 opacity-30 animate-skeleton-pulse-opacity" />
+            <div className="h-16 w-full rounded bg-mf-night-100 opacity-30 animate-skeleton-pulse-opacity" />
           </div>
         ))}
       </div>
@@ -125,7 +124,7 @@ export default function MinerHardwareCards({
   }
 
   return (
-    <div className="grid grid-cols-1 gap-7 lg:grid-cols-3 mb-4">
+    <div className="grid grid-cols-1 gap-8 lg:grid-cols-3 mb-4">
       {displayCards.map((card, index) => (
         <div
           key={index}

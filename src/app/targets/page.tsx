@@ -2,6 +2,7 @@
 
 import BlockSelector from "@/app/_components/BlockSelector";
 import TargetCards from "@/app/_components/targets/TargetCards";
+import TargetsPayoutGraph from "@/app/_components/targets/TargetsPayoutGraph";
 import { reactClient } from "@/trpc/react";
 import { RiRecordCircleFill } from "@remixicon/react";
 import { useCallback, useState } from "react";
@@ -47,7 +48,8 @@ export default function TargetsPage() {
           )}
         </div>
       </div>
-      <div className="mt-5 pb-20">
+      <div className="mt-5 pb-20 flex flex-col gap-8">
+        <TargetsPayoutGraph />
         <TargetCards
           auctionResults={auction?.auction_results}
           auction={auction?.auctions}

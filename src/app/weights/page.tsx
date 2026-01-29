@@ -50,7 +50,7 @@ export default function WeightPage() {
         title="Weights"
         icon={<RiArrowUpBoxFill className="h-7 w-7 text-mf-sally-500" />}
       />
-      <div className="mt-5 pb-20">
+      <div className="mt-5 pb-20 flex flex-col gap-8">
         <WeightsGraphWithSelector
           weights={auction?.weights}
           isLoading={isLoading}

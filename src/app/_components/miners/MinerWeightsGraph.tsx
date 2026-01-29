@@ -43,7 +43,7 @@ export default function MinerWeightsGraph({ uid }: { uid: string }) {
   });
 
   return (
-    <div className="rounded-lg border border-mf-border-600 bg-mf-night-450 p-4 md:p-6 md:pb-4 pb-2 my-4">
+    <div className="rounded-lg border border-mf-border-600 bg-mf-night-450 p-4 md:p-6 md:pb-4 pb-2">
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <h2 className="whitespace-nowrap sm:text-base text-xs"> Weights</h2>
