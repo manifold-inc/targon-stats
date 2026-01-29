@@ -37,22 +37,22 @@ export default function WeightsGraph({
 
         return uids
           .map((uid, index) => ({
-            uid: uid.toString(),
-            percent: incentives[index] ?? 0,
+            key: uid.toString(),
+            value: incentives[index] ?? 0,
           }))
-          .sort((a, b) => a.percent - b.percent);
+          .sort((a, b) => a.value - b.value);
       })();
 
   const highestData =
     weightsData.length > 0
       ? weightsData.reduce(
-          (max, d) => (d.percent > max.percent ? d : max),
+          (max, d) => (d.value > max.value ? d : max),
           weightsData[0]!
         )
       : null;
 
   const highestPercentCountUp = useCountUp({
-    end: highestData ? highestData.percent * 100 : 0,
+    end: highestData ? highestData.value * 100 : 0,
     duration: 1000,
     decimals: 2,
     isReady: !isLoading && highestData !== null,
@@ -82,7 +82,7 @@ export default function WeightsGraph({
               />
             </button>
             <div className="rounded-sm border border-mf-border-600 px-3 w-28 text-xs text-mf-sally-500 py-0.5 text-center">
-              {highestData.uid} - {highestPercentCountUp}%
+              {highestData.key} - {highestPercentCountUp}%
             </div>
           </div>
         ) : null}

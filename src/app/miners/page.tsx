@@ -1,5 +1,6 @@
 "use client";
 
+import MinerComputeGraph from "@/app/_components/miners/MinerComputeGraph";
 import MinersTable from "@/app/_components/miners/MinersTable";
 import PageHeader from "@/app/_components/PageHeader";
 import { reactClient } from "@/trpc/react";
@@ -48,6 +49,10 @@ export default function MinersPage() {
         icon={<RiToolsFill className="h-7 w-7 text-mf-sally-500" />}
       />
       <div className="mt-5 pb-20">
+        <MinerComputeGraph
+          nodes={getNodes(auction?.auction_results ?? {})}
+          isLoading={isLoading}
+        />
         <MinersTable
           nodes={getNodes(auction?.auction_results ?? {})}
           searchTerm={searchTerm}

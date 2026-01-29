@@ -3,6 +3,33 @@
 import { useIsLgOrLarger } from "@/utils/useIsLgOrLarger";
 import { useEffect, useMemo, useRef, useState } from "react";
 
+const DEFAULT_COLORS = [
+  "#69C3FF",
+  "#58E8B5",
+  "#FFC45B",
+  "#FF815B",
+  "#A78BFA",
+  "#F472B6",
+  "#34D399",
+  "#FBBF24",
+];
+
+export type StackedDataItem = {
+  key: string;
+  segments: Array<{ value: number; label?: string }>;
+};
+
+export type SimpleDataItem = {
+  key: string;
+  value: number;
+};
+
+export type DataItem = StackedDataItem | SimpleDataItem;
+
+function isStackedItem(item: DataItem): item is StackedDataItem {
+  return "segments" in item && Array.isArray(item.segments);
+}
+
 export default function BarChart({
   data,
   gradientId,
@@ -12,28 +39,47 @@ export default function BarChart({
   formatLabel,
   chartHeight = 200,
 }: {
-  data: Array<{
-    uid?: string;
-    value?: number;
-    date?: string;
-    payout?: number;
-    percent?: number;
-    [key: string]: unknown;
-  }>;
+  data: DataItem[];
   gradientId: string;
   isHalfSize?: boolean;
   isLoading?: boolean;
   formatValue: (value: number) => string;
-  formatLabel?: (uid: string) => string;
+  formatLabel?: (label: string) => string;
   chartHeight?: number;
 }) {
   const maxValue = Math.max(
-    ...data.map((d) => d.value ?? d.payout ?? d.percent ?? 0),
+    ...data.map((d) => {
+      if (isStackedItem(d)) {
+        return d.segments.reduce((sum, seg) => sum + seg.value, 0);
+      }
+      return d.value;
+    }),
     0
   );
+
+  // Build a color map for unique segment labels
+  const labelColorMap = useMemo(() => {
+    const uniqueLabels: string[] = [];
+    data.forEach((item) => {
+      if (isStackedItem(item)) {
+        item.segments.forEach((seg) => {
+          if (seg.label && !uniqueLabels.includes(seg.label)) {
+            uniqueLabels.push(seg.label);
+          }
+        });
+      }
+    });
+    const map = new Map<string, string>();
+    uniqueLabels.forEach((label, index) => {
+      map.set(label, DEFAULT_COLORS[index % DEFAULT_COLORS.length]!);
+    });
+    return map;
+  }, [data]);
+
   const [hoveredData, setHoveredData] = useState<{
     uid: string;
     value: number;
+    label?: string;
   } | null>(null);
   const [hoverPosition, setHoverPosition] = useState<{
     x: number;
@@ -74,7 +120,7 @@ export default function BarChart({
       const labelWidth = 30 * (isHalfSize ? 2 : 1);
 
       return {
-        uid: item.uid ?? item.date ?? String(index),
+        key: item.key,
         x: centerX,
         width: labelWidth * scaleFactor,
       };
@@ -177,17 +223,136 @@ export default function BarChart({
             <stop offset="50%" stopColor="#52abff" stopOpacity="0.5" />
             <stop offset="100%" stopColor="#0f2334" stopOpacity="0.5" />
           </linearGradient>
+          {Array.from(labelColorMap.entries()).map(([label, color]) => {
+            const hex = color.replace("#", "");
+            const r = parseInt(hex.substring(0, 2), 16);
+            const g = parseInt(hex.substring(2, 4), 16);
+            const b = parseInt(hex.substring(4, 6), 16);
+
+            const lightR = Math.min(255, Math.round(r + (255 - r) * 0.2));
+            const lightG = Math.min(255, Math.round(g + (255 - g) * 0.2));
+            const lightB = Math.min(255, Math.round(b + (255 - b) * 0.2));
+
+            const darkR = Math.max(0, Math.round(r * 0.7));
+            const darkG = Math.max(0, Math.round(g * 0.7));
+            const darkB = Math.max(0, Math.round(b * 0.7));
+
+            // Use a safe ID by encoding the label
+            const safeId = `segment-gradient-${Array.from(labelColorMap.keys()).indexOf(label)}`;
+            return (
+              <linearGradient
+                key={safeId}
+                id={safeId}
+                x1="0%"
+                y1="0%"
+                x2="0%"
+                y2="100%"
+              >
+                <stop
+                  offset="0%"
+                  stopColor={`rgb(${lightR}, ${lightG}, ${lightB})`}
+                  stopOpacity="0.5"
+                />
+                <stop offset="50%" stopColor={color} stopOpacity="0.5" />
+                <stop
+                  offset="100%"
+                  stopColor={`rgb(${darkR}, ${darkG}, ${darkB})`}
+                  stopOpacity="0.5"
+                />
+              </linearGradient>
+            );
+          })}
         </defs>
 
         {data.map((item, index) => {
-          const value = item.value ?? item.payout ?? item.percent ?? 0;
-          const uid = item.uid ?? item.date ?? String(index);
-          const barHeight = maxValue > 0 ? (value / maxValue) * chartHeight : 0;
           const x = padding + index * (fixedBarWidth + calculatedGap);
+
+          if (isStackedItem(item)) {
+            const totalValue = item.segments.reduce(
+              (sum, seg) => sum + seg.value,
+              0
+            );
+            const totalBarHeight =
+              maxValue > 0 ? (totalValue / maxValue) * chartHeight : 0;
+            let currentY = chartHeight - totalBarHeight;
+
+            return (
+              <g key={`${item.key}-${index}`} className="animate-grow-up">
+                {item.segments.map((segment, segIndex) => {
+                  const segmentHeight =
+                    maxValue > 0 ? (segment.value / maxValue) * chartHeight : 0;
+                  const segmentY = currentY;
+
+                  // Get color index from labelColorMap
+                  const labelIndex = segment.label
+                    ? Array.from(labelColorMap.keys()).indexOf(segment.label)
+                    : -1;
+                  const segmentGradientId =
+                    labelIndex >= 0
+                      ? `segment-gradient-${labelIndex}`
+                      : gradientId;
+                  const fillColor = `url(#${segmentGradientId})`;
+
+                  currentY += segmentHeight;
+
+                  return (
+                    <rect
+                      key={`${item.key}-${index}-${segIndex}`}
+                      x={x}
+                      y={segmentY}
+                      width={fixedBarWidth}
+                      height={segmentHeight}
+                      fill={fillColor}
+                      rx={2}
+                      style={{ cursor: "pointer" }}
+                      onMouseEnter={() =>
+                        setHoveredData({
+                          uid: item.key,
+                          value: segment.value,
+                          label: segment.label,
+                        })
+                      }
+                      onMouseMove={(e) => {
+                        const svg = e.currentTarget.ownerSVGElement;
+                        if (svg) {
+                          const svgRect = svg.getBoundingClientRect();
+                          setHoverPosition({
+                            x: e.clientX - svgRect.left,
+                            y: e.clientY - svgRect.top,
+                          });
+                        }
+                      }}
+                      onMouseLeave={() => {
+                        setHoveredData(null);
+                        setHoverPosition(null);
+                      }}
+                    />
+                  );
+                })}
+                {item.segments.length > 0 && (
+                  <rect
+                    x={x}
+                    y={chartHeight - totalBarHeight}
+                    width={fixedBarWidth}
+                    height={3}
+                    fill={
+                      item.segments[0]?.label
+                        ? labelColorMap.get(item.segments[0].label) || "#52abff"
+                        : "#52abff"
+                    }
+                    opacity={0.9}
+                  />
+                )}
+              </g>
+            );
+          }
+
+          const value = item.value;
+          const barHeight = maxValue > 0 ? (value / maxValue) * chartHeight : 0;
           const y = chartHeight - barHeight;
 
           return (
-            <g key={`${uid}-${index}`}>
+            <g key={`${item.key}-${index}`}>
               <g className="animate-grow-up">
                 <rect
                   x={x}
@@ -199,7 +364,7 @@ export default function BarChart({
                   style={{ cursor: "pointer" }}
                   onMouseEnter={() =>
                     setHoveredData({
-                      uid,
+                      uid: item.key,
                       value,
                     })
                   }
@@ -245,7 +410,18 @@ export default function BarChart({
           <div className="whitespace-nowrap">
             {formatLabel ? formatLabel(hoveredData.uid) : hoveredData.uid}
           </div>
-          <div className="text-mf-sally-500 whitespace-nowrap">
+          <div
+            className="whitespace-nowrap"
+            style={{
+              color:
+                hoveredData.label && labelColorMap.has(hoveredData.label)
+                  ? labelColorMap.get(hoveredData.label)
+                  : undefined,
+            }}
+          >
+            {hoveredData.label && (
+              <div className="text-mf-edge-300">{hoveredData.label}</div>
+            )}
             {formatValue(hoveredData.value)}
           </div>
         </div>
@@ -255,7 +431,7 @@ export default function BarChart({
         <div className="absolute top-[210px] left-0 w-full h-[26px] pointer-events-none overflow-hidden">
           {labelPositions.map((label, index) => (
             <div
-              key={`label-${label.uid}-${index}`}
+              key={`label-${label.key}-${index}`}
               className="absolute flex items-center justify-center"
               style={{
                 left: `${label.x - label.width / 2}px`,
@@ -263,7 +439,7 @@ export default function BarChart({
               }}
             >
               <div className="rounded border border-mf-border-600 bg-mf-night-450 px-1.5 py-0.5 text-[8px] text-mf-milk-700 leading-tight whitespace-nowrap">
-                {formatLabel ? formatLabel(label.uid) : label.uid}
+                {formatLabel ? formatLabel(label.key) : label.key}
               </div>
             </div>
           ))}

@@ -3,16 +3,10 @@
 import BarChart from "@/app/_components/BarChart";
 import { reactClient } from "@/trpc/react";
 import useCountUp from "@/utils/useCountUp";
+import { getDisplayName } from "@/utils/utils";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { RiArrowDownSFill, RiRefreshLine } from "@remixicon/react";
 import { useRef, useState } from "react";
-
-function getDisplayName(computeType: string): string {
-  if (computeType.includes("H200")) return "NVIDIA H200";
-  if (computeType.includes("H100")) return "NVIDIA H100";
-  if (computeType.includes("V4")) return "AMD V4 CPU";
-  return computeType;
-}
 
 export default function PayoutGraph({
   defaultComputeType,
@@ -53,8 +47,11 @@ export default function PayoutGraph({
   const liveAveragePayout = totalCards > 0 ? totalPayout / totalCards : null;
 
   const payoutData = [
-    ...(historicalData || []),
-    { date: "live", payout: liveAveragePayout ?? 0 },
+    ...(historicalData || []).map((d) => ({
+      key: d.date,
+      value: d.payout,
+    })),
+    { key: "live", value: liveAveragePayout ?? 0 },
   ];
 
   const livePayoutCountUp = useCountUp({
@@ -142,9 +139,9 @@ export default function PayoutGraph({
         isHalfSize={isHalfSize}
         isLoading={isLoadingHistorical}
         formatValue={(value) => `$${value.toFixed(2)}`}
-        formatLabel={(uid: string) => {
-          if (uid === "live") return "Live";
-          const [month, day] = uid.substring(5).split("-");
+        formatLabel={(key: string) => {
+          if (key === "live") return "Live";
+          const [month, day] = key.substring(5).split("-");
           return `${Number(month)}.${Number(day)}`;
         }}
       />
