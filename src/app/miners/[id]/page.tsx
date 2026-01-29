@@ -40,24 +40,7 @@ export default function MinerDetailPage() {
     }
   }, [isLoading, auction, uid, router]);
 
-  if (isLoading) {
-    return (
-      <div className="w-full">
-        <div className="h-12 w-64 mb-6 rounded bg-mf-night-400 animate-skeleton-pulse" />
-        <div className="h-64 w-full rounded bg-mf-night-400 animate-skeleton-pulse mb-4" />
-        <div className="grid grid-cols-1 gap-7 lg:grid-cols-3">
-          {[1, 2, 3].map((index) => (
-            <div
-              key={index}
-              className="h-48 rounded bg-mf-night-400 animate-skeleton-pulse"
-            />
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  if (error || !auction) {
+  if (error || (!isLoading && !auction)) {
     return (
       <div className="w-full">
         <div className="text-red-400">
@@ -73,7 +56,7 @@ export default function MinerDetailPage() {
       <MinerWeightsGraph uid={uid} />
       <MinerHardwareCards
         uid={uid}
-        auctionResults={auction.auction_results}
+        auctionResults={auction?.auction_results}
         isLoading={isLoading}
       />
     </div>
