@@ -1,6 +1,7 @@
 "use client";
 
 import BarChart from "@/app/_components/BarChart";
+import LiveIndicator from "@/app/_components/LiveIndicator";
 import { reactClient } from "@/trpc/react";
 import useCountUp from "@/utils/useCountUp";
 import { useMemo } from "react";
@@ -49,11 +50,9 @@ export default function MinerWeightsGraph({ uid }: { uid: string }) {
           <h2 className="whitespace-nowrap sm:text-base text-xs"> Weights</h2>
         </div>
 
-        {!isLoading && !isLoadingCurrent && (
-          <div className="text-sm text-mf-sally-500">
-            Latest {latestWeightCountUp}%
-          </div>
-        )}
+        {!isLoading && !isLoadingCurrent && currentWeight > 0 ? (
+          <LiveIndicator value={`${latestWeightCountUp}%`} />
+        ) : null}
       </div>
 
       <BarChart

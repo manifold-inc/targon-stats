@@ -4,7 +4,7 @@ import { useIsLgOrLarger } from "@/utils/useIsLgOrLarger";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 const DEFAULT_COLORS = [
-  "#69C3FF",
+  "#52ABFF",
   "#58E8B5",
   "#FFC45B",
   "#FF815B",

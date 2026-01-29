@@ -1,10 +1,13 @@
 "use client";
 
 import BarChart from "@/app/_components/BarChart";
+import LiveIndicator from "@/app/_components/LiveIndicator";
+import { reactClient } from "@/trpc/react";
 import { type MinerNodes } from "@/types";
 import { getDisplayName } from "@/utils/utils";
+import { RiRefreshLine } from "@remixicon/react";
 import { useRouter } from "next/navigation";
-import { useMemo } from "react";
+import { useMemo, useRef, useState } from "react";
 
 function isCPU(computeType: string): boolean {
   return computeType.includes("V4") || computeType.includes("CPU");
@@ -18,6 +21,21 @@ export default function MinerComputeGraph({
   isLoading: boolean;
 }) {
   const router = useRouter();
+  const { refetch: refetchAuction } =
+    reactClient.chain.getAuctionState.useQuery(undefined);
+  const [showPulse, setShowPulse] = useState(false);
+  const pulseTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleRefetch = () => {
+    void refetchAuction();
+    setShowPulse(true);
+    if (pulseTimeoutRef.current) {
+      clearTimeout(pulseTimeoutRef.current);
+    }
+    pulseTimeoutRef.current = setTimeout(() => {
+      setShowPulse(false);
+    }, 10000);
+  };
 
   const handleBarClick = (uid: string) => {
     router.push(`/miners/${uid}`);
@@ -76,15 +94,37 @@ export default function MinerComputeGraph({
     return { chartData: chartDataResult, allComputeTypes };
   }, [nodes]);
 
+  const totalCards = useMemo(() => {
+    return nodes.reduce((sum, node) => sum + node.cards, 0);
+  }, [nodes]);
+
   return (
     <div className="rounded-lg border border-mf-border-600 bg-mf-night-450 p-4 md:p-6 md:pb-4 pb-2">
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex items-center justify-between relative">
         <h2 className="whitespace-nowrap sm:text-base text-xs">
           Miner Compute
         </h2>
-        {!isLoading && chartData.length === 0 ? (
-          <div className="text-sm text-mf-edge-300">No Data</div>
-        ) : null}
+        <div className="flex items-center gap-2">
+          {!isLoading && chartData.length === 0 ? (
+            <div className="text-sm text-mf-edge-300">No Data</div>
+          ) : !isLoading && totalCards > 0 ? (
+            <div className="flex items-center gap-2 group">
+              <button
+                onClick={handleRefetch}
+                className="flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer"
+              >
+                <RiRefreshLine className="h-3 w-3 text-mf-milk-700 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <span className="text-xs text-mf-milk-700 flex items-center gap-1.5">
+                  Total
+                  <div
+                    className={`w-1 h-1 rounded-full animate-pulse ${showPulse ? "bg-mf-sybil-300" : "bg-mf-sally-500"}`}
+                  />
+                </span>
+              </button>
+              <LiveIndicator value={totalCards.toString()} />
+            </div>
+          ) : null}
+        </div>
       </div>
 
       <BarChart

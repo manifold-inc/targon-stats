@@ -1,6 +1,7 @@
 "use client";
 
 import BarChart from "@/app/_components/BarChart";
+import LiveIndicator from "@/app/_components/LiveIndicator";
 import { reactClient } from "@/trpc/react";
 import useCountUp from "@/utils/useCountUp";
 import { getDisplayName } from "@/utils/utils";
@@ -126,9 +127,7 @@ export default function PayoutGraph({
                 className={`w-1 h-1 rounded-full animate-pulse ${showPulse ? "bg-mf-sybil-300" : "bg-mf-sally-500"}`}
               />
             </button>
-            <div className="rounded-sm border border-mf-border-600 w-16 text-xs text-mf-sally-500 py-0.5 text-center">
-              ${livePayoutCountUp}
-            </div>
+            <LiveIndicator value={`$${livePayoutCountUp}`} />
           </div>
         ) : null}
       </div>

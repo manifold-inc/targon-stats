@@ -1,11 +1,12 @@
 "use client";
 
 import BarChart from "@/app/_components/BarChart";
+import LiveIndicator from "@/app/_components/LiveIndicator";
 import { reactClient } from "@/trpc/react";
 import useCountUp from "@/utils/useCountUp";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
-import { RiArrowDownSFill } from "@remixicon/react";
-import { useMemo, useState } from "react";
+import { RiArrowDownSFill, RiRefreshLine } from "@remixicon/react";
+import { useMemo, useRef, useState } from "react";
 
 interface WeightsGraphWithSelectorProps {
   weights?: { uids: number[]; incentives: number[] };
@@ -17,6 +18,21 @@ export default function WeightsGraphWithSelector({
   isLoading: isLoadingWeights,
 }: WeightsGraphWithSelectorProps) {
   const [selectedUid, setSelectedUid] = useState<string | null>(null);
+  const { refetch: refetchAuction } =
+    reactClient.chain.getAuctionState.useQuery(undefined);
+  const [showPulse, setShowPulse] = useState(false);
+  const pulseTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleRefetch = () => {
+    void refetchAuction();
+    setShowPulse(true);
+    if (pulseTimeoutRef.current) {
+      clearTimeout(pulseTimeoutRef.current);
+    }
+    pulseTimeoutRef.current = setTimeout(() => {
+      setShowPulse(false);
+    }, 10000);
+  };
 
   const uidWeights = useMemo(() => {
     if (!weights?.uids || !weights?.incentives) return [];
@@ -128,11 +144,26 @@ export default function WeightsGraphWithSelector({
           )}
         </Menu>
 
-        {!isLoadingWeights && !isLoadingHistorical && currentUid && (
-          <div className="text-sm text-mf-sally-500">
-            Latest {latestWeightCountUp}%
+        {!isLoadingWeights &&
+        !isLoadingHistorical &&
+        currentUid &&
+        currentWeight > 0 ? (
+          <div className="flex items-center gap-2 group">
+            <button
+              onClick={handleRefetch}
+              className="flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer"
+            >
+              <RiRefreshLine className="h-3 w-3 text-mf-milk-700 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <span className="text-xs text-mf-milk-700 flex items-center gap-1.5">
+                Live
+                <div
+                  className={`w-1 h-1 rounded-full animate-pulse ${showPulse ? "bg-mf-sybil-300" : "bg-mf-sally-500"}`}
+                />
+              </span>
+            </button>
+            <LiveIndicator value={`${latestWeightCountUp}%`} />
           </div>
-        )}
+        ) : null}
       </div>
 
       <BarChart
