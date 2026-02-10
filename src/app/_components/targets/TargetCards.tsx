@@ -13,7 +13,7 @@ interface TargetCardsProps {
 interface ComputeTypeInfo {
   name: string;
   displayName: string;
-  type: "H200" | "H100" | "V4" | "OTHER";
+  type: "B200" | "H200" | "H100" | "V4" | "OTHER";
   badge?: "Intel TDX" | "AMD SEV";
   icon: React.ReactNode;
   totalCards: number;
@@ -35,6 +35,7 @@ const TargetCards = ({
     const types: ComputeTypeInfo[] = [];
 
     for (const [computeTypeName, auctionData] of Object.entries(auction)) {
+      const isB200 = computeTypeName.includes("B200");
       const isH200 = computeTypeName.includes("H200");
       const isH100 = computeTypeName.includes("H100");
       const isV4 = computeTypeName.includes("V4");
@@ -44,10 +45,13 @@ const TargetCards = ({
       const isNVIDIA = computeTypeName.includes("NVIDIA");
 
       let displayName = "";
-      let type: "H200" | "H100" | "V4" | "OTHER" = "OTHER";
+      let type: "B200" | "H200" | "H100" | "V4" | "OTHER" = "OTHER";
       let badge: "Intel TDX" | "AMD SEV" | undefined = undefined;
 
-      if (isH200) {
+      if (isB200) {
+        type = "B200";
+        displayName = isNVIDIA ? "NVIDIA B200" : "B200 GPU";
+      } else if (isH200) {
         type = "H200";
         displayName = isNVIDIA ? "NVIDIA H200" : "H200 GPU";
       } else if (isH100) {
@@ -94,11 +98,15 @@ const TargetCards = ({
     }
 
     return types.sort((a, b) => {
-      const order = { H200: 0, H100: 1, V4: 2, OTHER: 3 };
+      const order = { B200: 0, H200: 1, H100: 2, V4: 3, OTHER: 4 };
       return order[a.type] - order[b.type];
     });
   }, [auction, auctionResults]);
 
+  const b200Value = useMemo(
+    () => computeTypes.find((t) => t.type === "B200")?.totalCards || 0,
+    [computeTypes]
+  );
   const h200Value = useMemo(
     () => computeTypes.find((t) => t.type === "H200")?.totalCards || 0,
     [computeTypes]
@@ -111,6 +119,17 @@ const TargetCards = ({
     () => computeTypes.find((t) => t.type === "V4")?.totalCards || 0,
     [computeTypes]
   );
+
+  const b200Count = useCountUp({
+    end: b200Value,
+    duration: 1000,
+    decimals: 0,
+    isReady:
+      !isLoading &&
+      auction !== undefined &&
+      !error &&
+      auctionResults !== undefined,
+  });
 
   const h200Count = useCountUp({
     end: h200Value,
@@ -146,11 +165,18 @@ const TargetCards = ({
   });
 
   const summaryCards = useMemo(() => {
+    const b200 = computeTypes.find((t) => t.type === "B200");
     const h200 = computeTypes.find((t) => t.type === "H200");
     const h100 = computeTypes.find((t) => t.type === "H100");
     const v4 = computeTypes.find((t) => t.type === "V4");
 
     return [
+      b200 && {
+        title: "B200 GPU",
+        icon: <RiHardDrive3Fill className="h-4 w-4 text-mf-sally-500" />,
+        totalCards: b200.totalCards,
+        countUpValue: b200Count,
+      },
       h200 && {
         title: "H200 GPU",
         icon: <RiHardDrive3Fill className="h-4 w-4 text-mf-sally-500" />,
@@ -175,14 +201,14 @@ const TargetCards = ({
       totalCards: number;
       countUpValue: string;
     }>;
-  }, [computeTypes, h200Count, h100Count, v4Count]);
+  }, [computeTypes, b200Count, h200Count, h100Count, v4Count]);
 
   if (isLoading || error || !auction || !auctionResults) {
     if (isLoading) {
       return (
         <div className="space-y-8">
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-            {[1, 2, 3].map((index) => (
+          <div className="grid grid-cols-2 gap-8 lg:grid-cols-4">
+            {[1, 2, 3, 4].map((index) => (
               <div
                 key={index}
                 className="rounded-lg border border-mf-border-600 bg-mf-night-450 p-6 text-center"
@@ -194,7 +220,7 @@ const TargetCards = ({
           </div>
 
           <div className="grid grid-cols-1 gap-8 xl:grid-cols-3">
-            {[1, 2, 3].map((index) => (
+            {[1, 2, 3, 4].map((index) => (
               <div
                 key={index}
                 className="rounded-lg border border-mf-border-600 bg-mf-night-450 p-6"
@@ -213,7 +239,7 @@ const TargetCards = ({
   return (
     <div className="space-y-8">
       {/* Summary Cards Row */}
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+      <div className="grid grid-cols-2 gap-8 lg:grid-cols-4">
         {summaryCards.map((card, index) => (
           <div
             key={index}
