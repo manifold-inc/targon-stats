@@ -207,7 +207,7 @@ const TargetCards = ({
     if (isLoading) {
       return (
         <div className="space-y-8">
-          <div className="grid grid-cols-2 gap-8 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
             {[1, 2, 3, 4].map((index) => (
               <div
                 key={index}
@@ -239,7 +239,7 @@ const TargetCards = ({
   return (
     <div className="space-y-8">
       {/* Summary Cards Row */}
-      <div className="grid grid-cols-2 gap-8 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
         {summaryCards.map((card, index) => (
           <div
             key={index}
