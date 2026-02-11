@@ -69,7 +69,7 @@ export default function RootLayout({
         <WithGlobalProvider>
           <div className="flex flex-col min-h-screen">
             <Header />
-            <div className="mx-auto max-w-[1400px] p-10 w-full flex flex-col flex-1 animate-fade-in">
+            <div className="mx-auto max-w-[1400px] p-4 w-full flex flex-col flex-1 animate-fade-in">
               <main className="flex-1">{children}</main>
               <Footer />
             </div>

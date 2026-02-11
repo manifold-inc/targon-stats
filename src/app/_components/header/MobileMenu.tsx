@@ -67,7 +67,7 @@ const MobileMenu = ({
             <RiCloseLine className="size-5 hover:opacity-80" />
           </button>
         </div>
-        <div className="my-10 sm:mb-0 sm:-mt-20 flex h-full flex-col items-center justify-center gap-8">
+        <div className="flex flex-col items-center gap-8 translate-y-20 pb-20">
           {/* Navigation Items */}
           <div className="flex flex-col items-center gap-8">
             {navigation.map((route, index) => {

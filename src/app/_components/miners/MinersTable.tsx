@@ -184,14 +184,14 @@ export default function MinersTable({
             </button>
 
             {showUidFilter && (
-              <div className="absolute top-full left-0 mt-1 bg-mf-night-500 border border-mf-border-600 rounded-md shadow-lg z-50 min-w-[200px] max-h-[300px] overflow-y-auto font-normal">
+              <div className="absolute flex flex-col z-50 gap-1 top-full left-0 mt-1 bg-mf-night-500 border border-mf-border-600 rounded-md shadow-lg min-w-[200px] max-h-[300px] overflow-y-auto font-normal">
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     setUidFilter("all");
                     setShowUidFilter(false);
                   }}
-                  className={`w-full text-left px-4 py-2 hover:bg-mf-ash-500 transition-colors text-sm ${
+                  className={`w-full text-left px-4 py-2 hover:opacity-80 text-sm ${
                     uidFilter === "all" ? "text-mf-sally-500" : ""
                   }`}
                 >
@@ -205,7 +205,7 @@ export default function MinersTable({
                       setUidFilter(uid);
                       setShowUidFilter(false);
                     }}
-                    className={`w-full text-left px-4 py-2 hover:bg-mf-ash-500 transition-colors text-sm ${
+                    className={`w-full text-left px-4 py-2 hover:opacity-80 text-sm ${
                       uidFilter === uid ? "text-mf-sally-500" : ""
                     }`}
                   >
@@ -292,14 +292,14 @@ export default function MinersTable({
             </button>
 
             {showComputeTypeFilter && (
-              <div className="absolute top-full left-0 mt-1 bg-mf-night-500 border border-mf-border-600 rounded-md shadow-lg z-50 min-w-[250px] font-normal">
+              <div className="absolute flex flex-col z-50 gap-1 top-full right-0 mt-1 bg-mf-night-500 border border-mf-border-600 rounded-md shadow-lg min-w-[250px] font-normal">
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     setComputeTypeFilter("all");
                     setShowComputeTypeFilter(false);
                   }}
-                  className={`w-full text-left px-4 py-2 hover:bg-mf-ash-500 transition-colors text-sm ${
+                  className={`w-full text-left px-4 py-2 hover:opacity-80 text-sm ${
                     computeTypeFilter === "all" ? "text-mf-sally-500" : ""
                   }`}
                 >
@@ -313,7 +313,7 @@ export default function MinersTable({
                       setComputeTypeFilter(type);
                       setShowComputeTypeFilter(false);
                     }}
-                    className={`w-full text-left px-4 py-2 hover:bg-mf-ash-500 transition-colors text-sm ${
+                    className={`w-full text-left px-4 py-2 hover:opacity-80 text-sm ${
                       computeTypeFilter === type ? "text-mf-sally-500" : ""
                     }`}
                   >

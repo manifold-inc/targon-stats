@@ -67,7 +67,7 @@ export default function WeightsGraph({
   return (
     <div className="rounded-lg border border-mf-border-600 bg-mf-night-450 p-4 md:p-6 md:pb-4 pb-2">
       <div className="mb-6 flex items-center justify-between">
-        <h2 className="whitespace-nowrap sm:text-base text-xs">
+        <h2 className="whitespace-nowrap text-sm sm:text-base">
           Miner Weights
         </h2>
 

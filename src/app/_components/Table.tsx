@@ -109,7 +109,7 @@ export default function Table<T>({
   return (
     <div className="rounded-lg border border-mf-border-600 bg-mf-night-450 p-4">
       <div className="flex items-center px-3">
-        {title && <h2 className="flex-1">{title}</h2>}
+        {title && <h2 className="flex-1 text-sm sm:text-base">{title}</h2>}
         {onSearchChange && (
           <div className="hidden md:flex flex-1 justify-center">
             <div className="max-w-xs w-full">
@@ -136,7 +136,7 @@ export default function Table<T>({
           </div>
         )}
       </div>
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto min-h-96">
         <table className="w-full">
           <thead>
             <tr className="border-b border-mf-border-600">

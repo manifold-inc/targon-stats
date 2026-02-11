@@ -101,7 +101,7 @@ export default function WeightsGraphWithSelector({
                 className="flex items-center gap-2 focus:outline-none hover:opacity-80"
                 disabled={isLoadingWeights || uidWeights.length === 0}
               >
-                <h2 className="whitespace-nowrap sm:text-base text-xs">
+                <h2 className="whitespace-nowrap text-sm sm:text-base">
                   {isLoadingWeights
                     ? "Weights"
                     : currentUid

@@ -20,10 +20,14 @@ export default function PageHeader({
 
   const computeTypeCounts = useMemo(() => {
     if (!auction?.auction_results) {
-      return { h200: 0, h100: 0, v4: 0 };
+      return { b200: 0, h200: 0, h100: 0, v4: 0 };
     }
 
     const nodes = getNodes(auction.auction_results);
+
+    const b200Count = nodes
+      .filter((node) => node.compute_type.includes("B200"))
+      .reduce((sum, node) => sum + node.cards, 0);
 
     const h200Count = nodes
       .filter((node) => node.compute_type.includes("H200"))
@@ -37,8 +41,15 @@ export default function PageHeader({
       .filter((node) => node.compute_type.includes("V4"))
       .reduce((sum, node) => sum + node.cards, 0);
 
-    return { h200: h200Count, h100: h100Count, v4: v4Count };
+    return { b200: b200Count, h200: h200Count, h100: h100Count, v4: v4Count };
   }, [auction]);
+
+  const b200CountUp = useCountUp({
+    end: computeTypeCounts.b200,
+    duration: 1000,
+    decimals: 0,
+    isReady: !isLoading && auction !== undefined,
+  });
 
   const h200CountUp = useCountUp({
     end: computeTypeCounts.h200,
@@ -62,6 +73,11 @@ export default function PageHeader({
   });
 
   const badges = [
+    {
+      icon: <RiHardDrive3Fill className="h-4 w-4 text-mf-sally-500" />,
+      value: b200CountUp,
+      text: "B200 GPUs",
+    },
     {
       icon: <RiHardDrive3Fill className="h-4 w-4 text-mf-sally-500" />,
       value: h200CountUp,
