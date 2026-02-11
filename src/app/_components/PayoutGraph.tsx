@@ -17,7 +17,7 @@ export default function PayoutGraph({
   isHalfSize?: boolean;
 } = {}) {
   const [selectedComputeType, setSelectedComputeType] = useState<string>(
-    defaultComputeType || "TDX-NVCC-NVIDIA-H200"
+    defaultComputeType || "TDX-HOPPER-NVIDIA-H200"
   );
   const [showPulse, setShowPulse] = useState(false);
   const pulseTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -67,12 +67,12 @@ export default function PayoutGraph({
 
   return (
     <div className="rounded-lg border border-mf-border-600 bg-mf-night-450 p-4 md:p-6 md:pb-4 pb-2">
-      <div className="mb-6 flex items-center justify-between">
-        <Menu as="div" className="relative">
+      <div className="mb-6 flex items-center justify-between gap-4">
+        <Menu as="div" className="relative min-w-0 max-w-full">
           {({ open }) => (
             <>
-              <MenuButton className="flex items-center gap-2 focus:outline-none hover:opacity-80">
-                <h2 className="whitespace-nowrap sm:text-base text-xs">
+              <MenuButton className="flex w-full min-w-0 items-center gap-2 overflow-hidden focus:outline-none hover:opacity-80">
+                <h2 className="min-w-0 flex-1 truncate text-sm lg:text-base">
                   {getDisplayName(selectedComputeType)} Payout
                 </h2>
                 <RiArrowDownSFill
@@ -80,7 +80,7 @@ export default function PayoutGraph({
                 />
               </MenuButton>
 
-              <MenuItems className="absolute -left-2 z-10 mt-2 w-56 origin-top-left rounded-lg border-2 border-mf-border-600 bg-mf-night-500 shadow-lg focus:outline-none">
+              <MenuItems className="absolute -left-2 z-10 mt-2 w-64 origin-top-left rounded-lg border-2 border-mf-border-600 bg-mf-night-500 shadow-lg focus:outline-none">
                 <div className="py-1">
                   {auction?.auction_results &&
                     Object.keys(auction.auction_results)
@@ -98,7 +98,7 @@ export default function PayoutGraph({
                                 selectedComputeType === type
                                   ? "bg-mf-night-500/50"
                                   : ""
-                              } block w-full px-4 py-2 text-left text-sm transition-colors`}
+                              } block w-full px-4 py-2 text-left text-xs lg:text-sm transition-colors`}
                             >
                               {getDisplayName(type)}
                             </button>

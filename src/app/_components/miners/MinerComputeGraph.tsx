@@ -101,7 +101,7 @@ export default function MinerComputeGraph({
   return (
     <div className="rounded-lg border border-mf-border-600 bg-mf-night-450 p-4 md:p-6 md:pb-4 pb-2">
       <div className="mb-6 flex items-center justify-between relative">
-        <h2 className="whitespace-nowrap sm:text-base text-xs">
+        <h2 className="whitespace-nowrap text-sm sm:text-base">
           Miner Compute
         </h2>
         <div className="flex items-center gap-2">

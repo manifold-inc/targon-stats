@@ -16,7 +16,7 @@ const Header = () => {
       <nav aria-label="Global">
         <div
           aria-label="Global"
-          className="w-full items-center flex pt-6 lg:pb-3 pb-6 px-10 relative lg:border-b-0 border-b border-mf-border-600"
+          className="w-full items-center flex pt-6 lg:pb-3 pb-6 lg:px-10 px-4 relative lg:border-b-0 border-b border-mf-border-600"
         >
           <Branding />
 

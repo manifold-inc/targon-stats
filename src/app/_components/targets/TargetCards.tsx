@@ -268,7 +268,7 @@ const TargetCards = ({
         {computeTypes.map((computeType, index) => (
           <div
             key={index}
-            className="rounded-lg border border-mf-border-600 bg-mf-night-450 p-6 pb-8"
+            className="rounded-lg border border-mf-border-600 bg-mf-night-450 p-6"
           >
             <div className="flex items-center gap-2 mb-4 group">
               <div className="flex items-center gap-2">
@@ -334,6 +334,31 @@ const TargetCards = ({
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
+
+            <div className="mt-4 pt-4 border-t border-mf-border-600">
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-mf-milk-600">Current Payout</span>
+                <span className="text-xs text-mf-sybil-300 font-medium">
+                  $
+                  {auctionResults?.[computeType.name]
+                    ? (
+                        auctionResults[computeType.name]!.reduce(
+                          (sum, n) => sum + n.payout,
+                          0
+                        ) /
+                        Math.max(
+                          1,
+                          auctionResults[computeType.name]!.reduce(
+                            (sum, n) => sum + n.count,
+                            0
+                          )
+                        )
+                      ).toFixed(2)
+                    : "0.00"}{" "}
+                  per hour
+                </span>
               </div>
             </div>
           </div>
