@@ -88,19 +88,19 @@ export default function MinerHardwareCards({
 
   const displayCards = [
     {
-      displayName: "H200 GPU",
+      displayName: "INTEL NVIDIA H200",
       cards: h200Cards,
       icon: <RiHardDrive3Fill className="h-4 w-4 text-mf-sally-500" />,
       countUpValue: h200CountUp,
     },
     {
-      displayName: "H100 GPU",
+      displayName: "INTEL NVIDIA H100",
       cards: h100Cards,
       icon: <RiHardDrive3Fill className="h-4 w-4 text-mf-sally-500" />,
       countUpValue: h100CountUp,
     },
     {
-      displayName: "V4 CPU",
+      displayName: "AMD CPU V4",
       cards: v4Cards,
       icon: <RiCpuLine className="h-4 w-4 text-mf-sally-500" />,
       countUpValue: v4CountUp,

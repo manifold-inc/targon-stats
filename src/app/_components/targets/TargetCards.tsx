@@ -50,13 +50,13 @@ const TargetCards = ({
 
       if (isB200) {
         type = "B200";
-        displayName = isNVIDIA ? "NVIDIA B200" : "B200 GPU";
+        displayName = isNVIDIA ? "INTEL NVIDIA B200" : "B200 GPU";
       } else if (isH200) {
         type = "H200";
-        displayName = isNVIDIA ? "NVIDIA H200" : "H200 GPU";
+        displayName = isNVIDIA ? "INTEL NVIDIA H200" : "H200 GPU";
       } else if (isH100) {
         type = "H100";
-        displayName = isNVIDIA ? "NVIDIA H100" : "H100 GPU";
+        displayName = isNVIDIA ? "INTEL NVIDIA H100" : "H100 GPU";
       } else if (isV4) {
         type = "V4";
         displayName = isAMD ? "AMD CPU V4" : "V4 CPU";
