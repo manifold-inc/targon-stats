@@ -3,6 +3,7 @@
 import {
   RiArrowUpBoxFill,
   RiBarChartFill,
+  RiLayoutGridFill,
   RiRecordCircleFill,
   RiToolsFill,
 } from "@remixicon/react";
@@ -17,6 +18,11 @@ export const Navigation = () => {
   const navRefs = useRef<Map<string, HTMLDivElement>>(new Map());
 
   const navigation = [
+    {
+      pathname: "/dashboard",
+      title: "Dashboard",
+      icon: RiLayoutGridFill,
+    },
     {
       pathname: "/",
       title: "Stats",
