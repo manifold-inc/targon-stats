@@ -3,7 +3,6 @@ import { type NextRequest, NextResponse } from "next/server";
 import { uncachedValidateRequest } from "./server/auth";
 
 const protectedRoutes = ["/dashboard"];
-const signInUrl = "https://targon.com";
 
 export default async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname;
@@ -18,9 +17,7 @@ export default async function middleware(req: NextRequest) {
   const { session } = await uncachedValidateRequest();
 
   if (!session) {
-    const redirectUrl = new URL("/sign-in", signInUrl);
-    redirectUrl.searchParams.set("source", "stats");
-    redirectUrl.searchParams.set("redirect", req.nextUrl.toString());
+    const redirectUrl = new URL("/sign-in", req.url);
     return NextResponse.redirect(redirectUrl);
   }
 

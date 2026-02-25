@@ -38,6 +38,16 @@ export const TargonUser = mysqlTable("user", {
   twoFactorSecret: varchar("two_factor_secret", { length: 255 }),
 });
 
+export const TrackedMiner = mysqlTable("tracked_miner", {
+  id: serial("id").primaryKey(),
+  userId: bigint("user_id", {
+    unsigned: true,
+    mode: "number",
+  }).notNull(),
+  hotkey: varchar("hotkey", { length: 255 }).notNull(),
+  createdAt: timestamp("created_at").default(sql`CURRENT_TIMESTAMP`),
+});
+
 export const TargonSession = mysqlTable("session", {
   id: varchar("id", {
     length: 255,

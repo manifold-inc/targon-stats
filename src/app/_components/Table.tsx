@@ -44,6 +44,8 @@ type TableProps<T> = {
   sortField?: string | null;
   sortDirection?: SortDirection;
   onSort?: (field: string) => void;
+  onRowClick?: (row: T, index: number) => void;
+  selectedRowKey?: string | number | null;
 };
 
 export default function Table<T>({
@@ -65,6 +67,8 @@ export default function Table<T>({
   sortField = null,
   sortDirection = null,
   onSort,
+  onRowClick,
+  selectedRowKey = null,
 }: TableProps<T>) {
   if (isLoading) {
     return (
@@ -73,7 +77,7 @@ export default function Table<T>({
           {title && <h2 className="flex-1">{title}</h2>}
         </div>
         <div className="space-y-3">
-          {Array.from({ length: 8 }).map((_, idx) => (
+          {Array.from({ length: 3 }).map((_, idx) => (
             <div
               key={idx}
               className="h-10 w-full bg-mf-night-300 rounded-lg animate-skeleton-pulse"
@@ -136,7 +140,7 @@ export default function Table<T>({
           </div>
         )}
       </div>
-      <div className="overflow-x-auto min-h-96">
+      <div className="overflow-x-auto min-h-32">
         <table className="w-full">
           <thead>
             <tr className="border-b border-mf-border-600">
@@ -211,30 +215,44 @@ export default function Table<T>({
                 </td>
               </tr>
             ) : (
-              data.map((row, idx) => (
-                <tr
-                  key={getRowKey(row, idx)}
-                  className="border-b border-mf-border-600 hover:bg-mf-ash-500/30 transition-colors animate-fade-in-row"
-                  style={{
-                    animationDelay: `${idx * 0.05}s`,
-                    opacity: 0,
-                  }}
-                >
-                  {columns.map((column) => (
-                    <td
-                      key={column.key}
-                      className={`py-3 px-4 text-sm ${column.className || ""}`}
-                      style={
-                        column.width
-                          ? { width: column.width, whiteSpace: "nowrap" }
-                          : { whiteSpace: "nowrap" }
-                      }
-                    >
-                      {column.renderCell(row, idx)}
-                    </td>
-                  ))}
-                </tr>
-              ))
+              data.map((row, idx) => {
+                const rowKey = getRowKey(row, idx);
+                const isSelected =
+                  selectedRowKey !== null &&
+                  selectedRowKey !== undefined &&
+                  String(rowKey) === String(selectedRowKey);
+                return (
+                  <tr
+                    key={rowKey}
+                    onClick={
+                      onRowClick ? () => onRowClick(row, idx) : undefined
+                    }
+                    className={`border-b border-mf-border-600 transition-colors animate-fade-in-row ${
+                      onRowClick
+                        ? "cursor-pointer hover:bg-mf-ash-500/30"
+                        : "hover:bg-mf-ash-500/30"
+                    } ${isSelected ? "bg-mf-ash-500/50" : ""}`}
+                    style={{
+                      animationDelay: `${idx * 0.05}s`,
+                      opacity: 0,
+                    }}
+                  >
+                    {columns.map((column) => (
+                      <td
+                        key={column.key}
+                        className={`py-3 px-4 text-sm ${column.className || ""}`}
+                        style={
+                          column.width
+                            ? { width: column.width, whiteSpace: "nowrap" }
+                            : { whiteSpace: "nowrap" }
+                        }
+                      >
+                        {column.renderCell(row, idx)}
+                      </td>
+                    ))}
+                  </tr>
+                );
+              })
             )}
           </tbody>
         </table>

@@ -2,18 +2,39 @@
 
 import PageHeader from "@/app/_components/PageHeader";
 import { useAuth } from "@/app/_components/Providers";
-import { RiLayoutGridFill } from "@remixicon/react";
+import DashboardWeightsTable from "@/app/_components/weights/DashboardWeightsTable";
+import { reactClient } from "@/trpc/react";
+import { RiLayoutGridFill, RiSendPlaneFill } from "@remixicon/react";
+import { useState } from "react";
+import { toast } from "sonner";
 
 export default function DashboardPage() {
-  const { user, status } = useAuth();
+  const { user } = useAuth();
+  const [selectedUid, setSelectedUid] = useState<number | null>(null);
+  const {
+    data: auction,
+    isLoading,
+    error,
+  } = reactClient.chain.getAuctionState.useQuery(undefined);
+  const trackMinerMutation = reactClient.trackedMiner.trackMiner.useMutation({
+    onSuccess: () => {
+      toast.success("Miner tracked successfully");
+      setSelectedUid(null);
+    },
+    onError: (err) => {
+      toast.error(err.message);
+    },
+  });
 
-  if (status === "LOADING") {
-    return (
-      <div className="flex items-center justify-center min-h-[200px]">
-        <div className="animate-pulse text-mf-milk-500">Loading...</div>
-      </div>
-    );
-  }
+  const hotkeyToUid = auction?.hotkey_to_uid ?? {};
+  const selectedHotkey = selectedUid
+    ? (hotkeyToUid[String(selectedUid)] ?? null)
+    : null;
+
+  const handleSubmit = () => {
+    if (!selectedHotkey) return;
+    trackMinerMutation.mutate({ hotkey: selectedHotkey });
+  };
 
   return (
     <div className="w-full">
@@ -21,14 +42,30 @@ export default function DashboardPage() {
         title="Dashboard"
         icon={<RiLayoutGridFill className="h-7 w-7" />}
       />
-      <div className="mt-5 pb-20">
-        <div className="rounded-lg border border-mf-border-600 bg-mf-metal-500/30 p-6">
-          <h2 className="text-lg font-medium text-mf-milk-500">
-            Welcome{user?.name ? `, ${user.name}` : ""}
-          </h2>
-          {user?.email && (
-            <p className="mt-2 text-sm text-mf-milk-600">{user.email}</p>
-          )}
+      <div className="mt-5 pb-20 flex flex-col gap-8">
+        <div className="flex flex-col gap-4">
+          <DashboardWeightsTable
+            weights={auction?.weights}
+            hotkeyToUid={hotkeyToUid}
+            isLoading={isLoading}
+            error={error as Error | null}
+            title="Track Miner Hotkey"
+            selectedUid={selectedUid}
+            onSelectedUidChange={setSelectedUid}
+          />
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={handleSubmit}
+              disabled={
+                !selectedHotkey || !user || trackMinerMutation.isPending
+              }
+              className="flex items-center gap-2 rounded-lg border border-mf-border-600 bg-mf-sally-500 px-4 py-2 text-sm font-medium text-mf-night-500 transition-colors hover:bg-mf-sally-400 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <RiSendPlaneFill className="h-4 w-4" />
+              {trackMinerMutation.isPending ? "Submitting..." : "Track Miner"}
+            </button>
+          </div>
         </div>
       </div>
     </div>
