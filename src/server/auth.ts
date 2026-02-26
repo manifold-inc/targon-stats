@@ -1,4 +1,5 @@
 import { env } from "@/env.mjs";
+import { Google } from "arctic";
 import { Lucia } from "lucia";
 import { cookies } from "next/headers";
 import { cache } from "react";
@@ -24,6 +25,12 @@ export const lucia = new Lucia(adapter, {
   },
 });
 
+export const google = new Google(
+  env.GOOGLE_CLIENT_ID,
+  env.GOOGLE_CLIENT_SECRET,
+  env.GOOGLE_REDIRECT_URI
+);
+
 export const uncachedValidateRequest = async (): Promise<
   | { user: { id: number }; session: { id: string } }
   | { user: null; session: null }
@@ -34,6 +41,7 @@ export const uncachedValidateRequest = async (): Promise<
     return { user: null, session: null };
   }
   const result = await lucia.validateSession(sessionId);
+  // next.js throws when you attempt to set cookie when rendering page
   if (!!result.session && result.session.fresh) {
     const sessionCookie = lucia.createSessionCookie(result.session.id);
     (await cookies()).set(

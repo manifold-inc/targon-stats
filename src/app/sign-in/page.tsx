@@ -1,5 +1,6 @@
 "use client";
 
+import Box from "@/app/_components/Box";
 import { useAuth } from "@/app/_components/Providers";
 import { reactClient } from "@/trpc/react";
 import {
@@ -189,6 +190,35 @@ export default function SignInPage() {
               </button>
             </div>
           </form>
+
+          <div className="mt-6">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-mf-noir-500"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className={`px-2 bg-mf-metal-500 font-quantico`}>
+                  <span className="opacity-70">Or continue with</span>
+                </span>
+              </div>
+            </div>
+            <div className="mt-6 flex w-full justify-center">
+              <Link href={`/sign-in/google`} className="w-full">
+                <Box
+                  value="Continue with Google"
+                  icon={
+                    <Image
+                      src="/google.svg"
+                      alt="Google"
+                      width={20}
+                      height={20}
+                      priority
+                    />
+                  }
+                />
+              </Link>
+            </div>
+          </div>
 
           <p className="mt-6 text-center">
             <Link
