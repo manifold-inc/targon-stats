@@ -3,9 +3,9 @@ import { Lucia } from "lucia";
 import { cookies } from "next/headers";
 import { cache } from "react";
 
-import { targonDb } from "./db/targon";
-import { TargonLuciaAdapter } from "./db/targon-lucia-adapter";
-import { TargonSession, TargonUser } from "./db/targon-schema";
+import { LuciaAdapter } from "./db/lucia-adapter";
+import { Session, User } from "./db/schema";
+import { db } from "./db/targon";
 
 declare module "lucia" {
   interface Register {
@@ -14,15 +14,12 @@ declare module "lucia" {
   }
 }
 
-const adapter = new TargonLuciaAdapter(targonDb, TargonSession, TargonUser);
+const adapter = new LuciaAdapter(db, Session, User);
 
 export const lucia = new Lucia(adapter, {
   sessionCookie: {
     attributes: {
       secure: env.NODE_ENV === "production",
-      ...(env.NODE_ENV === "production" && {
-        domain: ".targon.com",
-      }),
     },
   },
 });

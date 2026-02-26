@@ -1,7 +1,7 @@
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 import { lucia } from "@/server/auth";
-import { targonDb } from "@/server/db/targon";
-import { TargonUser } from "@/server/db/targon-schema";
+import { User } from "@/server/db/schema";
+import { db } from "@/server/db/targon";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { Scrypt } from "lucia";
@@ -11,14 +11,14 @@ import { z } from "zod";
 export const accountRouter = createTRPCRouter({
   getUser: publicProcedure.query(async ({ ctx }) => {
     if (!ctx.user?.id) return null;
-    const [user] = await targonDb
+    const [user] = await db
       .select({
-        id: TargonUser.id,
-        name: TargonUser.name,
-        email: TargonUser.email,
+        id: User.id,
+        name: User.name,
+        email: User.email,
       })
-      .from(TargonUser)
-      .where(eq(TargonUser.id, ctx.user.id))
+      .from(User)
+      .where(eq(User.id, ctx.user.id))
       .limit(1);
     return user ?? null;
   }),
@@ -31,14 +31,14 @@ export const accountRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input }) => {
-      const [foundUser] = await targonDb
+      const [foundUser] = await db
         .select({
-          id: TargonUser.id,
-          password: TargonUser.password,
-          emailVerified: TargonUser.emailVerified,
+          id: User.id,
+          password: User.password,
+          emailVerified: User.emailVerified,
         })
-        .from(TargonUser)
-        .where(eq(TargonUser.email, input.email));
+        .from(User)
+        .where(eq(User.email, input.email));
       if (!foundUser)
         throw new TRPCError({
           code: "FORBIDDEN",

@@ -8,4 +8,4 @@ const client = new Client({
   password: env.DATABASE_PASSWORD,
 });
 
-export const targonDb = drizzle(client);
+export const db = drizzle(client);

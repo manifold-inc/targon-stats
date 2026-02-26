@@ -10,7 +10,7 @@ import {
   varchar,
 } from "drizzle-orm/mysql-core";
 
-export const TargonUser = mysqlTable("user", {
+export const User = mysqlTable("user", {
   id: serial("id").primaryKey(),
   pubId: varchar("pub_id", { length: 32 }),
   email: varchar("email", { length: 255 }),
@@ -48,7 +48,7 @@ export const TrackedMiner = mysqlTable("tracked_miner", {
   createdAt: timestamp("created_at").default(sql`CURRENT_TIMESTAMP`),
 });
 
-export const TargonSession = mysqlTable("session", {
+export const Session = mysqlTable("session", {
   id: varchar("id", {
     length: 255,
   }).primaryKey(),

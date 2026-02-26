@@ -1,6 +1,6 @@
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
-import { targonDb } from "@/server/db/targon";
-import { TrackedMiner } from "@/server/db/targon-schema";
+import { TrackedMiner } from "@/server/db/schema";
+import { db } from "@/server/db/targon";
 import { z } from "zod";
 
 export const trackedMinerRouter = createTRPCRouter({
@@ -11,7 +11,7 @@ export const trackedMinerRouter = createTRPCRouter({
         throw new Error("You must be logged in to track a miner");
       }
 
-      await targonDb.insert(TrackedMiner).values({
+      await db.insert(TrackedMiner).values({
         userId: ctx.user.id,
         hotkey: input.hotkey,
       });
