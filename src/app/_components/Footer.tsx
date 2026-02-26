@@ -1,3 +1,5 @@
+"use client";
+
 import Branding from "@/app/_components/header/Branding";
 import {
   RiDiscordFill,
@@ -6,6 +8,7 @@ import {
   RiTwitterXFill,
 } from "@remixicon/react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const socialLinks = [
   {
@@ -31,6 +34,10 @@ const socialLinks = [
 ];
 
 export default function Footer() {
+  const pathname = usePathname();
+  if (pathname === "/sign-in") {
+    return null;
+  }
   return (
     <footer className="bg-mf-night-500 pt-60 lg:pt-10 pb-10">
       <div className="flex flex-col lg:flex-row items-center justify-between gap-6">

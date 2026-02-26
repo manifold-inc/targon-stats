@@ -6,13 +6,18 @@ import Navigation from "@/app/_components/header/Navigation";
 import TopButtons from "@/app/_components/header/TopButtons";
 import TopStats from "@/app/_components/header/TopStats";
 import { RiMenuLine } from "@remixicon/react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
+
+import Box from "../Box";
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-30 bg-mf-night-500/90 backdrop-blur-sm">
+    <header className="sticky top-0 z-30 bg-mf-night-500 border-b border-mf-border-600 backdrop-blur-sm">
       <nav aria-label="Global">
         <div
           aria-label="Global"
@@ -20,9 +25,11 @@ const Header = () => {
         >
           <Branding />
 
-          <div className="absolute left-1/2 -translate-x-1/2 hidden lg:block">
-            <TopStats />
-          </div>
+          {pathname !== "/sign-in" && (
+            <div className="absolute left-1/2 -translate-x-1/2 hidden lg:block">
+              <TopStats />
+            </div>
+          )}
 
           <div className="flex lg:hidden ml-auto">
             <button
@@ -35,12 +42,20 @@ const Header = () => {
           </div>
 
           <div className="ml-auto hidden lg:block">
-            <TopButtons />
+            {pathname !== "/sign-in" ? (
+              <TopButtons />
+            ) : (
+              <Link href="/">
+                <Box
+                  value="Back"
+                  valueClassName="animate-flip-up w-18 px-auto justify-center"
+                />
+              </Link>
+            )}
           </div>
         </div>
 
-        <Navigation />
-
+        {pathname !== "/sign-in" ? <Navigation /> : <div className="h-3" />}
         <MobileMenu
           open={mobileMenuOpen}
           onClose={() => setMobileMenuOpen(false)}
