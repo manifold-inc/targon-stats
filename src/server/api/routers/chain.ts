@@ -411,6 +411,34 @@ export async function getHistoricalPayoutDataByComputeType(
     .filter((day) => Object.keys(day.payouts).length > 0);
 }
 
+export type ComputeTypeStats = {
+  computeType: string;
+  averageLatestPayout: number;
+  numNodes: number;
+};
+
+export async function getComputeTypeStats(): Promise<ComputeTypeStats[]> {
+  const state = await getAuctionState();
+  const results: ComputeTypeStats[] = [];
+
+  for (const [computeType, nodes] of Object.entries(state.auction_results)) {
+    if (!nodes || nodes.length === 0) continue;
+
+    const totalPayout = nodes.reduce((sum, node) => sum + node.payout, 0);
+    const totalCards = nodes.reduce((sum, node) => sum + node.count, 0);
+    const averageLatestPayout =
+      totalCards > 0 ? Number((totalPayout / totalCards).toFixed(2)) : 0;
+
+    results.push({
+      computeType,
+      averageLatestPayout,
+      numNodes: nodes.length,
+    });
+  }
+
+  return results.sort((a, b) => a.computeType.localeCompare(b.computeType));
+}
+
 export const chainRouter = createTRPCRouter({
   getAuctionState: publicAuthlessProcedure
     .input(z.number().optional())
@@ -448,4 +476,7 @@ export const chainRouter = createTRPCRouter({
     .query(async ({ input }) =>
       getHistoricalPayoutDataByComputeType(input?.days ?? 30)
     ),
+  getComputeTypeStats: publicAuthlessProcedure.query(() =>
+    getComputeTypeStats()
+  ),
 });
