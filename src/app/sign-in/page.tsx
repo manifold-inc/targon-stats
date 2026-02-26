@@ -73,9 +73,9 @@ export default function SignInPage() {
           <LiquidEther />
         </div>
       </div>
-      <div className="relative flex flex-1 flex-col items-center justify-center p-4 lg:pt-16">
+      <div className="relative flex flex-1 flex-col items-center justify-center lg:pt-16">
         <div className="w-full max-w-md">
-          <div className="rounded-lg border border-mf-border-600 bg-mf-night-450 p-12">
+          <div className="rounded-lg border border-mf-border-600 bg-mf-night-450 p-4 lg:p-12">
             <div className="flex flex-col items-center gap-6">
               <Image
                 src="/targon-logo.svg"
@@ -84,7 +84,7 @@ export default function SignInPage() {
                 height={50}
                 priority
               />
-              <h1 className="text-[1.75rem] font-saira font-semibold text-mf-milk-500">
+              <h1 className="text-[1.75rem] font-saira font-medium text-mf-milk-500">
                 Welcome Back
               </h1>
             </div>
@@ -171,7 +171,7 @@ export default function SignInPage() {
                 >
                   {signIn.isPending ? (
                     <>
-                      <span className="h-4 w-4 animate-spin rounded-full border border-mf-night-500 border-t-transparent" />
+                      <span className="h-3.5 w-3.5 animate-spin rounded-full border border-mf-night-500 border-t-transparent" />
                     </>
                   ) : (
                     "Log In"

@@ -14,6 +14,7 @@ import Box from "../Box";
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const toggleMobileMenu = () => setMobileMenuOpen((prev) => !prev);
   const pathname = usePathname();
 
   return (
@@ -21,7 +22,7 @@ const Header = () => {
       <nav aria-label="Global">
         <div
           aria-label="Global"
-          className="w-full items-center flex pt-6 lg:pb-3 pb-6 lg:px-10 px-4 relative lg:border-b-0 border-b border-mf-border-600"
+          className="w-full items-center flex pt-6 lg:pb-3 pb-6 lg:px-10 px-4 relative"
         >
           <Branding />
 
@@ -34,7 +35,7 @@ const Header = () => {
           <div className="flex lg:hidden ml-auto">
             <button
               type="button"
-              onClick={() => setMobileMenuOpen(true)}
+              onClick={() => toggleMobileMenu()}
               className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5"
             >
               <RiMenuLine className="size-5 hover:opacity-80" />
@@ -43,7 +44,7 @@ const Header = () => {
 
           <div className="ml-auto hidden lg:block">
             {pathname !== "/sign-in" ? (
-              <TopButtons />
+              <TopButtons onClose={() => setMobileMenuOpen(false)} />
             ) : (
               <Link href="/">
                 <Box
@@ -55,7 +56,7 @@ const Header = () => {
           </div>
         </div>
 
-        {pathname !== "/sign-in" ? <Navigation /> : <div className="h-3" />}
+        {pathname !== "/sign-in" ? <Navigation /> : <div className="lg:h-3" />}
         <MobileMenu
           open={mobileMenuOpen}
           onClose={() => setMobileMenuOpen(false)}

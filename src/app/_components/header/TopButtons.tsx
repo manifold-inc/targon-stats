@@ -9,8 +9,10 @@ import { useAuth } from "../Providers";
 
 export default function TopButtons({
   columnLayout = false,
+  onClose,
 }: {
   columnLayout?: boolean;
+  onClose?: () => void;
 }) {
   const isAuthed = useAuth().status === "AUTHED";
   return (
@@ -46,7 +48,7 @@ export default function TopButtons({
           />
         </a>
       ) : (
-        <Link href="/sign-in">
+        <Link href="/sign-in" onClick={onClose}>
           <Box
             value="Sign In"
             valueClassName="animate-flip-up w-18 px-auto justify-center"
