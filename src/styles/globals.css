@@ -19,6 +19,8 @@
 
   --color-mf-sybil-300: #56e8b5;
 
+  --color-mf-safety-500: #FE8056;
+
   --color-mf-border-400: #101619;
   --color-mf-border-500: #0a1014;
   --color-mf-border-600: #0b1018;
@@ -140,6 +142,17 @@
   /* prettylights-syntax-markup-deleted */
   color: #ffd8d3;
   background-color: #78191b;
+}
+
+/* Chrome autofill - override default white/yellow background */
+input:-webkit-autofill,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1px var(--color-mf-border-600) inset !important;
+  box-shadow: 0 0 0 1px var(--color-mf-border-600) inset !important;
+  -webkit-text-fill-color: var(--color-mf-milk-500) !important;
+  transition: background-color 5000s ease-in-out 0s;
 }
 
 /* Custom Fonts */

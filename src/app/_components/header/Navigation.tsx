@@ -1,8 +1,10 @@
 "use client";
 
+import { useAuth } from "@/app/_components/Providers";
 import {
   RiArrowUpBoxFill,
   RiBarChartFill,
+  RiLayoutGridFill,
   RiRecordCircleFill,
   RiToolsFill,
 } from "@remixicon/react";
@@ -13,10 +15,18 @@ import { useRef, useState } from "react";
 
 export const Navigation = () => {
   const pathname = usePathname();
+  const { status } = useAuth();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const navRefs = useRef<Map<string, HTMLDivElement>>(new Map());
 
+  console.log(status);
+
   const navigation = [
+    {
+      pathname: "/dashboard",
+      title: "Dashboard",
+      icon: RiLayoutGridFill,
+    },
     {
       pathname: "/",
       title: "Stats",
@@ -37,7 +47,9 @@ export const Navigation = () => {
       title: "Targets",
       icon: RiRecordCircleFill,
     },
-  ];
+  ].filter((route) =>
+    route.pathname === "/dashboard" ? status === "AUTHED" : true
+  );
   return (
     <div
       onMouseLeave={() => setHoveredItem(null)}
