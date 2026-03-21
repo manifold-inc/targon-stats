@@ -8,6 +8,10 @@ interface TargetCardsProps {
   auction?: Record<string, Auction>;
   isLoading: boolean;
   error: Error | null;
+  /** B200/H200/H100/V4 total cards row (Stats home). */
+  showServerCountRow?: boolean;
+  /** Per–compute-type target / price cards (Targets page). */
+  showDetailCards?: boolean;
 }
 
 interface ComputeTypeInfo {
@@ -23,86 +27,19 @@ interface ComputeTypeInfo {
   minClusterSize: number;
 }
 
-const TargetCards = ({
-  auctionResults,
-  auction,
+function TargetServerCountSummary({
+  computeTypes,
   isLoading,
+  auction,
   error,
-}: TargetCardsProps) => {
-  const computeTypes = useMemo<ComputeTypeInfo[]>(() => {
-    if (!auction || !auctionResults) return [];
-
-    const types: ComputeTypeInfo[] = [];
-
-    for (const [computeTypeName, auctionData] of Object.entries(auction)) {
-      const isB200 = computeTypeName.includes("B200");
-      const isH200 = computeTypeName.includes("H200");
-      const isH100 = computeTypeName.includes("H100");
-      const isV4 = computeTypeName.includes("V4");
-      const isTDX = computeTypeName.includes("TDX");
-      const isSEV = computeTypeName.includes("SEV");
-      const isAMD = computeTypeName.includes("AMD");
-      const isNVIDIA = computeTypeName.includes("NVIDIA");
-
-      let displayName = "";
-      let type: "B200" | "H200" | "H100" | "V4" | "OTHER" = "OTHER";
-      let badge: "Intel TDX" | "AMD SEV" | undefined = undefined;
-
-      if (isB200) {
-        type = "B200";
-        displayName = isNVIDIA ? "INTEL NVIDIA B200" : "B200 GPU";
-      } else if (isH200) {
-        type = "H200";
-        displayName = isNVIDIA ? "INTEL NVIDIA H200" : "H200 GPU";
-      } else if (isH100) {
-        type = "H100";
-        displayName = isNVIDIA ? "INTEL NVIDIA H100" : "H100 GPU";
-      } else if (isV4) {
-        type = "V4";
-        displayName = isAMD ? "AMD CPU V4" : "V4 CPU";
-      } else {
-        displayName = computeTypeName;
-      }
-
-      if (isTDX) {
-        badge = "Intel TDX";
-      } else if (isSEV) {
-        badge = "AMD SEV";
-      }
-
-      const totalCards =
-        auctionResults[computeTypeName]?.reduce(
-          (total, node) => total + (node.count || 0),
-          0
-        ) || 0;
-
-      const icon =
-        type === "V4" ? (
-          <RiCpuLine className="h-5 w-5 text-mf-sally-500" />
-        ) : (
-          <RiHardDrive3Fill className="h-5 w-5 text-mf-sally-500" />
-        );
-
-      types.push({
-        name: computeTypeName,
-        displayName,
-        type,
-        badge,
-        icon,
-        totalCards,
-        targetCards: auctionData.target_cards ?? auctionData.target_nodes ?? 0,
-        targetPrice: auctionData.target_price ?? 0,
-        maxPrice: auctionData.max_price ?? 0,
-        minClusterSize: auctionData.min_cluster_size ?? 0,
-      });
-    }
-
-    return types.sort((a, b) => {
-      const order = { B200: 0, H200: 1, H100: 2, V4: 3, OTHER: 4 };
-      return order[a.type] - order[b.type];
-    });
-  }, [auction, auctionResults]);
-
+  auctionResults,
+}: {
+  computeTypes: ComputeTypeInfo[];
+  isLoading: boolean;
+  auction: Record<string, Auction> | undefined;
+  error: Error | null;
+  auctionResults: AuctionResults | undefined;
+}) {
   const b200Value = useMemo(
     () => computeTypes.find((t) => t.type === "B200")?.totalCards || 0,
     [computeTypes]
@@ -203,33 +140,143 @@ const TargetCards = ({
     }>;
   }, [computeTypes, b200Count, h200Count, h100Count, v4Count]);
 
+  return (
+    <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
+      {summaryCards.map((card, index) => (
+        <div
+          key={index}
+          className="rounded-lg border border-mf-border-600 bg-mf-night-450 p-6 text-center"
+        >
+          <div className="mb-4 flex items-center justify-center gap-2">
+            {card.icon}
+            <h3 className="text-xs">{card.title}</h3>
+          </div>
+          <div
+            className={`mb-1 font-saira text-5xl font-medium ${
+              card.totalCards === 0 ? "text-mf-night-200" : "text-mf-sally-500"
+            }`}
+          >
+            {card.totalCards === 0 ? "00" : card.countUpValue}
+          </div>
+          <div className="text-xs text-mf-milk-600">Total Cards</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+const TargetCards = ({
+  auctionResults,
+  auction,
+  isLoading,
+  error,
+  showServerCountRow = false,
+  showDetailCards = true,
+}: TargetCardsProps) => {
+  const computeTypes = useMemo<ComputeTypeInfo[]>(() => {
+    if (!auction || !auctionResults) return [];
+
+    const types: ComputeTypeInfo[] = [];
+
+    for (const [computeTypeName, auctionData] of Object.entries(auction)) {
+      const isB200 = computeTypeName.includes("B200");
+      const isH200 = computeTypeName.includes("H200");
+      const isH100 = computeTypeName.includes("H100");
+      const isV4 = computeTypeName.includes("V4");
+      const isTDX = computeTypeName.includes("TDX");
+      const isSEV = computeTypeName.includes("SEV");
+      const isAMD = computeTypeName.includes("AMD");
+      const isNVIDIA = computeTypeName.includes("NVIDIA");
+
+      let displayName = "";
+      let type: "B200" | "H200" | "H100" | "V4" | "OTHER" = "OTHER";
+      let badge: "Intel TDX" | "AMD SEV" | undefined = undefined;
+
+      if (isB200) {
+        type = "B200";
+        displayName = isNVIDIA ? "INTEL NVIDIA B200" : "B200 GPU";
+      } else if (isH200) {
+        type = "H200";
+        displayName = isNVIDIA ? "INTEL NVIDIA H200" : "H200 GPU";
+      } else if (isH100) {
+        type = "H100";
+        displayName = isNVIDIA ? "INTEL NVIDIA H100" : "H100 GPU";
+      } else if (isV4) {
+        type = "V4";
+        displayName = isAMD ? "AMD CPU V4" : "V4 CPU";
+      } else {
+        displayName = computeTypeName;
+      }
+
+      if (isTDX) {
+        badge = "Intel TDX";
+      } else if (isSEV) {
+        badge = "AMD SEV";
+      }
+
+      const totalCards =
+        auctionResults[computeTypeName]?.reduce(
+          (total, node) => total + (node.count || 0),
+          0
+        ) || 0;
+
+      const icon =
+        type === "V4" ? (
+          <RiCpuLine className="h-5 w-5 text-mf-sally-500" />
+        ) : (
+          <RiHardDrive3Fill className="h-5 w-5 text-mf-sally-500" />
+        );
+
+      types.push({
+        name: computeTypeName,
+        displayName,
+        type,
+        badge,
+        icon,
+        totalCards,
+        targetCards: auctionData.target_cards ?? auctionData.target_nodes ?? 0,
+        targetPrice: auctionData.target_price ?? 0,
+        maxPrice: auctionData.max_price ?? 0,
+        minClusterSize: auctionData.min_cluster_size ?? 0,
+      });
+    }
+
+    return types.sort((a, b) => {
+      const order = { B200: 0, H200: 1, H100: 2, V4: 3, OTHER: 4 };
+      return order[a.type] - order[b.type];
+    });
+  }, [auction, auctionResults]);
+
   if (isLoading || error || !auction || !auctionResults) {
     if (isLoading) {
       return (
         <div className="space-y-8">
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
-            {[1, 2, 3, 4].map((index) => (
-              <div
-                key={index}
-                className="rounded-lg border border-mf-border-600 bg-mf-night-450 p-6 text-center"
-              >
-                <div className="h-6 w-32 mb-4 mx-auto rounded bg-mf-night-100 opacity-30 animate-skeleton-pulse-opacity" />
-                <div className="h-16 w-full rounded bg-mf-night-100 opacity-30 animate-skeleton-pulse-opacity" />
-              </div>
-            ))}
-          </div>
-
-          <div className="grid grid-cols-1 gap-8 xl:grid-cols-3">
-            {[1, 2, 3, 4].map((index) => (
-              <div
-                key={index}
-                className="rounded-lg border border-mf-border-600 bg-mf-night-450 p-6"
-              >
-                <div className="h-6 w-32 mb-4 rounded bg-mf-night-100 opacity-30 animate-skeleton-pulse-opacity" />
-                <div className="h-16 w-full rounded bg-mf-night-100 opacity-30 animate-skeleton-pulse-opacity" />
-              </div>
-            ))}
-          </div>
+          {showServerCountRow && (
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
+              {[1, 2, 3, 4].map((index) => (
+                <div
+                  key={index}
+                  className="rounded-lg border border-mf-border-600 bg-mf-night-450 p-6 text-center"
+                >
+                  <div className="mx-auto mb-4 h-6 w-32 rounded bg-mf-night-100 opacity-30 animate-skeleton-pulse-opacity" />
+                  <div className="h-16 w-full rounded bg-mf-night-100 opacity-30 animate-skeleton-pulse-opacity" />
+                </div>
+              ))}
+            </div>
+          )}
+          {showDetailCards && (
+            <div className="grid grid-cols-1 gap-8 xl:grid-cols-3">
+              {[1, 2, 3, 4].map((index) => (
+                <div
+                  key={index}
+                  className="rounded-lg border border-mf-border-600 bg-mf-night-450 p-6"
+                >
+                  <div className="mb-4 h-6 w-32 rounded bg-mf-night-100 opacity-30 animate-skeleton-pulse-opacity" />
+                  <div className="h-16 w-full rounded bg-mf-night-100 opacity-30 animate-skeleton-pulse-opacity" />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       );
     }
@@ -238,132 +285,119 @@ const TargetCards = ({
 
   return (
     <div className="space-y-8">
-      {/* Summary Cards Row */}
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
-        {summaryCards.map((card, index) => (
-          <div
-            key={index}
-            className="rounded-lg border border-mf-border-600 bg-mf-night-450 p-6 text-center"
-          >
-            <div className="flex items-center justify-center gap-2 mb-4">
-              {card.icon}
-              <h3 className="text-xs">{card.title}</h3>
-            </div>
+      {showServerCountRow && (
+        <TargetServerCountSummary
+          computeTypes={computeTypes}
+          isLoading={isLoading}
+          auction={auction}
+          error={error}
+          auctionResults={auctionResults}
+        />
+      )}
+      {showDetailCards && (
+        <div className="grid grid-cols-1 gap-8 xl:grid-cols-3">
+          {computeTypes.map((computeType, index) => (
             <div
-              className={`text-5xl font-saira font-medium mb-1 ${
-                card.totalCards === 0
-                  ? "text-mf-night-200"
-                  : "text-mf-sally-500"
-              }`}
+              key={index}
+              className="rounded-lg border border-mf-border-600 bg-mf-night-450 p-6"
             >
-              {card.totalCards === 0 ? "00" : card.countUpValue}
-            </div>
-            <div className="text-xs text-mf-milk-600">Total Cards</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Detailed Target Cards Row */}
-      <div className="grid grid-cols-1 gap-8 xl:grid-cols-3">
-        {computeTypes.map((computeType, index) => (
-          <div
-            key={index}
-            className="rounded-lg border border-mf-border-600 bg-mf-night-450 p-6"
-          >
-            <div className="flex items-center gap-2 mb-4 group">
-              <div className="flex items-center gap-2">
-                {computeType.icon}
-                <h3 className="text-sm">{computeType.displayName}</h3>
-              </div>
-              {computeType.badge && (
-                <span className="bg-mf-sally-800 group-hover:bg-mf-sally-700 transition-colors rounded-full w-15 h-3.75 flex items-center justify-center gap-0.5">
-                  <RiLockLine className="size-2 text-mf-sally-500" />
-                  <span className="text-[0.45rem] font-light text-mf-milk-600">
-                    {computeType.badge}
+              <div className="mb-4 flex items-center gap-2 group">
+                <div className="flex items-center gap-2">
+                  {computeType.icon}
+                  <h3 className="text-sm">{computeType.displayName}</h3>
+                </div>
+                {computeType.badge && (
+                  <span className="bg-mf-sally-800 group-hover:bg-mf-sally-700 transition-colors rounded-full w-15 h-3.75 flex items-center justify-center gap-0.5">
+                    <RiLockLine className="size-2 text-mf-sally-500" />
+                    <span className="text-[0.45rem] font-light text-mf-milk-600">
+                      {computeType.badge}
+                    </span>
                   </span>
-                </span>
-              )}
-            </div>
+                )}
+              </div>
 
-            <div className="border-t border-mf-border-600 pt-4">
-              <div className="grid sm:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <div className="rounded-lg border border-mf-border-600 bg-mf-night-400 px-3 py-2">
-                      <div className="text-sm text-mf-sally-500">
-                        {computeType.targetCards.toString().padStart(2, "0")}
+              <div className="border-t border-mf-border-600 pt-4">
+                <div className="grid gap-6 sm:grid-cols-2">
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <div className="rounded-lg border border-mf-border-600 bg-mf-night-400 px-3 py-2">
+                        <div className="text-sm text-mf-sally-500">
+                          {computeType.targetCards.toString().padStart(2, "0")}
+                        </div>
+                      </div>
+                      <div className="whitespace-nowrap text-xs text-mf-milk-600">
+                        Target Cards
                       </div>
                     </div>
-                    <div className="text-xs text-mf-milk-600 whitespace-nowrap">
-                      Target Cards
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="rounded-lg border border-mf-border-600 bg-mf-night-400 px-3 py-2">
-                      <div className="text-sm text-mf-sally-500">
-                        {(computeType.minClusterSize || 1)
-                          .toString()
-                          .padStart(2, "0")}
+                    <div className="flex items-center gap-3">
+                      <div className="rounded-lg border border-mf-border-600 bg-mf-night-400 px-3 py-2">
+                        <div className="text-sm text-mf-sally-500">
+                          {(computeType.minClusterSize || 1)
+                            .toString()
+                            .padStart(2, "0")}
+                        </div>
+                      </div>
+                      <div className="whitespace-nowrap text-xs text-mf-milk-600">
+                        Min Cards Per Cluster
                       </div>
                     </div>
-                    <div className="text-xs text-mf-milk-600 whitespace-nowrap">
-                      Min Cards Per Cluster
-                    </div>
                   </div>
-                </div>
 
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <div className="rounded-lg border border-mf-border-600 bg-mf-night-400 px-3 py-2">
-                      <div className="text-sm text-mf-sybil-300">
-                        ${(computeType.targetPrice / 100).toFixed(2)}
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <div className="rounded-lg border border-mf-border-600 bg-mf-night-400 px-3 py-2">
+                        <div className="text-sm text-mf-sybil-300">
+                          ${(computeType.targetPrice / 100).toFixed(2)}
+                        </div>
+                      </div>
+                      <div className="whitespace-nowrap text-xs text-mf-milk-600">
+                        Target Price
                       </div>
                     </div>
-                    <div className="text-xs text-mf-milk-600 whitespace-nowrap">
-                      Target Price
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="rounded-lg border border-mf-border-600 bg-mf-night-400 px-3 py-2">
-                      <div className="text-sm text-mf-sybil-300">
-                        ${(computeType.maxPrice / 100).toFixed(2)}
+                    <div className="flex items-center gap-3">
+                      <div className="rounded-lg border border-mf-border-600 bg-mf-night-400 px-3 py-2">
+                        <div className="text-sm text-mf-sybil-300">
+                          ${(computeType.maxPrice / 100).toFixed(2)}
+                        </div>
                       </div>
-                    </div>
-                    <div className="text-xs text-mf-milk-600 whitespace-nowrap">
-                      Max Price
+                      <div className="whitespace-nowrap text-xs text-mf-milk-600">
+                        Max Price
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div className="mt-4 pt-4 border-t border-mf-border-600">
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-mf-milk-600">Current Payout</span>
-                <span className="text-xs text-mf-sybil-300 font-medium">
-                  $
-                  {auctionResults?.[computeType.name]
-                    ? (
-                        auctionResults[computeType.name]!.reduce(
-                          (sum, n) => sum + n.payout,
-                          0
-                        ) /
-                        Math.max(
-                          1,
+              <div className="mt-4 border-t border-mf-border-600 pt-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-mf-milk-600">
+                    Current Payout
+                  </span>
+                  <span className="text-xs font-medium text-mf-sybil-300">
+                    $
+                    {auctionResults?.[computeType.name]
+                      ? (
                           auctionResults[computeType.name]!.reduce(
-                            (sum, n) => sum + n.count,
+                            (sum, n) => sum + n.payout,
                             0
+                          ) /
+                          Math.max(
+                            1,
+                            auctionResults[computeType.name]!.reduce(
+                              (sum, n) => sum + n.count,
+                              0
+                            )
                           )
-                        )
-                      ).toFixed(2)
-                    : "0.00"}{" "}
-                  per hour
-                </span>
+                        ).toFixed(2)
+                      : "0.00"}{" "}
+                    per hour
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

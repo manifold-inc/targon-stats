@@ -3,6 +3,7 @@
 import {
   RiArrowUpBoxFill,
   RiBarChartFill,
+  RiLineChartFill,
   RiRecordCircleFill,
   RiToolsFill,
 } from "@remixicon/react";
@@ -21,6 +22,11 @@ export const Navigation = () => {
       pathname: "/",
       title: "Stats",
       icon: RiBarChartFill,
+    },
+    {
+      pathname: "/historical",
+      title: "Historical",
+      icon: RiLineChartFill,
     },
     {
       pathname: "/miners",
