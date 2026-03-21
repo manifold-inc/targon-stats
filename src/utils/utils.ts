@@ -131,6 +131,7 @@ export function getDisplayName(computeType: string): string {
   if (computeType.includes("B200")) return "INTEL NVIDIA B200";
   if (computeType.includes("H200")) return "INTEL NVIDIA H200";
   if (computeType.includes("H100")) return "INTEL NVIDIA H100";
+  if (computeType.includes("RTX6000B")) return "INTEL NVIDIA RTX6000B";
   if (computeType.includes("V4")) return "AMD CPU V4";
   return computeType;
 }

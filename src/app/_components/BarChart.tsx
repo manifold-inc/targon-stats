@@ -1,23 +1,13 @@
 "use client";
 
+import {
+  buildLabelColorMapFromStackedData,
+  type StackedDataItem,
+} from "@/utils/stackedBarChartColors";
 import { useIsLgOrLarger } from "@/utils/useIsLgOrLarger";
 import { useEffect, useMemo, useRef, useState } from "react";
 
-const DEFAULT_COLORS = [
-  "#52ABFF",
-  "#58E8B5",
-  "#FFC45B",
-  "#FF815B",
-  "#A78BFA",
-  "#F472B6",
-  "#34D399",
-  "#FBBF24",
-];
-
-export type StackedDataItem = {
-  key: string;
-  segments: Array<{ value: number; label?: string }>;
-};
+export type { StackedDataItem };
 
 export type SimpleDataItem = {
   key: string;
@@ -65,21 +55,7 @@ export default function BarChart({
   );
 
   const labelColorMap = useMemo(() => {
-    const uniqueLabels: string[] = [];
-    data.forEach((item) => {
-      if (isStackedItem(item)) {
-        item.segments.forEach((seg) => {
-          if (seg.label && !uniqueLabels.includes(seg.label)) {
-            uniqueLabels.push(seg.label);
-          }
-        });
-      }
-    });
-    const map = new Map<string, string>();
-    uniqueLabels.forEach((label, index) => {
-      map.set(label, DEFAULT_COLORS[index % DEFAULT_COLORS.length]!);
-    });
-    return map;
+    return buildLabelColorMapFromStackedData(data.filter(isStackedItem));
   }, [data]);
 
   const [hoveredData, setHoveredData] = useState<{

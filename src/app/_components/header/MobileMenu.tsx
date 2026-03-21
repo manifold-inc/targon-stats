@@ -9,6 +9,7 @@ import {
   RiArrowUpBoxFill,
   RiBarChartFill,
   RiCloseLine,
+  RiLineChartFill,
   RiRecordCircleFill,
   RiToolsFill,
 } from "@remixicon/react";
@@ -33,6 +34,11 @@ const MobileMenu = ({
       pathname: "/",
       title: "Stats",
       icon: RiBarChartFill,
+    },
+    {
+      pathname: "/historical",
+      title: "Historical",
+      icon: RiLineChartFill,
     },
     {
       pathname: "/miners",
