@@ -15,7 +15,11 @@ export default function HomePage() {
 
   return (
     <div className="w-full">
-      <PageHeader title="Stats" icon={<RiBarChartFill className="h-7 w-7" />} />
+      <PageHeader
+        title="Stats"
+        icon={<RiBarChartFill className="h-7 w-7" />}
+        headerBadges="minerWeights"
+      />
       <div className="mt-5 flex flex-col gap-8 pb-20">
         <TargetsPayoutGraph />
         <TargetCards

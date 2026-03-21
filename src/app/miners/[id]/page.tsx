@@ -57,8 +57,10 @@ export default function MinerDetailPage() {
         <MinerWeightsGraph uid={uid} />
         <MinerHardwareCards
           uid={uid}
+          auction={auction?.auctions}
           auctionResults={auction?.auction_results}
           isLoading={isLoading}
+          error={null}
         />
       </div>
     </div>

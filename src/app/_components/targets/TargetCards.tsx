@@ -1,33 +1,141 @@
+"use client";
+
+import { reactClient } from "@/trpc/react";
 import { type Auction, type AuctionResults } from "@/types";
+import { buildTargetsStackedPayoutData } from "@/utils/buildTargetsStackedPayoutData";
+import {
+  buildComputeTypesFromAuction,
+  type ComputeTypeInfo,
+} from "@/utils/computeTypes";
+import { buildLabelColorMapFromStackedData } from "@/utils/stackedBarChartColors";
 import useCountUp from "@/utils/useCountUp";
-import { RiCpuLine, RiHardDrive3Fill, RiLockLine } from "@remixicon/react";
-import { useMemo } from "react";
+import { getDisplayName } from "@/utils/utils";
+import { RiLockLine } from "@remixicon/react";
+import { motion } from "framer-motion";
+import React, { useMemo, useState } from "react";
 
 interface TargetCardsProps {
   auctionResults?: AuctionResults;
   auction?: Record<string, Auction>;
   isLoading: boolean;
   error: Error | null;
-  /** B200/H200/H100/V4 total cards row (Stats home). */
   showServerCountRow?: boolean;
-  /** Per–compute-type target / price cards (Targets page). */
   showDetailCards?: boolean;
 }
 
-interface ComputeTypeInfo {
-  name: string;
-  displayName: string;
-  type: "B200" | "H200" | "H100" | "V4" | "OTHER";
-  badge?: "Intel TDX" | "AMD SEV";
-  icon: React.ReactNode;
-  totalCards: number;
-  targetCards: number;
-  targetPrice: number;
-  maxPrice: number;
-  minClusterSize: number;
+const FLIP_S = 0.4;
+const FLIP_EASE: [number, number, number, number] = [0.4, 0, 0.2, 1];
+
+function formatCurrentPayoutPerHour(
+  computeTypeName: string,
+  auctionResults: AuctionResults | undefined
+): string {
+  const rows = auctionResults?.[computeTypeName];
+  if (!rows?.length) return "0.00";
+  const totalPayout = rows.reduce((s, n) => s + n.payout, 0);
+  const totalCount = rows.reduce((s, n) => s + n.count, 0);
+  return (totalPayout / Math.max(1, totalCount)).toFixed(2);
 }
 
-function TargetServerCountSummary({
+function TargetServerCountSummaryCard({
+  title,
+  icon,
+  totalCards,
+  isReady,
+  accentHex,
+  currentPayoutUsdPerHour,
+}: {
+  title: string;
+  icon: React.ReactNode;
+  totalCards: number;
+  isReady: boolean;
+  accentHex?: string;
+  currentPayoutUsdPerHour: string;
+}) {
+  const countUpValue = useCountUp({
+    end: totalCards,
+    duration: 1000,
+    decimals: 0,
+    isReady,
+  });
+
+  const accentStyle =
+    totalCards !== 0 && accentHex ? { color: accentHex } : undefined;
+  const accentClass =
+    totalCards === 0
+      ? "text-mf-night-200"
+      : accentHex
+        ? ""
+        : "text-mf-sally-500";
+
+  const payoutNum = Number.parseFloat(currentPayoutUsdPerHour);
+  const payoutAccentClass =
+    !Number.isFinite(payoutNum) || payoutNum === 0
+      ? "text-mf-night-200"
+      : accentHex
+        ? ""
+        : "text-mf-sybil-300";
+  const payoutAccentStyle =
+    Number.isFinite(payoutNum) && payoutNum !== 0 && accentHex
+      ? { color: accentHex }
+      : undefined;
+
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <div
+      className="relative w-full min-h-40"
+      style={{ perspective: "1400px" }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <motion.div
+        className="absolute inset-0"
+        style={{
+          transformStyle: "preserve-3d",
+          transformOrigin: "center center",
+        }}
+        animate={{ rotateX: hovered ? 180 : 0 }}
+        transition={{ duration: FLIP_S, ease: FLIP_EASE }}
+      >
+        <div
+          className="absolute inset-0 rounded-lg border border-mf-border-600 bg-mf-night-450 p-6 text-center backface-hidden"
+          style={{ transform: "rotateX(0deg)" }}
+        >
+          <div className="mb-4 flex items-center justify-center gap-2">
+            {icon}
+            <h3 className="text-xs">{title}</h3>
+          </div>
+          <div
+            className={`mb-1 font-saira text-5xl font-medium opacity-80 ${accentClass}`}
+            style={accentStyle}
+          >
+            {totalCards === 0 ? "00" : countUpValue}
+          </div>
+          <div className="text-xs text-mf-milk-600">Total Cards</div>
+        </div>
+        <div
+          className="absolute inset-0 rounded-lg border border-mf-border-600 bg-mf-night-450 p-6 text-center backface-hidden"
+          style={{ transform: "rotateX(180deg)" }}
+        >
+          <div className="mb-4 flex items-center justify-center gap-2">
+            {icon}
+            <h3 className="text-xs">{title}</h3>
+          </div>
+          <div
+            className={`mb-1 font-saira text-5xl font-medium opacity-80 ${payoutAccentClass}`}
+            style={payoutAccentStyle}
+          >
+            ${currentPayoutUsdPerHour}
+          </div>
+          <div className="text-xs text-mf-milk-600">Per Hour</div>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
+export function TargetServerCountSummary({
   computeTypes,
   isLoading,
   auction,
@@ -40,127 +148,53 @@ function TargetServerCountSummary({
   error: Error | null;
   auctionResults: AuctionResults | undefined;
 }) {
-  const b200Value = useMemo(
-    () => computeTypes.find((t) => t.type === "B200")?.totalCards || 0,
-    [computeTypes]
-  );
-  const h200Value = useMemo(
-    () => computeTypes.find((t) => t.type === "H200")?.totalCards || 0,
-    [computeTypes]
-  );
-  const h100Value = useMemo(
-    () => computeTypes.find((t) => t.type === "H100")?.totalCards || 0,
-    [computeTypes]
-  );
-  const v4Value = useMemo(
-    () => computeTypes.find((t) => t.type === "V4")?.totalCards || 0,
-    [computeTypes]
-  );
+  const { data: historicalData } =
+    reactClient.chain.getHistoricalPayoutDataByComputeType.useQuery({
+      days: 30,
+    });
 
-  const b200Count = useCountUp({
-    end: b200Value,
-    duration: 1000,
-    decimals: 0,
-    isReady:
-      !isLoading &&
-      auction !== undefined &&
-      !error &&
-      auctionResults !== undefined,
-  });
+  const labelColorMap = useMemo(() => {
+    const stacked = buildTargetsStackedPayoutData(
+      historicalData,
+      auctionResults
+    );
+    return buildLabelColorMapFromStackedData(stacked);
+  }, [historicalData, auctionResults]);
 
-  const h200Count = useCountUp({
-    end: h200Value,
-    duration: 1000,
-    decimals: 0,
-    isReady:
-      !isLoading &&
-      auction !== undefined &&
-      !error &&
-      auctionResults !== undefined,
-  });
-
-  const h100Count = useCountUp({
-    end: h100Value,
-    duration: 1000,
-    decimals: 0,
-    isReady:
-      !isLoading &&
-      auction !== undefined &&
-      !error &&
-      auctionResults !== undefined,
-  });
-
-  const v4Count = useCountUp({
-    end: v4Value,
-    duration: 1000,
-    decimals: 0,
-    isReady:
-      !isLoading &&
-      auction !== undefined &&
-      !error &&
-      auctionResults !== undefined,
-  });
-
-  const summaryCards = useMemo(() => {
-    const b200 = computeTypes.find((t) => t.type === "B200");
-    const h200 = computeTypes.find((t) => t.type === "H200");
-    const h100 = computeTypes.find((t) => t.type === "H100");
-    const v4 = computeTypes.find((t) => t.type === "V4");
-
-    return [
-      b200 && {
-        title: "B200 GPU",
-        icon: <RiHardDrive3Fill className="h-4 w-4 text-mf-sally-500" />,
-        totalCards: b200.totalCards,
-        countUpValue: b200Count,
-      },
-      h200 && {
-        title: "H200 GPU",
-        icon: <RiHardDrive3Fill className="h-4 w-4 text-mf-sally-500" />,
-        totalCards: h200.totalCards,
-        countUpValue: h200Count,
-      },
-      h100 && {
-        title: "H100 GPU",
-        icon: <RiHardDrive3Fill className="h-4 w-4 text-mf-sally-500" />,
-        totalCards: h100.totalCards,
-        countUpValue: h100Count,
-      },
-      v4 && {
-        title: "V4 CPU",
-        icon: <RiCpuLine className="h-4 w-4 text-mf-sally-500" />,
-        totalCards: v4.totalCards,
-        countUpValue: v4Count,
-      },
-    ].filter(Boolean) as Array<{
-      title: string;
-      icon: React.ReactNode;
-      totalCards: number;
-      countUpValue: string;
-    }>;
-  }, [computeTypes, b200Count, h200Count, h100Count, v4Count]);
+  const isReady =
+    !isLoading &&
+    auction !== undefined &&
+    !error &&
+    auctionResults !== undefined;
 
   return (
     <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
-      {summaryCards.map((card, index) => (
-        <div
-          key={index}
-          className="rounded-lg border border-mf-border-600 bg-mf-night-450 p-6 text-center"
-        >
-          <div className="mb-4 flex items-center justify-center gap-2">
-            {card.icon}
-            <h3 className="text-xs">{card.title}</h3>
-          </div>
-          <div
-            className={`mb-1 font-saira text-5xl font-medium ${
-              card.totalCards === 0 ? "text-mf-night-200" : "text-mf-sally-500"
-            }`}
-          >
-            {card.totalCards === 0 ? "00" : card.countUpValue}
-          </div>
-          <div className="text-xs text-mf-milk-600">Total Cards</div>
-        </div>
-      ))}
+      {computeTypes.map((t) => {
+        const accentHex = labelColorMap.get(getDisplayName(t.name));
+        return (
+          <TargetServerCountSummaryCard
+            key={t.name}
+            title={t.displayName}
+            icon={
+              React.isValidElement(t.icon)
+                ? React.cloneElement(t.icon as React.ReactElement, {
+                    className: accentHex
+                      ? "h-4 w-4"
+                      : "h-4 w-4 text-mf-sally-500",
+                    ...(accentHex ? { style: { color: accentHex } } : {}),
+                  })
+                : t.icon
+            }
+            totalCards={t.totalCards}
+            isReady={isReady}
+            accentHex={accentHex}
+            currentPayoutUsdPerHour={formatCurrentPayoutPerHour(
+              t.name,
+              auctionResults
+            )}
+          />
+        );
+      })}
     </div>
   );
 }
@@ -175,85 +209,21 @@ const TargetCards = ({
 }: TargetCardsProps) => {
   const computeTypes = useMemo<ComputeTypeInfo[]>(() => {
     if (!auction || !auctionResults) return [];
-
-    const types: ComputeTypeInfo[] = [];
-
-    for (const [computeTypeName, auctionData] of Object.entries(auction)) {
-      const isB200 = computeTypeName.includes("B200");
-      const isH200 = computeTypeName.includes("H200");
-      const isH100 = computeTypeName.includes("H100");
-      const isV4 = computeTypeName.includes("V4");
-      const isTDX = computeTypeName.includes("TDX");
-      const isSEV = computeTypeName.includes("SEV");
-      const isAMD = computeTypeName.includes("AMD");
-      const isNVIDIA = computeTypeName.includes("NVIDIA");
-
-      let displayName = "";
-      let type: "B200" | "H200" | "H100" | "V4" | "OTHER" = "OTHER";
-      let badge: "Intel TDX" | "AMD SEV" | undefined = undefined;
-
-      if (isB200) {
-        type = "B200";
-        displayName = isNVIDIA ? "INTEL NVIDIA B200" : "B200 GPU";
-      } else if (isH200) {
-        type = "H200";
-        displayName = isNVIDIA ? "INTEL NVIDIA H200" : "H200 GPU";
-      } else if (isH100) {
-        type = "H100";
-        displayName = isNVIDIA ? "INTEL NVIDIA H100" : "H100 GPU";
-      } else if (isV4) {
-        type = "V4";
-        displayName = isAMD ? "AMD CPU V4" : "V4 CPU";
-      } else {
-        displayName = computeTypeName;
-      }
-
-      if (isTDX) {
-        badge = "Intel TDX";
-      } else if (isSEV) {
-        badge = "AMD SEV";
-      }
-
-      const totalCards =
-        auctionResults[computeTypeName]?.reduce(
-          (total, node) => total + (node.count || 0),
-          0
-        ) || 0;
-
-      const icon =
-        type === "V4" ? (
-          <RiCpuLine className="h-5 w-5 text-mf-sally-500" />
-        ) : (
-          <RiHardDrive3Fill className="h-5 w-5 text-mf-sally-500" />
-        );
-
-      types.push({
-        name: computeTypeName,
-        displayName,
-        type,
-        badge,
-        icon,
-        totalCards,
-        targetCards: auctionData.target_cards ?? auctionData.target_nodes ?? 0,
-        targetPrice: auctionData.target_price ?? 0,
-        maxPrice: auctionData.max_price ?? 0,
-        minClusterSize: auctionData.min_cluster_size ?? 0,
-      });
-    }
-
-    return types.sort((a, b) => {
-      const order = { B200: 0, H200: 1, H100: 2, V4: 3, OTHER: 4 };
-      return order[a.type] - order[b.type];
-    });
+    return buildComputeTypesFromAuction(auction, auctionResults);
   }, [auction, auctionResults]);
 
   if (isLoading || error || !auction || !auctionResults) {
     if (isLoading) {
+      const skeletonSlots = Math.max(
+        1,
+        auction ? Object.keys(auction).length : 0,
+        4
+      );
       return (
         <div className="space-y-8">
           {showServerCountRow && (
             <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
-              {[1, 2, 3, 4].map((index) => (
+              {Array.from({ length: skeletonSlots }, (_, index) => (
                 <div
                   key={index}
                   className="rounded-lg border border-mf-border-600 bg-mf-night-450 p-6 text-center"
@@ -266,7 +236,7 @@ const TargetCards = ({
           )}
           {showDetailCards && (
             <div className="grid grid-cols-1 gap-8 xl:grid-cols-3">
-              {[1, 2, 3, 4].map((index) => (
+              {Array.from({ length: skeletonSlots }, (_, index) => (
                 <div
                   key={index}
                   className="rounded-lg border border-mf-border-600 bg-mf-night-450 p-6"
@@ -296,9 +266,9 @@ const TargetCards = ({
       )}
       {showDetailCards && (
         <div className="grid grid-cols-1 gap-8 xl:grid-cols-3">
-          {computeTypes.map((computeType, index) => (
+          {computeTypes.map((computeType) => (
             <div
-              key={index}
+              key={computeType.name}
               className="rounded-lg border border-mf-border-600 bg-mf-night-450 p-6"
             >
               <div className="mb-4 flex items-center gap-2 group">
@@ -307,9 +277,9 @@ const TargetCards = ({
                   <h3 className="text-sm">{computeType.displayName}</h3>
                 </div>
                 {computeType.badge && (
-                  <span className="bg-mf-sally-800 group-hover:bg-mf-sally-700 transition-colors rounded-full w-15 h-3.75 flex items-center justify-center gap-0.5">
-                    <RiLockLine className="size-2 text-mf-sally-500" />
-                    <span className="text-[0.45rem] font-light text-mf-milk-600">
+                  <span className="inline-flex max-w-full shrink-0 items-center justify-center gap-0.5 rounded-full bg-mf-sally-800 px-1.5 py-0.5 transition-colors group-hover:bg-mf-sally-700">
+                    <RiLockLine className="size-2 shrink-0 text-mf-sally-500" />
+                    <span className="truncate text-[0.45rem] font-light text-mf-milk-600">
                       {computeType.badge}
                     </span>
                   </span>
